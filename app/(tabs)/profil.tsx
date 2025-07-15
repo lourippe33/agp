@@ -118,7 +118,7 @@ export default function ProfilScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter de l\'application ?',
+      'Êtes-vous sûr de vouloir vous déconnecter de l\'application AGP ?',
       [
         { text: 'Annuler', style: 'cancel' },
         {
@@ -126,7 +126,7 @@ export default function ProfilScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log('🔄 Tentative de déconnexion...');
+              console.log('🔄 Tentative de déconnexion initiée depuis le profil...');
               await logout();
               console.log('✅ Déconnexion réussie, redirection vers login');
               router.replace('/login');
@@ -542,7 +542,7 @@ export default function ProfilScreen() {
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
             <LogOut size={20} color={Colors.relaxation} />
             <Text style={styles.actionButtonText}>Déconnexion</Text>
-            <ChevronRight size={16} color={Colors.textSecondary} />
+            <ChevronRight size={20} color={Colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
@@ -806,22 +806,25 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     backgroundColor: Colors.surface,
     borderRadius: 12,
-    padding: 16,
-    gap: 12,
+    padding: 20,
+    paddingHorizontal: 24,
+    gap: 16,
     marginBottom: 12,
-    elevation: 2,
+    elevation: 4,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   actionButtonText: {
     fontSize: 16,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.relaxation,
     flex: 1,
   },
   accountInfo: {

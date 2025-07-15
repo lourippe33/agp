@@ -172,6 +172,7 @@ export class NotificationService {
   // Ajouter une notification
   static async addNotification(userId: string, notification: Omit<Notification, 'id' | 'timestamp' | 'read'>): Promise<void> {
     try {
+      console.log(`📣 Ajout d'une notification de type ${notification.type} pour l'utilisateur ${userId}`);
       const notifications = await this.getNotifications(userId);
       
       const newNotification: Notification = {
@@ -190,6 +191,8 @@ export class NotificationService {
         `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`,
         JSON.stringify(limitedNotifications)
       );
+      
+      console.log(`✅ Notification ajoutée avec succès: ${notification.title}`);
     } catch (error) {
       console.error('Erreur ajout notification:', error);
     }

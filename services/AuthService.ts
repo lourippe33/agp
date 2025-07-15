@@ -97,6 +97,10 @@ export class AuthService {
   static async logout(): Promise<boolean> {
     try {
       console.log('🔄 Déconnexion en cours...');
+      
+      // Ajouter un délai artificiel pour s'assurer que le processus de déconnexion est complet
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       await LocalStorageService.clearCurrentUser();
       console.log('✅ Déconnexion réussie');
       return true;
@@ -125,8 +129,10 @@ export class AuthService {
   static async isAuthenticated(): Promise<boolean> {
     try {
       const user = await LocalStorageService.getCurrentUser();
+      console.log('🔍 Vérification d\'authentification:', !!user);
       return !!user;
     } catch (error) {
+      console.error('❌ Erreur lors de la vérification d\'authentification:', error);
       return false;
     }
   }

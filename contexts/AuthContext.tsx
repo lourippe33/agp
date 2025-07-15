@@ -111,6 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async () => {
     try {
       console.log('🔄 Déconnexion en cours dans AuthContext...');
+      setAuthState(prev => ({ ...prev, loading: true }));
       
       // Vérifier si l'utilisateur est connecté
       if (!authState.isAuthenticated || !authState.user) {
@@ -122,6 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const result = await AuthService.logout();
       
       if (result) {
+        console.log('✅ Déconnexion réussie dans AuthService, mise à jour du state...');
         // Mise à jour de l'état d'authentification
         setAuthState({
           isAuthenticated: false,
@@ -131,10 +133,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('✅ Déconnexion réussie dans AuthContext');
       } else {
         console.error('❌ Échec de la déconnexion dans AuthService');
+        setAuthState(prev => ({ ...prev, loading: false }));
         throw new Error('Échec de la déconnexion');
       }
     } catch (error) {
       console.error('❌ Erreur lors de la déconnexion dans AuthContext:', error);
+      setAuthState(prev => ({ ...prev, loading: false }));
       throw error;
     }
   };
