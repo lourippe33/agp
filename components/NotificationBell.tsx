@@ -123,7 +123,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleClearAll = async () => {
     if (!user) return;
     
-    console.log('🔄 Tentative de suppression de toutes les notifications');
+   console.log('🔄 Tentative de suppression de toutes les notifications', user.id);
     Alert.alert(
       'Supprimer toutes les notifications',
       'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
@@ -134,18 +134,18 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log('✅ Confirmation de suppression reçue');
+             console.log('✅ Confirmation de suppression reçue pour user:', user.id);
               
-              // Puis dans le stockage
-              await NotificationService.clearAllNotifications(user.id);
-              console.log('✅ Notifications supprimées avec succès');
+             // Mettre à jour l'état local AVANT la suppression dans le stockage
+             setNotifications([]);
+             setUnreadCount(0);
               
-              // Mise à jour de l'état local APRÈS la suppression réussie
-              setNotifications([]);
-              setUnreadCount(0);
+             // Fermer la modal immédiatement pour donner un retour visuel
+             setModalVisible(false);
               
-              // Fermer la modal après suppression
-              setModalVisible(false);
+             // Puis supprimer dans le stockage
+             const result = await NotificationService.clearAllNotifications(user.id);
+             console.log('✅ Résultat de la suppression:', result);
             } catch (error) {
               console.error('❌ Erreur lors de la suppression des notifications:', error);
               Alert.alert(
