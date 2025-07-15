@@ -1,0 +1,2023 @@
+{
+  "recettes": [
+    {
+      "id": 1,
+      "titre": "Porridge aux fruits rouges",
+      "moment": "matin",
+      "image": "https://i.ibb.co/kVYv511y/porridge-compressed.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 3,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "flocons d'avoine",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "fruits rouges",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "graines de chia",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Mixer flocons+lait+chia",
+        "Cuire 3 min à feu doux en remuant",
+        "Ajouter fruits rouges"
+      ],
+      "nutritionPour100g": {
+        "calories": 110,
+        "proteines": 4,
+        "glucides": 17,
+        "lipides": 3
+      }
+    },
+    {
+      "id": 2,
+      "titre": "Smoothie bowl banane & épinards",
+      "moment": "matin",
+      "image": "https://i.ibb.co/9RFNTq9/smoothie-compressed.jpg",
+      "tempsPreparation": 7,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "detox"],
+      "ingredients": [
+        {
+          "nom": "banane",
+          "quantite": "1"
+        },
+        {
+          "nom": "épinards",
+          "quantite": "1 poignée"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "150 ml"
+        },
+        {
+          "nom": "graines de chia",
+          "quantite": "10 g"
+        }
+      ],
+      "etapes": [
+        "Mixer ingrédients",
+        "Verser en bol",
+        "Ajouter fruits/graines"
+      ],
+      "nutritionPour100g": {
+        "calories": 120,
+        "proteines": 3,
+        "glucides": 19,
+        "lipides": 4
+      }
+    },
+    {
+      "id": 3,
+      "titre": "Toast avocat & œuf mollet",
+      "moment": "matin",
+      "image": "https://i.ibb.co/WWYZC1HY/toast-compressed.jpg",
+      "tempsPreparation": 8,
+      "tempsCuisson": 6,
+      "temperatureCuisson": "Eau bouillante",
+      "difficulte": "Facile",
+      "tags": ["matin", "chronobiologie", "protéiné"],
+      "ingredients": [
+        {
+          "nom": "pain complet",
+          "quantite": "1 tranche"
+        },
+        {
+          "nom": "avocat",
+          "quantite": "1/2 (70 g)"
+        },
+        {
+          "nom": "œuf mollet",
+          "quantite": "1"
+        },
+        {
+          "nom": "huile d'olive",
+          "quantite": "5 ml"
+        }
+      ],
+      "etapes": [
+        "Griller pain au grille-pain",
+        "Cuire œuf 6 min dans l'eau bouillante",
+        "Écraser avocat sur le pain",
+        "Déposer œuf et assaisonner"
+      ],
+      "nutritionPour100g": {
+        "calories": 190,
+        "proteines": 6,
+        "glucides": 20,
+        "lipides": 11
+      }
+    },
+    {
+      "id": 4,
+      "titre": "Overnight oats coco-mangue",
+      "moment": "matin",
+      "image": "https://i.ibb.co/LhX5bjQy/overnight-oats-compressed.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "tempsRepos": "8h au frigo",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "vegan"],
+      "ingredients": [
+        {
+          "nom": "flocons avoine",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "lait coco",
+          "quantite": "100 ml"
+        },
+        {
+          "nom": "mangue",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "graines chia",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients sauf mangue",
+        "Laisser reposer 8h au frigo",
+        "Ajouter mangue avant de servir"
+      ],
+      "nutritionPour100g": {
+        "calories": 140,
+        "proteines": 3.5,
+        "glucides": 20,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 5,
+      "titre": "Crêpes d'épeautre protéinées",
+      "moment": "matin",
+      "image": "https://i.ibb.co/Z67Tgjwr/pancakes-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 5,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Facile",
+      "tags": ["matin", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "farine épeautre",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "100 ml"
+        },
+        {
+          "nom": "levure chimique",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients",
+        "Cuire 2 crêpes à feu moyen, 2-3 min par face"
+      ],
+      "nutritionPour100g": {
+        "calories": 160,
+        "proteines": 7,
+        "glucides": 22,
+        "lipides": 4
+      }
+    },
+    {
+      "id": 6,
+      "titre": "Bowl cake coco-framboise",
+      "moment": "matin",
+      "image": "https://i.ibb.co/4Z4VF7g2/bowlcake-compressed.jpg",
+      "tempsPreparation": 8,
+      "tempsCuisson": 4,
+      "temperatureCuisson": "Micro-ondes 800W",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "flocons avoine",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "50 ml"
+        },
+        {
+          "nom": "framboises",
+          "quantite": "30 g"
+        }
+      ],
+      "etapes": [
+        "Mélanger flocons, œuf et lait",
+        "Cuire 4 min au micro-ondes (800W)",
+        "Ajouter framboises"
+      ],
+      "nutritionPour100g": {
+        "calories": 150,
+        "proteines": 6,
+        "glucides": 18,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 7,
+      "titre": "Pancakes à la banane",
+      "moment": "matin",
+      "image": "https://i.ibb.co/LzCvQzhc/pancakes-banana-compressed.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 5,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "banane",
+          "quantite": "1"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "farine complète",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "levure",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Écraser banane à la fourchette",
+        "Ajouter œuf, farine et levure",
+        "Cuire pancakes 2-3 min par face à feu moyen"
+      ],
+      "nutritionPour100g": {
+        "calories": 170,
+        "proteines": 7,
+        "glucides": 24,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 8,
+      "titre": "Muesli croquant maison",
+      "moment": "matin",
+      "image": "https://i.ibb.co/vCtyM9NG/muesli-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 12,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Facile",
+      "tags": ["matin", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "flocons avoine",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "amandes",
+          "quantite": "15 g"
+        },
+        {
+          "nom": "graines tournesol",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "miel",
+          "quantite": "5 ml"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients",
+        "Étaler sur plaque et griller 12 min à 180°C"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 5,
+        "glucides": 18,
+        "lipides": 10
+      }
+    },
+    {
+      "id": 9,
+      "titre": "Pudding chia vanille",
+      "moment": "matin",
+      "image": "https://i.ibb.co/8vftNKr/chia-pudding-compressed.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "tempsRepos": "4h au frigo",
+      "difficulte": "Facile",
+      "tags": ["matin", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "graines chia",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "150 ml"
+        },
+        {
+          "nom": "vanille",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients",
+        "Laisser reposer 4h au frigo en remuant toutes les 30 min"
+      ],
+      "nutritionPour100g": {
+        "calories": 200,
+        "proteines": 6,
+        "glucides": 22,
+        "lipides": 9
+      }
+    },
+    {
+      "id": 10,
+      "titre": "Smoothie pêche & avoine",
+      "moment": "matin",
+      "image": "https://i.ibb.co/FbNk5fDq/smoothie-peach-compressed.jpg",
+      "tempsPreparation": 6,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "detox"],
+      "ingredients": [
+        {
+          "nom": "pêche",
+          "quantite": "1"
+        },
+        {
+          "nom": "flocons avoine",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "150 ml"
+        }
+      ],
+      "etapes": [
+        "Mixer fruits, avoine et lait jusqu'à consistance lisse"
+      ],
+      "nutritionPour100g": {
+        "calories": 130,
+        "proteines": 4,
+        "glucides": 19,
+        "lipides": 3
+      }
+    },
+    {
+      "id": 41,
+      "titre": "Pancakes Huel banane-vanille",
+      "moment": "matin",
+      "image": "https://i.ibb.co/3yz6Qg8w/Pancakes-Huel-banane-vanille.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 6,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "protéiné"],
+      "ingredients": [
+        {
+          "nom": "Huel vanille",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "banane bien mûre",
+          "quantite": "1/2"
+        },
+        {
+          "nom": "levure",
+          "quantite": "1 c.à.c"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "2 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Écrase la banane dans un bol",
+        "Ajoute l'œuf, le Huel, la levure et le lait",
+        "Mélange bien jusqu'à obtenir une pâte homogène",
+        "Fais cuire 2 à 3 petits pancakes dans une poêle antiadhésive chaude",
+        "Optionnel : ajoute quelques rondelles de banane sur le dessus avant de servir"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 12,
+        "glucides": 20,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 42,
+      "titre": "Smoothie Huel fruits rouges",
+      "moment": "matin",
+      "image": "https://i.ibb.co/ycB7RfLH/Smoothie-Huel-fruits-rouges.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "antioxydants"],
+      "ingredients": [
+        {
+          "nom": "lait végétal (amande, avoine…)",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "Huel vanille",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "fruits rouges (surgelés ou frais)",
+          "quantite": "100 g"
+        }
+      ],
+      "etapes": [
+        "Mets tous les ingrédients dans un blender",
+        "Mixe jusqu'à obtention d'un smoothie bien lisse",
+        "À consommer immédiatement, ou garder au frais"
+      ],
+      "nutritionPour100g": {
+        "calories": 140,
+        "proteines": 10,
+        "glucides": 18,
+        "lipides": 4
+      }
+    },
+    {
+      "id": 43,
+      "titre": "Bowl froid Huel coco-avoine-fruits rouges",
+      "moment": "matin",
+      "image": "https://i.ibb.co/DfCmsqTZ/Bowl-froid-Huel-coco-avoine.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "tempsRepos": "10-15 min au frigo",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "coco"],
+      "ingredients": [
+        {
+          "nom": "Huel neutre",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "flocons d'avoine",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "lait de coco light",
+          "quantite": "150 ml"
+        },
+        {
+          "nom": "noix de coco râpée",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "fruits rouges",
+          "quantite": "50 g"
+        }
+      ],
+      "etapes": [
+        "Mélange le Huel, les flocons, le lait et la noix de coco dans un bol",
+        "Laisse poser 10 à 15 minutes au réfrigérateur",
+        "Ajoute les fruits rouges au moment de servir"
+      ],
+      "nutritionPour100g": {
+        "calories": 160,
+        "proteines": 8,
+        "glucides": 20,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 44,
+      "titre": "Mugcake express choco-Huel",
+      "moment": "matin",
+      "image": "https://i.ibb.co/CKQqx15N/Mugcake-express-choco-Huel.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 2,
+      "temperatureCuisson": "Micro-ondes puissance moyenne",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "chocolat"],
+      "ingredients": [
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "Huel chocolat",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "purée d'amande",
+          "quantite": "1 c.à.s"
+        },
+        {
+          "nom": "banane bien mûre",
+          "quantite": "1/2"
+        }
+      ],
+      "etapes": [
+        "Écrase la banane dans une tasse",
+        "Ajoute l'œuf, le Huel et la purée d'amande",
+        "Mélange bien",
+        "Fais cuire 1 min 30 au micro-ondes (puissance moyenne)",
+        "Laisse tiédir avant de déguster"
+      ],
+      "nutritionPour100g": {
+        "calories": 190,
+        "proteines": 14,
+        "glucides": 18,
+        "lipides": 8
+      }
+    },
+    {
+      "id": 45,
+      "titre": "Porridge Huel et pomme râpée",
+      "moment": "matin",
+      "image": "https://i.ibb.co/vG5vFtV/Porridge-Huel-et-pomme-r-p-e.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 5,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "pomme"],
+      "ingredients": [
+        {
+          "nom": "Huel vanille",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "pomme râpée",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "cannelle",
+          "quantite": "au goût"
+        }
+      ],
+      "etapes": [
+        "Dans une petite casserole, chauffe le lait avec le Huel",
+        "Ajoute la pomme râpée et la cannelle",
+        "Laisse cuire à feu doux pendant 4 à 5 minutes en remuant",
+        "Servir chaud, éventuellement avec un filet de sirop d'érable"
+      ],
+      "nutritionPour100g": {
+        "calories": 150,
+        "proteines": 9,
+        "glucides": 22,
+        "lipides": 4
+      }
+    },
+    {
+      "id": 46,
+      "titre": "Cake protéiné Huel noisette",
+      "moment": "matin",
+      "image": "https://i.ibb.co/NgWx0Z7x/Cake-prot-in-Huel-noisette.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Facile",
+      "tags": ["matin", "chronobiologie", "Huel", "noisette"],
+      "ingredients": [
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "Huel vanille",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "purée de noisette",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "farine complète",
+          "quantite": "10 g"
+        }
+      ],
+      "etapes": [
+        "Préchauffe ton four à 180°C",
+        "Mélange tous les ingrédients dans un petit saladier",
+        "Verse dans un moule à cake individuel ou ramequin",
+        "Enfourne 15 minutes",
+        "Laisse tiédir avant de démouler"
+      ],
+      "nutritionPour100g": {
+        "calories": 220,
+        "proteines": 15,
+        "glucides": 18,
+        "lipides": 10
+      }
+    },
+    {
+      "id": 47,
+      "titre": "Tartine Huel-banane au four",
+      "moment": "matin",
+      "image": "https://i.ibb.co/Zz7J1Kd2/Tartine-Huel-banane-au-four.jpg",
+      "tempsPreparation": 8,
+      "tempsCuisson": 10,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "tartine"],
+      "ingredients": [
+        {
+          "nom": "pain complet",
+          "quantite": "1 tranche"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "banane",
+          "quantite": "1/2"
+        },
+        {
+          "nom": "Huel vanille",
+          "quantite": "30 g"
+        }
+      ],
+      "etapes": [
+        "Écrase la banane et mélange-la avec l'œuf et le Huel",
+        "Étale cette crème sur la tranche de pain",
+        "Passe au four 10 minutes à 180°C",
+        "Déguste tiède"
+      ],
+      "nutritionPour100g": {
+        "calories": 200,
+        "proteines": 12,
+        "glucides": 25,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 48,
+      "titre": "Crème froide Huel-cajou",
+      "moment": "matin",
+      "image": "https://i.ibb.co/GvHpjhvb/Cr-me-froide-Huel-cajou.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "tempsRepos": "10 min au frais",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "cajou"],
+      "ingredients": [
+        {
+          "nom": "Huel",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "100 ml"
+        },
+        {
+          "nom": "purée de cajou",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "sirop d'érable",
+          "quantite": "1 c.c"
+        }
+      ],
+      "etapes": [
+        "Mixe tous les ingrédients ensemble",
+        "Verse dans un bol ou petit pot",
+        "Place au frais 10 minutes avant de consommer"
+      ],
+      "nutritionPour100g": {
+        "calories": 170,
+        "proteines": 11,
+        "glucides": 18,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 49,
+      "titre": "Overnight Huel protéiné",
+      "moment": "matin",
+      "image": "https://i.ibb.co/gFWH5xgn/Overnight-Huel-prot-in.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "tempsRepos": "une nuit au frigo",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "overnight"],
+      "ingredients": [
+        {
+          "nom": "Huel",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "flocons d'avoine",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "boisson végétale",
+          "quantite": "150 ml"
+        },
+        {
+          "nom": "carré de chocolat noir (optionnel)",
+          "quantite": "1"
+        }
+      ],
+      "etapes": [
+        "Dans un bocal, mélange le Huel, les flocons et le lait",
+        "Ajoute le carré de chocolat cassé en petits morceaux",
+        "Laisse reposer une nuit au frigo",
+        "Consommer froid le matin"
+      ],
+      "nutritionPour100g": {
+        "calories": 160,
+        "proteines": 10,
+        "glucides": 20,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 50,
+      "titre": "Barres express Huel noisette",
+      "moment": "matin",
+      "image": "https://i.ibb.co/f6RwHFt/Barres-express-Huel-noisette.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 0,
+      "tempsRepos": "30 min au congélateur",
+      "difficulte": "Très facile",
+      "tags": ["matin", "chronobiologie", "Huel", "barres"],
+      "ingredients": [
+        {
+          "nom": "Huel",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "purée de noisette",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "sirop d'érable",
+          "quantite": "1 c.à.s"
+        },
+        {
+          "nom": "flocons d'avoine",
+          "quantite": "10 g"
+        }
+      ],
+      "etapes": [
+        "Mélange tous les ingrédients dans un bol",
+        "Forme 2 petites barres avec les doigts ou à l'emporte-pièce",
+        "Place 30 minutes au congélateur pour durcir",
+        "Conserve au frais jusqu'au petit-déjeuner"
+      ],
+      "nutritionPour100g": {
+        "calories": 210,
+        "proteines": 12,
+        "glucides": 22,
+        "lipides": 9
+      }
+    },
+    {
+      "id": 11,
+      "titre": "Poke bowl saumon-avocat",
+      "moment": "midi",
+      "image": "https://i.ibb.co/MDKGLsgg/poke-bowl-saumon-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 0,
+      "difficulte": "Facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "riz complet cuit",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "saumon cru",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "avocat tranché",
+          "quantite": "1/2"
+        },
+        {
+          "nom": "concombre",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "sauce soja",
+          "quantite": "1 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Disposer le riz dans un bol",
+        "Ajouter le saumon, avocat, concombre",
+        "Verser la sauce soja"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 12,
+        "glucides": 21,
+        "lipides": 8
+      }
+    },
+    {
+      "id": 12,
+      "titre": "Buddha bowl tofu quinoa",
+      "moment": "midi",
+      "image": "https://i.ibb.co/gbKP8Fcf/Buddha-bowl-tofu-quinoa-compressed.jpg",
+      "tempsPreparation": 20,
+      "tempsCuisson": 10,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Moyen",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "quinoa cuit",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "tofu grillé",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "brocoli vapeur",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "carottes râpées",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "sauce tahini",
+          "quantite": "1 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Cuire le quinoa 15 min dans l'eau bouillante",
+        "Griller le tofu 5 min à feu moyen",
+        "Cuire brocoli 5 min à la vapeur",
+        "Assembler dans un bol"
+      ],
+      "nutritionPour100g": {
+        "calories": 195,
+        "proteines": 10,
+        "glucides": 23,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 13,
+      "titre": "Salade de lentilles et saumon",
+      "moment": "midi",
+      "image": "https://i.ibb.co/ZpYQRbKJ/salade-lentilles-et-saumon-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 5,
+      "temperatureCuisson": "Feu vif",
+      "difficulte": "Facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "lentilles cuites",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "saumon fumé",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "échalote",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "vinaigrette olive-citron",
+          "quantite": "1 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Cuire les lentilles 20 min dans l'eau bouillante",
+        "Faire revenir échalote 2 min à feu vif",
+        "Mélanger tous les ingrédients"
+      ],
+      "nutritionPour100g": {
+        "calories": 175,
+        "proteines": 11,
+        "glucides": 18,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 14,
+      "titre": "Wok de légumes et tofu",
+      "moment": "midi",
+      "image": "https://i.ibb.co/hb0hjPx/wok-de-legumes-et-tofu-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 12,
+      "temperatureCuisson": "Feu vif",
+      "difficulte": "Moyen",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "tofu ferme",
+          "quantite": "120 g"
+        },
+        {
+          "nom": "brocoli",
+          "quantite": "60 g"
+        },
+        {
+          "nom": "carottes",
+          "quantite": "60 g"
+        },
+        {
+          "nom": "sauce soja",
+          "quantite": "1 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Sauter les légumes 8 min à feu vif",
+        "Ajouter le tofu et cuire 4 min",
+        "Ajouter sauce soja en fin de cuisson"
+      ],
+      "nutritionPour100g": {
+        "calories": 145,
+        "proteines": 8,
+        "glucides": 10,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 15,
+      "titre": "Poulet curry coco",
+      "moment": "midi",
+      "image": "https://i.ibb.co/DHPWcL9M/poulet-curry-coco-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "poulet",
+          "quantite": "120 g"
+        },
+        {
+          "nom": "lait de coco",
+          "quantite": "100 ml"
+        },
+        {
+          "nom": "curry",
+          "quantite": "1 c.à.c"
+        },
+        {
+          "nom": "riz complet cuit",
+          "quantite": "80 g"
+        }
+      ],
+      "etapes": [
+        "Cuire le poulet 10 min à feu moyen",
+        "Ajouter lait coco et curry, mijoter 10 min",
+        "Servir avec riz"
+      ],
+      "nutritionPour100g": {
+        "calories": 160,
+        "proteines": 12,
+        "glucides": 18,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 16,
+      "titre": "Salade quinoa pois chiches",
+      "moment": "midi",
+      "image": "https://i.ibb.co/Cp4dqbDg/salade-de-quinoa-pois-chiches-compressed.jpg",
+      "tempsPreparation": 12,
+      "tempsCuisson": 8,
+      "temperatureCuisson": "Eau bouillante",
+      "difficulte": "Facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "quinoa",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "pois chiches",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "poivron rouge",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "huile d'olive",
+          "quantite": "1 c.à.s"
+        }
+      ],
+      "etapes": [
+        "Cuire quinoa 15 min dans l'eau bouillante",
+        "Égoutter pois chiches en conserve",
+        "Mélanger tous les ingrédients"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 7,
+        "glucides": 26,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 17,
+      "titre": "Wrap poulet avocat",
+      "moment": "midi",
+      "image": "https://i.ibb.co/Wv11KCpL/wrap-poulet-avocat-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 6,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Très facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "galette blé",
+          "quantite": "1"
+        },
+        {
+          "nom": "poulet",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "avocat",
+          "quantite": "1/2"
+        },
+        {
+          "nom": "crudités",
+          "quantite": "30 g"
+        }
+      ],
+      "etapes": [
+        "Griller le poulet 6 min à feu moyen",
+        "Réchauffer galette 30 sec",
+        "Assembler dans la galette et rouler"
+      ],
+      "nutritionPour100g": {
+        "calories": 190,
+        "proteines": 12,
+        "glucides": 20,
+        "lipides": 8
+      }
+    },
+    {
+      "id": 18,
+      "titre": "Tajine pois chiches",
+      "moment": "midi",
+      "image": "https://i.ibb.co/KxD0YVfN/Tajine-de-pois-chiches-compressed.jpg",
+      "tempsPreparation": 12,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Moyen",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "pois chiches",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "carottes",
+          "quantite": "60 g"
+        },
+        {
+          "nom": "ras-el-hanout",
+          "quantite": "1 c.à.c"
+        },
+        {
+          "nom": "semoule complète",
+          "quantite": "80 g"
+        }
+      ],
+      "etapes": [
+        "Faire revenir épices 1 min",
+        "Ajouter légumes et mijoter 15 min à feu doux",
+        "Cuire semoule 5 min dans l'eau bouillante"
+      ],
+      "nutritionPour100g": {
+        "calories": 170,
+        "proteines": 6,
+        "glucides": 25,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 19,
+      "titre": "Riz sauté crevettes-légumes",
+      "moment": "midi",
+      "image": "https://i.ibb.co/d47TM92v/Riz-saut-crevettes-l-gumes-compressed.jpg",
+      "tempsPreparation": 12,
+      "tempsCuisson": 10,
+      "temperatureCuisson": "Feu vif",
+      "difficulte": "Facile",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "riz",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "crevettes",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "légumes variés",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "gingembre",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Cuire riz 18 min dans l'eau bouillante",
+        "Sauter crevettes 3 min à feu vif",
+        "Ajouter légumes et riz, sauter 5 min"
+      ],
+      "nutritionPour100g": {
+        "calories": 185,
+        "proteines": 9,
+        "glucides": 22,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 20,
+      "titre": "Spaghetti bolo veggie",
+      "moment": "midi",
+      "image": "https://i.ibb.co/fGMV9pGR/spaghetti-bolo-veggie-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Moyen",
+      "tags": ["midi", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "pâtes complètes",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "protéines de soja",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "tomates",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "épices",
+          "quantite": "1 c.à.c"
+        }
+      ],
+      "etapes": [
+        "Faire revenir protéines de soja 5 min",
+        "Ajouter tomates et mijoter 15 min à feu moyen",
+        "Cuire pâtes selon emballage"
+      ],
+      "nutritionPour100g": {
+        "calories": 195,
+        "proteines": 8,
+        "glucides": 27,
+        "lipides": 5
+      }
+    },
+    {
+      "id": 21,
+      "titre": "Cake protéiné chocolat-noisette",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/7dcYwLfX/Cake-prot-in-chocolat-noisettes-compressed.jpg",
+      "tempsPreparation": 12,
+      "tempsCuisson": 25,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Facile",
+      "tags": ["gouter", "chronobiologie", "protéiné"],
+      "ingredients": [
+        {
+          "nom": "farine complète",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "poudre cacao",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "purée de noisette",
+          "quantite": "20 g"
+        }
+      ],
+      "etapes": [
+        "Mélanger les ingrédients secs",
+        "Ajouter œuf et purée de noisette",
+        "Cuire 25 min au four à 180°C"
+      ],
+      "nutritionPour100g": {
+        "calories": 220,
+        "proteines": 8,
+        "glucides": 24,
+        "lipides": 10
+      }
+    },
+    {
+      "id": 22,
+      "titre": "Compote pomme-cannelle",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/6RLzj7z0/Compote-pomme-cannelle-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Facile",
+      "tags": ["gouter", "chronobiologie", "léger"],
+      "ingredients": [
+        {
+          "nom": "pommes",
+          "quantite": "200 g"
+        },
+        {
+          "nom": "cannelle",
+          "quantite": "1 c.à.c"
+        },
+        {
+          "nom": "sirop d'érable",
+          "quantite": "5 g"
+        }
+      ],
+      "etapes": [
+        "Éplucher et couper pommes en morceaux",
+        "Cuire 15 min à feu doux avec cannelle",
+        "Mixer selon texture souhaitée"
+      ],
+      "nutritionPour100g": {
+        "calories": 90,
+        "proteines": 0.3,
+        "glucides": 22,
+        "lipides": 0.1
+      }
+    },
+    {
+      "id": 23,
+      "titre": "Barres céréales maison",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/nsS8YmWS/Barres-c-r-ales-maison-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Facile",
+      "tags": ["gouter", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "flocons avoine",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "amandes",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "miel",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "graines tournesol",
+          "quantite": "5 g"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients",
+        "Étaler sur plaque et tasser",
+        "Cuire 15 min au four à 180°C"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 6,
+        "glucides": 20,
+        "lipides": 8
+      }
+    },
+    {
+      "id": 24,
+      "titre": "Smoothie protéiné banane-Huel",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/vvqmjmnx/Smoothie-prot-in-banane-Huel-compressed.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "lait végétal",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "banane",
+          "quantite": "1"
+        },
+        {
+          "nom": "poudre Huel vanille",
+          "quantite": "30 g"
+        }
+      ],
+      "etapes": [
+        "Mixer tous les ingrédients jusqu'à consistance lisse"
+      ],
+      "nutritionPour100g": {
+        "calories": 150,
+        "proteines": 12,
+        "glucides": 22,
+        "lipides": 4
+      }
+    },
+    {
+      "id": 25,
+      "titre": "Tartine purée de noisette-pomme",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/rGJYKLPW/Tartine-pur-e-de-noisette-pomme.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "protéiné"],
+      "ingredients": [
+        {
+          "nom": "pain complet",
+          "quantite": "1 tranche"
+        },
+        {
+          "nom": "purée de noisette",
+          "quantite": "15 g"
+        },
+        {
+          "nom": "pomme tranchée",
+          "quantite": "50 g"
+        }
+      ],
+      "etapes": [
+        "Griller légèrement le pain",
+        "Tartiner purée de noisette",
+        "Ajouter les tranches de pomme"
+      ],
+      "nutritionPour100g": {
+        "calories": 200,
+        "proteines": 5,
+        "glucides": 25,
+        "lipides": 8
+      }
+    },
+    {
+      "id": 26,
+      "titre": "Mugcake Huel chocolat",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/3YfkzmJr/Mugcake-Huel-chocolat.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 2,
+      "temperatureCuisson": "Micro-ondes 800W",
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "AGP"],
+      "ingredients": [
+        {
+          "nom": "poudre Huel chocolat",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "lait végétal",
+          "quantite": "50 ml"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients dans un mug",
+        "Cuire 2 min au micro-ondes (800W)"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 14,
+        "glucides": 20,
+        "lipides": 6
+      }
+    },
+    {
+      "id": 27,
+      "titre": "Yaourt végétal et granola",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/G4SR6Jzb/Yaourt-v-g-tal-et-granola.jpg",
+      "tempsPreparation": 5,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "yaourt végétal",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "granola maison",
+          "quantite": "30 g"
+        },
+        {
+          "nom": "fruits rouges",
+          "quantite": "20 g"
+        }
+      ],
+      "etapes": [
+        "Mettre yaourt dans un bol",
+        "Ajouter granola et fruits rouges"
+      ],
+      "nutritionPour100g": {
+        "calories": 140,
+        "proteines": 6,
+        "glucides": 18,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 28,
+      "titre": "Energy balls dattes-amandes",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/q3Zf9YZT/Energy-balls-dattes-amandes.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 0,
+      "tempsRepos": "30 min au frigo",
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "protéiné"],
+      "ingredients": [
+        {
+          "nom": "dattes",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "amandes",
+          "quantite": "40 g"
+        },
+        {
+          "nom": "cacao",
+          "quantite": "10 g"
+        },
+        {
+          "nom": "noix de coco râpée",
+          "quantite": "10 g"
+        }
+      ],
+      "etapes": [
+        "Mixer tous les ingrédients",
+        "Former des boules avec les mains",
+        "Laisser reposer 30 min au frigo"
+      ],
+      "nutritionPour100g": {
+        "calories": 220,
+        "proteines": 8,
+        "glucides": 18,
+        "lipides": 10
+      }
+    },
+    {
+      "id": 29,
+      "titre": "Flan de coco allégé",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/wh7RxtD9/Flan-de-coco-all-g.jpg",
+      "tempsPreparation": 8,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Bain-marie",
+      "difficulte": "Facile",
+      "tags": ["gouter", "chronobiologie", "healthy"],
+      "ingredients": [
+        {
+          "nom": "lait coco allégé",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "œuf",
+          "quantite": "1"
+        },
+        {
+          "nom": "sucre de coco",
+          "quantite": "5 g"
+        }
+      ],
+      "etapes": [
+        "Mélanger tous les ingrédients",
+        "Verser dans ramequins",
+        "Cuire 20 min au bain-marie"
+      ],
+      "nutritionPour100g": {
+        "calories": 180,
+        "proteines": 5,
+        "glucides": 10,
+        "lipides": 12
+      }
+    },
+    {
+      "id": 30,
+      "titre": "Galette riz & purée d'amande",
+      "moment": "gouter",
+      "image": "https://i.ibb.co/VYFJN1zN/Galette-de-riz-et-pur-e-d-amande-compressed.jpg",
+      "tempsPreparation": 3,
+      "tempsCuisson": 0,
+      "difficulte": "Très facile",
+      "tags": ["gouter", "chronobiologie", "léger"],
+      "ingredients": [
+        {
+          "nom": "galettes de riz",
+          "quantite": "2"
+        },
+        {
+          "nom": "purée d'amande",
+          "quantite": "20 g"
+        },
+        {
+          "nom": "pomme râpée",
+          "quantite": "30 g"
+        }
+      ],
+      "etapes": [
+        "Tartiner purée d'amande sur galettes",
+        "Ajouter pomme râpée sur le dessus"
+      ],
+      "nutritionPour100g": {
+        "calories": 160,
+        "proteines": 4,
+        "glucides": 28,
+        "lipides": 7
+      }
+    },
+    {
+      "id": 31,
+      "titre": "Sauté de tofu aux légumes",
+      "moment": "soir",
+      "image": "https://i.ibb.co/cXbgrLD7/Saut-de-tofu-aux-l-gumes.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 12,
+      "temperatureCuisson": "Feu moyen-vif",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "brocolis",
+          "quantite": "200 g"
+        },
+        {
+          "nom": "tofu nature",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "champignons",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "graines de sésame",
+          "quantite": "1 c. à soupe"
+        }
+      ],
+      "etapes": [
+        "Couper le tofu en cubes et les légumes",
+        "Faire sauter le tofu 5 min à feu moyen-vif",
+        "Ajouter les légumes et cuire 8 min",
+        "Parsemer de graines de sésame avant de servir"
+      ],
+      "nutritionPour100g": {
+        "calories": 90,
+        "proteines": 9,
+        "glucides": 5,
+        "lipides": 3,
+        "fibres": 2.8
+      }
+    },
+    {
+      "id": 32,
+      "titre": "Soupe miso aux légumes",
+      "moment": "soir",
+      "image": "https://i.ibb.co/yFVnGZ90/Soupe-miso-aux-l-gumes.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "bouillon de légumes",
+          "quantite": "400 ml"
+        },
+        {
+          "nom": "pâte miso",
+          "quantite": "1 c. à soupe"
+        },
+        {
+          "nom": "champignons shiitake",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "épinards",
+          "quantite": "50 g"
+        }
+      ],
+      "etapes": [
+        "Chauffer le bouillon à feu doux",
+        "Diluer la pâte miso dans un peu de bouillon",
+        "Ajouter champignons et cuire 10 min",
+        "Ajouter épinards en fin de cuisson"
+      ],
+      "nutritionPour100g": {
+        "calories": 45,
+        "proteines": 3,
+        "glucides": 6,
+        "lipides": 1,
+        "fibres": 1.5
+      }
+    },
+    {
+      "id": 33,
+      "titre": "Salade de courgetti au pesto",
+      "moment": "soir",
+      "image": "https://i.ibb.co/chwV1rYh/Salade-de-courgetti-au-pesto-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 0,
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "courgettes",
+          "quantite": "300 g"
+        },
+        {
+          "nom": "pesto de basilic",
+          "quantite": "2 c. à soupe"
+        },
+        {
+          "nom": "tomates cerises",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "pignons de pin",
+          "quantite": "15 g"
+        }
+      ],
+      "etapes": [
+        "Spiraler les courgettes en spaghettis",
+        "Couper tomates cerises en deux",
+        "Mélanger avec pesto et pignons",
+        "Laisser mariner 10 min avant de servir"
+      ],
+      "nutritionPour100g": {
+        "calories": 85,
+        "proteines": 4,
+        "glucides": 8,
+        "lipides": 5,
+        "fibres": 2.2
+      }
+    },
+    {
+      "id": 34,
+      "titre": "Curry de légumes au lait de coco",
+      "moment": "soir",
+      "image": "https://i.ibb.co/ZzYQvZfC/Curry-de-l-gumes-au-lait-de-coco-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "aubergine",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "courgette",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "lait de coco light",
+          "quantite": "200 ml"
+        },
+        {
+          "nom": "pâte de curry rouge",
+          "quantite": "1 c. à café"
+        }
+      ],
+      "etapes": [
+        "Couper légumes en cubes",
+        "Faire revenir pâte de curry 1 min",
+        "Ajouter légumes et cuire 10 min",
+        "Verser lait de coco et mijoter 10 min à feu moyen"
+      ],
+      "nutritionPour100g": {
+        "calories": 75,
+        "proteines": 2,
+        "glucides": 8,
+        "lipides": 4,
+        "fibres": 3.1
+      }
+    },
+    {
+      "id": 35,
+      "titre": "Omelette aux herbes et légumes",
+      "moment": "soir",
+      "image": "https://i.ibb.co/pj4CxPmF/Omelette-aux-herbes-et-l-gumes-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 8,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "œufs",
+          "quantite": "2"
+        },
+        {
+          "nom": "épinards",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "herbes fraîches",
+          "quantite": "2 c. à soupe"
+        },
+        {
+          "nom": "huile d'olive",
+          "quantite": "1 c. à café"
+        }
+      ],
+      "etapes": [
+        "Battre les œufs avec herbes",
+        "Faire revenir épinards 2 min",
+        "Verser œufs et cuire 3 min par face à feu moyen",
+        "Plier l'omelette en deux"
+      ],
+      "nutritionPour100g": {
+        "calories": 120,
+        "proteines": 10,
+        "glucides": 3,
+        "lipides": 8,
+        "fibres": 1.8
+      }
+    },
+    {
+      "id": 36,
+      "titre": "Salade de quinoa aux légumes grillés",
+      "moment": "soir",
+      "image": "https://i.ibb.co/QvjXydNB/salade-de-quinoa-aux-l-gumes-grill-s.jpg",
+      "tempsPreparation": 20,
+      "tempsCuisson": 15,
+      "temperatureCuisson": "Four 200°C",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "quinoa",
+          "quantite": "60 g"
+        },
+        {
+          "nom": "courgette",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "poivron rouge",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "vinaigrette citron",
+          "quantite": "1 c. à soupe"
+        }
+      ],
+      "etapes": [
+        "Cuire quinoa 15 min dans l'eau bouillante",
+        "Griller légumes 15 min au four à 200°C",
+        "Mélanger quinoa et légumes tièdes",
+        "Assaisonner avec vinaigrette"
+      ],
+      "nutritionPour100g": {
+        "calories": 110,
+        "proteines": 4,
+        "glucides": 18,
+        "lipides": 3,
+        "fibres": 2.5
+      }
+    },
+    {
+      "id": 37,
+      "titre": "Velouté de brocoli au gingembre",
+      "moment": "soir",
+      "image": "https://i.ibb.co/N61MM1TM/Velout-de-brocoli-au-gingembre-compressed.jpg",
+      "tempsPreparation": 10,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Feu moyen",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "brocoli",
+          "quantite": "300 g"
+        },
+        {
+          "nom": "bouillon de légumes",
+          "quantite": "400 ml"
+        },
+        {
+          "nom": "gingembre frais",
+          "quantite": "1 c. à café"
+        },
+        {
+          "nom": "lait de coco light",
+          "quantite": "50 ml"
+        }
+      ],
+      "etapes": [
+        "Cuire brocoli 15 min dans le bouillon",
+        "Ajouter gingembre râpé",
+        "Mixer jusqu'à consistance lisse",
+        "Ajouter lait de coco et réchauffer 2 min"
+      ],
+      "nutritionPour100g": {
+        "calories": 55,
+        "proteines": 4,
+        "glucides": 6,
+        "lipides": 2,
+        "fibres": 2.8
+      }
+    },
+    {
+      "id": 38,
+      "titre": "Salade de lentilles aux légumes croquants",
+      "moment": "soir",
+      "image": "https://i.ibb.co/zV4PmvpX/Salade-de-lentilles-aux-l-gumes-croquants-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 5,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "lentilles vertes cuites",
+          "quantite": "120 g"
+        },
+        {
+          "nom": "concombre",
+          "quantite": "80 g"
+        },
+        {
+          "nom": "radis",
+          "quantite": "50 g"
+        },
+        {
+          "nom": "vinaigrette moutarde",
+          "quantite": "1 c. à soupe"
+        }
+      ],
+      "etapes": [
+        "Réchauffer lentilles 5 min à feu doux",
+        "Couper légumes en petits dés",
+        "Mélanger lentilles tièdes et légumes crus",
+        "Assaisonner avec vinaigrette"
+      ],
+      "nutritionPour100g": {
+        "calories": 95,
+        "proteines": 7,
+        "glucides": 12,
+        "lipides": 2,
+        "fibres": 4.2
+      }
+    },
+    {
+      "id": 39,
+      "titre": "Ratatouille légère aux herbes",
+      "moment": "soir",
+      "image": "https://i.ibb.co/WLQQMhZ/Ratatouille-l-g-re-aux-herbes.jpg",
+      "tempsPreparation": 20,
+      "tempsCuisson": 25,
+      "temperatureCuisson": "Feu doux",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "aubergine",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "courgette",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "tomate",
+          "quantite": "200 g"
+        },
+        {
+          "nom": "herbes de Provence",
+          "quantite": "1 c. à café"
+        }
+      ],
+      "etapes": [
+        "Couper tous les légumes en cubes",
+        "Faire revenir aubergine 5 min",
+        "Ajouter courgette et tomate",
+        "Mijoter 25 min à feu doux avec herbes"
+      ],
+      "nutritionPour100g": {
+        "calories": 35,
+        "proteines": 1.5,
+        "glucides": 6,
+        "lipides": 0.5,
+        "fibres": 3.2
+      }
+    },
+    {
+      "id": 40,
+      "titre": "Papillote de légumes au citron",
+      "moment": "soir",
+      "image": "https://i.ibb.co/Tx6mCYcG/Papillote-de-l-gumes-au-citron-compressed.jpg",
+      "tempsPreparation": 15,
+      "tempsCuisson": 20,
+      "temperatureCuisson": "Four 180°C",
+      "difficulte": "Facile",
+      "tags": [
+        "AGP",
+        "chronobiologie"
+      ],
+      "ingredients": [
+        {
+          "nom": "fenouil",
+          "quantite": "150 g"
+        },
+        {
+          "nom": "carotte",
+          "quantite": "100 g"
+        },
+        {
+          "nom": "citron",
+          "quantite": "1/2"
+        },
+        {
+          "nom": "thym frais",
+          "quantite": "1 c. à café"
+        }
+      ],
+      "etapes": [
+        "Couper légumes en lamelles",
+        "Disposer sur papier sulfurisé",
+        "Arroser de jus de citron et thym",
+        "Cuire en papillote 20 min au four à 180°C"
+      ],
+      "nutritionPour100g": {
+        "calories": 40,
+        "proteines": 1.8,
+        "glucides": 7,
+        "lipides": 0.3,
+        "fibres": 3.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+[
+  {
+    "id": 1,
+    "titre": "Pancakes Huel banane-vanille",
+    "image": "https://i.ibb.co/3yz6Qg8w/Pancakes-Huel-banane-vanille.jpg",
+    "ingrédients": [
+      "30 g de Huel vanille",
+      "1 œuf",
+      "1/2 banane bien mûre",
+      "1 c.à.c de levure",
+      "2 c.à.s de lait végétal"
+    ],
+    "étapes": [
+      "Écrase la banane dans un bol.",
+      "Ajoute l’œuf, le Huel, la levure et le lait.",
+      "Mélange bien jusqu’à obtenir une pâte homogène.",
+      "Fais cuire 2 à 3 petits pancakes dans une poêle antiadhésive chaude.",
+      "Optionnel : ajoute quelques rondelles de banane sur le dessus avant de servir."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 2,
+    "titre": "Smoothie Huel fruits rouges",
+    "image": "https://i.ibb.co/ycB7RfLH/Smoothie-Huel-fruits-rouges.jpg",
+    "ingrédients": [
+      "200 ml de lait végétal (amande, avoine…)",
+      "30 g de Huel vanille",
+      "100 g de fruits rouges (surgelés ou frais)"
+    ],
+    "étapes": [
+      "Mets tous les ingrédients dans un blender.",
+      "Mixe jusqu’à obtention d’un smoothie bien lisse.",
+      "À consommer immédiatement, ou garder au frais."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 3,
+    "titre": "Bowl froid Huel coco-avoine-fruits rouges",
+    "image": "https://i.ibb.co/DfCmsqTZ/Bowl-froid-Huel-coco-avoine.jpg",
+    "ingrédients": [
+      "30 g de Huel neutre",
+      "20 g de flocons d’avoine",
+      "150 ml de lait de coco light",
+      "10 g de noix de coco râpée",
+      "50 g de fruits rouges"
+    ],
+    "étapes": [
+      "Mélange le Huel, les flocons, le lait et la noix de coco dans un bol.",
+      "Laisse poser 10 à 15 minutes au réfrigérateur.",
+      "Ajoute les fruits rouges au moment de servir."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 4,
+    "titre": "Mugcake express choco-Huel",
+    "image": "https://i.ibb.co/CKQqx15N/Mugcake-express-choco-Huel.jpg",
+    "ingrédients": [
+      "1 œuf",
+      "30 g de Huel chocolat",
+      "1 c.à.s de purée d’amande",
+      "1/2 banane bien mûre"
+    ],
+    "étapes": [
+      "Écrase la banane dans une tasse.",
+      "Ajoute l’œuf, le Huel et la purée d’amande.",
+      "Mélange bien.",
+      "Fais cuire 1 min 30 au micro-ondes (puissance moyenne).",
+      "Laisse tiédir avant de déguster."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 5,
+    "titre": "Porridge Huel et pomme râpée",
+    "image": "https://i.ibb.co/vG5vFtV/Porridge-Huel-et-pomme-r-p-e.jpg",
+    "ingrédients": [
+      "30 g de Huel vanille",
+      "200 ml de lait végétal",
+      "50 g de pomme râpée",
+      "Cannelle (au goût)"
+    ],
+    "étapes": [
+      "Dans une petite casserole, chauffe le lait avec le Huel.",
+      "Ajoute la pomme râpée et la cannelle.",
+      "Laisse cuire à feu doux pendant 4 à 5 minutes en remuant.",
+      "Servir chaud, éventuellement avec un filet de sirop d’érable."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 6,
+    "titre": "Cake protéiné Huel noisette",
+    "image": "https://i.ibb.co/NgWx0Z7x/Cake-prot-in-Huel-noisette.jpg",
+    "ingrédients": [
+      "1 œuf",
+      "30 g de Huel vanille",
+      "20 g de purée de noisette",
+      "10 g de farine complète"
+    ],
+    "étapes": [
+      "Préchauffe ton four à 180°C.",
+      "Mélange tous les ingrédients dans un petit saladier.",
+      "Verse dans un moule à cake individuel ou ramequin.",
+      "Enfourne 15 minutes.",
+      "Laisse tiédir avant de démouler."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 7,
+    "titre": "Tartine Huel-banane au four",
+    "image": "https://i.ibb.co/Zz7J1Kd2/Tartine-Huel-banane-au-four.jpg",
+    "ingrédients": [
+      "1 tranche de pain complet",
+      "1 œuf",
+      "1/2 banane",
+      "30 g de Huel vanille"
+    ],
+    "étapes": [
+      "Écrase la banane et mélange-la avec l’œuf et le Huel.",
+      "Étale cette crème sur la tranche de pain.",
+      "Passe au four 10 minutes à 180°C.",
+      "Déguste tiède."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 8,
+    "titre": "Crème froide Huel-cajou",
+    "image": "https://i.ibb.co/GvHpjhvb/Cr-me-froide-Huel-cajou.jpg",
+    "ingrédients": [
+      "30 g de Huel",
+      "100 ml de lait végétal",
+      "10 g de purée de cajou",
+      "1 c.c de sirop d’érable"
+    ],
+    "étapes": [
+      "Mixe tous les ingrédients ensemble.",
+      "Verse dans un bol ou petit pot.",
+      "Place au frais 10 minutes avant de consommer."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 9,
+    "titre": "Overnight Huel protéiné",
+    "image": "https://i.ibb.co/gFWH5xgn/Overnight-Huel-prot-in.jpg",
+    "ingrédients": [
+      "30 g de Huel",
+      "20 g de flocons d’avoine",
+      "150 ml de boisson végétale",
+      "1 carré de chocolat noir (optionnel)"
+    ],
+    "étapes": [
+      "Dans un bocal, mélange le Huel, les flocons et le lait.",
+      "Ajoute le carré de chocolat cassé en petits morceaux.",
+      "Laisse reposer une nuit au frigo.",
+      "Consommer froid le matin."
+    ],
+    "moment": "matin"
+  },
+  {
+    "id": 10,
+    "titre": "Barres express Huel noisette",
+    "image": "https://i.ibb.co/f6RwHFt/Barres-express-Huel-noisette.jpg",
+    "ingrédients": [
+      "40 g de Huel",
+      "20 g de purée de noisette",
+      "1 c.à.s de sirop d’érable",
+      "10 g de flocons d’avoine"
+    ],
+    "étapes": [
+      "Mélange tous les ingrédients dans un bol.",
+      "Forme 2 petites barres avec les doigts ou à l’emporte-pièce.",
+      "Place 30 minutes au congélateur pour durcir.",
+      "Conserve au frais jusqu’au petit-déjeuner."
+    ],
+    "moment": "matin"
+  }
+]

@@ -1,0 +1,901 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { 
+  Calendar, 
+  Router, 
+  TrendingUp, 
+  Target, 
+  Award, 
+  Clock, 
+  Activity, 
+  Heart, 
+  Zap, 
+  Sun, 
+  Moon, 
+  Coffee, 
+  Utensils, 
+  Database, 
+  Dumbbell,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react-native';
+
+import { router, useRouter } from 'expo-router';
+import { Colors } from '@/constants/Colors';
+import { useAuth } from '@/contexts/AuthContext';
+import PersistentTabBar from '@/components/PersistentTabBar';
+
+
+
+const { width } = Dimensions.get('window');
+
+// Calculate dimensions outside StyleSheet
+const actionCardWidth = (width - 60) / 2;
+const statCardWidth = (width - 56) / 2;
+const dayCardWidth = (width - 100) / 7;
+
+interface DayProgram {
+  day: number;
+  date: Date;
+  isCompleted: boolean;
+  isToday: boolean;
+  activities: {
+    breakfast: { name: string; completed: boolean };
+    sport: { name: string; completed: boolean };
+    relaxation: { name: string; completed: boolean };
+    lunch: { name: string; completed: boolean };
+    snack: { name: string; completed: boolean };
+    dinner: { name: string; completed: boolean };
+  };
+  totalDuration: number;
+  badges?: string[];
+}
+
+export default function HomeScreen() {
+  const { user } = useAuth();
+  const navigation = useRouter();
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [programData, setProgramData] = useState<DayProgram[]>([]);
+  const [visibleDayIndex, setVisibleDayIndex] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+  
+  useEffect(() => {
+    generateProgramData();
+  }, []);
+
+  const generateProgramData = () => {
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - (today.getDay() || 7) + 1); // Lundi de cette semaine
+    const todayStr = today.toDateString();
+
+    const program: DayProgram[] = [];
+
+    for (let i = 0; i < 28; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      
+      const isToday = currentDate.toDateString() === todayStr;
+      const isPast = currentDate.getTime() < today.getTime() && !isToday;
+      
+      program.push({
+        day: i + 1,
+        date: currentDate,
+        isCompleted: isPast && Math.random() > 0.3, // Simulation de progression
+        isToday,
+        activities: generateDayActivities(i + 1),
+        totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
+        badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
+      });
+    }
+
+    setProgramData(program);
+    
+    // Calculate current streak
+    let streak = 0;
+    today.setHours(0, 0, 0, 0);
+    
+    // Count consecutive completed days leading up to today
+    for (let i = program.length - 1; i >= 0; i--) {
+      const dayDate = new Date(program[i].date);
+      dayDate.setHours(0, 0, 0, 0);
+      
+      if (dayDate.getTime() < today.getTime() && program[i].isCompleted) {
+        streak++;
+      } else if (dayDate.getTime() < today.getTime()) {
+        break;
+      }
+    }
+    setCurrentStreak(streak);
+    
+    // Calculate overall progress
+    const completedDays = program.filter(day => day.isCompleted).length;
+    const progress = (completedDays / program.length) * 100;
+    setOverallProgress(progress);
+    
+    // Trouver l'index du jour actuel pour le carrousel
+    const todayIndex = program.findIndex(day => day.isToday);
+    if (todayIndex !== -1) {
+      setVisibleDayIndex(Math.floor(todayIndex / 7) * 7);
+    }
+  };
+
+  const generateDayActivities = (day: number) => {
+    const breakfasts = [
+      'Porridge aux fruits rouges',
+      'Smoothie bowl banane',
+      'Toast avocat œuf',
+      'Pancakes Huel banane',
+      'Overnight oats coco'
+    ];
+    
+    const sports = [
+      'Marche Active (15 min)',
+      'Circuit Training (20 min)',
+      'Danse Fitness (15 min)',
+      'Yoga Dynamique (20 min)',
+      'HIIT Léger (15 min)'
+    ];
+    
+    const relaxations = [
+      'Cohérence Cardiaque (3 min)',
+      'Respiration Sourire (2 min)',
+      'Méditation 5 Sens (5 min)',
+      'Gratitude Express (2 min)',
+      'Relaxation Express (3 min)'
+    ];
+
+    return {
+      breakfast: { 
+        name: breakfasts[day % breakfasts.length], 
+        completed: false 
+      },
+      sport: { 
+        name: sports[day % sports.length], 
+        completed: false 
+      },
+      relaxation: { 
+        name: relaxations[day % relaxations.length], 
+        completed: false 
+      },
+      lunch: { 
+        name: 'Poke bowl saumon-avocat', 
+        completed: false 
+      },
+      snack: { 
+        name: 'Energy balls dattes', 
+        completed: false 
+      },
+      dinner: { 
+        name: 'Salade quinoa légumes', 
+        completed: false 
+      }
+    };
+  };
+
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Bonjour';
+    if (hour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  };
+
+  const getCurrentMoment = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 6 && hour < 12) return 'matin';
+    if (hour >= 12 && hour < 16) return 'midi';
+    if (hour >= 16 && hour < 20) return 'gouter';
+    return 'soir';
+  };
+
+  const getMomentIcon = () => {
+    const moment = getCurrentMoment();
+    switch (moment) {
+      case 'matin': return <Sun size={24} color={Colors.morning} />;
+      case 'midi': return <Utensils size={24} color={Colors.agpBlue} />;
+      case 'gouter': return <Coffee size={24} color={Colors.relaxation} />;
+      case 'soir': return <Moon size={24} color={Colors.evening} />;
+      default: return <Sun size={24} color={Colors.morning} />;
+    }
+  };
+
+  const getMomentColor = () => {
+    const moment = getCurrentMoment();
+    switch (moment) {
+      case 'matin': return Colors.morning;
+      case 'midi': return Colors.agpBlue;
+      case 'gouter': return Colors.relaxation;
+      case 'soir': return Colors.evening;
+      default: return Colors.morning;
+    }
+  };
+
+  const navigateToSport = () => {
+    router.push('/sport');
+  };
+
+  const navigateToRecipes = () => {
+    router.push('/recettes');
+  };
+
+  const navigateToDetente = () => {
+    router.push('/detente');
+  };
+
+  const handleDayPress = (day: DayProgram) => {
+    // Navigate to the program screen with the selected day
+    router.push({
+      pathname: '/(tabs)/programme',
+      params: { 
+        day: day.day.toString(),
+        openDetails: 'true'
+      }
+    });
+  };
+
+  const DayCard = ({ day }: { day: DayProgram }) => {
+    const isPast = isPastDay(day);
+    
+    return (
+      <TouchableOpacity
+        style={[
+          styles.dayCard,
+          day.isCompleted && styles.dayCardCompleted,
+          day.isToday && styles.dayCardToday
+        ]}
+        onPress={() => handleDayPress(day)}
+        activeOpacity={0.8}
+      >
+        <View style={styles.dayHeader}>
+          <Text style={[
+            styles.dayNumber,
+            day.isCompleted && styles.dayNumberCompleted,
+            day.isToday && styles.dayNumberToday
+          ]}>
+            {day.day}
+          </Text>
+          {day.badges && (
+            <View style={styles.badgeContainer}>
+              {day.badges.map((badge, index) => (
+                <Text key={index} style={styles.badge}>{badge}</Text>
+              ))}
+            </View>
+          )}
+        </View>
+        
+        <Text style={styles.dayDate}>
+          {day.date.toLocaleDateString('fr-FR', { 
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+          })}
+        </Text>
+        
+        <View style={styles.dayDuration}>
+          <Clock size={12} color={Colors.textSecondary} />
+          <Text style={styles.durationText}>{day.totalDuration}min</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  // Vérifier si un jour est passé (avant aujourd'hui)
+  const isPastDay = (day: DayProgram): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayDate = new Date(day.date);
+    dayDate.setHours(0, 0, 0, 0);
+    
+    return dayDate.getTime() < today.getTime();
+  };
+
+  const DayCarousel = () => {
+    const days = programData.slice(visibleDayIndex, visibleDayIndex + 7);
+    const canScrollLeft = visibleDayIndex > 0;
+    const canScrollRight = visibleDayIndex + 7 < programData.length;
+    
+    const scrollLeft = () => {
+      if (canScrollLeft) {
+        setVisibleDayIndex(Math.max(0, visibleDayIndex - 7));
+      }
+    };
+    
+    const scrollRight = () => {
+      if (canScrollRight) {
+        setVisibleDayIndex(Math.min(programData.length - 7, visibleDayIndex + 7));
+      }
+    };
+    
+    return (
+      <View style={styles.carouselContainer}>
+        <TouchableOpacity 
+          style={[styles.carouselArrow, !canScrollLeft && styles.carouselArrowDisabled]} 
+          onPress={scrollLeft}
+          disabled={!canScrollLeft}
+        >
+          <ChevronLeft size={24} color={canScrollLeft ? Colors.agpBlue : Colors.border} />
+        </TouchableOpacity>
+        
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.carouselContent}
+        >
+          {days.map((day) => (
+            <DayCard key={day.day} day={day} />
+          ))}
+        </ScrollView>
+        
+        <TouchableOpacity 
+          style={[styles.carouselArrow, !canScrollRight && styles.carouselArrowDisabled]} 
+          onPress={scrollRight}
+          disabled={!canScrollRight}
+        >
+          <ChevronRight size={24} color={canScrollRight ? Colors.agpBlue : Colors.border} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={[Colors.agpBlue, Colors.agpGreen]}
+        style={styles.header}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.greetingSection}>
+            <Text style={styles.greeting}>
+              {getGreeting()}, {user?.firstName || 'Utilisateur'} !
+            </Text>
+            <Text style={styles.subtitle}>
+              Votre parcours chronobiologique vous attend
+            </Text>
+          </View>
+          
+          <View style={styles.momentIndicator}>
+            {getMomentIcon()}
+            <Text style={styles.momentText}>
+              {getCurrentMoment().charAt(0).toUpperCase() + getCurrentMoment().slice(1)}
+            </Text>
+          </View>
+        </View>
+      </LinearGradient>
+
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Programme 28 Jours */}
+        <View style={styles.programSection}>
+          <Text style={styles.sectionTitle}>Programme 28 Jours</Text>
+          <DayCarousel />
+        </View>
+
+        <View style={styles.quickActions}>
+          <Text style={styles.sectionTitle}>Actions rapides</Text>
+          
+          <View style={styles.actionsGrid}>
+            <View style={styles.actionRow}>
+              <TouchableOpacity style={[styles.actionCard, { backgroundColor: '#FF5722' }]} onPress={navigateToSport}>
+                <Dumbbell size={32} color={Colors.textLight} />
+                <Text style={styles.actionTitle}>Sport</Text>
+                <Text style={styles.actionSubtitle}>activités</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
+                onPress={navigateToRecipes}
+              >
+                <Utensils size={32} color={Colors.textLight} />
+                <Text style={styles.actionTitle}>Recettes</Text>
+                <Text style={styles.actionSubtitle}>adaptées</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.centerButtonContainer}>
+              <TouchableOpacity 
+                style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
+                onPress={navigateToDetente}
+              >
+                <Heart size={32} color={Colors.textLight} />
+                <Text style={styles.actionTitle}>Détente</Text>
+                <Text style={styles.actionSubtitle}>& bien-être</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.achievementsSection}>
+          <Text style={styles.sectionTitle}>Vos Réussites</Text>
+          
+          <View style={styles.achievementCard}>
+            <Award size={28} color={Colors.agpGreen} />
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                {currentStreak > 0 
+                  ? `🔥 Bravo ! ${currentStreak} jours consécutifs !` 
+                  : '🚀 Prêt à commencer votre transformation ?'
+                }
+              </Text>
+              <Text style={styles.achievementText}>
+                {currentStreak >= 5 
+                  ? "Vous êtes incroyable ! Votre régularité est la clé du succès. Continuez sur cette lancée !" 
+                  : currentStreak > 0
+                  ? "Chaque jour compte ! Votre constance commence à porter ses fruits. Continuez ainsi !"
+                  : "Les changements durables commencent par de petites actions quotidiennes. Lancez-vous dès aujourd'hui !"
+                }
+              </Text>
+            </View>
+          </View>
+          
+          <View style={styles.achievementCard}>
+            <Target size={28} color={Colors.agpBlue} />
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                {overallProgress > 0 
+                  ? `✅ ${Math.round(overallProgress)}% du programme complété` 
+                  : '🎯 Votre programme vous attend'
+                }
+              </Text>
+              <Text style={styles.achievementText}>
+                {overallProgress >= 50 
+                  ? "Vous êtes à mi-chemin ! Vos efforts quotidiens transforment votre bien-être." 
+                  : overallProgress > 0
+                  ? "Chaque étape franchie vous rapproche de vos objectifs. Persévérez !"
+                  : "Suivre le programme AGP vous aidera à harmoniser votre mode de vie avec votre chronobiologie."
+                }
+              </Text>
+            </View>
+          </View>
+          
+          <View style={styles.achievementCard}>
+            <Zap size={28} color={Colors.relaxation} />
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                💪 Votre potentiel est illimité
+              </Text>
+              <Text style={styles.achievementText}>
+                En appliquant les principes de chronobiologie, vous optimisez votre énergie et votre bien-être au quotidien. Chaque petit changement compte !
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.todaySection}>
+          <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+          
+          <View style={styles.todayCard}>
+            <LinearGradient
+              colors={[getMomentColor(), `${getMomentColor()}80`]}
+              style={styles.todayGradient}
+            >
+              <View style={styles.todayHeader}>
+                {getMomentIcon()}
+                <Text style={styles.todayTitle}>
+                  Moment {getCurrentMoment()}
+                </Text>
+              </View>
+              
+              <Text style={styles.todayDescription}>
+                {getCurrentMoment() === 'matin' && 
+                  "C'est le moment idéal pour activer votre métabolisme avec des exercices dynamiques et un petit-déjeuner équilibré."
+                }
+                {getCurrentMoment() === 'midi' && 
+                  "Votre corps est au pic de ses performances. Profitez-en pour vos activités les plus intenses."
+                }
+                {getCurrentMoment() === 'gouter' && 
+                  "Période parfaite pour une collation saine et quelques étirements pour maintenir votre énergie."
+                }
+                {getCurrentMoment() === 'soir' && 
+                  "Préparez votre corps au repos avec des activités relaxantes et un dîner léger."
+                }
+              </Text>
+              
+              <TouchableOpacity style={styles.todayButton}>
+                <Text style={styles.todayButtonText}>
+                  Voir le programme
+                </Text>
+                <Clock size={16} color={Colors.textLight} />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+        </View>
+
+        <View style={styles.tipsSection}>
+          <Text style={styles.sectionTitle}>Conseil du jour</Text>
+          
+          <View style={styles.tipCard}>
+            <View style={styles.tipIcon}>
+              <Heart size={24} color={Colors.agpBlue} />
+            </View>
+            <View style={styles.tipContent}>
+              <Text style={styles.tipTitle}>Hydratation optimale</Text>
+              <Text style={styles.tipDescription}>
+                Buvez un grand verre d'eau dès le réveil pour réactiver votre métabolisme 
+                et améliorer votre concentration matinale.
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      <PersistentTabBar />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  greetingSection: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 28,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+    lineHeight: 22,
+  },
+  momentIndicator: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  momentText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  content: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  quickActions: {
+    padding: 20,
+  },
+  programSection: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 12,
+  },
+  centerButtonContainer: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  actionCard: {
+    width: actionCardWidth,
+    marginBottom: 12,
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  actionTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginTop: 12,
+  },
+  actionSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  statsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  statCard: {
+    width: statCardWidth,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  statHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+  },
+  statLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 16,
+  },
+  achievementsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  achievementCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpGreen,
+  },
+  achievementContent: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  achievementTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  achievementText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  todaySection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  todayCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  todayGradient: {
+    padding: 20,
+  },
+  todayHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  todayTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+  },
+  todayDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    lineHeight: 20,
+    marginBottom: 16,
+    opacity: 0.9,
+  },
+  todayButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    alignSelf: 'flex-start',
+  },
+  todayButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  tipsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  tipCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    gap: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  tipIcon: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tipContent: {
+    flex: 1,
+  },
+  tipTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  tipDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  carouselContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  carouselArrow: {
+    backgroundColor: Colors.surface,
+    borderRadius: 20,
+    padding: 8,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  carouselArrowDisabled: {
+    backgroundColor: Colors.background,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  carouselContent: {
+    paddingHorizontal: 8,
+  },
+  dayCard: {
+    width: dayCardWidth,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 8,
+    alignItems: 'center',
+    marginHorizontal: 4,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  dayCardCompleted: {
+    backgroundColor: Colors.agpLightGreen,
+    borderColor: Colors.agpGreen,
+  },
+  dayCardToday: {
+    borderColor: Colors.agpBlue,
+    backgroundColor: Colors.agpLightBlue,
+  },
+  dayHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    minHeight: 20,
+  },
+  dayNumber: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+  },
+  dayNumberCompleted: {
+    color: Colors.agpGreen,
+  },
+  dayNumberToday: {
+    color: Colors.agpBlue,
+  },
+  badgeContainer: {
+    marginLeft: 4,
+  },
+  badge: {
+    fontSize: 12,
+  },
+  dayDate: {
+    fontSize: 10,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  dayDuration: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  durationText: {
+    fontSize: 9,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  }
+});

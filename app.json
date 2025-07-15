@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "AGP Chronobiologie",
+    "slug": "agp-chrono-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "agp-app",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#4A90E2"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "name": "AGP Chronobiologie",
+      "shortName": "AGP Chrono",
+      "lang": "fr",
+      "scope": "/",
+      "themeColor": "#4A90E2",
+      "backgroundColor": "#FAFAFA",
+      "display": "browser",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "splash": {
+        "image": "./assets/images/icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#4A90E2"
+      }
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}
