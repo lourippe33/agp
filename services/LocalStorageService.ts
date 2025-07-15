@@ -22,8 +22,23 @@ export class LocalStorageService {
   static async setItem(key: string, value: string): Promise<void> {
     try {
       console.log(`📝 Sauvegarde dans le stockage local: ${key.split('_')[0]}`);
+      
+      // Vérifier si la clé et la valeur sont valides
+      if (!key) {
+        throw new Error('Clé de stockage manquante');
+      }
+      
+      // Effectuer la sauvegarde
       await AsyncStorage.setItem(key, value);
-      console.log(`✅ Sauvegarde réussie pour: ${key.split('_')[0]}`);
+      
+      // Vérifier que la sauvegarde a fonctionné
+      const savedValue = await AsyncStorage.getItem(key);
+      if (savedValue === value) {
+        console.log(`✅ Sauvegarde réussie pour: ${key.split('_')[0]}`);
+      } else {
+        console.error(`❌ Vérification de sauvegarde échouée pour: ${key.split('_')[0]}`);
+        throw new Error('Échec de vérification de sauvegarde');
+      }
     } catch (error) {
       console.error(`❌ Erreur lors de la sauvegarde ${key}:`, error);
       throw error; // Propager l'erreur pour la gérer dans les services

@@ -258,12 +258,35 @@ export class NotificationService {
   // Supprimer toutes les notifications
   static async clearAllNotifications(userId: string): Promise<void> {
     try {
-      console.log(`🗑️ Tentative de suppression de toutes les notifications pour l'utilisateur ${userId}`);
-      await LocalStorageService.setItem(
-        `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`,
-        JSON.stringify([])
-      );
-      console.log('✅ Toutes les notifications ont été supprimées avec succès');
+      console.log(`🗑️ Début de suppression des notifications pour l'utilisateur ${userId}`);
+      
+      // Vérifier si l'utilisateur existe
+      if (!userId) {
+        throw new Error('ID utilisateur manquant');
+      }
+      
+      // Construire la clé de stockage
+      const storageKey = `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`;
+      console.log(`🔑 Clé de stockage: ${storageKey}`);
+      
+      // Vérifier si des notifications existent
+      const existingNotifications = await LocalStorageService.getItem(storageKey);
+      console.log(`📊 Notifications existantes: ${existingNotifications ? 'Oui' : 'Non'}`);
+      
+      // Supprimer les notifications
+      await LocalStorageService.setItem(storageKey, JSON.stringify([]));
+      
+      // Vérifier que la suppression a fonctionné
+      const afterClear = await LocalStorageService.getItem(storageKey);
+      const parsedAfterClear = afterClear ? JSON.parse(afterClear) : null;
+      
+      if (!afterClear || (parsedAfterClear && parsedAfterClear.length === 0)) {
+        console.log('✅ Toutes les notifications ont été supprimées avec succès');
+        return;
+      } else {
+        console.error('❌ Échec de la suppression des notifications');
+        throw new Error('Échec de la suppression des notifications');
+      }
     } catch (error) {
       console.error('❌ Erreur lors de la suppression de toutes les notifications:', error);
       throw error; // Propager l'erreur pour la gérer dans le composant
