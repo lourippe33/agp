@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import NotificationBell from '@/components/NotificationBell';
 
 export default function TabLayout() {
   return (
@@ -23,9 +22,6 @@ export default function TabLayout() {
           fontSize: 12,
           marginTop: 4
         },
-        headerRight: () => (
-          <NotificationBell style={{ marginRight: 16 }} />
-        ),
         headerStyle: {
           backgroundColor: Colors.surface,
           elevation: 0,
@@ -79,4 +75,3 @@ export default function TabLayout() {
       />
     </Tabs>
   );
-}

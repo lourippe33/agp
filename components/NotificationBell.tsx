@@ -7,6 +7,7 @@ import {
   Modal,
   FlatList,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { Bell, X, Check, Trash2 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
@@ -68,10 +69,12 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   };
 
   const handleOpenNotifications = () => {
+    console.log('Ouverture des notifications');
     setModalVisible(true);
   };
 
   const handleCloseNotifications = () => {
+    console.log('Fermeture des notifications');
     setModalVisible(false);
   };
 
@@ -79,6 +82,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     if (!user) return;
     
     try {
+      console.log('Marquage notification comme lue:', notificationId);
       await NotificationService.markNotificationAsRead(user.id, notificationId);
       
       // Mettre à jour l'état local
@@ -101,6 +105,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     if (!user) return;
     
     try {
+      console.log('Marquage de toutes les notifications comme lues');
       await NotificationService.markAllNotificationsAsRead(user.id);
       
       // Mettre à jour l'état local
@@ -118,15 +123,29 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleClearAll = async () => {
     if (!user) return;
     
-    try {
-      await NotificationService.clearAllNotifications(user.id);
-      
-      // Mettre à jour l'état local
-      setNotifications([]);
-      setUnreadCount(0);
-    } catch (error) {
-      console.error('Erreur lors de la suppression des notifications:', error);
-    }
+    Alert.alert(
+      'Supprimer toutes les notifications',
+      'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { 
+          text: 'Supprimer', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              console.log('Suppression de toutes les notifications');
+              await NotificationService.clearAllNotifications(user.id);
+              
+              // Mettre à jour l'état local
+              setNotifications([]);
+              setUnreadCount(0);
+            } catch (error) {
+              console.error('Erreur lors de la suppression des notifications:', error);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const renderNotificationItem = ({ item }: { item: Notification }) => {
@@ -197,10 +216,11 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   return (
     <>
       <TouchableOpacity
-        style={[styles.bellContainer, style]}
+        style={[styles.bellContainer, style, unreadCount > 0 && styles.bellContainerWithBadge]}
         onPress={handleOpenNotifications}
+        activeOpacity={0.7}
       >
-        <Bell size={24} color={Colors.text} />
+        <Bell size={24} color={unreadCount > 0 ? Colors.agpBlue : Colors.textLight} />
         {unreadCount > 0 && (
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{unreadCount}</Text>
@@ -276,8 +296,15 @@ export default function NotificationBell({ style }: NotificationBellProps) {
 
 const styles = StyleSheet.create({
   bellContainer: {
-    position: 'relative',
-    padding: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative'
+  },
+  bellContainerWithBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   badge: {
     position: 'absolute',

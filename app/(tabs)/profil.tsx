@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Switch,
+  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
@@ -44,6 +45,9 @@ export default function ProfilScreen() {
   const [notifications, setNotifications] = useState(true);
   const [waterNotifications, setWaterNotifications] = useState(true);
   const [waterObjective, setWaterObjective] = useState(8);
+
+  // État pour suivre le processus de déconnexion
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -116,6 +120,7 @@ export default function ProfilScreen() {
   };
 
   const handleLogout = () => {
+    console.log('Bouton de déconnexion cliqué');
     Alert.alert(
       'Déconnexion',
       'Êtes-vous sûr de vouloir vous déconnecter de l\'application AGP ?',
@@ -126,11 +131,13 @@ export default function ProfilScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              setIsLoggingOut(true);
               console.log('🔄 Tentative de déconnexion initiée depuis le profil...');
               await logout();
               console.log('✅ Déconnexion réussie, redirection vers login');
               router.replace('/login');
             } catch (error) {
+              setIsLoggingOut(false);
               console.error('❌ Erreur lors de la déconnexion:', error);
               Alert.alert(
                 'Erreur',
@@ -540,9 +547,15 @@ export default function ProfilScreen() {
         {/* Actions */}
         <View style={styles.actionsSection}>
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
-            <LogOut size={20} color={Colors.relaxation} />
-            <Text style={styles.actionButtonText}>Déconnexion</Text>
-            <ChevronRight size={20} color={Colors.textSecondary} />
+            {isLoggingOut ? (
+              <ActivityIndicator size="small" color={Colors.relaxation} />
+            ) : (
+              <LogOut size={24} color={Colors.relaxation} />
+            )}
+            <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
+              Déconnexion
+            </Text>
+            <ChevronRight size={24} color={Colors.relaxation} />
           </TouchableOpacity>
         </View>
 
@@ -806,25 +819,24 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     backgroundColor: Colors.surface,
     borderRadius: 12,
-    padding: 20,
+    padding: 24,
     paddingHorizontal: 24,
     gap: 16,
     marginBottom: 12,
-    elevation: 4,
+    elevation: 8,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
     shadowRadius: 6,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.relaxation,
   },
   actionButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
-    color: Colors.relaxation,
     flex: 1,
   },
   accountInfo: {

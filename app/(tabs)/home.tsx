@@ -32,6 +32,7 @@ import {
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
+import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 
 
@@ -363,7 +364,7 @@ export default function HomeScreen() {
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <View style={styles.greetingSection}>
+          <View style={styles.headerLeft}>
             <Text style={styles.greeting}>
               {getGreeting()}, {user?.firstName || 'Utilisateur'} !
             </Text>
@@ -371,12 +372,16 @@ export default function HomeScreen() {
               Votre parcours chronobiologique vous attend
             </Text>
           </View>
-          
-          <View style={styles.momentIndicator}>
-            {getMomentIcon()}
-            <Text style={styles.momentText}>
-              {getCurrentMoment().charAt(0).toUpperCase() + getCurrentMoment().slice(1)}
-            </Text>
+
+          <View style={styles.headerRight}>
+            <NotificationBell style={styles.notificationBell} />
+            
+            <View style={styles.momentIndicator}>
+              {getMomentIcon()}
+              <Text style={styles.momentText}>
+                {getCurrentMoment().charAt(0).toUpperCase() + getCurrentMoment().slice(1)}
+              </Text>
+            </View>
           </View>
         </View>
       </LinearGradient>
@@ -560,8 +565,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  greetingSection: {
+  headerLeft: {
     flex: 1,
+  },
+  headerRight: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 12,
+  },
+  notificationBell: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    padding: 8,
   },
   greeting: {
     fontSize: 28,
@@ -579,8 +594,8 @@ const styles = StyleSheet.create({
   momentIndicator: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
