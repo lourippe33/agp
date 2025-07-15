@@ -258,12 +258,15 @@ export class NotificationService {
   // Supprimer toutes les notifications
   static async clearAllNotifications(userId: string): Promise<void> {
     try {
+      console.log(`🗑️ Tentative de suppression de toutes les notifications pour l'utilisateur ${userId}`);
       await LocalStorageService.setItem(
         `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`,
         JSON.stringify([])
       );
+      console.log('✅ Toutes les notifications ont été supprimées avec succès');
     } catch (error) {
-      console.error('Erreur suppression toutes notifications:', error);
+      console.error('❌ Erreur lors de la suppression de toutes les notifications:', error);
+      throw error; // Propager l'erreur pour la gérer dans le composant
     }
   }
 

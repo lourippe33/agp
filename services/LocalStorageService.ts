@@ -21,9 +21,12 @@ export class LocalStorageService {
 
   static async setItem(key: string, value: string): Promise<void> {
     try {
+      console.log(`📝 Sauvegarde dans le stockage local: ${key.split('_')[0]}`);
       await AsyncStorage.setItem(key, value);
+      console.log(`✅ Sauvegarde réussie pour: ${key.split('_')[0]}`);
     } catch (error) {
-      console.error(`Erreur sauvegarde ${key}:`, error);
+      console.error(`❌ Erreur lors de la sauvegarde ${key}:`, error);
+      throw error; // Propager l'erreur pour la gérer dans les services
     }
   }
 
