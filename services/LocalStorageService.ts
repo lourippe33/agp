@@ -47,19 +47,20 @@ export class LocalStorageService {
 
   static async removeItem(key: string): Promise<void> {
     try {
-     console.log(`🗑️ Suppression de la clé: ${key}`);
+      console.log(`🗑️ [Storage] Suppression de la clé: ${key}`);
       await AsyncStorage.removeItem(key);
      
-     // Vérifier que la suppression a fonctionné
-     const afterRemoval = await AsyncStorage.getItem(key);
-     if (afterRemoval === null) {
-       console.log(`✅ Suppression réussie pour: ${key}`);
-     } else {
-       console.error(`❌ Échec de la suppression pour: ${key}`);
-     }
+      // Vérifier que la suppression a fonctionné
+      const afterRemoval = await AsyncStorage.getItem(key);
+      if (afterRemoval === null) {
+        console.log(`✅ [Storage] Suppression réussie pour: ${key}`);
+      } else {
+        console.error(`❌ [Storage] Échec de la suppression pour: ${key}`);
+        throw new Error(`Échec de la suppression pour: ${key}`);
+      }
     } catch (error) {
-      console.error(`Erreur suppression ${key}:`, error);
-     throw error; // Propager l'erreur pour une meilleure gestion
+      console.error(`❌ [Storage] Erreur suppression ${key}:`, error);
+      throw error; // Propager l'erreur pour une meilleure gestion
     }
   }
 

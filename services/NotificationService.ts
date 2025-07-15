@@ -258,7 +258,7 @@ export class NotificationService {
   // Supprimer toutes les notifications
   static async clearAllNotifications(userId: string): Promise<boolean> {
     try {
-      console.log(`🗑️ Début de suppression des notifications pour l'utilisateur ${userId}`);
+      console.log(`🗑️ [Service] Début de suppression des notifications pour l'utilisateur ${userId}`);
       
       // Vérifier si l'utilisateur existe
       if (!userId) {
@@ -267,24 +267,24 @@ export class NotificationService {
       
       // Construire la clé de stockage
       const storageKey = `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`;
-      console.log(`🔑 Clé de stockage: ${storageKey}`);
+      console.log(`🔑 [Service] Clé de stockage: ${storageKey}`);
       
-     // Supprimer directement les notifications avec removeItem au lieu de setItem
-     await LocalStorageService.removeItem(storageKey);
-     console.log(`🗑️ Suppression effectuée avec removeItem pour ${storageKey}`);
+      // Supprimer directement les notifications avec removeItem
+      await LocalStorageService.removeItem(storageKey);
+      console.log(`🗑️ [Service] Suppression effectuée avec removeItem pour ${storageKey}`);
       
       // Vérifier que la suppression a fonctionné
       const afterClear = await LocalStorageService.getItem(storageKey);
       
-     if (!afterClear) {
-        console.log('✅ Toutes les notifications ont été supprimées avec succès');
-       return true;
+      if (!afterClear) {
+        console.log('✅ [Service] Toutes les notifications ont été supprimées avec succès');
+        return true;
       } else {
-        console.error('❌ Échec de la suppression des notifications');
+        console.error('❌ [Service] Échec de la suppression des notifications');
         throw new Error('Échec de la suppression des notifications');
       }
     } catch (error) {
-      console.error('❌ Erreur lors de la suppression de toutes les notifications:', error);
+      console.error('❌ [Service] Erreur lors de la suppression de toutes les notifications:', error);
       throw error; // Propager l'erreur pour la gérer dans le composant
     }
   }

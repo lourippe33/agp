@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  AsyncStorage,
   View,
   Text,
   TouchableOpacity,
@@ -123,7 +124,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleClearAll = async () => {
     if (!user) return;
     
-   console.log('🔄 Tentative de suppression de toutes les notifications', user.id);
+    console.log('🔄 Tentative de suppression de toutes les notifications', user.id);
     Alert.alert(
       'Supprimer toutes les notifications',
       'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
@@ -134,18 +135,28 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-             console.log('✅ Confirmation de suppression reçue pour user:', user.id);
-              
-             // Mettre à jour l'état local AVANT la suppression dans le stockage
-             setNotifications([]);
-             setUnreadCount(0);
-              
-             // Fermer la modal immédiatement pour donner un retour visuel
-             setModalVisible(false);
-              
-             // Puis supprimer dans le stockage
-             const result = await NotificationService.clearAllNotifications(user.id);
-             console.log('✅ Résultat de la suppression:', result);
+               console.log('✅ Confirmation de suppression reçue pour user:', user.id);
+               
+               // Approche directe avec AsyncStorage
+               const key = `@agp_notifications_${user.id}`;
+               console.log('🔑 Suppression directe avec la clé:', key);
+               
+               // Supprimer directement avec AsyncStorage
+               await AsyncStorage.removeItem(key);
+               console.log('✅ AsyncStorage.removeItem exécuté');
+               
+               // Vérifier que la suppression a fonctionné
+               const check = await AsyncStorage.getItem(key);
+               console.log('🔍 Vérification après suppression:', check);
+               
+               // Mettre à jour l'état local
+               setNotifications([]);
+               setUnreadCount(0);
+               
+               // Fermer la modal
+               setModalVisible(false);
+               
+               console.log('✅ Processus de suppression terminé avec succès');
             } catch (error) {
               console.error('❌ Erreur lors de la suppression des notifications:', error);
               Alert.alert(
