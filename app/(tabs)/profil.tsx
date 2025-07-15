@@ -118,15 +118,25 @@ export default function ProfilScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      'Êtes-vous sûr de vouloir vous déconnecter de l\'application ?',
       [
         { text: 'Annuler', style: 'cancel' },
         {
           text: 'Déconnexion',
           style: 'destructive',
           onPress: async () => {
-            await logout();
-            router.replace('/login');
+            try {
+              console.log('🔄 Tentative de déconnexion...');
+              await logout();
+              console.log('✅ Déconnexion réussie, redirection vers login');
+              router.replace('/login');
+            } catch (error) {
+              console.error('❌ Erreur lors de la déconnexion:', error);
+              Alert.alert(
+                'Erreur',
+                'Un problème est survenu lors de la déconnexion. Veuillez réessayer.'
+              );
+            }
           },
         },
       ]
@@ -796,10 +806,12 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: Colors.surface,
     borderRadius: 12,
     padding: 16,
     gap: 12,
+    marginBottom: 12,
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
@@ -809,7 +821,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
-    color: Colors.relaxation,
+    color: Colors.text,
     flex: 1,
   },
   accountInfo: {

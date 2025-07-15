@@ -462,9 +462,14 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: Colors.agpGreen,
     borderRadius: 12,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
     marginBottom: 32,
+    elevation: 3,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   saveButtonText: {
     fontSize: 16,

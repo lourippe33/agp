@@ -10,7 +10,7 @@ import {
 import { Bell, Droplets, Utensils, MessageSquare, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationService } from '@/services/NotificationService';
+import { NotificationService, Notification } from '@/services/NotificationService';
 
 export default function NotificationTester() {
   const { user } = useAuth();
@@ -25,22 +25,56 @@ export default function NotificationTester() {
     setLoading(true);
 
     try {
+      let notification: Partial<Notification> = {
+        id: '',
+        read: false,
+        timestamp: new Date().toISOString()
+      };
+      
       switch (type) {
         case 'meal':
           await NotificationService.generateMealReminder(user.id, 'breakfast');
+          notification = {
+            ...notification,
+            type: 'meal',
+            title: '🌅 Petit-déjeuner',
+            message: 'C\'est l\'heure de votre petit-déjeuner ! Pensez à respecter votre rythme chrono 🍽️'
+          };
           break;
         case 'water':
           await NotificationService.generateWaterReminder(user.id);
+          notification = {
+            ...notification,
+            type: 'water',
+            title: '💧 Hydratation',
+            message: 'N\'oubliez pas de boire de l\'eau régulièrement 💦'
+          };
           break;
         case 'tracking':
           await NotificationService.generateTrackingReminder(user.id);
+          notification = {
+            ...notification,
+            type: 'tracking',
+            title: '📝 Suivi quotidien',
+            message: 'Avez-vous rempli votre journal AGP aujourd\'hui ? Cela ne prend que 2 minutes.'
+          };
           break;
         case 'motivational':
           await NotificationService.generateRandomMotivationalNotification(user.id);
+          notification = {
+            ...notification,
+            type: 'motivational',
+            title: '✨ Motivation du jour',
+            message: 'Chaque petit pas compte ! Vous êtes sur la bonne voie 🌱'
+          };
           break;
       }
 
-      Alert.alert('Succès', 'Notification de test envoyée avec succès !');
+      Alert.alert(
+        'Notification envoyée',
+        `${notification.title}\n${notification.message}\n\nVérifiez l'icône de cloche en haut à droite !`,
+        [{ text: 'OK', style: 'default' }]
+      );
     } catch (error) {
       console.error('Erreur lors de l\'envoi de la notification de test:', error);
       Alert.alert('Erreur', 'Impossible d\'envoyer la notification de test');
@@ -53,7 +87,7 @@ export default function NotificationTester() {
     <View style={styles.container}>
       <Text style={styles.title}>Tester les notifications</Text>
       <Text style={styles.description}>
-        Utilisez les boutons ci-dessous pour tester les différents types de notifications.
+        Utilisez les boutons ci-dessous pour tester les différents types de notifications. Vérifiez l'icône de cloche en haut à droite après avoir cliqué.
       </Text>
 
       <ScrollView style={styles.buttonContainer}>
@@ -135,14 +169,17 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
     gap: 12,
+    minHeight: 60,
   },
   buttonText: {
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
   },
   note: {
     fontSize: 12,

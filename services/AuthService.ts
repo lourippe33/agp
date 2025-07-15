@@ -94,13 +94,15 @@ export class AuthService {
     }
   }
 
-  static async logout(): Promise<void> {
+  static async logout(): Promise<boolean> {
     try {
       console.log('🔄 Déconnexion en cours...');
       await LocalStorageService.clearCurrentUser();
       console.log('✅ Déconnexion réussie');
+      return true;
     } catch (error) {
       console.error('❌ Erreur lors de la déconnexion:', error);
+      return false;
     }
   }
 
