@@ -54,7 +54,7 @@ export default function ProgrammeScreen() {
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   
   // États pour le système de choix
-  const [isPressed, setIsPressed] = useState(false);
+  const [todayButtonScale] = useState(new Animated.Value(1));
   const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
@@ -64,16 +64,39 @@ export default function ProgrammeScreen() {
     generateProgramData();
   }, [user]);
 
+  // Fonction pour obtenir l'index du jour actuel
   const getTodayIndex = () => {
-    return programData.findIndex(day => day.isToday);
+    const todayIndex = programData.findIndex(day => day.isToday);
+    return todayIndex !== -1 ? todayIndex : 0;
   };
 
+  // Fonction pour obtenir la semaine actuelle (1-4)
+  const getCurrentWeek = () => {
+    const todayIndex = getTodayIndex();
+    return Math.floor(todayIndex / 7) + 1;
+  };
+
+  // Fonction pour scroller automatiquement à la semaine actuelle
   const scrollToToday = () => {
     const todayIndex = getTodayIndex();
     if (todayIndex !== -1) {
       const weekIndex = Math.floor(todayIndex / 7) + 1;
       setCurrentWeek(weekIndex);
       setVisibleDayIndex((weekIndex - 1) * 7);
+      
+      // Animation du bouton
+      Animated.sequence([
+        Animated.timing(todayButtonScale, {
+          toValue: 0.96,
+          duration: 100,
+          useNativeDriver: true
+        }),
+        Animated.timing(todayButtonScale, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true
+        })
+      ]).start();
     }
   };
 
@@ -108,6 +131,7 @@ export default function ProgrammeScreen() {
     
     // Trouver l'index du jour actuel pour le carrousel
     const todayIndex = program.findIndex(day => day.isToday);
+    const currentWeekNumber = Math.floor(todayIndex / 7) + 1;
     
     // If we have a day parameter, find and select that day
     if (params.day) {
@@ -123,7 +147,9 @@ export default function ProgrammeScreen() {
     }
     
     if (todayIndex !== -1) {
-      setVisibleDayIndex(Math.floor(todayIndex / 7) * 7);
+      // Centrer automatiquement sur la semaine actuelle
+      setCurrentWeek(currentWeekNumber);
+      setVisibleDayIndex((currentWeekNumber - 1) * 7);
     }
     
     // Calculer la progression
@@ -565,32 +591,43 @@ export default function ProgrammeScreen() {
   const WeekSelector = () => (
     <View style={styles.weekSelector}>
       <TouchableOpacity
-        style={[styles.weekArrow, currentWeek === 1 && styles.weekArrowDisabled]}
+        style={[styles.weekArrow, currentWeek === 1 && styles.weekArrowDisabled, styles.weekArrowLeft]}
         onPress={handlePreviousWeek}
         disabled={currentWeek === 1}
       >
         <ChevronLeft size={20} color={currentWeek === 1 ? Colors.textSecondary : Colors.agpBlue} />
       </TouchableOpacity>
       
-      <View style={styles.weekInfo}>
-        <Text style={styles.weekTitle}>Semaine {currentWeek}</Text>
-        <View style={styles.weekProgress}>
-          <View style={styles.weekProgressBar}>
-            <View 
-              style={[
-                styles.weekProgressFill, 
-                { width: `${getWeekProgress(currentWeek)}%` }
-              ]} 
-            />
+      <TouchableOpacity 
+        style={styles.weekInfo}
+        onPress={() => {
+          Alert.alert(
+            `Semaine ${currentWeek}`,
+            `Durée totale: ${getWeekDays(currentWeek).reduce((sum, day) => sum + day.totalDuration, 0)} minutes\n\nJours complétés: ${getWeekDays(currentWeek).filter(day => day.isCompleted).length}/7\n\n${getWeekMotivationalMessage(currentWeek)}`,
+            [{ text: 'OK', style: 'default' }]
+          );
+        }}
+      >
+        <View>
+          <Text style={styles.weekTitle}>Semaine {currentWeek}</Text>
+          <View style={styles.weekProgress}>
+            <View style={styles.weekProgressBar}>
+              <View 
+                style={[
+                  styles.weekProgressFill, 
+                  { width: `${getWeekProgress(currentWeek)}%` }
+                ]} 
+              />
+            </View>
+            <Text style={styles.weekProgressText}>
+              {Math.round(getWeekProgress(currentWeek))}%
+            </Text>
           </View>
-          <Text style={styles.weekProgressText}>
-            {Math.round(getWeekProgress(currentWeek))}%
-          </Text>
         </View>
-      </View>
+      </TouchableOpacity>
       
       <TouchableOpacity
-        style={[styles.weekArrow, currentWeek === 4 && styles.weekArrowDisabled]}
+        style={[styles.weekArrow, currentWeek === 4 && styles.weekArrowDisabled, styles.weekArrowRight]}
         onPress={handleNextWeek}
         disabled={currentWeek === 4}
       >
@@ -598,6 +635,22 @@ export default function ProgrammeScreen() {
       </TouchableOpacity>
     </View>
   );
+
+  // Fonction pour obtenir un message motivant selon la semaine
+  const getWeekMotivationalMessage = (week: number) => {
+    switch (week) {
+      case 1:
+        return "Semaine de démarrage ! Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection.";
+      case 2:
+        return "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire.";
+      case 3:
+        return "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé.";
+      case 4:
+        return "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme.";
+      default:
+        return "Chaque jour compte dans votre transformation !";
+    }
+  };
 
   const OverallStats = () => (
     <View style={styles.statsContainer}>
@@ -830,29 +883,44 @@ export default function ProgrammeScreen() {
         
         {/* Progression globale */}
         <View style={styles.progressContainer}>
-          <Text style={{
-            fontSize: 16,
-            fontFamily: 'Poppins-Bold',
-            color: Colors.agpBlue,
-            marginBottom: 12
-          }}>
+          <Text style={styles.progressText}>
             🎯 Vous avez complété {completionPercentage}% du programme !
           </Text>
           
-          <TouchableOpacity
-            style={styles.todayButton}
-            onPress={scrollToToday}
-            onPressIn={() => setIsPressed(true)}
-            onPressOut={() => setIsPressed(false)}
-          >
-            <Animated.View style={{
-              transform: [{ scale: isPressed ? 0.96 : 1 }]
-            }}>
+          <Animated.View style={{
+            transform: [{ scale: todayButtonScale }]
+          }}>
+            <TouchableOpacity
+              style={styles.todayButton}
+              onPress={scrollToToday}
+              onPressIn={() => {
+                Animated.timing(todayButtonScale, {
+                  toValue: 0.96,
+                  duration: 100,
+                  useNativeDriver: true
+                }).start();
+              }}
+              onPressOut={() => {
+                Animated.timing(todayButtonScale, {
+                  toValue: 1,
+                  duration: 100,
+                  useNativeDriver: true
+                }).start();
+              }}
+            >
               <Text style={styles.todayButtonText}>
                 📍 Aller à aujourd'hui
               </Text>
-            </Animated.View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </Animated.View>
+          
+          {/* Indicateur de semaine actuelle */}
+          <View style={styles.currentWeekIndicator}>
+            <Calendar size={16} color={Colors.agpBlue} />
+            <Text style={styles.currentWeekText}>
+              Vous êtes dans la semaine {getCurrentWeek()} 🗓️
+            </Text>
+          </View>
         </View>
 
         {/* Sélecteur de semaine */}
@@ -1019,6 +1087,12 @@ const styles = StyleSheet.create({
   weekArrowDisabled: {
     opacity: 0.3,
   },
+  weekArrowLeft: {
+    marginRight: 8,
+  },
+  weekArrowRight: {
+    marginLeft: 8,
+  },
   weekInfo: {
     flex: 1,
     alignItems: 'center',
@@ -1173,8 +1247,7 @@ const styles = StyleSheet.create({
   progressContainer: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
-    padding: 16,
-    marginHorizontal: 20,
+    padding: 20,
     marginBottom: 20,
     alignItems: 'center',
     elevation: 2,
@@ -1182,6 +1255,27 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+  progressText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+    marginBottom: 12
+  },
+  currentWeekIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginTop: 12,
+  },
+  currentWeekText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.agpBlue,
+    marginLeft: 8,
   },
   todayButton: {
     backgroundColor: Colors.agpBlue,
