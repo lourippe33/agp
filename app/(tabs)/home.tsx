@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Animated,
   Dimensions,
   Platform,
   ScrollView,
@@ -116,6 +117,10 @@ export default function HomeScreen() {
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
   const todayIndex = new Date().getDay();
   const todayTip = dailyTips[todayIndex];
+  // Animation scales
+  const [sportScale] = useState(new Animated.Value(1));
+  const [recipesScale] = useState(new Animated.Value(1));
+  const [relaxScale] = useState(new Animated.Value(1));
   
   // Badge pour le streak
   let badge = '';
@@ -301,6 +306,15 @@ export default function HomeScreen() {
     }
   };
 
+  const animateScale = (scale: Animated.Value, value: number) => {
+    Animated.spring(scale, {
+      toValue: value,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 100
+    }).start();
+  };
+
   const navigateToSport = () => {
     router.push('/sport');
   };
@@ -476,31 +490,49 @@ export default function HomeScreen() {
           
           <View style={styles.actionsGrid}>
             <View style={styles.actionRow}>
-              <TouchableOpacity style={[styles.actionCard, { backgroundColor: '#FF5722' }]} onPress={navigateToSport}>
-                <Dumbbell size={32} color={Colors.textLight} />
-                <Text style={styles.actionTitle}>Sport</Text>
-                <Text style={styles.actionSubtitle}>activités</Text>
-              </TouchableOpacity>
+              <Animated.View style={{ transform: [{ scale: sportScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: '#FF5722' }]} 
+                  onPress={navigateToSport}
+                  onPressIn={() => animateScale(sportScale, 0.96)}
+                  onPressOut={() => animateScale(sportScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Dumbbell size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Sport</Text>
+                  <Text style={styles.actionSubtitle}>activités</Text>
+                </TouchableOpacity>
+              </Animated.View>
               
-              <TouchableOpacity 
-                style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
-                onPress={navigateToRecipes}
-              >
-                <Utensils size={32} color={Colors.textLight} />
-                <Text style={styles.actionTitle}>Recettes</Text>
-                <Text style={styles.actionSubtitle}>adaptées</Text>
-              </TouchableOpacity>
+              <Animated.View style={{ transform: [{ scale: recipesScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
+                  onPress={navigateToRecipes}
+                  onPressIn={() => animateScale(recipesScale, 0.96)}
+                  onPressOut={() => animateScale(recipesScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Utensils size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Recettes</Text>
+                  <Text style={styles.actionSubtitle}>adaptées</Text>
+                </TouchableOpacity>
+              </Animated.View>
             </View>
             
             <View style={styles.centerButtonContainer}>
-              <TouchableOpacity 
-                style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
-                onPress={navigateToDetente}
-              >
-                <Heart size={32} color={Colors.textLight} />
-                <Text style={styles.actionTitle}>Détente</Text>
-                <Text style={styles.actionSubtitle}>& bien-être</Text>
-              </TouchableOpacity>
+              <Animated.View style={{ transform: [{ scale: relaxScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
+                  onPress={navigateToDetente}
+                  onPressIn={() => animateScale(relaxScale, 0.96)}
+                  onPressOut={() => animateScale(relaxScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Heart size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Détente</Text>
+                  <Text style={styles.actionSubtitle}>& bien-être</Text>
+                </TouchableOpacity>
+              </Animated.View>
             </View>
           </View>
         </View>
@@ -723,13 +755,15 @@ const styles = StyleSheet.create({
     width: actionCardWidth,
     marginBottom: 12,
     borderRadius: 16,
-    padding: 20,
+    padding: 20, 
     alignItems: 'center',
-    elevation: 3,
+    elevation: 5,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   actionTitle: {
     fontSize: 16,
