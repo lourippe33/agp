@@ -18,7 +18,6 @@ import {
   Clock, 
   Activity, 
   Heart, 
-  Activity,
   Zap, 
   Sun, 
   Moon, 
