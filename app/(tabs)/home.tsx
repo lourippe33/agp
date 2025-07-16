@@ -71,6 +71,62 @@ export default function HomeScreen() {
   const [overallProgress, setOverallProgress] = useState(0);
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
 
+  const generateDayActivities = (day: number) => {
+    const dayKey = `day-${day}`;
+    const choices = {}; // userChoices[dayKey] || {}; // Simplified for home screen
+    
+    const breakfasts = [
+      'Porridge aux fruits rouges',
+      'Smoothie bowl banane',
+      'Toast avocat œuf',
+      'Pancakes Huel banane',
+      'Overnight oats coco'
+    ];
+    
+    const sports = [
+      'Marche Active (15 min)',
+      'Circuit Training (20 min)',
+      'Danse Fitness (15 min)',
+      'Yoga Dynamique (20 min)',
+      'HIIT Léger (15 min)'
+    ];
+    
+    const relaxations = [
+      'Cohérence Cardiaque (3 min)',
+      'Respiration Sourire (2 min)',
+      'Méditation 5 Sens (5 min)',
+      'Gratitude Express (2 min)',
+      'Relaxation Express (3 min)'
+    ];
+
+    return {
+      breakfast: { 
+        name: breakfasts[day % breakfasts.length], 
+        completed: false 
+      },
+      sport: { 
+        name: sports[day % sports.length], 
+        completed: false 
+      },
+      relaxation: { 
+        name: relaxations[day % relaxations.length], 
+        completed: false 
+      },
+      lunch: { 
+        name: 'Poke bowl saumon-avocat', 
+        completed: false 
+      },
+      snack: { 
+        name: 'Energy balls dattes', 
+        completed: false 
+      },
+      dinner: { 
+        name: 'Salade quinoa légumes', 
+        completed: false 
+      }
+    };
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
