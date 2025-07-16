@@ -558,16 +558,6 @@ export default function ProgrammeScreen() {
           <Clock size={12} color={Colors.textSecondary} />
           <Text style={styles.durationText}>{day.totalDuration}min</Text>
         </View>
-        
-        {day.isToday && (
-          <View style={styles.todayActivities}>
-            <Text style={{ fontSize: 12, color: Colors.text }}>
-              🥣 Petit-déj : {day.activities.breakfast.name.substring(0, 15)}...{'\n'}
-              🏃 Sport : {day.activities.sport.name.substring(0, 15)}...{'\n'}
-              🧘 Détente : {day.activities.relaxation.name.substring(0, 15)}...
-            </Text>
-          </View>
-        )}
       </TouchableOpacity>
     );
   };
@@ -1179,12 +1169,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: 'Inter-Medium',
     color: Colors.textSecondary,
-  },
-  todayActivities: {
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(74, 144, 226, 0.3)',
   },
   progressContainer: {
     backgroundColor: Colors.surface,
