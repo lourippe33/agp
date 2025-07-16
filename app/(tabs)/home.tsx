@@ -539,16 +539,16 @@ export default function HomeScreen() {
               
               <Text style={styles.todayDescription}>
                 {getCurrentMoment() === 'matin' && 
-                  "C'est le moment idéal pour activer votre métabolisme avec des exercices dynamiques et un petit-déjeuner équilibré."
+                  "C'est le moment idéal pour activer ton métabolisme 💥 ! Un bon petit-déjeuner et 10 minutes d'énergie suffisent à transformer ta journée."
                 }
                 {getCurrentMoment() === 'midi' && 
-                  "Votre corps est au pic de ses performances. Profitez-en pour vos activités les plus intenses."
+                  "Ton corps est au top de sa forme 💪. Profite-en pour bouger, cuisiner, ou avancer sur tes objectifs."
                 }
                 {getCurrentMoment() === 'gouter' && 
-                  "Période parfaite pour une collation saine et quelques étirements pour maintenir votre énergie."
+                  "Recharge-toi sans culpabiliser 😌. Étirements, respiration, ou snack malin : tout compte."
                 }
                 {getCurrentMoment() === 'soir' && 
-                  "Préparez votre corps au repos avec des activités relaxantes et un dîner léger."
+                  "Offre-toi un vrai temps pour toi 🌙. Déconnexion, douceur et dîner léger : ton corps te dira merci."
                 }
               </Text>
               
