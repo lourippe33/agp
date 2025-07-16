@@ -846,6 +846,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+    backgroundColor: 'rgba(230, 245, 255, 0.8)',
   },
   tipIcon: {
     backgroundColor: Colors.agpLightBlue,
