@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Chimport { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3 } from 'lucide-react-native'stants/Colors';
+import { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3 } from 'lucide-react-native';
+import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import DailyTrackingModal from '@/components/DailyTrackingModal';
