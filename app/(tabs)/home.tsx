@@ -33,6 +33,7 @@ import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import NotificationBell from '@/components/NotificationBell';
+import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 
 
@@ -60,6 +61,20 @@ interface DayProgram {
   totalDuration: number;
   badges?: string[];
 }
+
+const HeaderTitle = ({ name }: { name: string }) => (
+  <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+      <Activity size={24} color={Colors.agpBlue} />
+      <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
+        Tableau de bord
+      </Text>
+    </View>
+    <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
+      Bienvenue sur AGP, {name} 👋
+    </Text>
+  </View>
+);
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -403,6 +418,8 @@ export default function HomeScreen() {
           </View>
         </View>
       </LinearGradient>
+
+      <HeaderTitle name={user?.firstName || 'Utilisateur'} />
 
       <HeaderTitle name={user?.firstName || 'Utilisateur'} />
 
