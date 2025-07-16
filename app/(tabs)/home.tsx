@@ -35,6 +35,36 @@ import { useAuth } from '@/contexts/AuthContext';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 
+const dailyTips = [
+  {
+    title: '💧 Hydratation optimale',
+    description: "Buvez un grand verre d'eau dès le réveil pour relancer votre métabolisme et améliorer votre concentration."
+  },
+  {
+    title: '🧘 Respiration apaisante',
+    description: "3 minutes de cohérence cardiaque suffisent à réduire le stress et recentrer votre énergie."
+  },
+  {
+    title: '🍽️ Manger en pleine conscience',
+    description: "Prenez le temps de savourer chaque bouchée. Cela favorise la satiété et réduit les fringales."
+  },
+  {
+    title: '🧠 Visualisation positive',
+    description: "Imaginez votre objectif atteint. Cela active des circuits neuronaux qui renforcent la motivation."
+  },
+  {
+    title: '🚶 Bouger un peu plus',
+    description: "Un pas après l'autre : 15 min de marche quotidienne suffisent à améliorer votre bien-être."
+  },
+  {
+    title: '🛌 Préparer son sommeil',
+    description: "Coupez les écrans 1h avant de dormir et détendez-vous avec une routine calme pour optimiser votre récupération."
+  },
+  {
+    title: '🎯 Célébrer ses petits pas',
+    description: "Notez chaque réussite, même minime. Cela booste votre estime et vous ancre dans la progression durable."
+  }
+];
 
 
 const { width } = Dimensions.get('window');
@@ -84,6 +114,8 @@ export default function HomeScreen() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [overallProgress, setOverallProgress] = useState(0);
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
+  const todayIndex = new Date().getDay();
+  const todayTip = dailyTips[todayIndex];
 
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
@@ -570,11 +602,8 @@ export default function HomeScreen() {
               <Heart size={24} color={Colors.agpBlue} />
             </View>
             <View style={styles.tipContent}>
-              <Text style={styles.tipTitle}>Hydratation optimale</Text>
-              <Text style={styles.tipDescription}>
-                Buvez un grand verre d'eau dès le réveil pour réactiver votre métabolisme 
-                et améliorer votre concentration matinale.
-              </Text>
+              <Text style={styles.tipTitle}>{todayTip.title}</Text>
+              <Text style={styles.tipDescription}>{todayTip.description}</Text>
             </View>
           </View>
         </View>
