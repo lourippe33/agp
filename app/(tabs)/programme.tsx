@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock } from 'lucide-react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
@@ -53,13 +53,28 @@ export default function ProgrammeScreen() {
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   
   // États pour le système de choix
+  const [isPressed, setIsPressed] = useState(false);
   const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
+  const [completionPercentage, setCompletionPercentage] = useState(0);
 
   useEffect(() => {
     generateProgramData();
   }, [user]);
+
+  const getTodayIndex = () => {
+    return programData.findIndex(day => day.isToday);
+  };
+
+  const scrollToToday = () => {
+    const todayIndex = getTodayIndex();
+    if (todayIndex !== -1) {
+      const weekIndex = Math.floor(todayIndex / 7) + 1;
+      setCurrentWeek(weekIndex);
+      setVisibleDayIndex((weekIndex - 1) * 7);
+    }
+  };
 
   const generateProgramData = () => {
     console.log('Generating program data with params:', params);
@@ -112,7 +127,9 @@ export default function ProgrammeScreen() {
     
     // Calculer la progression
     const completed = program.filter(day => day.isCompleted).length;
-    setOverallProgress((completed / 28) * 100);
+    const progress = (completed / 28) * 100;
+    setOverallProgress(progress);
+    setCompletionPercentage(Math.round(progress));
     
     // Calculer le streak
     let streak = 0;
@@ -493,7 +510,11 @@ export default function ProgrammeScreen() {
     return (
       <TouchableOpacity
         style={[
-          styles.dayCard,
+        style={[
+          styles.dayCard, 
+          item.isCompleted && styles.dayCardCompleted,
+          item.isToday && styles.dayCardToday
+        ]}
           day.isCompleted && styles.dayCardCompleted,
           day.isToday && styles.dayCardToday
         ]}
@@ -503,7 +524,8 @@ export default function ProgrammeScreen() {
         <View style={styles.dayHeader}>
           <Text style={[
             styles.dayNumber,
-            day.isCompleted && styles.dayNumberCompleted,
+            item.isCompleted && styles.dayNumberCompleted,
+            item.isToday && styles.dayNumberToday
             day.isToday && styles.dayNumberToday
           ]}>
             {day.day}
@@ -521,6 +543,11 @@ export default function ProgrammeScreen() {
               ))}
             </View>
           )}
+          {item.isToday && (
+            <Text style={{ fontSize: 12, color: Colors.agpBlue }}>
+              Aujourd'hui
+            </Text>
+          )}
         </View>
         
         <Text style={styles.dayDate}>
@@ -535,6 +562,16 @@ export default function ProgrammeScreen() {
           <Clock size={12} color={Colors.textSecondary} />
           <Text style={styles.durationText}>{day.totalDuration}min</Text>
         </View>
+        
+        {item.isToday && (
+          <View style={styles.todayActivities}>
+            <Text style={{ fontSize: 12, color: Colors.text }}>
+              🥣 Petit-déj : {item.activities.breakfast.name.substring(0, 15)}...{'\n'}
+              🏃 Sport : {item.activities.sport.name.substring(0, 15)}...{'\n'}
+              🧘 Détente : {item.activities.relaxation.name.substring(0, 15)}...
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -804,6 +841,33 @@ export default function ProgrammeScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Statistiques générales */}
         <OverallStats />
+        
+        {/* Progression globale */}
+        <View style={styles.progressContainer}>
+          <Text style={{
+            fontSize: 16,
+            fontFamily: 'Poppins-Bold',
+            color: Colors.agpBlue,
+            marginBottom: 12
+          }}>
+            🎯 Vous avez complété {completionPercentage}% du programme !
+          </Text>
+          
+          <TouchableOpacity
+            style={styles.todayButton}
+            onPress={scrollToToday}
+            onPressIn={() => setIsPressed(true)}
+            onPressOut={() => setIsPressed(false)}
+          >
+            <Animated.View style={{
+              transform: [{ scale: isPressed ? 0.96 : 1 }]
+            }}>
+              <Text style={styles.todayButtonText}>
+                📍 Aller à aujourd'hui
+              </Text>
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
 
         {/* Sélecteur de semaine */}
         <View style={styles.weekSelectorContainer}>
@@ -1067,6 +1131,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.agpGreen,
   },
   dayCardToday: {
+    backgroundColor: Colors.agpLightBlue,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+    width: (width - 56) / 7 + 10, // Légèrement plus large
+    zIndex: 1,
+  },
+  dayCardToday: {
     borderColor: Colors.agpBlue,
     backgroundColor: Colors.agpLightBlue,
   },
@@ -1083,6 +1154,9 @@ const styles = StyleSheet.create({
   },
   dayNumberCompleted: {
     color: Colors.agpGreen,
+  },
+  dayNumberToday: {
+    color: Colors.agpBlue,
   },
   dayNumberToday: {
     color: Colors.agpBlue,
@@ -1109,6 +1183,41 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: 'Inter-Medium',
     color: Colors.textSecondary,
+  },
+  todayActivities: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(74, 144, 226, 0.3)',
+  },
+  progressContainer: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  todayButton: {
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    elevation: 3,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  todayButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   motivationCard: {
     flexDirection: 'row',
