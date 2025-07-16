@@ -116,6 +116,13 @@ export default function HomeScreen() {
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
   const todayIndex = new Date().getDay();
   const todayTip = dailyTips[todayIndex];
+  
+  // Badge pour le streak
+  let badge = '';
+  if (currentStreak >= 7 && currentStreak < 14) badge = '🌱';
+  else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
+  else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
+  else if (currentStreak >= 28) badge = '🏆';
 
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
@@ -501,14 +508,17 @@ export default function HomeScreen() {
         <View style={styles.achievementsSection}>
           <Text style={styles.sectionTitle}>Vos Réussites</Text>
           
-          <View style={styles.achievementCard}>
-            <Award size={28} color={Colors.agpGreen} />
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.morning }]}>
+            <View style={styles.achievementIconContainer}>
+              <Award size={32} color={Colors.morning} />
+            </View>
             <View style={styles.achievementContent}>
               <Text style={styles.achievementTitle}>
                 {currentStreak > 0 
                   ? `🔥 Bravo ! ${currentStreak} jours consécutifs !` 
                   : '🚀 Prêt à commencer votre transformation ?'
                 }
+                {badge && <Text style={{ fontSize: 24 }}>{badge}</Text>}
               </Text>
               <Text style={styles.achievementText}>
                 {currentStreak >= 5 
@@ -521,8 +531,10 @@ export default function HomeScreen() {
             </View>
           </View>
           
-          <View style={styles.achievementCard}>
-            <Target size={28} color={Colors.agpBlue} />
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.agpBlue }]}>
+            <View style={styles.achievementIconContainer}>
+              <Target size={32} color={Colors.agpBlue} />
+            </View>
             <View style={styles.achievementContent}>
               <Text style={styles.achievementTitle}>
                 {overallProgress > 0 
@@ -541,8 +553,10 @@ export default function HomeScreen() {
             </View>
           </View>
           
-          <View style={styles.achievementCard}>
-            <Zap size={28} color={Colors.relaxation} />
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.relaxation }]}>
+            <View style={styles.achievementIconContainer}>
+              <Zap size={32} color={Colors.relaxation} />
+            </View>
             <View style={styles.achievementContent}>
               <Text style={styles.achievementTitle}>
                 💪 Votre potentiel est illimité
@@ -783,14 +797,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.agpGreen,
+  },
+  achievementIconContainer: {
+    backgroundColor: Colors.agpLightBlue,
+    padding: 8,
+    borderRadius: 50,
   },
   achievementContent: {
     flex: 1,
     marginLeft: 16,
   },
   achievementTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Poppins-Bold',
     color: Colors.text,
     marginBottom: 8,
