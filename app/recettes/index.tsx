@@ -1,18 +1,31 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Sun, Utensils, Coffee, Moon, ArrowLeft } from 'lucide-react-native';
+import { Sun, Utensils, Coffee, Moon, ArrowLeft, Search } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import AGPLogo from '@/components/AGPLogo';
+import QuickSearchButton from '@/components/QuickSearchButton';
 
 export default function RecettesIndexScreen() {
+  const scrollViewRef = useRef<ScrollView>(null);
+  
   const goBack = () => {
     router.back();
   };
 
   const navigateToMoment = (moment: string) => {
     router.push(`/recettes/${moment}`);
+  };
+  
+  const scrollToSection = (sectionId: number) => {
+    // Positions approximatives des sections dans le ScrollView
+    const sectionPositions = [0, 300, 600, 900];
+    
+    scrollViewRef.current?.scrollTo({
+      y: sectionPositions[sectionId],
+      animated: true
+    });
   };
 
   const moments = [
@@ -48,7 +61,11 @@ export default function RecettesIndexScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Header */}
         <LinearGradient
           colors={[Colors.agpGreen, '#A5D6A7']}
@@ -70,6 +87,49 @@ export default function RecettesIndexScreen() {
             </Text>
           </View>
         </LinearGradient>
+
+        {/* Barre de recherche */}
+        <View style={styles.searchContainer}>
+          <QuickSearchButton 
+            placeholder="Rechercher une recette..." 
+            style={styles.searchBar}
+          />
+        </View>
+        
+        {/* Navigation rapide */}
+        <View style={styles.quickNavContainer}>
+          <TouchableOpacity 
+            style={styles.quickNavButton} 
+            onPress={() => scrollToSection(0)}
+          >
+            <Sun size={16} color={Colors.morning} />
+            <Text style={styles.quickNavText}>Matin</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.quickNavButton} 
+            onPress={() => scrollToSection(1)}
+          >
+            <Utensils size={16} color={Colors.agpGreen} />
+            <Text style={styles.quickNavText}>Midi</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.quickNavButton} 
+            onPress={() => scrollToSection(2)}
+          >
+            <Coffee size={16} color={Colors.snack} />
+            <Text style={styles.quickNavText}>Goûter</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.quickNavButton} 
+            onPress={() => scrollToSection(3)}
+          >
+            <Moon size={16} color={Colors.agpBlue} />
+            <Text style={styles.quickNavText}>Soir</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Content */}
         <View style={styles.content}>
@@ -137,6 +197,42 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 70, // Espace pour la tab bar
   },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  searchBar: {
+    borderRadius: 12,
+    backgroundColor: Colors.background,
+  },
+  quickNavContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  quickNavButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  quickNavText: {
+    marginLeft: 6,
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+  },
   header: {
     paddingTop: 60,
     paddingBottom: 30,
@@ -190,10 +286,10 @@ const styles = StyleSheet.create({
   momentButton: {
     borderRadius: 16,
     elevation: 4,
+    marginBottom: 16,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 6,
   },
   momentGradient: {
     borderRadius: 16,
@@ -209,7 +305,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   momentTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
     marginBottom: 4,
@@ -224,7 +320,7 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     backgroundColor: Colors.surface,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
     elevation: 2,
     shadowColor: Colors.shadow,
@@ -251,7 +347,8 @@ const styles = StyleSheet.create({
   },
   principleItem: {
     alignItems: 'center',
-    flex: 1,
+    width: '33%',
+    padding: 8,
   },
   principleIcon: {
     fontSize: 24,
@@ -260,7 +357,8 @@ const styles = StyleSheet.create({
   principleText: {
     fontSize: 12,
     fontFamily: 'Poppins-Medium',
-    color: Colors.text,
+    color: Colors.textSecondary,
     textAlign: 'center',
+    marginTop: 4,
   },
 });
