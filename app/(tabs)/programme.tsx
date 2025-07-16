@@ -8,6 +8,7 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock } from 'lucide-react-native';
