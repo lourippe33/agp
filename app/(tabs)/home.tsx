@@ -630,7 +630,11 @@ export default function HomeScreen() {
                 }
               </Text>
               
-              <TouchableOpacity style={styles.todayButton}>
+              <TouchableOpacity 
+                style={styles.todayButton}
+                onPress={() => router.push('/(tabs)/programme')}
+                activeOpacity={0.8}
+              >
                 <Text style={styles.todayButtonText}>
                   Voir le programme
                 </Text>
@@ -891,13 +895,13 @@ const styles = StyleSheet.create({
   todayButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
     shadowColor: 'rgba(0, 0, 0, 0.2)',
@@ -905,12 +909,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
+    marginTop: 12,
   },
   todayButtonText: {
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
-    fontSize: 16,
   },
   tipsSection: {
     paddingHorizontal: 20,
