@@ -420,8 +420,7 @@ export default function HomeScreen() {
 
       <HeaderTitle name={user?.firstName || 'Utilisateur'} />
 
-      <HeaderTitle name={user?.firstName || 'Utilisateur'} />
-
+      
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
