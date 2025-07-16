@@ -510,11 +510,7 @@ export default function ProgrammeScreen() {
     return (
       <TouchableOpacity
         style={[
-        style={[
-          styles.dayCard, 
-          item.isCompleted && styles.dayCardCompleted,
-          item.isToday && styles.dayCardToday
-        ]}
+          styles.dayCard,
           day.isCompleted && styles.dayCardCompleted,
           day.isToday && styles.dayCardToday
         ]}
@@ -528,7 +524,7 @@ export default function ProgrammeScreen() {
             item.isToday && styles.dayNumberToday
             day.isToday && styles.dayNumberToday
           ]}>
-            {day.day}
+            {item.day}
           </Text>
           {day.isCompleted && (
             <CheckCircle size={16} color={Colors.agpGreen} />
@@ -543,7 +539,7 @@ export default function ProgrammeScreen() {
               ))}
             </View>
           )}
-          {item.isToday && (
+          {day.isToday && (
             <Text style={{ fontSize: 12, color: Colors.agpBlue }}>
               Aujourd'hui
             </Text>
@@ -563,12 +559,12 @@ export default function ProgrammeScreen() {
           <Text style={styles.durationText}>{day.totalDuration}min</Text>
         </View>
         
-        {item.isToday && (
+        {day.isToday && (
           <View style={styles.todayActivities}>
             <Text style={{ fontSize: 12, color: Colors.text }}>
-              🥣 Petit-déj : {item.activities.breakfast.name.substring(0, 15)}...{'\n'}
-              🏃 Sport : {item.activities.sport.name.substring(0, 15)}...{'\n'}
-              🧘 Détente : {item.activities.relaxation.name.substring(0, 15)}...
+              🥣 Petit-déj : {day.activities.breakfast.name.substring(0, 15)}...{'\n'}
+              🏃 Sport : {day.activities.sport.name.substring(0, 15)}...{'\n'}
+              🧘 Détente : {day.activities.relaxation.name.substring(0, 15)}...
             </Text>
           </View>
         )}
