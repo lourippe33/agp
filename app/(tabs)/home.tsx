@@ -18,6 +18,7 @@ import {
   Clock, 
   Activity, 
   Heart, 
+  Activity,
   Zap, 
   Sun, 
   Moon, 
@@ -140,58 +141,20 @@ export default function HomeScreen() {
     }
   };
 
-  const generateDayActivities = (day: number) => {
-    const breakfasts = [
-      'Porridge aux fruits rouges',
-      'Smoothie bowl banane',
-      'Toast avocat œuf',
-      'Pancakes Huel banane',
-      'Overnight oats coco'
-    ];
-    
-    const sports = [
-      'Marche Active (15 min)',
-      'Circuit Training (20 min)',
-      'Danse Fitness (15 min)',
-      'Yoga Dynamique (20 min)',
-      'HIIT Léger (15 min)'
-    ];
-    
-    const relaxations = [
-      'Cohérence Cardiaque (3 min)',
-      'Respiration Sourire (2 min)',
-      'Méditation 5 Sens (5 min)',
-      'Gratitude Express (2 min)',
-      'Relaxation Express (3 min)'
-    ];
+  const HeaderTitle = ({ name }: { name: string }) => (
+    <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+        <Activity size={24} color={Colors.agpBlue} />
+        <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
+          Tableau de bord
+        </Text>
+      </View>
+      <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
+        Bienvenue sur AGP, {name} 👋
+      </Text>
+    </View>
+  );
 
-    return {
-      breakfast: { 
-        name: breakfasts[day % breakfasts.length], 
-        completed: false 
-      },
-      sport: { 
-        name: sports[day % sports.length], 
-        completed: false 
-      },
-      relaxation: { 
-        name: relaxations[day % relaxations.length], 
-        completed: false 
-      },
-      lunch: { 
-        name: 'Poke bowl saumon-avocat', 
-        completed: false 
-      },
-      snack: { 
-        name: 'Energy balls dattes', 
-        completed: false 
-      },
-      dinner: { 
-        name: 'Salade quinoa légumes', 
-        completed: false 
-      }
-    };
-  };
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
@@ -385,6 +348,8 @@ export default function HomeScreen() {
           </View>
         </View>
       </LinearGradient>
+
+      <HeaderTitle name={user?.firstName || 'Utilisateur'} />
 
       <ScrollView
         style={styles.content}
