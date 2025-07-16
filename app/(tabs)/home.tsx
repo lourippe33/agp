@@ -527,7 +527,7 @@ export default function HomeScreen() {
           
           <View style={styles.todayCard}>
             <LinearGradient
-              colors={[getMomentColor(), `${getMomentColor()}80`]}
+              colors={[getMomentColor(), `${getMomentColor()}CC`]}
               style={styles.todayGradient}
             >
               <View style={styles.todayHeader}>
@@ -779,11 +779,11 @@ const styles = StyleSheet.create({
   todayCard: {
     borderRadius: 16,
     overflow: 'hidden',
-    elevation: 3,
+    elevation: 6,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
   todayGradient: {
     padding: 20,
@@ -810,18 +810,26 @@ const styles = StyleSheet.create({
   todayButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   todayButtonText: {
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
+    fontSize: 16,
   },
   tipsSection: {
     paddingHorizontal: 20,
