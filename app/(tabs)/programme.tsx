@@ -520,11 +520,10 @@ export default function ProgrammeScreen() {
         <View style={styles.dayHeader}>
           <Text style={[
             styles.dayNumber,
-            item.isCompleted && styles.dayNumberCompleted,
-            item.isToday && styles.dayNumberToday
+            day.isCompleted && styles.dayNumberCompleted,
             day.isToday && styles.dayNumberToday
           ]}>
-            {item.day}
+            {day.day}
           </Text>
           {day.isCompleted && (
             <CheckCircle size={16} color={Colors.agpGreen} />
