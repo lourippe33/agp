@@ -31,6 +31,31 @@ export default function ProfilScreen() {
   const [height, setHeight] = useState('');
   const [notifications, setNotifications] = useState(true);
 
+  // Utilisation de useCallback pour éviter les re-renders inutiles
+  const handleFirstNameChange = useCallback((text) => {
+    setFirstName(text);
+  }, []);
+  
+  const handleLastNameChange = useCallback((text) => {
+    setLastName(text);
+  }, []);
+  
+  const handleUsernameChange = useCallback((text) => {
+    setUsername(text);
+  }, []);
+  
+  const handleCurrentWeightChange = useCallback((text) => {
+    setCurrentWeight(text);
+  }, []);
+  
+  const handleTargetWeightChange = useCallback((text) => {
+    setTargetWeight(text);
+  }, []);
+  
+  const handleHeightChange = useCallback((text) => {
+    setHeight(text);
+  }, []);
+
   const handleSave = async () => {
     if (!user) return;
 
@@ -131,7 +156,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={firstName}
-                onChangeText={setFirstName}
+                onChangeText={handleFirstNameChange}
                 placeholder="Votre prénom"
                 placeholderTextColor={Colors.textSecondary}
               />
@@ -146,7 +171,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={lastName}
-                onChangeText={setLastName}
+                onChangeText={handleLastNameChange}
                 placeholder="Votre nom"
                 placeholderTextColor={Colors.textSecondary}
               />
@@ -161,7 +186,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={username}
-                onChangeText={setUsername}
+                onChangeText={handleUsernameChange}
                 placeholder="Votre nom d'utilisateur"
                 placeholderTextColor={Colors.textSecondary}
               />
@@ -186,7 +211,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={currentWeight}
-                onChangeText={setCurrentWeight}
+                onChangeText={handleCurrentWeightChange}
                 placeholder="Ex: 70.5"
                 placeholderTextColor={Colors.textSecondary}
                 keyboardType="numeric"
@@ -202,7 +227,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={targetWeight}
-                onChangeText={setTargetWeight}
+                onChangeText={handleTargetWeightChange}
                 placeholder="Ex: 65"
                 placeholderTextColor={Colors.textSecondary}
                 keyboardType="numeric"
@@ -218,7 +243,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.textInput}
                 value={height}
-                onChangeText={setHeight}
+                onChangeText={handleHeightChange}
                 placeholder="Ex: 175"
                 placeholderTextColor={Colors.textSecondary}
                 keyboardType="numeric"
