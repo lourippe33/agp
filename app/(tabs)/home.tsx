@@ -451,7 +451,7 @@ export default function HomeScreen() {
         <View style={styles.headerContent}>
           <View style={styles.headerLeft}>
             <Text style={styles.greeting}>
-              {getGreeting()}, {user?.firstName || 'Utilisateur'} !
+              {getGreeting()}, {user?.firstName || 'Utilisateur'}
             </Text>
             <Text style={styles.subtitle}>
               Votre parcours chronobiologique vous attend
@@ -670,8 +670,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 30,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: 20,
     paddingHorizontal: 20,
   },
   headerContent: {
@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 28,
     fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
+    color: Colors.textLight, 
     marginBottom: 4,
   },
   subtitle: {
