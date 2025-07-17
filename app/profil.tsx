@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   Switch,
-  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Bell, Target, Activity, Heart, LogOut } from 'lucide-react-native';
@@ -26,35 +25,7 @@ export default function ProfilScreen() {
   const [firstName, setFirstName] = useState(user?.firstName || '');
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [username, setUsername] = useState(user?.username || '');
-  const [currentWeight, setCurrentWeight] = useState('');
-  const [targetWeight, setTargetWeight] = useState('');
-  const [height, setHeight] = useState('');
   const [notifications, setNotifications] = useState(true);
-
-  // Utilisation de useCallback pour éviter les re-renders inutiles
-  const handleFirstNameChange = useCallback((text) => {
-    setFirstName(text);
-  }, []);
-  
-  const handleLastNameChange = useCallback((text) => {
-    setLastName(text);
-  }, []);
-  
-  const handleUsernameChange = useCallback((text) => {
-    setUsername(text);
-  }, []);
-  
-  const handleCurrentWeightChange = useCallback((text) => {
-    setCurrentWeight(text);
-  }, []);
-  
-  const handleTargetWeightChange = useCallback((text) => {
-    setTargetWeight(text);
-  }, []);
-  
-  const handleHeightChange = useCallback((text) => {
-    setHeight(text);
-  }, []);
 
   const handleSave = async () => {
     if (!user) return;
@@ -105,12 +76,26 @@ export default function ProfilScreen() {
     );
   };
 
+  // Composant simple pour un champ de texte
+  const TextField = ({ label, value, onChangeText, placeholder }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <TextInput
+          style={styles.textInput}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.textSecondary}
+        />
+      ) : (
+        <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
+      )}
+    </View>
+  );
+
   return (
-    <ScrollView 
-      style={styles.container} 
-      contentContainerStyle={styles.contentContainer}
-      keyboardShouldPersistTaps="always"
-    >
+    <View style={styles.container}>
       {/* Header */}
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
@@ -145,112 +130,39 @@ export default function ProfilScreen() {
         </View>
       </LinearGradient>
 
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="always"
+      >
         {/* Informations personnelles */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>👤 Informations personnelles</Text>
           
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Prénom</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={firstName}
-                onChangeText={handleFirstNameChange}
-                placeholder="Votre prénom"
-                placeholderTextColor={Colors.textSecondary}
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{firstName || 'Non renseigné'}</Text>
-            )}
-          </View>
+          <TextField 
+            label="Prénom"
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholder="Votre prénom"
+          />
           
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Nom</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={lastName}
-                onChangeText={handleLastNameChange}
-                placeholder="Votre nom"
-                placeholderTextColor={Colors.textSecondary}
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{lastName || 'Non renseigné'}</Text>
-            )}
-          </View>
+          <TextField 
+            label="Nom"
+            value={lastName}
+            onChangeText={setLastName}
+            placeholder="Votre nom"
+          />
           
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Nom d'utilisateur</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={username}
-                onChangeText={handleUsernameChange}
-                placeholder="Votre nom d'utilisateur"
-                placeholderTextColor={Colors.textSecondary}
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{username || 'Non renseigné'}</Text>
-            )}
-          </View>
+          <TextField 
+            label="Nom d'utilisateur"
+            value={username}
+            onChangeText={setUsername}
+            placeholder="Votre nom d'utilisateur"
+          />
 
           <View style={styles.fieldContainer}>
             <Text style={styles.fieldLabel}>Email</Text>
             <Text style={styles.fieldValue}>{user?.email}</Text>
-          </View>
-        </View>
-
-        {/* Mesures corporelles */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>⚖️ Mesures corporelles</Text>
-          
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Poids actuel (kg)</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={currentWeight}
-                onChangeText={handleCurrentWeightChange}
-                placeholder="Ex: 70.5"
-                placeholderTextColor={Colors.textSecondary}
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{currentWeight || 'Non renseigné'}</Text>
-            )}
-          </View>
-          
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Poids cible (kg)</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={targetWeight}
-                onChangeText={handleTargetWeightChange}
-                placeholder="Ex: 65"
-                placeholderTextColor={Colors.textSecondary}
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{targetWeight || 'Non renseigné'}</Text>
-            )}
-          </View>
-          
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Taille (cm)</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={height}
-                onChangeText={handleHeightChange}
-                placeholder="Ex: 175"
-                placeholderTextColor={Colors.textSecondary}
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{height || 'Non renseigné'}</Text>
-            )}
           </View>
         </View>
 
@@ -297,11 +209,7 @@ export default function ProfilScreen() {
 
         {/* Déconnexion */}
         <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
-          {isLoggingOut ? (
-            <ActivityIndicator size="small" color={Colors.relaxation} />
-          ) : (
-            <LogOut size={24} color={Colors.relaxation} />
-          )}
+          <LogOut size={24} color={Colors.relaxation} />
           <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
             Déconnexion
           </Text>
@@ -314,8 +222,8 @@ export default function ProfilScreen() {
             Membre depuis : {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
           </Text>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -324,7 +232,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
+    padding: 20,
     paddingBottom: 40,
   },
   header: {
@@ -362,9 +274,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 25,
     padding: 12,
-  },
-  content: {
-    padding: 20,
   },
   section: {
     backgroundColor: Colors.surface,
