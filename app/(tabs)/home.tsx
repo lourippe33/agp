@@ -124,6 +124,24 @@ export default function HomeScreen() {
   else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
   else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
   else if (currentStreak >= 28) badge = '🏆';
+  const [programData, setProgramData] = useState<DayProgram[]>([]);
+  const [visibleDayIndex, setVisibleDayIndex] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
+  const todayIndex = new Date().getDay();
+  const todayTip = dailyTips[todayIndex];
+  // Animation scales
+  const [sportScale] = useState(new Animated.Value(1));
+  const [recipesScale] = useState(new Animated.Value(1));
+  const [relaxScale] = useState(new Animated.Value(1));
+  
+  // Badge pour le streak
+  let badge = '';
+  if (currentStreak >= 7 && currentStreak < 14) badge = '🌱';
+  else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
+  else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
+  else if (currentStreak >= 28) badge = '🏆';
 
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
@@ -441,13 +459,16 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[Colors.agpBlue, Colors.agpGreen]}
+        colors={[Colors.agpBlue, Colors.agpGreen]} 
         style={styles.header}
       >
         <View style={styles.headerContent}>
           <View style={styles.headerLeft}>
             <Text style={styles.greeting}>
-              Bienvenue sur AGP, Eric
+              {getGreeting()}, {user?.firstName || 'Utilisateur'}
+            </Text>
+            <Text style={styles.subtitle}>
+              Votre parcours chronobiologique vous attend
             </Text>
           </View>
 
@@ -464,7 +485,17 @@ export default function HomeScreen() {
         </View>
       </LinearGradient>
 
-      <HeaderTitle name={user?.firstName || 'Utilisateur'} />
+      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+          <Activity size={24} color={Colors.agpBlue} />
+          <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
+            Tableau de bord
+          </Text>
+        </View>
+        <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
+          Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
+        </Text>
+      </View>
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
