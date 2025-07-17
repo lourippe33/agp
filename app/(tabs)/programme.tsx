@@ -331,7 +331,7 @@ export default function ProgrammeScreen() {
 
   const handleActivityChange = (activityType: 'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner') => {
     // Vérifier si le jour est passé
-    if (selectedDay && (selectedDay.isCompleted || isPastDay(selectedDay))) {
+    if (selectedDay && (selectedDay.isCompleted || (isPastDay(selectedDay.date) && !selectedDay.isToday))) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -570,9 +570,9 @@ export default function ProgrammeScreen() {
   // Fonction pour marquer une activité comme complétée
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
-    
+
     // Vérifier si le jour est passé (mais pas aujourd'hui)
-    if (isPastDay(selectedDay) && !selectedDay.isToday && !selectedDay.activities[activityType].completed) {
+    if (isPastDay(selectedDay.date) && !selectedDay.isToday) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -781,16 +781,18 @@ export default function ProgrammeScreen() {
             style={styles.goToButton}
             onPress={() => navigateToActivity(activityType, activity.name)}
             activeOpacity={0.8}
+            disabled={isPastDay(selectedDay!.date) && !selectedDay!.isToday}
           >
-            <ExternalLink size={14} color={Colors.agpGreen} />
-            <Text style={styles.goToButtonText}>Accéder</Text>
+            <ExternalLink size={14} color={isPastDay(selectedDay!.date) && !selectedDay!.isToday ? Colors.textSecondary : Colors.agpGreen} />
+            <Text style={[styles.goToButtonText, isPastDay(selectedDay!.date) && !selectedDay!.isToday && styles.disabledButtonText]}>Accéder</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.changeButton}
             onPress={() => handleActivityChange(activityType)}
             activeOpacity={0.8}
+            disabled={isPastDay(selectedDay!.date) && !selectedDay!.isToday}
           >
-            <RefreshCw size={14} color={Colors.agpBlue} />
+            <RefreshCw size={14} color={isPastDay(selectedDay!.date) && !selectedDay!.isToday ? Colors.textSecondary : Colors.agpBlue} />
             <Text style={styles.changeButtonText}>
               {isPastDay(selectedDay!) && !selectedDay?.isToday 
                 ? "Verrouillé" 
@@ -811,6 +813,7 @@ export default function ProgrammeScreen() {
             styles.checkboxContainer,
             activity.completed && styles.checkboxContainerChecked
           ]}
+          disabled={isPastDay(selectedDay!.date) && !selectedDay!.isToday}
           onPress={(e) => {
             e.stopPropagation();
             toggleActivityCompletion(activityType);
@@ -837,9 +840,9 @@ export default function ProgrammeScreen() {
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Jour {selectedDay.day}</Text>
             <TouchableOpacity onPress={() => setSelectedDay(null)}>
-              <Text style={styles.modalClose}>✕</Text>
+              <Text style={styles.modalClose}>×</Text>
             </TouchableOpacity>
-            {isPastDay(selectedDay) && !selectedDay.isToday && (
+            {isPastDay(selectedDay.date) && !selectedDay.isToday && (
               <View style={styles.pastDayBadge}>
                 <Lock size={14} color={Colors.textLight} />
                 <Text style={styles.pastDayBadgeText}>
@@ -1438,6 +1441,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-Medium',
     color: Colors.agpGreen,
+  },
+  disabledButtonText: {
+    color: Colors.textSecondary,
   },
   changeButton: {
     flexDirection: 'row',
