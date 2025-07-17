@@ -45,7 +45,7 @@ export default function PersistentTabBar() {
 
   // Ne pas afficher la tab bar sur la page d'accueil elle-même
   // Ni sur aucune page des tabs principales qui ont déjà la navigation en bas
-  if (pathname === '/(tabs)/home' || pathname === '/' || pathname.startsWith('/(tabs)/')) {
+  if (pathname === '/(tabs)/home' || pathname === '/' || pathname.includes('/(tabs)/')) {
     return null;
   }
 
