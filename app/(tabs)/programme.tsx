@@ -793,7 +793,12 @@ export default function ProgrammeScreen() {
             activity.completed && styles.checkboxContainerChecked,
             isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
           ]}
-          onPress={() => {
+            onPress={(event) => {
+              // Empêcher la propagation et le comportement par défaut
+              if (event && event.stopPropagation) {
+                event.stopPropagation();
+              }
+              
             if (isPastDay && !selectedDay?.isToday) {
               Alert.alert(
                 "Modification impossible",
@@ -824,6 +829,9 @@ export default function ProgrammeScreen() {
   const DayDetailModal = () => {
     if (!selectedDay) return null;
 
+    // Référence pour le ScrollView
+    const scrollViewRef = React.useRef(null);
+
     return (
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
@@ -843,7 +851,14 @@ export default function ProgrammeScreen() {
             
           </View>
           
-          <ScrollView style={styles.modalBody}>
+          <ScrollView 
+            ref={scrollViewRef}
+            style={styles.modalBody}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={true}
+            keyboardShouldPersistTaps="handled"
+            maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+          >
             <ActivityRow
               title="🌅 Petit-déjeuner"
               activity={selectedDay.activities.breakfast}
@@ -1402,8 +1417,6 @@ const styles = StyleSheet.create({
   modalBody: {
     padding: 20,
     maxHeight: 400,
-    // Empêcher le défilement automatique vers le haut
-    scrollBehavior: 'auto',
   },
   activitySection: {
     marginBottom: 16,
