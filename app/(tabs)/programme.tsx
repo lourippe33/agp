@@ -104,6 +104,9 @@ export default function ProgrammeScreen() {
   const generateProgramData = () => {
     console.log('Generating program data with params:', params);
     const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - (today.getDay() || 7) + 1); // Lundi de cette semaine
     const todayStr = today.toDateString();
@@ -114,19 +117,61 @@ export default function ProgrammeScreen() {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
       
-      // Déterminer si le jour est complètement ou partiellement complété
+      // Déterminer si le jour est aujourd'hui, hier ou un autre jour passé
       const isToday = currentDate.toDateString() === todayStr;
+      const isYesterday = currentDate.toDateString() === yesterdayStr;
       const isPast = currentDate.getTime() < today.getTime() && !isToday;
-      const isCompleted = isPast && Math.random() > 0.3; // Simulation de progression complète
-      const isPartiallyCompleted = isPast && !isCompleted && Math.random() > 0.5; // Simulation de progression partielle
+      
+      // Générer les activités du jour
+      const activities = generateDayActivities(i + 1);
+      
+      // Pour hier, déterminer si toutes les activités ont été cochées
+      let isCompleted = false;
+      let isPartiallyCompleted = false;
+      
+      if (isYesterday) {
+        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
+        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
+        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
+        
+        if (allActivitiesChecked) {
+          isCompleted = true;
+          // Marquer toutes les activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = true;
+          });
+        } else if (someActivitiesChecked) {
+          isPartiallyCompleted = true;
+          // Marquer certaines activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = Math.random() > 0.5;
+          });
+        }
+      } else if (isPast && !isYesterday) {
+        // Pour les jours plus anciens, simuler une progression aléatoire
+        isCompleted = Math.random() > 0.3;
+        isPartiallyCompleted = !isCompleted && Math.random() > 0.5;
+        
+        if (isCompleted) {
+          // Marquer toutes les activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = true;
+          });
+        } else if (isPartiallyCompleted) {
+          // Marquer certaines activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = Math.random() > 0.5;
+          });
+        }
+      }
       
       program.push({
         day: i + 1,
         date: currentDate,
-        isCompleted: isCompleted,
-        isPartiallyCompleted: isPartiallyCompleted,
+        isCompleted,
+        isPartiallyCompleted,
         isToday,
-        activities: generateDayActivities(i + 1),
+        activities,
         totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
         badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
       });
@@ -504,8 +549,8 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
     
-    // Vérifier si le jour est passé
-    if (isPastDay(selectedDay) && !selectedDay.activities[activityType].completed) {
+    // Vérifier si le jour est passé (mais pas aujourd'hui)
+    if (isPastDay(selectedDay) && !selectedDay.isToday && !selectedDay.activities[activityType].completed) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -518,10 +563,17 @@ export default function ProgrammeScreen() {
       if (day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
         updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
+
+        // Vérifier si toutes les activités sont complétées
+        const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
+        // Vérifier si au moins une activité est complétée
+        const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
         
         return {
           ...day,
-          activities: updatedActivities
+          activities: updatedActivities,
+          isCompleted: allCompleted,
+          isPartiallyCompleted: !allCompleted && someCompleted
         };
       }
       return day;
