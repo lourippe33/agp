@@ -567,6 +567,14 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
 
+    // Empêcher le défilement automatique
+    if (typeof document !== 'undefined') {
+      const currentScrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+      setTimeout(() => {
+        window.scrollTo(0, currentScrollPosition);
+      }, 10);
+    }
+
     // Créer une copie des activités du jour sélectionné
     const updatedActivities = { ...selectedDay.activities };
     // Inverser l'état de l'activité sélectionnée
@@ -790,14 +798,9 @@ export default function ProgrammeScreen() {
           <TouchableOpacity
           style={[
             styles.checkboxContainer,
-            activity.completed && styles.checkboxContainerChecked,
-            isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
+              activity.completed && styles.checkboxContainerChecked
           ]}
-          onPress={(event) => {
-              // Empêcher le défilement automatique
-              event.preventDefault?.();
-              event.stopPropagation?.();
-              
+            onPress={() => {
               if (isPastDay && !selectedDay?.isToday) {
                 Alert.alert(
                   "Modification impossible",
@@ -854,8 +857,8 @@ export default function ProgrammeScreen() {
           <ScrollView 
             style={styles.modalBody} 
             contentContainerStyle={{ paddingBottom: 20 }}
-            showsVerticalScrollIndicator={false}
-            maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+            showsVerticalScrollIndicator={true}
+            keyboardShouldPersistTaps="handled"
           >
             <ActivityRow
               title="🌅 Petit-déjeuner"
