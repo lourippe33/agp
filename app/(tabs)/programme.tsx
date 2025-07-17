@@ -565,11 +565,6 @@ export default function ProgrammeScreen() {
               ))}
             </View>
           )}
-          {day.isToday && (
-            <Text style={{ fontSize: 12, color: Colors.agpBlue }}>
-              Aujourd'hui
-            </Text>
-          )}
         </View>
         
         <Text style={styles.dayDate}>
