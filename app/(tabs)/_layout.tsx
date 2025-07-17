@@ -41,11 +41,10 @@ export default function TabLayout() {
     backgroundColor: Colors.surface,
     borderTopColor: Colors.border,
     borderTopWidth: 1,
-    paddingBottom: 8,
+    paddingBottom: Platform.OS === 'ios' ? 25 : 12,
     paddingTop: 8,
     height: tabBarHeight,
     overflow: 'hidden',
-    paddingBottom: Platform.OS === 'ios' ? 25 : 8, // Ajout de padding pour iOS
   };
 
   return (
@@ -57,8 +56,9 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors.textSecondary,
         tabBarLabelStyle: {
           fontFamily: 'Poppins-Medium',
-          fontSize: 12,
-          marginTop: 4
+          fontSize: 10,
+          marginTop: 2,
+          paddingBottom: 4
         },
         headerStyle: {
           backgroundColor: Colors.surface,
