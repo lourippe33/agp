@@ -69,6 +69,11 @@ export default function ProgrammeScreen() {
     generateProgramData();
   }, [user]);
   
+  // Référence pour le ScrollView de la modal
+  const modalScrollViewRef = useRef<ScrollView>(null);
+  // État pour stocker la position de défilement actuelle
+  const [scrollPosition, setScrollPosition] = useState(0);
+  
   // Centrer le jour actuel au chargement initial
   useEffect(() => {
     if (programData.length > 0) {
@@ -567,14 +572,6 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
 
-    // Empêcher le défilement automatique
-    if (typeof document !== 'undefined') {
-      const currentScrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-      setTimeout(() => {
-        window.scrollTo(0, currentScrollPosition);
-      }, 10);
-    }
-
     // Créer une copie des activités du jour sélectionné
     const updatedActivities = { ...selectedDay.activities };
     // Inverser l'état de l'activité sélectionnée
@@ -608,6 +605,12 @@ export default function ProgrammeScreen() {
     const progress = (completed / 28) * 100;
     setOverallProgress(progress);
     setCompletionPercentage(Math.round(progress));
+  };
+
+  // Fonction pour capturer la position de défilement
+  const handleScroll = (event: any) => {
+    const y = event.nativeEvent.contentOffset.y;
+    setScrollPosition(y);
   };
 
   const WeekSelector = () => (
@@ -791,6 +794,7 @@ export default function ProgrammeScreen() {
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
         activeOpacity={0.9}
+        onStartShouldSetResponder={() => false}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
@@ -798,7 +802,8 @@ export default function ProgrammeScreen() {
           <TouchableOpacity
           style={[
             styles.checkboxContainer,
-              activity.completed && styles.checkboxContainerChecked
+            activity.completed && styles.checkboxContainerChecked,
+            isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
           ]}
             onPress={() => {
               if (isPastDay && !selectedDay?.isToday) {
@@ -807,7 +812,18 @@ export default function ProgrammeScreen() {
                   "Vous ne pouvez pas modifier les activités des jours passés."
                 );
               } else {
+                // Mémoriser la position de défilement actuelle
+                const currentPosition = scrollPosition;
+                
+                // Mettre à jour l'état
                 toggleActivityCompletion(activityType);
+                
+                // Restaurer la position de défilement après la mise à jour
+                setTimeout(() => {
+                  if (modalScrollViewRef.current) {
+                    modalScrollViewRef.current.scrollTo({ y: currentPosition, animated: false });
+                  }
+                }, 50);
               }
             }}
           activeOpacity={0.7}
@@ -835,8 +851,7 @@ export default function ProgrammeScreen() {
       <View 
         style={styles.modalOverlay} 
         onStartShouldSetResponder={() => true}
-        onStartShouldSetResponderCapture={() => true}
-      >
+        onStartShouldSetResponderCapture={() => true}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Jour {selectedDay.day}</Text>
@@ -855,10 +870,13 @@ export default function ProgrammeScreen() {
           </View>
           
           <ScrollView 
+            ref={modalScrollViewRef}
             style={styles.modalBody} 
             contentContainerStyle={{ paddingBottom: 20 }}
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="handled"
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
           >
             <ActivityRow
               title="🌅 Petit-déjeuner"
@@ -1496,6 +1514,11 @@ const styles = StyleSheet.create({
   checkboxContainerChecked: {
     backgroundColor: Colors.agpGreen,
     borderColor: Colors.agpGreen,
+  },
+  checkboxContainerLocked: {
+    backgroundColor: Colors.border,
+    borderColor: Colors.textSecondary,
+    opacity: 0.7,
   },
   checkboxContainerDisabled: {
     backgroundColor: Colors.border,
