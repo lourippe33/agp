@@ -331,7 +331,7 @@ export default function ProgrammeScreen() {
 
   const handleActivityChange = (activityType: 'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner') => {
     // Vérifier si le jour est passé
-    if (selectedDay && (selectedDay.isCompleted || isPastDay(selectedDay.date) && !selectedDay.isToday)) {
+    if (selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -571,9 +571,8 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
     
-    // Vérifier si le jour est passé (mais pas aujourd'hui) - uniquement pour empêcher de cocher
-    const isPast = isPastDay(selectedDay.date) && !selectedDay.isToday;
-    if (isPast) {
+    // Vérifier si le jour est passé et n'est pas aujourd'hui
+    if (isPastDay(selectedDay.date) && !selectedDay.isToday) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -767,46 +766,37 @@ export default function ProgrammeScreen() {
   const ActivityRow = ({ 
     title, 
     activity, 
-    activityType
+    activityType,
+    isPastDay
   }: { 
     title: string; 
     activity: { name: string; completed: boolean }; 
     activityType: keyof DayProgram['activities'];
+    isPastDay: boolean;
   }) => (
     <View style={styles.activitySection}>
+      {/* En-tête de l'activité */}
       <View style={styles.activityHeader}>
         <Text style={styles.activityTitle}>{title}</Text>
         <View style={styles.activityActions}>
           <TouchableOpacity
             style={styles.goToButton}
             onPress={() => navigateToActivity(activityType, activity.name)}
-            activeOpacity={0.7}
+            disabled={isPastDay}
+            activeOpacity={0.8}
           >
-            <ExternalLink size={14} color={Colors.agpGreen} />
-            <Text style={styles.goToButtonText}>Accéder</Text>
+            <ExternalLink size={14} color={isPastDay ? Colors.textSecondary : Colors.agpGreen} />
+            <Text style={[styles.goToButtonText, isPastDay && styles.disabledButtonText]}>Accéder</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.changeButton}
-            onPress={() => {
-              // Vérifier si le jour est passé (mais pas aujourd'hui)
-              const isPast = selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday;
-              if (!isPast) {
-                handleActivityChange(activityType);
-              } else {
-                Alert.alert(
-                  "Modification impossible",
-                  "Vous ne pouvez pas modifier les activités des jours passés.",
-                  [{ text: "OK", style: "default" }]
-                );
-              }
-            }}
-            activeOpacity={0.7}
+            onPress={() => handleActivityChange(activityType)}
+            disabled={isPastDay}
+            activeOpacity={0.8}
           >
-            <RefreshCw size={14} color={Colors.agpBlue} />
-            <Text style={styles.changeButtonText}>
-              {selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday 
-                ? "Verrouillé" 
-                : "Changer"}
+            <RefreshCw size={14} color={isPastDay ? Colors.textSecondary : Colors.agpBlue} />
+            <Text style={[styles.changeButtonText, isPastDay && styles.disabledButtonText]}>
+              {isPastDay ? "Verrouillé" : "Changer"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -814,32 +804,26 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.7}
+        activeOpacity={0.8}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
+        {/* Checkbox pour marquer comme complété */}
         <TouchableOpacity
           style={[
             styles.checkboxContainer,
-            activity.completed && styles.checkboxContainerChecked
+            activity.completed && styles.checkboxContainerChecked,
+            isPastDay && styles.checkboxContainerDisabled
           ]}
           onPress={(e) => {
             e.stopPropagation();
-            // Vérifier si le jour est passé (mais pas aujourd'hui)
-            const isPast = selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday;
-            if (!isPast) {
-              toggleActivityCompletion(activityType);
-            } else {
-              Alert.alert(
-                "Modification impossible",
-                "Vous ne pouvez pas modifier les activités des jours passés.",
-                [{ text: "OK", style: "default" }]
-              );
-            }
+            toggleActivityCompletion(activityType);
           }}
+          disabled={isPastDay}
         >
+          {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
             <CheckCircle size={20} color={Colors.textLight} />
-          ) : selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday ? (
+          ) : isPastDay ? (
             <Lock size={16} color={Colors.textSecondary} />
           ) : (
             <View style={styles.checkbox} />
@@ -876,37 +860,43 @@ export default function ProgrammeScreen() {
             <ActivityRow
               title="🌅 Petit-déjeuner"
               activity={selectedDay.activities.breakfast}
-              activityType="breakfast"
+              activityType="breakfast" 
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
             
             <ActivityRow
               title="💪 Sport"
               activity={selectedDay.activities.sport}
               activityType="sport"
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
             
             <ActivityRow
               title="🧘 Détente"
               activity={selectedDay.activities.relaxation}
               activityType="relaxation"
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
             
             <ActivityRow
               title="🍽️ Déjeuner"
               activity={selectedDay.activities.lunch}
               activityType="lunch"
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
             
             <ActivityRow
               title="🍪 Collation"
               activity={selectedDay.activities.snack}
               activityType="snack"
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
             
             <ActivityRow
               title="🌙 Dîner"
               activity={selectedDay.activities.dinner}
               activityType="dinner"
+              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
             />
           </ScrollView>
         </View>
@@ -1501,6 +1491,13 @@ const styles = StyleSheet.create({
   checkboxContainerChecked: {
     backgroundColor: Colors.agpGreen,
     borderColor: Colors.agpGreen,
+  },
+  checkboxContainerDisabled: {
+    backgroundColor: Colors.border,
+    borderColor: Colors.textSecondary,
+  },
+  disabledButtonText: {
+    color: Colors.textSecondary,
   },
   checkbox: {
     width: 16,
