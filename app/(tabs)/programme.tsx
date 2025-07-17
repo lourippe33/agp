@@ -571,8 +571,9 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
     
-    // Vérifier si le jour est passé (mais pas aujourd'hui)
-    if (isPastDay(selectedDay.date) && !selectedDay.isToday && !selectedDay.activities[activityType].completed) {
+    // Vérifier si le jour est passé (mais pas aujourd'hui) - uniquement pour empêcher de cocher
+    const isPast = isPastDay(selectedDay.date) && !selectedDay.isToday;
+    if (isPast) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -766,33 +767,44 @@ export default function ProgrammeScreen() {
   const ActivityRow = ({ 
     title, 
     activity, 
-    activityType 
+    activityType
   }: { 
     title: string; 
     activity: { name: string; completed: boolean }; 
     activityType: keyof DayProgram['activities'];
   }) => (
     <View style={styles.activitySection}>
-      {/* En-tête de l'activité */}
       <View style={styles.activityHeader}>
         <Text style={styles.activityTitle}>{title}</Text>
         <View style={styles.activityActions}>
           <TouchableOpacity
             style={styles.goToButton}
             onPress={() => navigateToActivity(activityType, activity.name)}
-            activeOpacity={0.8}
+            activeOpacity={0.7}
           >
             <ExternalLink size={14} color={Colors.agpGreen} />
             <Text style={styles.goToButtonText}>Accéder</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.changeButton}
-            onPress={() => handleActivityChange(activityType)}
-            activeOpacity={0.8}
+            onPress={() => {
+              // Vérifier si le jour est passé (mais pas aujourd'hui)
+              const isPast = selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday;
+              if (!isPast) {
+                handleActivityChange(activityType);
+              } else {
+                Alert.alert(
+                  "Modification impossible",
+                  "Vous ne pouvez pas modifier les activités des jours passés.",
+                  [{ text: "OK", style: "default" }]
+                );
+              }
+            }}
+            activeOpacity={0.7}
           >
             <RefreshCw size={14} color={Colors.agpBlue} />
             <Text style={styles.changeButtonText}>
-              {isPastDay(selectedDay!) && !selectedDay?.isToday 
+              {selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday 
                 ? "Verrouillé" 
                 : "Changer"}
             </Text>
@@ -802,10 +814,9 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.8}
+        activeOpacity={0.7}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
-        {/* Checkbox pour marquer comme complété */}
         <TouchableOpacity
           style={[
             styles.checkboxContainer,
@@ -813,12 +824,23 @@ export default function ProgrammeScreen() {
           ]}
           onPress={(e) => {
             e.stopPropagation();
-            toggleActivityCompletion(activityType);
+            // Vérifier si le jour est passé (mais pas aujourd'hui)
+            const isPast = selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday;
+            if (!isPast) {
+              toggleActivityCompletion(activityType);
+            } else {
+              Alert.alert(
+                "Modification impossible",
+                "Vous ne pouvez pas modifier les activités des jours passés.",
+                [{ text: "OK", style: "default" }]
+              );
+            }
           }}
         >
-          {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
             <CheckCircle size={20} color={Colors.textLight} />
+          ) : selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday ? (
+            <Lock size={16} color={Colors.textSecondary} />
           ) : (
             <View style={styles.checkbox} />
           )}
