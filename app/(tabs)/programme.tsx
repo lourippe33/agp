@@ -555,16 +555,6 @@ export default function ProgrammeScreen() {
             params: { 
               exerciseId: activityId.toString(),
               openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/detente');
-        }
-        break;
-    }
-  };
-
-  const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     const updatedProgram = programData.map(day => {
       if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
@@ -788,7 +778,7 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.7}
+        activeOpacity={0.8}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
@@ -797,18 +787,19 @@ export default function ProgrammeScreen() {
             styles.checkboxContainer,
             activity.completed && styles.checkboxContainerChecked
           ]}
-          onPress={e => {
+          onPress={(e) => {
             e.stopPropagation();
-            if (!isPastDay) {
-              toggleActivityCompletion(activityType);
-            } else {
+            if (isPastDay && !selectedDay?.isToday) {
               Alert.alert(
                 "Modification impossible",
                 "Vous ne pouvez pas modifier les activités des jours passés.",
                 [{ text: "OK", style: "default" }]
               );
+            } else {
+              toggleActivityCompletion(activityType);
             }
           }}
+          activeOpacity={0.7}
         >
           {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
