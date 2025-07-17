@@ -467,14 +467,8 @@ export default function HomeScreen() {
         </View>
       </LinearGradient>
 
-      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-          <Activity size={24} color={Colors.agpBlue} />
-          <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
-            Tableau de bord
-          </Text>
-        </View>
-        <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
+        <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
           Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
         </Text>
       </View>
