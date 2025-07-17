@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   dayCard: {
     backgroundColor: Colors.surface,
     borderRadius: 12,
-    padding: 8,
+    padding: 6,
     alignItems: 'center',
     elevation: 2,
     shadowColor: Colors.shadow,
@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 2,
     borderColor: 'transparent',
-    marginHorizontal: 4,
+    marginHorizontal: 2,
+    width: 45, // Largeur fixe pour assurer que tous les jours sont visibles
   },
   dayCardCompleted: {
     backgroundColor: Colors.agpLightGreen,

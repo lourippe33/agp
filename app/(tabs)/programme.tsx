@@ -713,11 +713,11 @@ export default function ProgrammeScreen() {
   const DayCarousel = () => {
     // Afficher 7 jours à partir de l'index visible
     const days = programData.slice(visibleDayIndex, visibleDayIndex + 7);
-    const canScrollLeft = visibleDayIndex > 0;
-    const canScrollRight = visibleDayIndex + 7 < programData.length;
+    const canScrollLeft = currentWeek > 1;
+    const canScrollRight = currentWeek < 4;
     
     const scrollLeft = () => {
-      if (canScrollLeft && currentWeek > 1) {
+      if (canScrollLeft) {
         const newWeek = Math.max(1, currentWeek - 1);
         setCurrentWeek(newWeek);
         setVisibleDayIndex((newWeek - 1) * 7);
@@ -725,7 +725,7 @@ export default function ProgrammeScreen() {
     };
     
     const scrollRight = () => {
-      if (canScrollRight && currentWeek < 4) {
+      if (canScrollRight) {
         const newWeek = Math.min(4, currentWeek + 1);
         setCurrentWeek(newWeek);
         setVisibleDayIndex((newWeek - 1) * 7);
@@ -742,14 +742,15 @@ export default function ProgrammeScreen() {
           <ChevronLeft size={24} color={canScrollLeft ? Colors.agpBlue : Colors.border} />
         </TouchableOpacity>
         
-        <FlatList
-          data={days}
-          renderItem={({ item }) => <DayProgramCard day={item} onPress={handleDayPress} />}
-          keyExtractor={(item) => item.day.toString()}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.carouselContent}
-        />
+        >
+          {days.map((day) => (
+            <DayProgramCard key={day.day} day={day} onPress={handleDayPress} />
+          ))}
+        </ScrollView>
         
         <TouchableOpacity 
           style={[styles.carouselArrow, !canScrollRight && styles.carouselArrowDisabled]} 
@@ -1165,7 +1166,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   carouselContent: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: width - 80, // Largeur de l'écran moins les flèches et marges
   },
   weekTitle: {
     fontSize: 18,
