@@ -28,14 +28,14 @@ export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    niveauSport: 'debutant',
-    preferencesAlimentaires: [],
-    objectifs: [],
-  });
+  // États individuels pour chaque champ
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [niveauSport, setNiveauSport] = useState('debutant');
+  const [preferencesAlimentaires, setPreferencesAlimentaires] = useState<string[]>([]);
+  const [objectifs, setObjectifs] = useState<string[]>([]);
+  
   const [profileData, setProfileData] = useState({
     currentWeight: 0,
     targetWeight: 0,
@@ -53,26 +53,16 @@ export default function ProfilScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollPositionRef = useRef(0);
   
-  // Références pour éviter les re-renders lors de la saisie
-  const firstNameRef = useRef(user?.firstName || '');
-  const lastNameRef = useRef(user?.lastName || '');
-  const usernameRef = useRef(user?.username || '');
 
   useEffect(() => {
     if (user) {
-      setFormData({
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
-        username: user?.username || '',
-        niveauSport: user.niveauSport || 'debutant',
-        preferencesAlimentaires: user.preferencesAlimentaires || [],
-        objectifs: user.objectifs || [],
-      });
-      
-      // Initialiser les références
-      firstNameRef.current = user.firstName || '';
-      lastNameRef.current = user.lastName || '';
-      usernameRef.current = user.username || '';
+      // Initialiser les états individuels
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setUsername(user.username || '');
+      setNiveauSport(user.niveauSport || 'debutant');
+      setPreferencesAlimentaires(user.preferencesAlimentaires || []);
+      setObjectifs(user.objectifs || []);
     }
     
     // Charger le profil de suivi
@@ -112,12 +102,14 @@ export default function ProfilScreen() {
   const handleSave = async () => {
     if (!user) return;
 
-    // Récupérer les valeurs des refs pour la mise à jour
+    // Créer l'objet de mise à jour avec les états individuels
     const updatedFormData = {
-      ...formData,
-      firstName: firstNameRef.current,
-      lastName: lastNameRef.current,
-      username: usernameRef.current
+      firstName,
+      lastName,
+      username,
+      niveauSport,
+      preferencesAlimentaires,
+      objectifs
     };
 
     try {
@@ -143,8 +135,6 @@ export default function ProfilScreen() {
         setIsEditing(false);
         // Mettre à jour le state avec les nouvelles valeurs
         setFormData(updatedFormData);
-        Alert.alert('Succès', 'Profil mis à jour avec succès !');
-        // Restaurer la position de défilement après la mise à jour
         preserveScrollPosition();
       } else {
         Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
@@ -186,21 +176,19 @@ export default function ProfilScreen() {
   };
 
   const togglePreference = (preference: string) => {
-    setFormData(prev => ({
-      ...prev,
-      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
-        ? prev.preferencesAlimentaires.filter(p => p !== preference)
-        : [...prev.preferencesAlimentaires, preference]
-    }));
+    setPreferencesAlimentaires(prev => 
+      prev.includes(preference)
+        ? prev.filter(p => p !== preference)
+        : [...prev, preference]
+    );
   };
 
   const toggleObjectif = (objectif: string) => {
-    setFormData(prev => ({
-      ...prev,
-      objectifs: prev.objectifs.includes(objectif)
-        ? prev.objectifs.filter(o => o !== objectif)
-        : [...prev.objectifs, objectif]
-    }));
+    setObjectifs(prev => 
+      prev.includes(objectif)
+        ? prev.filter(o => o !== objectif)
+        : [...prev, objectif]
+    );
   };
 
   const preferencesOptions = [
@@ -237,12 +225,12 @@ export default function ProfilScreen() {
   const EditableField = ({ 
     label, 
     value, 
-    fieldRef,
+    onChangeText,
     placeholder 
   }: { 
     label: string; 
     value: string; 
-    fieldRef: React.MutableRefObject<string>;
+    onChangeText: (text: string) => void;
     placeholder?: string;
   }) => (
     <View style={styles.fieldContainer}>
@@ -250,8 +238,8 @@ export default function ProfilScreen() {
       {isEditing ? (
         <TextInput
           style={styles.textInput}
-          defaultValue={value}
-          onChangeText={(text) => fieldRef.current = text}
+          value={value}
+          onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor={Colors.textSecondary}
         />
@@ -395,22 +383,22 @@ export default function ProfilScreen() {
         <ProfileSection title="👤 Informations personnelles">
           <EditableField
             label="Prénom"
-            value={formData.firstName}
-            fieldRef={firstNameRef}
+            value={firstName}
+            onChangeText={setFirstName}
             placeholder="Votre prénom"
           />
           
           <EditableField
             label="Nom"
-            value={formData.lastName}
-            fieldRef={lastNameRef}
+            value={lastName}
+            onChangeText={setLastName}
             placeholder="Votre nom"
           />
           
           <EditableField
             label="Nom d'utilisateur"
-            value={formData.username}
-            fieldRef={usernameRef}
+            value={username}
+            onChangeText={setUsername}
             placeholder="Votre nom d'utilisateur"
           />
 
@@ -479,9 +467,9 @@ export default function ProfilScreen() {
         <ProfileSection title="💪 Préférences sportives">
           <SelectField
             label="Niveau sportif"
-            value={formData.niveauSport}
+            value={niveauSport}
             options={niveauxSport}
-            onSelect={(value) => setFormData(prev => ({ ...prev, niveauSport: value as any }))}
+            onSelect={setNiveauSport}
           />
         </ProfileSection>
 
@@ -489,7 +477,7 @@ export default function ProfilScreen() {
         <ProfileSection title="🍽️ Préférences alimentaires">
           <MultiSelectField
             label="Régimes alimentaires"
-            values={formData.preferencesAlimentaires}
+            values={preferencesAlimentaires}
             options={preferencesOptions}
             onToggle={togglePreference}
           />
@@ -499,7 +487,7 @@ export default function ProfilScreen() {
         <ProfileSection title="🎯 Objectifs">
           <MultiSelectField
             label="Vos objectifs"
-            values={formData.objectifs}
+            values={objectifs}
             options={objectifsOptions}
             onToggle={toggleObjectif}
           />
