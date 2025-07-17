@@ -857,26 +857,28 @@ export default function ProgrammeScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <LinearGradient
-          colors={[Colors.agpBlue, Colors.agpGreen]}
-          style={styles.header}
-        >
-          <View style={styles.headerContent}>
-            <View style={styles.logoContainer}>
-              <AGPLogo size={50} />
+        <View style={{ width: '100%' }}>
+          {/* Header */}
+          <LinearGradient
+            colors={[Colors.agpBlue, Colors.agpGreen]}
+            style={styles.header}
+          >
+            <View style={styles.headerContent}>
+              <View style={styles.logoContainer}>
+                <AGPLogo size={50} />
+              </View>
+              <View style={styles.headerText}>
+                <Text style={styles.headerTitle}>Programme 28 Jours</Text>
+                <Text style={styles.headerSubtitle}>
+                  Votre transformation AGP personnalisée
+                </Text>
+              </View>
+              <View style={styles.headerIcon}>
+                <Calendar size={32} color={Colors.textLight} />
+              </View>
             </View>
-            <View style={styles.headerText}>
-              <Text style={styles.headerTitle}>Programme 28 Jours</Text>
-              <Text style={styles.headerSubtitle}>
-                Votre transformation AGP personnalisée
-              </Text>
-            </View>
-            <View style={styles.headerIcon}>
-              <Calendar size={32} color={Colors.textLight} />
-            </View>
-          </View>
-        </LinearGradient>
+          </LinearGradient>
+        </View>
 
         {/* Statistiques générales */}
         <OverallStats />
@@ -999,7 +1001,7 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 60,
     paddingBottom: 30,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, 
     width: '100%',
   },
   headerContent: {
@@ -1035,10 +1037,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
     paddingBottom: 20,
   },
   statsContainer: {
+    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 24,
@@ -1101,11 +1104,13 @@ const styles = StyleSheet.create({
   },
   weekSelectorContainer: {
     marginBottom: 20,
+    paddingHorizontal: 20,
   },
   carouselContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    paddingHorizontal: 20,
   },
   carouselArrow: {
     backgroundColor: Colors.surface,
@@ -1248,6 +1253,7 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     backgroundColor: Colors.surface,
+    marginHorizontal: 20,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -1297,6 +1303,7 @@ const styles = StyleSheet.create({
   },
   motivationCard: {
     flexDirection: 'row',
+    marginHorizontal: 20,
     alignItems: 'center',
     backgroundColor: Colors.surface,
     borderRadius: 16,
@@ -1328,6 +1335,7 @@ const styles = StyleSheet.create({
   },
   tipsCard: {
     backgroundColor: Colors.agpLightBlue,
+    marginHorizontal: 20,
     borderRadius: 16,
     padding: 16,
     borderLeftWidth: 4,
@@ -1349,6 +1357,7 @@ const styles = StyleSheet.create({
   customizationInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal: 20,
     backgroundColor: Colors.agpLightGreen,
     borderRadius: 16,
     padding: 16,
