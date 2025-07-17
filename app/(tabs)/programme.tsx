@@ -565,6 +565,8 @@ export default function ProgrammeScreen() {
   };
 
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
+    if (!selectedDay) return;
+
     const updatedProgram = programData.map(day => {
       if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
@@ -785,32 +787,42 @@ export default function ProgrammeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.activityRow}>
+      <TouchableOpacity
+        style={styles.activityRow}
+        onPress={() => navigateToActivity(activityType, activity.name)}
+        activeOpacity={0.8}
+      >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
         <TouchableOpacity
-          style={[styles.checkboxContainer, 
-                 activity.completed ? styles.checkboxContainerChecked : null,
-                 isPastDay && !selectedDay?.isToday ? styles.checkboxContainerDisabled : null]}
-          onPress={() => {
-            // Uniquement pour les jours actuels ou futurs
-            if (!isPastDay || selectedDay?.isToday) {
+          style={[
+            styles.checkboxContainer,
+            activity.completed && styles.checkboxContainerChecked,
+            isPastDay && !selectedDay?.isToday && styles.checkboxContainerDisabled
+          ]}
+          onPress={(e) => {
+            e.stopPropagation();
+            if (isPastDay && !selectedDay?.isToday) {
+              Alert.alert(
+                "Modification impossible",
+                "Vous ne pouvez pas modifier les activités des jours passés."
+              );
+            } else {
               toggleActivityCompletion(activityType);
             }
           }}
-          disabled={isPastDay && !selectedDay?.isToday}
-          activeOpacity={0.7}
+          activeOpacity={isPastDay && !selectedDay?.isToday ? 1 : 0.7}
         >
           {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
             <CheckCircle size={20} color={Colors.textLight} />
-          ) : (isPastDay && !selectedDay?.isToday) ? (
+          ) : isPastDay ? (
             <Lock size={16} color={Colors.textSecondary} />
           ) : (
             <View style={styles.checkbox} />
           )}
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 
@@ -1478,11 +1490,6 @@ const styles = StyleSheet.create({
   checkboxContainerDisabled: {
     backgroundColor: Colors.border,
     borderColor: Colors.textSecondary,
-    opacity: 0.7,
-  },
-  checkboxContainerDisabled: {
-    backgroundColor: Colors.border,
-    borderColor: Colors.textSecondary,
   },
   disabledButtonText: {
     color: Colors.textSecondary,
@@ -1492,5 +1499,5 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     backgroundColor: 'transparent',
-  }
+  },
 });
