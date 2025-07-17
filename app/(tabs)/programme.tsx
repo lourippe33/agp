@@ -793,21 +793,20 @@ export default function ProgrammeScreen() {
             activity.completed && styles.checkboxContainerChecked,
             isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
           ]}
-            onPress={(event) => {
-              // Empêcher la propagation et le comportement par défaut
-              if (event && event.stopPropagation) {
-                event.stopPropagation();
-              }
+          onPress={(event) => {
+              // Empêcher le défilement automatique
+              event.preventDefault?.();
+              event.stopPropagation?.();
               
-            if (isPastDay && !selectedDay?.isToday) {
-              Alert.alert(
-                "Modification impossible",
-                "Vous ne pouvez pas modifier les activités des jours passés."
-              );
-            } else {
-              toggleActivityCompletion(activityType);
-            }
-          }}
+              if (isPastDay && !selectedDay?.isToday) {
+                Alert.alert(
+                  "Modification impossible",
+                  "Vous ne pouvez pas modifier les activités des jours passés."
+                );
+              } else {
+                toggleActivityCompletion(activityType);
+              }
+            }}
           activeOpacity={0.7}
           disabled={isPastDay && !selectedDay?.isToday}
         >
@@ -829,11 +828,12 @@ export default function ProgrammeScreen() {
   const DayDetailModal = () => {
     if (!selectedDay) return null;
 
-    // Référence pour le ScrollView
-    const scrollViewRef = React.useRef(null);
-
     return (
-      <View style={styles.modalOverlay}>
+      <View 
+        style={styles.modalOverlay} 
+        onStartShouldSetResponder={() => true}
+        onStartShouldSetResponderCapture={() => true}
+      >
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Jour {selectedDay.day}</Text>
@@ -852,11 +852,9 @@ export default function ProgrammeScreen() {
           </View>
           
           <ScrollView 
-            ref={scrollViewRef}
-            style={styles.modalBody}
+            style={styles.modalBody} 
             contentContainerStyle={{ paddingBottom: 20 }}
-            showsVerticalScrollIndicator={true}
-            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           >
             <ActivityRow
@@ -1417,6 +1415,8 @@ const styles = StyleSheet.create({
   modalBody: {
     padding: 20,
     maxHeight: 400,
+    // Empêcher le défilement automatique
+    scrollBehavior: 'auto'
   },
   activitySection: {
     marginBottom: 16,
