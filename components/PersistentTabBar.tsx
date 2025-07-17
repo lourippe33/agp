@@ -4,6 +4,7 @@ import { router, usePathname } from 'expo-router';
 import { Chrome as Home } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
+
 export default function PersistentTabBar() {
   const pathname = usePathname();
   const [tabBarHeight] = useState(new Animated.Value(70));
@@ -43,7 +44,8 @@ export default function PersistentTabBar() {
   };
 
   // Ne pas afficher la tab bar sur la page d'accueil elle-même
-  if (pathname === '/(tabs)/home' || pathname === '/') {
+  // Ni sur aucune page des tabs principales qui ont déjà la navigation en bas
+  if (pathname === '/(tabs)/home' || pathname === '/' || pathname.startsWith('/(tabs)/')) {
     return null;
   }
 
