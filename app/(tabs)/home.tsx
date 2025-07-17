@@ -23,8 +23,7 @@ import {
   Moon, 
   Coffee, 
   Utensils, 
-  Database, 
-  Dumbbell,
+  Dumbbell, 
   ChevronLeft,
   ChevronRight
 } from 'lucide-react-native';
@@ -35,6 +34,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { isPastDay } from '@/utils/dateUtils';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
+import DayProgramCard from '@/components/DayProgramCard';
 
 const dailyTips = [
   {
@@ -355,68 +355,15 @@ export default function HomeScreen() {
     router.push('/detente');
   };
 
-  const DayCard = ({ day }: { day: DayProgram }) => {    
-    return (
-      <TouchableOpacity
-        style={[
-          styles.dayCard,
-          day.isCompleted && styles.dayCardCompleted, // Vert pour les jours complétés
-          day.isPartiallyCompleted && styles.dayCardPartiallyCompleted, // Rouge pour les jours partiellement complétés
-          day.isToday && styles.dayCardToday
-        ]}
-        onPress={() => {
-          // Navigate to the program screen with the selected day
-          router.push({
-            pathname: '/(tabs)/programme',
-            params: { 
-              day: day.day.toString(),
-              openDetails: 'true'
-            }
-          });
-        }}
-        activeOpacity={0.8}
-      >
-        <View style={styles.dayHeader}>
-          <Text style={[
-            styles.dayNumber,
-            day.isCompleted && styles.dayNumberCompleted,
-            day.isPartiallyCompleted && styles.dayNumberPartiallyCompleted,
-            day.isToday && styles.dayNumberToday
-          ]}>
-            {day.day}
-          </Text>
-          {day.isCompleted && (
-            <Zap size={16} color={Colors.agpGreen} />
-          )}
-          {day.isPartiallyCompleted && (
-            <Flame size={16} color={Colors.relaxation} />
-          )}
-          {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
-            <Lock size={14} color={Colors.textSecondary} />
-          )}
-          {day.badges && (
-            <View style={styles.badgeContainer}>
-              {day.badges.map((badge, index) => (
-                <Text key={index} style={styles.badge}>{badge}</Text>
-              ))}
-            </View>
-          )}
-        </View>
-        
-        <Text style={styles.dayDate}>
-          {day.date.toLocaleDateString('fr-FR', { 
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short'
-          })}
-        </Text>
-        
-        <View style={styles.dayDuration}>
-          <Clock size={12} color={Colors.textSecondary} />
-          <Text style={styles.durationText}>{day.totalDuration}min</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  const handleDayPress = (day: DayProgram) => {
+    // Navigate to the program screen with the selected day
+    router.push({
+      pathname: '/(tabs)/programme',
+      params: { 
+        day: day.day.toString(),
+        openDetails: 'true'
+      }
+    });
   };
 
   const DayCarousel = () => {
@@ -452,7 +399,7 @@ export default function HomeScreen() {
           contentContainerStyle={styles.carouselContent}
         >
           {days.map((day) => (
-            <DayCard key={day.day} day={day} />
+            <DayProgramCard key={day.day} day={day} onPress={handleDayPress} />
           ))}
         </ScrollView>
         
@@ -1017,74 +964,4 @@ const styles = StyleSheet.create({
   carouselContent: {
     paddingHorizontal: 8,
   },
-  dayCard: {
-    width: dayCardWidth,
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 8,
-    alignItems: 'center',
-    marginHorizontal: 4,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  dayCardCompleted: {
-    backgroundColor: Colors.agpLightGreen,
-    borderColor: Colors.agpGreen,
-  },
-  dayCardPartiallyCompleted: {
-    backgroundColor: '#FFE0E6', // Fond rouge clair
-    borderColor: Colors.relaxation,
-  },
-  dayCardToday: {
-    borderColor: Colors.agpBlue,
-    backgroundColor: Colors.agpLightBlue,
-  },
-  dayHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-    minHeight: 20,
-  },
-  dayNumber: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-  },
-  dayNumberCompleted: {
-    color: Colors.agpGreen,
-  },
-  dayNumberPartiallyCompleted: {
-    color: Colors.relaxation,
-  },
-  dayNumberToday: {
-    color: Colors.agpBlue,
-  },
-  badgeContainer: {
-    marginLeft: 4,
-  },
-  badge: {
-    fontSize: 12,
-  },
-  dayDate: {
-    fontSize: 10,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  dayDuration: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  durationText: {
-    fontSize: 9,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  }
 });

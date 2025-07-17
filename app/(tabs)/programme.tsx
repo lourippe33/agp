@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock, Zap } from 'lucide-react-native';
-import { router, useLocalSearchParams, useRouter } from 'expo-router';
+import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import DayProgramCard from '@/components/DayProgramCard';
 import { isPastDay } from '@/utils/dateUtils';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
@@ -601,61 +602,6 @@ export default function ProgrammeScreen() {
     });
   };
 
-  const DayCard = ({ day }: { day: DayProgram }) => {
-    return (
-      <TouchableOpacity
-        style={[
-          styles.dayCard,
-          day.isCompleted && styles.dayCardCompleted, // Vert pour les jours complétés
-          day.isPartiallyCompleted && styles.dayCardPartiallyCompleted, // Rouge pour les jours partiellement complétés
-          day.isToday && styles.dayCardToday // Bleu pour le jour actuel
-        ]}
-        onPress={() => handleDayPress(day)}
-        activeOpacity={0.8}
-      >
-        <View style={styles.dayHeader}>
-          <Text style={[
-            styles.dayNumber,
-            day.isCompleted && styles.dayNumberCompleted, // Texte vert
-            day.isPartiallyCompleted && styles.dayNumberPartiallyCompleted, // Texte rouge
-            day.isToday && styles.dayNumberToday // Texte bleu
-          ]}>
-            {day.day}
-          </Text>
-          {day.isCompleted && (
-            <Zap size={16} color={Colors.agpGreen} />
-          )}
-          {day.isPartiallyCompleted && (
-            <Flame size={16} color={Colors.relaxation} />
-          )}
-          {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
-            <Lock size={14} color={Colors.textSecondary} />
-          )}
-          {day.badges && (
-            <View style={styles.badgeContainer}>
-              {day.badges.map((badge, index) => (
-                <Text key={index} style={styles.badge}>{badge}</Text>
-              ))}
-            </View>
-          )}
-        </View>
-        
-        <Text style={styles.dayDate}>
-          {day.date.toLocaleDateString('fr-FR', { 
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short'
-          })}
-        </Text>
-        
-        <View style={styles.dayDuration}>
-          <Clock size={12} color={Colors.textSecondary} />
-          <Text style={styles.durationText}>{day.totalDuration}min</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   const WeekSelector = () => (
     <View style={styles.weekSelector}>
       <TouchableOpacity
@@ -775,7 +721,7 @@ export default function ProgrammeScreen() {
         
         <FlatList
           data={days}
-          renderItem={({ item }) => <DayCard day={item} />}
+          renderItem={({ item }) => <DayProgramCard day={item} onPress={handleDayPress} />}
           keyExtractor={(item) => item.day.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -1257,75 +1203,6 @@ const styles = StyleSheet.create({
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  dayCardCompleted: {
-    backgroundColor: Colors.agpLightGreen,
-    borderColor: Colors.agpGreen,
-  },
-  dayCardPartiallyCompleted: {
-    backgroundColor: '#FFE0E6', // Fond rouge clair
-    borderColor: Colors.relaxation,
-  },
-  dayCardToday: {
-    backgroundColor: Colors.agpLightBlue,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
-    width: (width - 56) / 7 + 10, // Légèrement plus large
-    zIndex: 1,
-  },
-  dayCardToday: {
-    borderColor: Colors.agpBlue,
-    backgroundColor: Colors.agpLightBlue,
-  },
-  dayHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-    minHeight: 20,
-  },
-  dayNumber: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-  },
-  dayNumberCompleted: {
-    color: Colors.agpGreen,
-  },
-  dayNumberPartiallyCompleted: {
-    color: Colors.relaxation,
-  },
-  dayNumberToday: {
-    color: Colors.agpBlue,
-  },
-  dayNumberToday: {
-    color: Colors.agpBlue,
-  },
-  badgeContainer: {
-    marginLeft: 4,
-  },
-  badge: {
-    fontSize: 12,
-  },
-  dayDate: {
-    fontSize: 10,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  dayDuration: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  durationText: {
-    fontSize: 9,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  },
   progressContainer: {
     backgroundColor: Colors.surface,
     marginHorizontal: 20,
