@@ -571,8 +571,13 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
     
-    // Vérifier si le jour est passé et n'est pas aujourd'hui
-    if (isPastDay(selectedDay.date) && !selectedDay.isToday) {
+    // Vérifier si le jour est dans le passé (avant aujourd'hui) et n'est pas le jour actuel
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(selectedDay.date);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate.getTime() < today.getTime() && !selectedDay.isToday) {
       Alert.alert(
         "Modification impossible",
         "Vous ne pouvez pas modifier les activités des jours passés.",
@@ -804,7 +809,7 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.8}
+        activeOpacity={isPastDay ? 0.9 : 0.7}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
@@ -816,9 +821,17 @@ export default function ProgrammeScreen() {
           ]}
           onPress={(e) => {
             e.stopPropagation();
-            toggleActivityCompletion(activityType);
+            if (!isPastDay) {
+              toggleActivityCompletion(activityType);
+            } else {
+              Alert.alert(
+                "Modification impossible",
+                "Vous ne pouvez pas modifier les activités des jours passés.",
+                [{ text: "OK", style: "default" }]
+              );
+            }
           }}
-          disabled={isPastDay}
+          disabled={false}
         >
           {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
