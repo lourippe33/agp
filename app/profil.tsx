@@ -7,8 +7,8 @@ import {
   TextInput,
   Alert,
   StyleSheet,
-  Dimensions,
-  Platform,
+  ActivityIndicator,
+  Switch,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
@@ -29,12 +29,12 @@ export default function ProfilScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    username: user?.username || '',
-    niveauSport: user?.niveauSport || 'debutant',
-    preferencesAlimentaires: user?.preferencesAlimentaires || [],
-    objectifs: user?.objectifs || [],
+    firstName: '',
+    lastName: '',
+    username: '',
+    niveauSport: 'debutant',
+    preferencesAlimentaires: [],
+    objectifs: [],
   });
   const [profileData, setProfileData] = useState({
     currentWeight: 0,
@@ -52,17 +52,27 @@ export default function ProfilScreen() {
   // Référence pour le ScrollView
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollPositionRef = useRef(0);
+  
+  // Références pour éviter les re-renders lors de la saisie
+  const firstNameRef = useRef(user?.firstName || '');
+  const lastNameRef = useRef(user?.lastName || '');
+  const usernameRef = useRef(user?.username || '');
 
   useEffect(() => {
     if (user) {
       setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        username: user.username || '',
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        username: user?.username || '',
         niveauSport: user.niveauSport || 'debutant',
         preferencesAlimentaires: user.preferencesAlimentaires || [],
         objectifs: user.objectifs || [],
       });
+      
+      // Initialiser les références
+      firstNameRef.current = user.firstName || '';
+      lastNameRef.current = user.lastName || '';
+      usernameRef.current = user.username || '';
     }
     
     // Charger le profil de suivi
@@ -102,9 +112,17 @@ export default function ProfilScreen() {
   const handleSave = async () => {
     if (!user) return;
 
+    // Récupérer les valeurs des refs pour la mise à jour
+    const updatedFormData = {
+      ...formData,
+      firstName: firstNameRef.current,
+      lastName: lastNameRef.current,
+      username: usernameRef.current
+    };
+
     try {
       // Sauvegarder les informations de base
-      const result = await updateProfile(user.id, formData);
+      const result = await updateProfile(user.id, updatedFormData);
       
       // Sauvegarder le profil de suivi
       if (profileData.currentWeight > 0) {
@@ -123,6 +141,8 @@ export default function ProfilScreen() {
       
       if (result.success) {
         setIsEditing(false);
+        // Mettre à jour le state avec les nouvelles valeurs
+        setFormData(updatedFormData);
         Alert.alert('Succès', 'Profil mis à jour avec succès !');
         // Restaurer la position de défilement après la mise à jour
         preserveScrollPosition();
@@ -217,12 +237,12 @@ export default function ProfilScreen() {
   const EditableField = ({ 
     label, 
     value, 
-    onChangeText, 
+    fieldRef,
     placeholder 
   }: { 
     label: string; 
     value: string; 
-    onChangeText: (text: string) => void; 
+    fieldRef: React.MutableRefObject<string>;
     placeholder?: string;
   }) => (
     <View style={styles.fieldContainer}>
@@ -230,11 +250,10 @@ export default function ProfilScreen() {
       {isEditing ? (
         <TextInput
           style={styles.textInput}
-          value={value}
-          onChangeText={onChangeText}
+          defaultValue={value}
+          onChangeText={(text) => fieldRef.current = text}
           placeholder={placeholder}
           placeholderTextColor={Colors.textSecondary}
-          scrollEnabled={false}
         />
       ) : (
         <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
@@ -329,17 +348,13 @@ export default function ProfilScreen() {
       ref={scrollViewRef}
       style={styles.container} 
       showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
       onScroll={(event) => {
         scrollPositionRef.current = event.nativeEvent.contentOffset.y;
       }}
       scrollEventThrottle={16}
       contentContainerStyle={{ paddingBottom: 40 }}
-      maintainVisibleContentPosition={{
-        minIndexForVisible: 0,
-        autoscrollToTopThreshold: null
-      }}
     >
       {/* Header */}
       <LinearGradient
@@ -381,21 +396,21 @@ export default function ProfilScreen() {
           <EditableField
             label="Prénom"
             value={formData.firstName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
+            fieldRef={firstNameRef}
             placeholder="Votre prénom"
           />
           
           <EditableField
             label="Nom"
             value={formData.lastName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+            fieldRef={lastNameRef}
             placeholder="Votre nom"
           />
           
           <EditableField
             label="Nom d'utilisateur"
             value={formData.username}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, username: text }))}
+            fieldRef={usernameRef}
             placeholder="Votre nom d'utilisateur"
           />
 
