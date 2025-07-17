@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -65,6 +65,7 @@ export default function ProgrammeScreen() {
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
+  const scrollPositionRef = useRef(0);
 
   // Supprimer les références qui causent des problèmes
   useEffect(() => {
@@ -569,8 +570,11 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
 
-    // Mémoriser la position de défilement actuelle
-    const scrollPosition = modalScrollViewRef.current?.scrollTop;
+    // Capturer la position de défilement actuelle
+    const currentScrollPosition = modalScrollViewRef.current?.scrollTop;
+    if (currentScrollPosition !== undefined) {
+      scrollPositionRef.current = currentScrollPosition;
+    }
 
     // Créer une copie des activités du jour sélectionné
     const updatedActivities = { ...selectedDay.activities };
@@ -607,11 +611,14 @@ export default function ProgrammeScreen() {
     setCompletionPercentage(Math.round(progress));
     
     // Restaurer la position de défilement après le rendu
-    setTimeout(() => {
-      if (modalScrollViewRef.current && scrollPosition) {
-        modalScrollViewRef.current.scrollTop = scrollPosition;
-      }
-    }, 0);
+    // Utiliser un délai plus long pour s'assurer que le rendu est terminé
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (modalScrollViewRef.current && scrollPositionRef.current) {
+          modalScrollViewRef.current.scrollTop = scrollPositionRef.current;
+        }
+      }, 50);
+    });
   };
 
   const WeekSelector = () => (
@@ -846,7 +853,7 @@ export default function ProgrammeScreen() {
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Jour {selectedDay.day}</Text>
             <TouchableOpacity onPress={() => setSelectedDay(null)}>
-              <Text style={styles.modalClose}>✕</Text>
+              <Text style={styles.modalClose} accessibilityLabel="Fermer">✕</Text>
             </TouchableOpacity>
             {isPastDay(selectedDay.date) && !selectedDay.isToday && (
               <View style={styles.pastDayBadge}>
@@ -862,9 +869,15 @@ export default function ProgrammeScreen() {
           <ScrollView 
             ref={modalScrollViewRef}
             style={styles.modalBody} 
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            onScroll={(event) => {
+              const y = event.nativeEvent.contentOffset.y;
+              scrollPositionRef.current = y;
+            }}
+            scrollEventThrottle={16}
           >
             <ActivityRow
               title="🌅 Petit-déjeuner"

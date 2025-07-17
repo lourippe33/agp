@@ -32,9 +32,10 @@ const { width } = Dimensions.get('window');
 
 export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const scrollPositionRef = useRef(0);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -71,6 +72,17 @@ export default function ProfilScreen() {
     }
   }, [user]);
 
+  // Fonction pour préserver la position de défilement
+  const preserveScrollPosition = useCallback(() => {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (scrollViewRef.current && scrollPositionRef.current > 0) {
+          scrollViewRef.current.scrollTo({ y: scrollPositionRef.current, animated: false });
+        }
+      }, 50);
+    });
+  }, []);
+
   const handleSave = async () => {
     try {
       await updateProfile({
@@ -90,6 +102,7 @@ export default function ProfilScreen() {
       
       setIsEditing(false);
       Alert.alert('Succès', 'Profil mis à jour avec succès');
+      preserveScrollPosition();
     } catch (error) {
       Alert.alert('Erreur', 'Impossible de mettre à jour le profil');
     }
@@ -112,6 +125,7 @@ export default function ProfilScreen() {
       {isEditing ? (
         <TextInput
           style={styles.input}
+          scrollEnabled={false}
           value={formData[key]}
           onChangeText={(text) => setFormData(prev => ({ ...prev, [key]: text }))}
           placeholder={placeholder || label}
@@ -127,16 +141,19 @@ export default function ProfilScreen() {
     <ScrollView 
       ref={scrollViewRef}
       style={styles.container} 
+      contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
-      onContentSizeChange={() => {
-        // Conserver la position de défilement actuelle
-        const scrollPosition = scrollViewRef.current?.scrollTop;
-        setTimeout(() => {
-          if (scrollViewRef.current && scrollPosition) {
-            scrollViewRef.current.scrollTop = scrollPosition;
-          }
-        }, 0);
+      keyboardDismissMode="on-drag"
+      onScroll={(event) => {
+        // Capturer la position de défilement actuelle
+        const y = event.nativeEvent.contentOffset.y;
+        scrollPositionRef.current = y;
+      }}
+      scrollEventThrottle={16}
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+        autoscrollToTopThreshold: 10
       }}
     >
       {/* Header */}
