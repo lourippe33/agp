@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock, Zap } from 'lucide-react-native';
-import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User, Clock } from 'lucide-react-native';
+import { Chrome as Home, ChartBar as BarChart3, Users, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import DayProgramCard from '@/components/DayProgramCard';
 import { isPastDay } from '@/utils/dateUtils';
