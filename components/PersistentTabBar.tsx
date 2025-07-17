@@ -3,7 +3,6 @@ import { View, TouchableOpacity, Text, StyleSheet, Animated, Platform } from 're
 import { router, usePathname } from 'expo-router';
 import { Chrome as Home } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { View } from 'react-native';
 
 export default function PersistentTabBar() {
   const pathname = usePathname();
