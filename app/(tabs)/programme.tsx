@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock } from 'lucide-react-native';
+import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock, Zap } from 'lucide-react-native';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,6 +31,7 @@ interface DayProgram {
   date: Date;
   isCompleted: boolean;
   isToday: boolean;
+  isPartiallyCompleted?: boolean;
   activities: {
     breakfast: { name: string; completed: boolean };
     sport: { name: string; completed: boolean };
@@ -113,13 +114,17 @@ export default function ProgrammeScreen() {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
       
+      // Déterminer si le jour est complètement ou partiellement complété
       const isToday = currentDate.toDateString() === todayStr;
       const isPast = currentDate.getTime() < today.getTime() && !isToday;
+      const isCompleted = isPast && Math.random() > 0.3; // Simulation de progression complète
+      const isPartiallyCompleted = isPast && !isCompleted && Math.random() > 0.5; // Simulation de progression partielle
       
       program.push({
         day: i + 1,
         date: currentDate,
-        isCompleted: isPast && Math.random() > 0.3, // Simulation de progression
+        isCompleted: isCompleted,
+        isPartiallyCompleted: isPartiallyCompleted,
         isToday,
         activities: generateDayActivities(i + 1),
         totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
@@ -538,8 +543,9 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={[
           styles.dayCard,
-          day.isCompleted && styles.dayCardCompleted,
-          day.isToday && styles.dayCardToday
+          day.isCompleted && styles.dayCardCompleted, // Vert pour les jours complétés
+          day.isPartiallyCompleted && styles.dayCardPartiallyCompleted, // Rouge pour les jours partiellement complétés
+          day.isToday && styles.dayCardToday // Bleu pour le jour actuel
         ]}
         onPress={() => handleDayPress(day)}
         activeOpacity={0.8}
@@ -547,13 +553,17 @@ export default function ProgrammeScreen() {
         <View style={styles.dayHeader}>
           <Text style={[
             styles.dayNumber,
-            day.isCompleted && styles.dayNumberCompleted,
-            day.isToday && styles.dayNumberToday
+            day.isCompleted && styles.dayNumberCompleted, // Texte vert
+            day.isPartiallyCompleted && styles.dayNumberPartiallyCompleted, // Texte rouge
+            day.isToday && styles.dayNumberToday // Texte bleu
           ]}>
             {day.day}
           </Text>
           {day.isCompleted && (
-            <CheckCircle size={16} color={Colors.agpGreen} />
+            <Zap size={16} color={Colors.agpGreen} />
+          )}
+          {day.isPartiallyCompleted && (
+            <Flame size={16} color={Colors.relaxation} />
           )}
           {isPast && !day.isCompleted && (
             <Lock size={14} color={Colors.textSecondary} />
@@ -1192,6 +1202,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.agpLightGreen,
     borderColor: Colors.agpGreen,
   },
+  dayCardPartiallyCompleted: {
+    backgroundColor: '#FFE0E6', // Fond rouge clair
+    borderColor: Colors.relaxation,
+  },
   dayCardToday: {
     backgroundColor: Colors.agpLightBlue,
     borderLeftWidth: 4,
@@ -1216,6 +1230,9 @@ const styles = StyleSheet.create({
   },
   dayNumberCompleted: {
     color: Colors.agpGreen,
+  },
+  dayNumberPartiallyCompleted: {
+    color: Colors.relaxation,
   },
   dayNumberToday: {
     color: Colors.agpBlue,
