@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,131 +8,318 @@ import {
   Alert,
   StyleSheet,
   Dimensions,
-  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../contexts/AuthContext';
-import { Colors } from '../constants/Colors';
+import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { Colors } from '@/constants/Colors';
+import { useAuth } from '@/contexts/AuthContext';
+import AGPLogo from '@/components/AGPLogo';
+import { TrackingService } from '@/services/TrackingService';
+import { UserProfile } from '@/types/Tracking';
+import NotificationSettings from '@/components/NotificationSettings';
+import NotificationTester from '@/components/NotificationTester';
 
-interface UserProfile {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
-}
-
-const { width } = Dimensions.get('window');
+// Variable pour contrôler l'affichage du testeur de notifications
+const showNotificationSettings = true;
 
 export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();
-  const scrollViewRef = useRef<ScrollView | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const scrollPositionRef = useRef(0);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    username: user?.username || '',
+    niveauSport: user?.niveauSport || 'debutant',
+    preferencesAlimentaires: user?.preferencesAlimentaires || [],
+    objectifs: user?.objectifs || [],
   });
+  const [profileData, setProfileData] = useState({
+    currentWeight: 0,
+    targetWeight: 0,
+    height: 0,
+    waistMeasurement: 0,
+  });
+  const [notifications, setNotifications] = useState(true);
+  const [waterNotifications, setWaterNotifications] = useState(true);
+  const [waterObjective, setWaterObjective] = useState(8);
+
+  // État pour suivre le processus de déconnexion
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  // Référence pour le ScrollView
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollPositionRef = useRef(0);
 
   useEffect(() => {
     if (user) {
-      const profile: UserProfile = {
-        id: user.uid,
-        email: user.email || '',
-        firstName: user.displayName?.split(' ')[0] || '',
-        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-        phone: '',
-        address: '',
-        city: '',
-        postalCode: '',
-        country: '',
-      };
-      setUserProfile(profile);
       setFormData({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        phone: profile.phone || '',
-        address: profile.address || '',
-        city: profile.city || '',
-        postalCode: profile.postalCode || '',
-        country: profile.country || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        username: user.username || '',
+        niveauSport: user.niveauSport || 'debutant',
+        preferencesAlimentaires: user.preferencesAlimentaires || [],
+        objectifs: user.objectifs || [],
       });
+    }
+    
+    // Charger le profil de suivi
+    if (user) {
+      loadUserProfile();
     }
   }, [user]);
 
+  const loadUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const profile = await TrackingService.getUserProfile(user.id);
+      if (profile) {
+        setUserProfile(profile);
+        setProfileData({
+          currentWeight: profile.currentWeight || 0,
+          targetWeight: profile.targetWeight || 0,
+          height: profile.height || 0,
+          waistMeasurement: profile.waistMeasurement || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement du profil:', error);
+    }
+  };
+
   // Fonction pour préserver la position de défilement
   const preserveScrollPosition = useCallback(() => {
-    requestAnimationFrame(() => {
+    if (scrollViewRef.current && scrollPositionRef.current > 0) {
       setTimeout(() => {
-        if (scrollViewRef.current && scrollPositionRef.current > 0) {
-          scrollViewRef.current.scrollTo({ y: scrollPositionRef.current, animated: false });
-        }
-      }, 50);
-    });
+        scrollViewRef.current?.scrollTo({ y: scrollPositionRef.current, animated: false });
+      }, 100);
+    }
   }, []);
 
   const handleSave = async () => {
+    if (!user) return;
+
     try {
-      await updateProfile({
-        displayName: `${formData.firstName} ${formData.lastName}`,
-      });
+      // Sauvegarder les informations de base
+      const result = await updateProfile(user.id, formData);
       
-      setUserProfile(prev => prev ? {
-        ...prev,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        postalCode: formData.postalCode,
-        country: formData.country,
-      } : null);
+      // Sauvegarder le profil de suivi
+      if (profileData.currentWeight > 0) {
+        const profileToSave: UserProfile = {
+          id: userProfile?.id || TrackingService.generateId(),
+          currentWeight: profileData.currentWeight,
+          targetWeight: profileData.targetWeight,
+          height: profileData.height,
+          waistMeasurement: profileData.waistMeasurement,
+          startDate: userProfile?.startDate || new Date().toISOString().split('T')[0],
+        };
+        
+        await TrackingService.saveUserProfile(user.id, profileToSave);
+        setUserProfile(profileToSave);
+      }
       
-      setIsEditing(false);
-      Alert.alert('Succès', 'Profil mis à jour avec succès');
-      preserveScrollPosition();
+      if (result.success) {
+        setIsEditing(false);
+        Alert.alert('Succès', 'Profil mis à jour avec succès !');
+        // Restaurer la position de défilement après la mise à jour
+        preserveScrollPosition();
+      } else {
+        Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
+      }
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de mettre à jour le profil');
+      Alert.alert('Erreur', 'Une erreur est survenue');
     }
   };
 
   const handleLogout = () => {
+    console.log('Bouton de déconnexion cliqué');
     Alert.alert(
       'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      'Êtes-vous sûr de vouloir vous déconnecter de l\'application AGP ?',
       [
         { text: 'Annuler', style: 'cancel' },
-        { text: 'Déconnexion', style: 'destructive', onPress: logout },
+        {
+          text: 'Déconnexion',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setIsLoggingOut(true);
+              console.log('🔄 Tentative de déconnexion initiée depuis le profil...');
+              await logout();
+              console.log('✅ Déconnexion réussie, redirection vers login');
+              router.replace('/login');
+            } catch (error) {
+              setIsLoggingOut(false);
+              console.error('❌ Erreur lors de la déconnexion:', error);
+              Alert.alert(
+                'Erreur',
+                'Un problème est survenu lors de la déconnexion. Veuillez réessayer.'
+              );
+            }
+          },
+        },
       ]
     );
   };
 
-  const renderField = (label: string, value: string, key: keyof typeof formData, placeholder?: string) => (
+  const togglePreference = (preference: string) => {
+    setFormData(prev => ({
+      ...prev,
+      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
+        ? prev.preferencesAlimentaires.filter(p => p !== preference)
+        : [...prev.preferencesAlimentaires, preference]
+    }));
+  };
+
+  const toggleObjectif = (objectif: string) => {
+    setFormData(prev => ({
+      ...prev,
+      objectifs: prev.objectifs.includes(objectif)
+        ? prev.objectifs.filter(o => o !== objectif)
+        : [...prev.objectifs, objectif]
+    }));
+  };
+
+  const preferencesOptions = [
+    'Végétarien',
+    'Vegan',
+    'Sans gluten',
+    'Sans lactose',
+    'Paléo',
+    'Cétogène'
+  ];
+
+  const objectifsOptions = [
+    'Perte de poids',
+    'Prise de muscle',
+    'Améliorer l\'énergie',
+    'Réduire le stress',
+    'Mieux dormir',
+    'Améliorer la digestion'
+  ];
+
+  const niveauxSport = [
+    { value: 'debutant', label: 'Débutant' },
+    { value: 'intermediaire', label: 'Intermédiaire' },
+    { value: 'avance', label: 'Avancé' }
+  ];
+
+  const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {children}
+    </View>
+  );
+
+  const EditableField = ({ 
+    label, 
+    value, 
+    onChangeText, 
+    placeholder 
+  }: { 
+    label: string; 
+    value: string; 
+    onChangeText: (text: string) => void; 
+    placeholder?: string;
+  }) => (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
       {isEditing ? (
         <TextInput
-          style={styles.input}
+          style={styles.textInput}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.textSecondary}
           scrollEnabled={false}
-          value={formData[key]}
-          onChangeText={(text) => setFormData(prev => ({ ...prev, [key]: text }))}
-          placeholder={placeholder || label}
-          placeholderTextColor={Colors.gray}
         />
       ) : (
         <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
+      )}
+    </View>
+  );
+
+  const SelectField = ({ 
+    label, 
+    value, 
+    options, 
+    onSelect 
+  }: { 
+    label: string; 
+    value: string; 
+    options: { value: string; label: string }[]; 
+    onSelect: (value: string) => void;
+  }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <View style={styles.selectContainer}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.selectOption,
+                value === option.value && styles.selectOptionSelected
+              ]}
+              onPress={() => onSelect(option.value)}
+            >
+              <Text style={[
+                styles.selectOptionText,
+                value === option.value && styles.selectOptionTextSelected
+              ]}>
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : (
+        <Text style={styles.fieldValue}>
+          {options.find(opt => opt.value === value)?.label || 'Non renseigné'}
+        </Text>
+      )}
+    </View>
+  );
+
+  const MultiSelectField = ({ 
+    label, 
+    values, 
+    options, 
+    onToggle 
+  }: { 
+    label: string; 
+    values: string[]; 
+    options: string[]; 
+    onToggle: (value: string) => void;
+  }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <View style={styles.multiSelectContainer}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={[
+                styles.multiSelectOption,
+                values.includes(option) && styles.multiSelectOptionSelected
+              ]}
+              onPress={() => onToggle(option)}
+            >
+              <Text style={[
+                styles.multiSelectOptionText,
+                values.includes(option) && styles.multiSelectOptionTextSelected
+              ]}>
+                {option}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : (
+        <Text style={styles.fieldValue}>
+          {values.length > 0 ? values.join(', ') : 'Aucune préférence'}
+        </Text>
       )}
     </View>
   );
@@ -141,19 +328,17 @@ export default function ProfilScreen() {
     <ScrollView 
       ref={scrollViewRef}
       style={styles.container} 
-      contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       onScroll={(event) => {
-        // Capturer la position de défilement actuelle
-        const y = event.nativeEvent.contentOffset.y;
-        scrollPositionRef.current = y;
+        scrollPositionRef.current = event.nativeEvent.contentOffset.y;
       }}
       scrollEventThrottle={16}
+      contentContainerStyle={{ paddingBottom: 40 }}
       maintainVisibleContentPosition={{
         minIndexForVisible: 0,
-        autoscrollToTopThreshold: 10
+        autoscrollToTopThreshold: null
       }}
     >
       {/* Header */}
@@ -162,86 +347,272 @@ export default function ProfilScreen() {
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <View style={styles.avatarContainer}>
-            <Ionicons name="person" size={50} color="white" />
+          <View style={styles.logoContainer}>
+            <AGPLogo size={50} />
           </View>
-          <Text style={styles.userName}>
-            {userProfile ? `${userProfile.firstName} ${userProfile.lastName}` : 'Utilisateur'}
-          </Text>
-          <Text style={styles.userEmail}>{userProfile?.email}</Text>
+          <View style={styles.headerText}>
+            <Text style={styles.headerTitle}>Mon Profil</Text>
+            <Text style={styles.headerSubtitle}>
+              Personnalisez votre expérience AGP
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              if (isEditing) {
+                handleSave();
+              } else {
+                setIsEditing(true);
+              }
+            }}
+          >
+            {isEditing ? (
+              <Save size={24} color={Colors.textLight} />
+            ) : (
+              <Edit3 size={24} color={Colors.textLight} />
+            )}
+          </TouchableOpacity>
         </View>
       </LinearGradient>
 
-      {/* Profile Content */}
       <View style={styles.content}>
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Informations personnelles</Text>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => setIsEditing(!isEditing)}
-            >
-              <Ionicons 
-                name={isEditing ? "close" : "pencil"} 
-                size={20} 
-                color={Colors.agpBlue} 
-              />
-            </TouchableOpacity>
+        {/* Informations personnelles */}
+        <ProfileSection title="👤 Informations personnelles">
+          <EditableField
+            label="Prénom"
+            value={formData.firstName}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
+            placeholder="Votre prénom"
+          />
+          
+          <EditableField
+            label="Nom"
+            value={formData.lastName}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+            placeholder="Votre nom"
+          />
+          
+          <EditableField
+            label="Nom d'utilisateur"
+            value={formData.username}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, username: text }))}
+            placeholder="Votre nom d'utilisateur"
+          />
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.fieldLabel}>Email</Text>
+            <Text style={styles.fieldValue}>{user?.email}</Text>
           </View>
+        </ProfileSection>
 
-          {renderField('Prénom', userProfile?.firstName || '', 'firstName')}
-          {renderField('Nom', userProfile?.lastName || '', 'lastName')}
-          {renderField('Téléphone', userProfile?.phone || '', 'phone', '+33 6 12 34 56 78')}
-          {renderField('Adresse', userProfile?.address || '', 'address', '123 Rue de la Paix')}
-          {renderField('Ville', userProfile?.city || '', 'city', 'Paris')}
-          {renderField('Code postal', userProfile?.postalCode || '', 'postalCode', '75001')}
-          {renderField('Pays', userProfile?.country || '', 'country', 'France')}
-
-          {isEditing && (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Sauvegarder</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.cancelButton} 
-                onPress={() => setIsEditing(false)}
-              >
-                <Text style={styles.cancelButtonText}>Annuler</Text>
-              </TouchableOpacity>
+        {/* Mesures corporelles */}
+        <ProfileSection title="⚖️ Mesures corporelles">
+          <EditableField
+            label="Poids actuel (kg)"
+            value={profileData.currentWeight ? profileData.currentWeight.toString() : ''}
+            onChangeText={(text) => setProfileData(prev => ({ 
+              ...prev, 
+              currentWeight: parseFloat(text) || 0 
+            }))}
+            placeholder="Ex: 70.5"
+          />
+          
+          <EditableField
+            label="Poids cible (kg)"
+            value={profileData.targetWeight ? profileData.targetWeight.toString() : ''}
+            onChangeText={(text) => setProfileData(prev => ({ 
+              ...prev, 
+              targetWeight: parseFloat(text) || 0 
+            }))}
+            placeholder="Ex: 65"
+          />
+          
+          <EditableField
+            label="Taille (cm)"
+            value={profileData.height ? profileData.height.toString() : ''}
+            onChangeText={(text) => setProfileData(prev => ({ 
+              ...prev, 
+              height: parseFloat(text) || 0 
+            }))}
+            placeholder="Ex: 175"
+          />
+          
+          <EditableField
+            label="Tour de taille (cm)"
+            value={profileData.waistMeasurement ? profileData.waistMeasurement.toString() : ''}
+            onChangeText={(text) => setProfileData(prev => ({ 
+              ...prev, 
+              waistMeasurement: parseFloat(text) || 0 
+            }))}
+            placeholder="Ex: 80"
+          />
+          
+          {!isEditing && profileData.height > 0 && profileData.currentWeight > 0 && (
+            <View style={styles.bmiContainer}>
+              <Text style={styles.bmiLabel}>IMC :</Text>
+              <Text style={styles.bmiValue}>
+                {TrackingService.calculateBMI(profileData.currentWeight, profileData.height)}
+              </Text>
+              <Text style={styles.bmiCategory}>
+                {getBMICategory(TrackingService.calculateBMI(profileData.currentWeight, profileData.height))}
+              </Text>
             </View>
           )}
-        </View>
+        </ProfileSection>
+
+        {/* Préférences sportives */}
+        <ProfileSection title="💪 Préférences sportives">
+          <SelectField
+            label="Niveau sportif"
+            value={formData.niveauSport}
+            options={niveauxSport}
+            onSelect={(value) => setFormData(prev => ({ ...prev, niveauSport: value as any }))}
+          />
+        </ProfileSection>
+
+        {/* Préférences alimentaires */}
+        <ProfileSection title="🍽️ Préférences alimentaires">
+          <MultiSelectField
+            label="Régimes alimentaires"
+            values={formData.preferencesAlimentaires}
+            options={preferencesOptions}
+            onToggle={togglePreference}
+          />
+        </ProfileSection>
+
+        {/* Objectifs */}
+        <ProfileSection title="🎯 Objectifs">
+          <MultiSelectField
+            label="Vos objectifs"
+            values={formData.objectifs}
+            options={objectifsOptions}
+            onToggle={toggleObjectif}
+          />
+        </ProfileSection>
+
+        {/* Paramètres */}
+        <ProfileSection title="⚙️ Paramètres">
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Bell size={20} color={Colors.agpBlue} />
+              <Text style={styles.settingLabel}>Notifications</Text>
+            </View>
+            <Switch
+              value={notifications}
+              onValueChange={setNotifications}
+              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
+              thumbColor={notifications ? Colors.agpBlue : Colors.textSecondary}
+            />
+          </View>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Droplets size={20} color={Colors.agpBlue} />
+              <Text style={styles.settingLabel}>Rappels d'hydratation</Text>
+            </View>
+            <Switch
+              value={waterNotifications}
+              onValueChange={setWaterNotifications}
+              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
+              thumbColor={waterNotifications ? Colors.agpBlue : Colors.textSecondary}
+            />
+          </View>
+          
+          <NotificationSettings />
+
+          {/* Testeur de notifications */}
+          {showNotificationSettings && (
+            <NotificationTester />
+          )}
+
+          {waterNotifications && (
+            <View style={styles.waterObjectiveSetting}>
+              <Text style={styles.waterObjectiveLabel}>Objectif quotidien d'eau</Text>
+              <View style={styles.waterObjectiveControls}>
+                <TouchableOpacity
+                  style={styles.waterObjectiveButton}
+                  onPress={() => setWaterObjective(Math.max(1, waterObjective - 1))}
+                >
+                  <Text style={styles.waterObjectiveButtonText}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.waterObjectiveValue}>
+                  <Text style={styles.waterObjectiveValueText}>{waterObjective}</Text>
+                  <Text style={styles.waterObjectiveUnit}>verres</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.waterObjectiveButton}
+                  onPress={() => setWaterObjective(waterObjective + 1)}
+                >
+                  <Text style={styles.waterObjectiveButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.waterObjectiveHelp}>
+                Recommandation : 8 verres (environ 2L) par jour
+              </Text>
+            </View>
+          )}
+        </ProfileSection>
+
+        {/* Statistiques */}
+        <ProfileSection title="📊 Statistiques">
+          <View style={styles.statsGrid}>
+            <View style={styles.statItem}>
+              <Activity size={24} color={Colors.agpGreen} />
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Exercices</Text>
+            </View>
+            
+            <View style={styles.statItem}>
+              <Heart size={24} color={Colors.relaxation} />
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Favoris</Text>
+            </View>
+            
+            <View style={styles.statItem}>
+              <Target size={24} color={Colors.morning} />
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Jours actifs</Text>
+            </View>
+          </View>
+        </ProfileSection>
 
         {/* Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Actions</Text>
-          
-          <TouchableOpacity style={styles.actionItem}>
-            <Ionicons name="notifications-outline" size={24} color={Colors.agpBlue} />
-            <Text style={styles.actionText}>Notifications</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.gray} />
+        <View style={styles.actionsSection}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
+            {isLoggingOut ? (
+              <ActivityIndicator size="small" color={Colors.relaxation} />
+            ) : (
+              <LogOut size={24} color={Colors.relaxation} />
+            )}
+            <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
+              Déconnexion
+            </Text>
+            <ChevronRight size={24} color={Colors.relaxation} />
           </TouchableOpacity>
+        </View>
 
-          <TouchableOpacity style={styles.actionItem}>
-            <Ionicons name="shield-outline" size={24} color={Colors.agpBlue} />
-            <Text style={styles.actionText}>Confidentialité</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.gray} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionItem}>
-            <Ionicons name="help-circle-outline" size={24} color={Colors.agpBlue} />
-            <Text style={styles.actionText}>Aide</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.gray} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.actionItem, styles.logoutItem]} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={24} color={Colors.error} />
-            <Text style={[styles.actionText, styles.logoutText]}>Déconnexion</Text>
-          </TouchableOpacity>
+        {/* Informations de compte */}
+        <View style={styles.accountInfo}>
+          <Text style={styles.accountInfoTitle}>Informations du compte</Text>
+          <Text style={styles.accountInfoText}>
+            Membre depuis : {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+          </Text>
+          <Text style={styles.accountInfoText}>
+            Dernière mise à jour : {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('fr-FR') : 'Jamais'}
+          </Text>
         </View>
       </View>
     </ScrollView>
   );
+}
+
+// Fonction pour obtenir la catégorie d'IMC
+function getBMICategory(bmi: number): string {
+  if (bmi < 18.5) return 'Insuffisance pondérale';
+  if (bmi < 25) return 'Corpulence normale';
+  if (bmi < 30) return 'Surpoids';
+  if (bmi < 35) return 'Obésité modérée';
+  if (bmi < 40) return 'Obésité sévère';
+  return 'Obésité morbide';
 }
 
 const styles = StyleSheet.create({
@@ -255,130 +626,292 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerContent: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  logoContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
+    borderRadius: 30,
+    padding: 8,
   },
-  userName: {
+  headerText: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 5,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginBottom: 4,
   },
-  userEmail: {
+  headerSubtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  editButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 25,
+    padding: 12,
   },
   content: {
-    flex: 1,
     padding: 20,
   },
   section: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    shadowRadius: 4,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-  },
-  editButton: {
-    padding: 8,
+    marginBottom: 16,
   },
   fieldContainer: {
-    marginBottom: 15,
+    marginBottom: 16,
   },
   fieldLabel: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.agpBlue,
-    marginBottom: 5,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    marginBottom: 8,
   },
   fieldValue: {
     fontSize: 16,
-    color: Colors.text,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
     paddingVertical: 8,
   },
-  input: {
+  textInput: {
+    backgroundColor: Colors.background,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     fontSize: 16,
+    fontFamily: 'Inter-Regular',
     color: Colors.text,
   },
-  buttonContainer: {
+  selectContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+    gap: 8,
+    flexWrap: 'wrap',
   },
-  saveButton: {
-    flex: 1,
+  selectOption: {
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  selectOptionSelected: {
     backgroundColor: Colors.agpBlue,
-    paddingVertical: 12,
+    borderColor: Colors.agpBlue,
+  },
+  selectOptionText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+  },
+  selectOptionTextSelected: {
+    color: Colors.textLight,
+  },
+  multiSelectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  multiSelectOption: {
+    backgroundColor: Colors.background,
     borderRadius: 8,
-    marginRight: 10,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  saveButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: '600',
-    fontSize: 16,
+  multiSelectOptionSelected: {
+    backgroundColor: Colors.agpGreen,
+    borderColor: Colors.agpGreen,
   },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: Colors.gray,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginLeft: 10,
+  multiSelectOptionText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
   },
-  cancelButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: '600',
-    fontSize: 16,
+  multiSelectOptionTextSelected: {
+    color: Colors.textLight,
   },
-  actionItem: {
+  settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    justifyContent: 'space-between',
+    paddingVertical: 8,
   },
-  actionText: {
-    flex: 1,
+  settingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  settingLabel: {
     fontSize: 16,
+    fontFamily: 'Poppins-Medium',
     color: Colors.text,
-    marginLeft: 15,
   },
-  logoutItem: {
-    borderBottomWidth: 0,
+  waterObjectiveSetting: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    marginLeft: 36,
   },
-  logoutText: {
-    color: Colors.error,
+  waterObjectiveLabel: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    marginBottom: 12,
+  },
+  waterObjectiveControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  waterObjectiveButton: {
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  waterObjectiveButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+  },
+  waterObjectiveValue: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    paddingHorizontal: 16,
+  },
+  waterObjectiveValueText: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+    marginRight: 4,
+  },
+  waterObjectiveUnit: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  waterObjectiveHelp: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  actionsSection: {
+    marginBottom: 20,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 24,
+    paddingHorizontal: 24,
+    gap: 16,
+    marginBottom: 12,
+    elevation: 8,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.relaxation,
+  },
+  actionButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    flex: 1,
+  },
+  accountInfo: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  accountInfoTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  accountInfoText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    marginBottom: 4,
+  },
+  bmiContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+  },
+  bmiLabel: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    marginRight: 8,
+  },
+  bmiValue: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+    marginRight: 8,
+  },
+  bmiCategory: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
   },
 });
