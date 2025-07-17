@@ -555,6 +555,16 @@ export default function ProgrammeScreen() {
             params: { 
               exerciseId: activityId.toString(),
               openModal: 'true'
+            }
+          });
+        } else {
+          router.push('/detente');
+        }
+        break;
+    }
+  };
+
+  const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     const updatedProgram = programData.map(day => {
       if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
