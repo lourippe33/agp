@@ -451,10 +451,7 @@ export default function HomeScreen() {
         <View style={styles.headerContent}>
           <View style={styles.headerLeft}>
             <Text style={styles.greeting}>
-              {getGreeting()}, {user?.firstName || 'Utilisateur'}
-            </Text>
-            <Text style={styles.subtitle}>
-              Votre parcours chronobiologique vous attend
+              Bienvenue sur AGP, Eric
             </Text>
           </View>
 
@@ -679,6 +676,7 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     flex: 1,
+    alignItems: 'center',
   },
   headerRight: {
     flexDirection: 'column',
@@ -695,6 +693,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight, 
     marginBottom: 4,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
