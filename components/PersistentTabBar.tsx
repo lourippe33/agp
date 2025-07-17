@@ -50,21 +50,10 @@ export default function PersistentTabBar() {
       pathname === '/(tabs)/communaute' || 
       pathname === '/(tabs)/profil' ||
       pathname === '/(tabs)/journal') {
-    return <View />;
+    return null;
   }
 
-  return (
-    <Animated.View style={[styles.container, { height: tabBarHeight }]}>
-      <TouchableOpacity 
-        style={styles.homeButton} 
-        onPress={navigateToHome}
-        activeOpacity={0.8}
-      >
-        <Home size={24} color={Colors.primary} strokeWidth={2} />
-        <Text style={styles.homeButtonText}>Accueil</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
+  return null;
 }
 
 const styles = StyleSheet.create({
