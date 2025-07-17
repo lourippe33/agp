@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Zap, Flame, Lock } from 'lucide-react-native';
+import { Zap, Flame, Lock, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { isPastDay } from '@/utils/dateUtils';
 
