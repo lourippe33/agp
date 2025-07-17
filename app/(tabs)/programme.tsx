@@ -856,28 +856,28 @@ export default function ProgrammeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <LinearGradient
-        colors={[Colors.agpBlue, Colors.agpGreen]}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <View style={styles.logoContainer}>
-            <AGPLogo size={50} />
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Programme 28 Jours</Text>
-            <Text style={styles.headerSubtitle}>
-              Votre transformation AGP personnalisée
-            </Text>
-          </View>
-          <View style={styles.headerIcon}>
-            <Calendar size={32} color={Colors.textLight} />
-          </View>
-        </View>
-      </LinearGradient>
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <LinearGradient
+          colors={[Colors.agpBlue, Colors.agpGreen]}
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <View style={styles.logoContainer}>
+              <AGPLogo size={50} />
+            </View>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>Programme 28 Jours</Text>
+              <Text style={styles.headerSubtitle}>
+                Votre transformation AGP personnalisée
+              </Text>
+            </View>
+            <View style={styles.headerIcon}>
+              <Calendar size={32} color={Colors.textLight} />
+            </View>
+          </View>
+        </LinearGradient>
+
         {/* Statistiques générales */}
         <OverallStats />
         
@@ -1000,6 +1000,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
+    width: '100%',
   },
   headerContent: {
     flexDirection: 'row',
@@ -1034,7 +1035,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   statsContainer: {
     flexDirection: 'row',

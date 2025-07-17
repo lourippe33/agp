@@ -102,7 +102,6 @@ const HeaderTitle = ({ name }: { name: string }) => (
 
 export default function HomeScreen() {
   const { user } = useAuth();
-  const navigation = useRouter();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [programData, setProgramData] = useState<DayProgram[]>([]);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
@@ -438,7 +437,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Header */}
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
@@ -465,19 +470,14 @@ export default function HomeScreen() {
             </View>
           </View>
         </LinearGradient>
-      </View>
 
-      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
-        <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
-          Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
-        </Text>
-      </View>
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        contentContainerStyle={styles.scrollContent}
-      >
+        {/* Welcome message */}
+        <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
+            Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
+          </Text>
+        </View>
+
         {/* Programme 28 Jours */}
         <View style={styles.programSection}>
           <Text style={styles.sectionTitle}>Programme 28 Jours</Text>
@@ -668,13 +668,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  headerContainer: {
-    width: '100%',
-  },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    width: '100%',
   },
   headerContent: {
     flexDirection: 'row',
@@ -725,9 +723,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    paddingTop: 0,
   },
   scrollContent: {
     paddingBottom: 100,
+    paddingTop: 0,
   },
   quickActions: {
     padding: 20,
