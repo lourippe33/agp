@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock, Zap } from 'lucide-react-native';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { isPastDay } from '@/utils/dateUtils';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
@@ -335,7 +336,7 @@ export default function ProgrammeScreen() {
     setUserChoices(newChoices);
     
     // Mettre à jour les données du programme
-    const updatedProgram = programData.map(day => {
+    setProgramData(prev => prev.map(day => {
       if (day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
         updatedActivities[currentActivityType] = {
@@ -349,25 +350,23 @@ export default function ProgrammeScreen() {
         };
       }
       return day;
-    });
-    
-    setProgramData(updatedProgram);
+    }));
     
     // Mettre à jour le jour sélectionné
-    const updatedSelectedDay = updatedProgram.find(day => day.day === selectedDay.day);
-    if (updatedSelectedDay) {
-      setSelectedDay(updatedSelectedDay);
-    }
-  };
-
-  // Vérifier si un jour est passé (avant aujourd'hui)
-  const isPastDay = (day: DayProgram): boolean => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayDate = new Date(day.date);
-    dayDate.setHours(0, 0, 0, 0);
-    
-    return dayDate.getTime() < today.getTime();
+    setSelectedDay(prev => {
+      if (!prev) return null;
+      
+      const updatedActivities = { ...prev.activities };
+      updatedActivities[currentActivityType] = {
+        name: choice.title,
+        completed: updatedActivities[currentActivityType].completed
+      };
+      
+      return {
+        ...prev,
+        activities: updatedActivities
+      };
+    });
   };
 
   // Fonction pour trouver l'ID exact de l'activité avec recherche améliorée
@@ -560,7 +559,7 @@ export default function ProgrammeScreen() {
     }
 
     const updatedProgram = programData.map(day => {
-      if (day.day === selectedDay.day) {
+      if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
         updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
 
@@ -581,16 +580,28 @@ export default function ProgrammeScreen() {
     
     setProgramData(updatedProgram);
     
-    // Mettre à jour le jour sélectionné
-    const updatedSelectedDay = updatedProgram.find(day => day.day === selectedDay.day);
-    if (updatedSelectedDay) {
-      setSelectedDay(updatedSelectedDay);
-    }
+    // Mettre à jour le jour sélectionné si nécessaire
+    setSelectedDay(prev => {
+      if (!prev) return null;
+      
+      const updatedActivities = { ...prev.activities };
+      updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
+      
+      // Vérifier si toutes les activités sont complétées
+      const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
+      // Vérifier si au moins une activité est complétée
+      const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
+      
+      return {
+        ...prev,
+        activities: updatedActivities,
+        isCompleted: allCompleted,
+        isPartiallyCompleted: !allCompleted && someCompleted
+      };
+    });
   };
 
   const DayCard = ({ day }: { day: DayProgram }) => {
-    const isPast = isPastDay(day);
-    
     return (
       <TouchableOpacity
         style={[

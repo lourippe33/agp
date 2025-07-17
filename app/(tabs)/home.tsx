@@ -32,6 +32,7 @@ import {
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
+import { isPastDay } from '@/utils/dateUtils';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 
@@ -110,6 +111,7 @@ export default function HomeScreen() {
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
   const todayIndex = new Date().getDay();
   const todayTip = dailyTips[todayIndex];
+  
   // Animation scales
   const [sportScale] = useState(new Animated.Value(1));
   const [recipesScale] = useState(new Animated.Value(1));
@@ -194,6 +196,9 @@ export default function HomeScreen() {
     const today = new Date();
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - (today.getDay() || 7) + 1); // Lundi de cette semaine
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
     const todayStr = today.toDateString();
 
     const program: DayProgram[] = [];
@@ -202,15 +207,45 @@ export default function HomeScreen() {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
       
+      // Déterminer si le jour est aujourd'hui, hier ou un autre jour passé
       const isToday = currentDate.toDateString() === todayStr;
-      const isPast = currentDate.getTime() < today.getTime() && !isToday;
+      const isYesterday = currentDate.toDateString() === yesterdayStr;
+      const isPast = isPastDay(currentDate);
+      
+      // Générer les activités du jour
+      const activities = generateDayActivities(i + 1);
+      
+      // Pour hier et les jours passés, déterminer si toutes les activités ont été cochées
+      let isCompleted = false;
+      let isPartiallyCompleted = false;
+      
+      if (isYesterday || (isPast && !isToday)) {
+        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
+        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
+        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
+        
+        if (allActivitiesChecked) {
+          isCompleted = true;
+          // Marquer toutes les activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = true;
+          });
+        } else if (someActivitiesChecked) {
+          isPartiallyCompleted = true;
+          // Marquer certaines activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = Math.random() > 0.5;
+          });
+        }
+      }
       
       program.push({
         day: i + 1,
         date: currentDate,
-        isCompleted: isPast && Math.random() > 0.3, // Simulation de progression
+        isCompleted,
+        isPartiallyCompleted,
         isToday,
-        activities: generateDayActivities(i + 1),
+        activities,
         totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
         badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
       });
@@ -241,9 +276,9 @@ export default function HomeScreen() {
     setOverallProgress(progress);
     
     // Trouver l'index du jour actuel pour le carrousel
-    const todayIndex = program.findIndex(day => day.isToday);
-    if (todayIndex !== -1) {
-      setVisibleDayIndex(Math.floor(todayIndex / 7) * 7);
+    const todayIdx = program.findIndex(day => day.isToday);
+    if (todayIdx !== -1) {
+      setVisibleDayIndex(Math.floor(todayIdx / 7) * 7);
     }
   };
 
@@ -320,38 +355,45 @@ export default function HomeScreen() {
     router.push('/detente');
   };
 
-  const handleDayPress = (day: DayProgram) => {
-    // Navigate to the program screen with the selected day
-    router.push({
-      pathname: '/(tabs)/programme',
-      params: { 
-        day: day.day.toString(),
-        openDetails: 'true'
-      }
-    });
-  };
-
-  const DayCard = ({ day }: { day: DayProgram }) => {
-    const isPast = isPastDay(day);
-    
+  const DayCard = ({ day }: { day: DayProgram }) => {    
     return (
       <TouchableOpacity
         style={[
           styles.dayCard,
-          day.isCompleted && styles.dayCardCompleted,
+          day.isCompleted && styles.dayCardCompleted, // Vert pour les jours complétés
+          day.isPartiallyCompleted && styles.dayCardPartiallyCompleted, // Rouge pour les jours partiellement complétés
           day.isToday && styles.dayCardToday
         ]}
-        onPress={() => handleDayPress(day)}
+        onPress={() => {
+          // Navigate to the program screen with the selected day
+          router.push({
+            pathname: '/(tabs)/programme',
+            params: { 
+              day: day.day.toString(),
+              openDetails: 'true'
+            }
+          });
+        }}
         activeOpacity={0.8}
       >
         <View style={styles.dayHeader}>
           <Text style={[
             styles.dayNumber,
             day.isCompleted && styles.dayNumberCompleted,
+            day.isPartiallyCompleted && styles.dayNumberPartiallyCompleted,
             day.isToday && styles.dayNumberToday
           ]}>
             {day.day}
           </Text>
+          {day.isCompleted && (
+            <Zap size={16} color={Colors.agpGreen} />
+          )}
+          {day.isPartiallyCompleted && (
+            <Flame size={16} color={Colors.relaxation} />
+          )}
+          {isPastDay(day) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
+            <Lock size={14} color={Colors.textSecondary} />
+          )}
           {day.badges && (
             <View style={styles.badgeContainer}>
               {day.badges.map((badge, index) => (
@@ -375,16 +417,6 @@ export default function HomeScreen() {
         </View>
       </TouchableOpacity>
     );
-  };
-
-  // Vérifier si un jour est passé (avant aujourd'hui)
-  const isPastDay = (day: DayProgram): boolean => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayDate = new Date(day.date);
-    dayDate.setHours(0, 0, 0, 0);
-    
-    return dayDate.getTime() < today.getTime();
   };
 
   const DayCarousel = () => {
@@ -1004,6 +1036,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.agpLightGreen,
     borderColor: Colors.agpGreen,
   },
+  dayCardPartiallyCompleted: {
+    backgroundColor: '#FFE0E6', // Fond rouge clair
+    borderColor: Colors.relaxation,
+  },
   dayCardToday: {
     borderColor: Colors.agpBlue,
     backgroundColor: Colors.agpLightBlue,
@@ -1021,6 +1057,9 @@ const styles = StyleSheet.create({
   },
   dayNumberCompleted: {
     color: Colors.agpGreen,
+  },
+  dayNumberPartiallyCompleted: {
+    color: Colors.relaxation,
   },
   dayNumberToday: {
     color: Colors.agpBlue,
