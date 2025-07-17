@@ -35,6 +35,23 @@ import { useAuth } from '@/contexts/AuthContext';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 
+interface DayProgram {
+  day: number;
+  date: Date;
+  isCompleted: boolean;
+  isToday: boolean;
+  activities: {
+    breakfast: { name: string; completed: boolean };
+    sport: { name: string; completed: boolean };
+    relaxation: { name: string; completed: boolean };
+    lunch: { name: string; completed: boolean };
+    snack: { name: string; completed: boolean };
+    dinner: { name: string; completed: boolean };
+  };
+  totalDuration: number;
+  badges?: string[];
+}
+
 const dailyTips = [
   {
     title: '💧 Hydratation optimale',
@@ -73,23 +90,6 @@ const actionCardWidth = (width - 60) / 2;
 const statCardWidth = (width - 56) / 2;
 const dayCardWidth = (width - 100) / 7;
 
-interface DayProgram {
-  day: number;
-  date: Date;
-  isCompleted: boolean;
-  isToday: boolean;
-  activities: {
-    breakfast: { name: string; completed: boolean };
-    sport: { name: string; completed: boolean };
-    relaxation: { name: string; completed: boolean };
-    lunch: { name: string; completed: boolean };
-    snack: { name: string; completed: boolean };
-    dinner: { name: string; completed: boolean };
-  };
-  totalDuration: number;
-  badges?: string[];
-}
-
 const HeaderTitle = ({ name }: { name: string }) => (
   <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
     <View style={{ alignItems: 'center', marginBottom: 6 }}>
@@ -106,8 +106,8 @@ export default function HomeScreen() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [programData, setProgramData] = useState<DayProgram[]>([]);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [overallProgress, setOverallProgress] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [overallProgress, setOverallProgress] = useState<number>(0);
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
   const todayIndex = new Date().getDay();
   const todayTip = dailyTips[todayIndex];
@@ -122,7 +122,7 @@ export default function HomeScreen() {
   else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
   else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
   else if (currentStreak >= 28) badge = '🏆';
-
+  
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
     const choices = {}; // userChoices[dayKey] || {}; // Simplified for home screen
@@ -475,7 +475,6 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        )}
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
       >
