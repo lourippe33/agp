@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -65,14 +65,10 @@ export default function ProgrammeScreen() {
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
+  // Supprimer les références qui causent des problèmes
   useEffect(() => {
     generateProgramData();
   }, [user]);
-  
-  // Référence pour le ScrollView de la modal
-  const modalScrollViewRef = useRef<ScrollView>(null);
-  // État pour stocker la position de défilement actuelle
-  const [scrollPosition, setScrollPosition] = useState(0);
   
   // Centrer le jour actuel au chargement initial
   useEffect(() => {
@@ -607,12 +603,6 @@ export default function ProgrammeScreen() {
     setCompletionPercentage(Math.round(progress));
   };
 
-  // Fonction pour capturer la position de défilement
-  const handleScroll = (event: any) => {
-    const y = event.nativeEvent.contentOffset.y;
-    setScrollPosition(y);
-  };
-
   const WeekSelector = () => (
     <View style={styles.weekSelector}>
       <TouchableOpacity
@@ -812,18 +802,7 @@ export default function ProgrammeScreen() {
                   "Vous ne pouvez pas modifier les activités des jours passés."
                 );
               } else {
-                // Mémoriser la position de défilement actuelle
-                const currentPosition = scrollPosition;
-                
-                // Mettre à jour l'état
                 toggleActivityCompletion(activityType);
-                
-                // Restaurer la position de défilement après la mise à jour
-                setTimeout(() => {
-                  if (modalScrollViewRef.current) {
-                    modalScrollViewRef.current.scrollTo({ y: currentPosition, animated: false });
-                  }
-                }, 50);
               }
             }}
           activeOpacity={0.7}
@@ -870,13 +849,10 @@ export default function ProgrammeScreen() {
           </View>
           
           <ScrollView 
-            ref={modalScrollViewRef}
             style={styles.modalBody} 
             contentContainerStyle={{ paddingBottom: 20 }}
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="handled"
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
           >
             <ActivityRow
               title="🌅 Petit-déjeuner"
