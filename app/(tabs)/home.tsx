@@ -124,24 +124,6 @@ export default function HomeScreen() {
   else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
   else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
   else if (currentStreak >= 28) badge = '🏆';
-  const [programData, setProgramData] = useState<DayProgram[]>([]);
-  const [visibleDayIndex, setVisibleDayIndex] = useState(0);
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [overallProgress, setOverallProgress] = useState(0);
-  const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
-  const todayIndex = new Date().getDay();
-  const todayTip = dailyTips[todayIndex];
-  // Animation scales
-  const [sportScale] = useState(new Animated.Value(1));
-  const [recipesScale] = useState(new Animated.Value(1));
-  const [relaxScale] = useState(new Animated.Value(1));
-  
-  // Badge pour le streak
-  let badge = '';
-  if (currentStreak >= 7 && currentStreak < 14) badge = '🌱';
-  else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
-  else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
-  else if (currentStreak >= 28) badge = '🏆';
 
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
