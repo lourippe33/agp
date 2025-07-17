@@ -68,6 +68,13 @@ export default function ProgrammeScreen() {
   useEffect(() => {
     generateProgramData();
   }, [user]);
+  
+  // Centrer le jour actuel au chargement initial
+  useEffect(() => {
+    if (programData.length > 0) {
+      scrollToToday();
+    }
+  }, [programData]);
 
   // Fonction pour obtenir l'index du jour actuel
   const getTodayIndex = () => {
@@ -84,10 +91,23 @@ export default function ProgrammeScreen() {
   // Fonction pour scroller automatiquement à la semaine actuelle
   const scrollToToday = () => {
     const todayIndex = getTodayIndex();
-    if (todayIndex !== -1) {
+    if (todayIndex >= 0) {
       const weekIndex = Math.floor(todayIndex / 7) + 1;
       setCurrentWeek(weekIndex);
-      setVisibleDayIndex((weekIndex - 1) * 7);
+      
+      // Centrer le jour actuel dans la vue
+      // Si le jour est au début ou à la fin de la semaine, ajuster pour montrer toute la semaine
+      const dayInWeek = todayIndex % 7;
+      if (dayInWeek <= 2) {
+        // Début de semaine, montrer depuis le début
+        setVisibleDayIndex((weekIndex - 1) * 7);
+      } else if (dayInWeek >= 4) {
+        // Fin de semaine, montrer jusqu'à la fin
+        setVisibleDayIndex(Math.max(0, (weekIndex - 1) * 7 + dayInWeek - 3));
+      } else {
+        // Milieu de semaine, centrer le jour
+        setVisibleDayIndex(Math.max(0, todayIndex - 3));
+      }
       
       // Animation du bouton
       Animated.sequence([
@@ -691,6 +711,7 @@ export default function ProgrammeScreen() {
   );
 
   const DayCarousel = () => {
+    // Afficher 7 jours à partir de l'index visible
     const days = programData.slice(visibleDayIndex, visibleDayIndex + 7);
     const canScrollLeft = visibleDayIndex > 0;
     const canScrollRight = visibleDayIndex + 7 < programData.length;
