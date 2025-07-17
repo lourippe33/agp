@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet, Animated, Platform } from 're
 import { router, usePathname } from 'expo-router';
 import { Chrome as Home } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-
+import { View } from 'react-native';
 
 export default function PersistentTabBar() {
   const pathname = usePathname();
@@ -45,8 +45,13 @@ export default function PersistentTabBar() {
 
   // Ne pas afficher la tab bar sur la page d'accueil elle-même
   // Ni sur aucune page des tabs principales qui ont déjà la navigation en bas
-  if (pathname === '/(tabs)/home' || pathname === '/' || pathname.includes('/(tabs)/')) {
-    return null;
+  if (pathname === '/(tabs)/home' || pathname === '/' || 
+      pathname === '/(tabs)/programme' || 
+      pathname === '/(tabs)/suivi' || 
+      pathname === '/(tabs)/communaute' || 
+      pathname === '/(tabs)/profil' ||
+      pathname === '/(tabs)/journal') {
+    return <View />;
   }
 
   return (
