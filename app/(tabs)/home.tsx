@@ -472,8 +472,6 @@ export default function HomeScreen() {
       </LinearGradient>
 
       <HeaderTitle name={user?.firstName || 'Utilisateur'} />
-
-      
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
