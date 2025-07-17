@@ -391,7 +391,7 @@ export default function HomeScreen() {
           {day.isPartiallyCompleted && (
             <Flame size={16} color={Colors.relaxation} />
           )}
-          {isPastDay(day) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
+          {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
             <Lock size={14} color={Colors.textSecondary} />
           )}
           {day.badges && (
