@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { Animated, Platform, Dimensions } from 'react-native';
-import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User } from 'lucide-react-native';
+import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User } from 'lucide-react-native'; 
 import { Colors } from '@/constants/Colors';
 
 const { width } = Dimensions.get('window');
@@ -90,45 +90,35 @@ export default function TabLayout() {
         name="home"
         options={{
           title: '',
-          tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <Home size={size} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
         name="programme"
         options={{
           title: 'Prog.',
-          tabBarIcon: ({ size, color }) => (
-            <Calendar size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <Calendar size={size} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
         name="suivi"
         options={{
           title: 'Suivi',
-          tabBarIcon: ({ size, color }) => (
-            <BarChart3 size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <BarChart3 size={size} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
         name="communaute"
         options={{
           title: 'Comm.',
-          tabBarIcon: ({ size, color }) => (
-            <Users size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <Users size={size} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
         name="profil"
         options={{
           title: 'Profil',
-          tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <User size={size} color={color} strokeWidth={2} />,
         }}
       />
     </Tabs>

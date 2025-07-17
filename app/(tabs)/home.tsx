@@ -111,11 +111,11 @@ export default function HomeScreen() {
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
   const todayIndex = new Date().getDay();
   const todayTip = dailyTips[todayIndex];
-  
+
   // Animation scales
-  const [sportScale] = useState(new Animated.Value(1));
-  const [recipesScale] = useState(new Animated.Value(1));
-  const [relaxScale] = useState(new Animated.Value(1));
+  const sportScale = useState(new Animated.Value(1))[0];
+  const recipesScale = useState(new Animated.Value(1))[0];
+  const relaxScale = useState(new Animated.Value(1))[0];
   
   // Badge pour le streak
   let badge = '';
@@ -285,7 +285,7 @@ export default function HomeScreen() {
   const HeaderTitle = ({ name }: { name: string }) => (
     <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-        <Activity size={24} color={Colors.agpBlue} />
+        <Activity size={24} color={Colors.agpBlue} strokeWidth={2} />
         <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
           Tableau de bord
         </Text>
@@ -315,11 +315,11 @@ export default function HomeScreen() {
   const getMomentIcon = () => {
     const moment = getCurrentMoment();
     switch (moment) {
-      case 'matin': return <Sun size={24} color={Colors.morning} />;
-      case 'midi': return <Utensils size={24} color={Colors.agpBlue} />;
-      case 'gouter': return <Coffee size={24} color={Colors.relaxation} />;
-      case 'soir': return <Moon size={24} color={Colors.evening} />;
-      default: return <Sun size={24} color={Colors.morning} />;
+      case 'matin': return <Sun size={24} color={Colors.morning} strokeWidth={2} />;
+      case 'midi': return <Utensils size={24} color={Colors.agpBlue} strokeWidth={2} />;
+      case 'gouter': return <Coffee size={24} color={Colors.relaxation} strokeWidth={2} />;
+      case 'soir': return <Moon size={24} color={Colors.evening} strokeWidth={2} />;
+      default: return <Sun size={24} color={Colors.morning} strokeWidth={2} />;
     }
   };
 

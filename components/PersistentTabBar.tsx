@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Animated, Platform } from 'react-native';
 import { router, usePathname } from 'expo-router';
-import { Chrome as Home } from 'lucide-react-native';
+import { Chrome as Home } from 'lucide-react-native'; 
 import { Colors } from '@/constants/Colors';
 
 export default function PersistentTabBar() {
@@ -56,37 +56,4 @@ export default function PersistentTabBar() {
   return null;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: Colors.surface,
-    borderTopColor: Colors.border,
-    borderTopWidth: 1,
-    paddingBottom: 8,
-    paddingTop: 8,
-    height: 70,
-    paddingBottom: Platform.OS === 'ios' ? 25 : 8, // Ajout de padding pour iOS
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-  },
-  homeButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-  },
-  homeButtonText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-    color: Colors.primary,
-    marginTop: 4,
-  },
-});
+// Styles supprimés car ils ne sont plus utilisés

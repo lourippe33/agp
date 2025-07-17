@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Zap, Flame, Lock, Clock } from 'lucide-react-native';
+import { Zap, Flame, Lock, Clock } from 'lucide-react-native'; 
 import { Colors } from '@/constants/Colors';
 import { isPastDay } from '@/utils/dateUtils';
 
@@ -49,13 +49,13 @@ export default function DayProgramCard({ day, onPress }: DayCardProps) {
           {day.day}
         </Text>
         {day.isCompleted && (
-          <Zap size={16} color={Colors.agpGreen} />
+          <Zap size={16} color={Colors.agpGreen} strokeWidth={2} />
         )}
         {day.isPartiallyCompleted && (
-          <Flame size={16} color={Colors.relaxation} />
+          <Flame size={16} color={Colors.relaxation} strokeWidth={2} />
         )}
         {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
-          <Lock size={14} color={Colors.textSecondary} />
+          <Lock size={14} color={Colors.textSecondary} strokeWidth={2} />
         )}
         {day.badges && (
           <View style={styles.badgeContainer}>
@@ -75,7 +75,7 @@ export default function DayProgramCard({ day, onPress }: DayCardProps) {
       </Text>
       
       <View style={styles.dayDuration}>
-        <Clock size={12} color={Colors.textSecondary} />
+        <Clock size={12} color={Colors.textSecondary} strokeWidth={2} />
         <Text style={styles.durationText}>{day.totalDuration}min</Text>
       </View>
     </TouchableOpacity>

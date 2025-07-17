@@ -59,7 +59,7 @@ export default function ProgrammeScreen() {
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   
   // États pour le système de choix
-  const [todayButtonScale] = useState(new Animated.Value(1));
+  const todayButtonScale = useState(new Animated.Value(1))[0];
   const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
@@ -570,7 +570,7 @@ export default function ProgrammeScreen() {
   // Fonction pour marquer une activité comme complétée
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
-    
+
     const updatedProgram = programData.map(day => {
       if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
@@ -795,6 +795,7 @@ export default function ProgrammeScreen() {
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
         activeOpacity={isPastDay ? 0.9 : 0.7}
+        onStartShouldSetResponder={() => true}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
@@ -807,11 +808,7 @@ export default function ProgrammeScreen() {
           onPress={(e) => {
             e.stopPropagation();
             if (isPastDay) {
-              Alert.alert(
-                "Modification impossible",
-                "Vous ne pouvez pas modifier les activités des jours passés.",
-                [{ text: "OK", style: "default" }]
-              );
+              Alert.alert("Modification impossible", "Vous ne pouvez pas modifier les activités des jours passés.");
             } else {
               toggleActivityCompletion(activityType);
             }
@@ -1412,6 +1409,7 @@ const styles = StyleSheet.create({
   modalBody: {
     padding: 20,
     maxHeight: 400,
+    scrollBehavior: 'auto'
   },
   activitySection: {
     marginBottom: 16,
@@ -1500,7 +1498,6 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 16,
     height: 16,
-    borderRadius: 8,
-    backgroundColor: 'transparent',
+    borderRadius: 8
   },
 });
