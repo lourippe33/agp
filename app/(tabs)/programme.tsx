@@ -785,42 +785,32 @@ export default function ProgrammeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.activityRow}
-        onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.8}
-      >
+      <View style={styles.activityRow}>
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
         <TouchableOpacity
-          style={[
-            styles.checkboxContainer,
-            activity.completed && styles.checkboxContainerChecked
-          ]}
-          onPress={(e) => {
-            e.stopPropagation();
-            if (isPastDay && !selectedDay?.isToday) {
-              Alert.alert(
-                "Modification impossible",
-                "Vous ne pouvez pas modifier les activités des jours passés.",
-                [{ text: "OK", style: "default" }]
-              );
-            } else {
+          style={[styles.checkboxContainer, 
+                 activity.completed ? styles.checkboxContainerChecked : null,
+                 isPastDay && !selectedDay?.isToday ? styles.checkboxContainerDisabled : null]}
+          onPress={() => {
+            // Uniquement pour les jours actuels ou futurs
+            if (!isPastDay || selectedDay?.isToday) {
               toggleActivityCompletion(activityType);
             }
           }}
+          disabled={isPastDay && !selectedDay?.isToday}
           activeOpacity={0.7}
         >
           {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
             <CheckCircle size={20} color={Colors.textLight} />
-          ) : isPastDay ? (
+          ) : (isPastDay && !selectedDay?.isToday) ? (
             <Lock size={16} color={Colors.textSecondary} />
           ) : (
             <View style={styles.checkbox} />
           )}
         </TouchableOpacity>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -1484,6 +1474,11 @@ const styles = StyleSheet.create({
   checkboxContainerChecked: {
     backgroundColor: Colors.agpGreen,
     borderColor: Colors.agpGreen,
+  },
+  checkboxContainerDisabled: {
+    backgroundColor: Colors.border,
+    borderColor: Colors.textSecondary,
+    opacity: 0.7,
   },
   checkboxContainerDisabled: {
     backgroundColor: Colors.border,
