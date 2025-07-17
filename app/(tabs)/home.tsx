@@ -94,15 +94,12 @@ interface DayProgram {
 
 const HeaderTitle = ({ name }: { name: string }) => (
   <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
       <Activity size={24} color={Colors.agpBlue} />
-      <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
-        Tableau de bord
+      <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text, textAlign: 'center' }}>
+        Bienvenue sur AGP, Eric
       </Text>
     </View>
-    <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
-      Bienvenue sur AGP, {name} 👋
-    </Text>
   </View>
 );
 
