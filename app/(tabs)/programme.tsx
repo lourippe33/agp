@@ -1496,5 +1496,5 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     backgroundColor: 'transparent',
-  },
+  }
 });
