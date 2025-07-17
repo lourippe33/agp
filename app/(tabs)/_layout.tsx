@@ -1,8 +1,10 @@
 import { Tabs } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { Animated, Platform } from 'react-native';
+import { Animated, Platform, Dimensions } from 'react-native';
 import { Chrome as Home, ChartBar as BarChart3, Users, Calendar, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+
+const { width } = Dimensions.get('window');
 
 export default function TabLayout() {
   const [tabBarHeight] = useState(new Animated.Value(70));
@@ -54,12 +56,30 @@ export default function TabLayout() {
         tabBarStyle: animatedTabBarStyle,
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textSecondary,
-        tabBarLabelStyle: {
-          fontFamily: 'Poppins-Medium',
-          fontSize: 10,
-          marginTop: 2,
-          paddingBottom: 4
+        tabBarItemStyle: {
+          width: width / 5,
+          paddingTop: 8,
         },
+        tabBarLabelStyle: Platform.select({
+          ios: {
+            fontFamily: 'Poppins-Medium',
+            fontSize: 9,
+            marginTop: 0,
+            paddingBottom: 0,
+          },
+          android: {
+            fontFamily: 'Poppins-Medium',
+            fontSize: 8,
+            marginTop: 0,
+            paddingBottom: 0,
+          },
+          default: {
+            fontFamily: 'Poppins-Medium',
+            fontSize: 9,
+            marginTop: 0,
+            paddingBottom: 0,
+          }
+        }),
         headerStyle: {
           backgroundColor: Colors.surface,
           elevation: 0,
@@ -78,7 +98,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="programme"
         options={{
-          title: 'Programme',
+          title: 'Prog.',
           tabBarIcon: ({ size, color }) => (
             <Calendar size={size} color={color} />
           ),
@@ -96,7 +116,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="communaute"
         options={{
-          title: 'Communauté',
+          title: 'Comm.',
           tabBarIcon: ({ size, color }) => (
             <Users size={size} color={color} />
           ),
