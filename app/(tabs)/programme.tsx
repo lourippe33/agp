@@ -567,47 +567,39 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
 
-    const updatedProgram = programData.map(day => {
-      if (day && selectedDay && day.day === selectedDay.day) {
-        const updatedActivities = { ...day.activities };
-        updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
+    // Créer une copie des activités du jour sélectionné
+    const updatedActivities = { ...selectedDay.activities };
+    // Inverser l'état de l'activité sélectionnée
+    updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
 
-        // Vérifier si toutes les activités sont complétées
-        const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
-        // Vérifier si au moins une activité est complétée
-        const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
-        
-        return {
-          ...day,
-          activities: updatedActivities,
-          isCompleted: allCompleted,
-          isPartiallyCompleted: !allCompleted && someCompleted
-        };
-      }
-      return day;
-    });
+    // Vérifier si toutes les activités sont complétées
+    const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
+    // Vérifier si au moins une activité est complétée
+    const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
+    
+    // Créer un jour mis à jour
+    const updatedDay = {
+      ...selectedDay,
+      activities: updatedActivities,
+      isCompleted: allCompleted,
+      isPartiallyCompleted: !allCompleted && someCompleted
+    };
+    
+    // Mettre à jour le jour sélectionné
+    setSelectedDay(updatedDay);
+    
+    // Mettre à jour le programme complet
+    const updatedProgram = programData.map(day => 
+      day.day === selectedDay.day ? updatedDay : day
+    );
     
     setProgramData(updatedProgram);
     
-    // Mettre à jour le jour sélectionné si nécessaire
-    setSelectedDay(prev => {
-      if (!prev) return null;
-      
-      const updatedActivities = { ...prev.activities };
-      updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
-      
-      // Vérifier si toutes les activités sont complétées
-      const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
-      // Vérifier si au moins une activité est complétée
-      const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
-      
-      return {
-        ...prev,
-        activities: updatedActivities,
-        isCompleted: allCompleted,
-        isPartiallyCompleted: !allCompleted && someCompleted
-      };
-    });
+    // Recalculer les statistiques
+    const completed = updatedProgram.filter(day => day.isCompleted).length;
+    const progress = (completed / 28) * 100;
+    setOverallProgress(progress);
+    setCompletionPercentage(Math.round(progress));
   };
 
   const WeekSelector = () => (
@@ -790,18 +782,18 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.8}
+        activeOpacity={0.9}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
-        <TouchableOpacity
+        <View style={styles.checkboxWrapper}>
+          <TouchableOpacity
           style={[
             styles.checkboxContainer,
             activity.completed && styles.checkboxContainerChecked,
-            isPastDay && !selectedDay?.isToday && styles.checkboxContainerDisabled
+            isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
           ]}
-          onPress={(e) => {
-            e.stopPropagation();
+          onPress={() => {
             if (isPastDay && !selectedDay?.isToday) {
               Alert.alert(
                 "Modification impossible",
@@ -811,17 +803,19 @@ export default function ProgrammeScreen() {
               toggleActivityCompletion(activityType);
             }
           }}
-          activeOpacity={isPastDay && !selectedDay?.isToday ? 1 : 0.7}
+          activeOpacity={0.7}
+          disabled={isPastDay && !selectedDay?.isToday}
         >
           {/* Afficher une icône de cadenas pour les jours passés non complétés */}
           {activity.completed ? (
             <CheckCircle size={20} color={Colors.textLight} />
-          ) : isPastDay ? (
+          ) : (isPastDay && !selectedDay?.isToday) ? (
             <Lock size={16} color={Colors.textSecondary} />
           ) : (
             <View style={styles.checkbox} />
           )}
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -1499,5 +1493,14 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     backgroundColor: 'transparent',
+  },
+  checkboxWrapper: {
+    padding: 8, // Agrandit la zone tactile
+    marginLeft: 8,
+  },
+  checkboxContainerLocked: {
+    backgroundColor: Colors.border,
+    borderColor: Colors.textSecondary,
+    opacity: 0.7,
   },
 });
