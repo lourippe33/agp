@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   StyleSheet,
-  ActivityIndicator,
+  Alert,
   Switch,
+  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
@@ -28,14 +28,14 @@ export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  // États individuels pour chaque champ
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [niveauSport, setNiveauSport] = useState('debutant');
-  const [preferencesAlimentaires, setPreferencesAlimentaires] = useState<string[]>([]);
-  const [objectifs, setObjectifs] = useState<string[]>([]);
-  
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    username: user?.username || '',
+    niveauSport: user?.niveauSport || 'debutant',
+    preferencesAlimentaires: user?.preferencesAlimentaires || [],
+    objectifs: user?.objectifs || [],
+  });
   const [profileData, setProfileData] = useState({
     currentWeight: 0,
     targetWeight: 0,
@@ -48,21 +48,17 @@ export default function ProfilScreen() {
 
   // État pour suivre le processus de déconnexion
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  
-  // Référence pour le ScrollView
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollPositionRef = useRef(0);
-  
 
   useEffect(() => {
     if (user) {
-      // Initialiser les états individuels
-      setFirstName(user.firstName || '');
-      setLastName(user.lastName || '');
-      setUsername(user.username || '');
-      setNiveauSport(user.niveauSport || 'debutant');
-      setPreferencesAlimentaires(user.preferencesAlimentaires || []);
-      setObjectifs(user.objectifs || []);
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        username: user.username || '',
+        niveauSport: user.niveauSport || 'debutant',
+        preferencesAlimentaires: user.preferencesAlimentaires || [],
+        objectifs: user.objectifs || [],
+      });
     }
     
     // Charger le profil de suivi
@@ -90,31 +86,12 @@ export default function ProfilScreen() {
     }
   };
 
-  // Fonction pour préserver la position de défilement
-  const preserveScrollPosition = useCallback(() => {
-    if (scrollViewRef.current && scrollPositionRef.current > 0) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ y: scrollPositionRef.current, animated: false });
-      }, 100);
-    }
-  }, []);
-
   const handleSave = async () => {
     if (!user) return;
 
-    // Créer l'objet de mise à jour avec les états individuels
-    const updatedFormData = {
-      firstName,
-      lastName,
-      username,
-      niveauSport,
-      preferencesAlimentaires,
-      objectifs
-    };
-
     try {
       // Sauvegarder les informations de base
-      const result = await updateProfile(user.id, updatedFormData);
+      const result = await updateProfile(user.id, formData);
       
       // Sauvegarder le profil de suivi
       if (profileData.currentWeight > 0) {
@@ -133,9 +110,7 @@ export default function ProfilScreen() {
       
       if (result.success) {
         setIsEditing(false);
-        // Mettre à jour le state avec les nouvelles valeurs
-        setFormData(updatedFormData);
-        preserveScrollPosition();
+        Alert.alert('Succès', 'Profil mis à jour avec succès !');
       } else {
         Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
       }
@@ -175,20 +150,29 @@ export default function ProfilScreen() {
     );
   };
 
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const togglePreference = (preference: string) => {
-    setPreferencesAlimentaires(prev => 
-      prev.includes(preference)
-        ? prev.filter(p => p !== preference)
-        : [...prev, preference]
-    );
+    setFormData(prev => ({
+      ...prev,
+      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
+        ? prev.preferencesAlimentaires.filter(p => p !== preference)
+        : [...prev.preferencesAlimentaires, preference]
+    }));
   };
 
   const toggleObjectif = (objectif: string) => {
-    setObjectifs(prev => 
-      prev.includes(objectif)
-        ? prev.filter(o => o !== objectif)
-        : [...prev, objectif]
-    );
+    setFormData(prev => ({
+      ...prev,
+      objectifs: prev.objectifs.includes(objectif)
+        ? prev.objectifs.filter(o => o !== objectif)
+        : [...prev.objectifs, objectif]
+    }));
   };
 
   const preferencesOptions = [
@@ -225,12 +209,12 @@ export default function ProfilScreen() {
   const EditableField = ({ 
     label, 
     value, 
-    onChangeText,
+    onChangeText, 
     placeholder 
   }: { 
     label: string; 
     value: string; 
-    onChangeText: (text: string) => void;
+    onChangeText: (text: string) => void; 
     placeholder?: string;
   }) => (
     <View style={styles.fieldContainer}>
@@ -333,16 +317,10 @@ export default function ProfilScreen() {
 
   return (
     <ScrollView 
-      ref={scrollViewRef}
       style={styles.container} 
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
-      onScroll={(event) => {
-        scrollPositionRef.current = event.nativeEvent.contentOffset.y;
-      }}
-      scrollEventThrottle={16}
-      contentContainerStyle={{ paddingBottom: 40 }}
     >
       {/* Header */}
       <LinearGradient
@@ -383,22 +361,22 @@ export default function ProfilScreen() {
         <ProfileSection title="👤 Informations personnelles">
           <EditableField
             label="Prénom"
-            value={firstName}
-            onChangeText={setFirstName}
+            value={formData.firstName}
+            onChangeText={(text) => handleInputChange('firstName', text)}
             placeholder="Votre prénom"
           />
           
           <EditableField
             label="Nom"
-            value={lastName}
-            onChangeText={setLastName}
+            value={formData.lastName}
+            onChangeText={(text) => handleInputChange('lastName', text)}
             placeholder="Votre nom"
           />
           
           <EditableField
             label="Nom d'utilisateur"
-            value={username}
-            onChangeText={setUsername}
+            value={formData.username}
+            onChangeText={(text) => handleInputChange('username', text)}
             placeholder="Votre nom d'utilisateur"
           />
 
@@ -467,9 +445,9 @@ export default function ProfilScreen() {
         <ProfileSection title="💪 Préférences sportives">
           <SelectField
             label="Niveau sportif"
-            value={niveauSport}
+            value={formData.niveauSport}
             options={niveauxSport}
-            onSelect={setNiveauSport}
+            onSelect={(value) => handleInputChange('niveauSport', value)}
           />
         </ProfileSection>
 
@@ -477,7 +455,7 @@ export default function ProfilScreen() {
         <ProfileSection title="🍽️ Préférences alimentaires">
           <MultiSelectField
             label="Régimes alimentaires"
-            values={preferencesAlimentaires}
+            values={formData.preferencesAlimentaires}
             options={preferencesOptions}
             onToggle={togglePreference}
           />
@@ -487,7 +465,7 @@ export default function ProfilScreen() {
         <ProfileSection title="🎯 Objectifs">
           <MultiSelectField
             label="Vos objectifs"
-            values={objectifs}
+            values={formData.objectifs}
             options={objectifsOptions}
             onToggle={toggleObjectif}
           />
