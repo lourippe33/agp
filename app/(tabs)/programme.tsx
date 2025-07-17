@@ -59,7 +59,7 @@ export default function ProgrammeScreen() {
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   
   // États pour le système de choix
-  const todayButtonScale = useState(new Animated.Value(1))[0];
+  const [todayButtonScale] = useState(new Animated.Value(1));
   const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
   const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
@@ -561,16 +561,10 @@ export default function ProgrammeScreen() {
           router.push('/detente');
         }
         break;
-        
-      default:
-        Alert.alert('Navigation', `Redirection vers ${activityName}`);
     }
   };
 
-  // Fonction pour marquer une activité comme complétée
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
-    if (!selectedDay) return;
-
     const updatedProgram = programData.map(day => {
       if (day && selectedDay && day.day === selectedDay.day) {
         const updatedActivities = { ...day.activities };
@@ -794,23 +788,25 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={isPastDay ? 0.9 : 0.7}
-        onStartShouldSetResponder={() => true}
+        activeOpacity={0.7}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
         <TouchableOpacity
           style={[
             styles.checkboxContainer,
-            activity.completed && styles.checkboxContainerChecked,
-            isPastDay && styles.checkboxContainerDisabled
+            activity.completed && styles.checkboxContainerChecked
           ]}
-          onPress={(e) => {
+          onPress={e => {
             e.stopPropagation();
-            if (isPastDay) {
-              Alert.alert("Modification impossible", "Vous ne pouvez pas modifier les activités des jours passés.");
-            } else {
+            if (!isPastDay) {
               toggleActivityCompletion(activityType);
+            } else {
+              Alert.alert(
+                "Modification impossible",
+                "Vous ne pouvez pas modifier les activités des jours passés.",
+                [{ text: "OK", style: "default" }]
+              );
             }
           }}
         >
@@ -1409,7 +1405,8 @@ const styles = StyleSheet.create({
   modalBody: {
     padding: 20,
     maxHeight: 400,
-    scrollBehavior: 'auto'
+    // Empêcher le défilement automatique vers le haut
+    scrollBehavior: 'auto',
   },
   activitySection: {
     marginBottom: 16,
@@ -1490,7 +1487,6 @@ const styles = StyleSheet.create({
   checkboxContainerDisabled: {
     backgroundColor: Colors.border,
     borderColor: Colors.textSecondary,
-    opacity: 0.7,
   },
   disabledButtonText: {
     color: Colors.textSecondary,
@@ -1498,6 +1494,7 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 16,
     height: 16,
-    borderRadius: 8
+    borderRadius: 8,
+    backgroundColor: 'transparent',
   },
 });
