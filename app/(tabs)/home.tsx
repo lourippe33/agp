@@ -12,7 +12,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
   Calendar, 
-  Router, 
   TrendingUp, 
   Target, 
   Award, 
@@ -70,7 +69,6 @@ const dailyTips = [
 
 const { width } = Dimensions.get('window');
 
-// Calculate dimensions outside StyleSheet
 const actionCardWidth = (width - 60) / 2;
 const statCardWidth = (width - 56) / 2;
 const dayCardWidth = (width - 100) / 7;
@@ -105,7 +103,6 @@ const HeaderTitle = ({ name }: { name: string }) => (
 export default function HomeScreen() {
   const { user } = useAuth();
   const navigation = useRouter();
-  const [scrollY] = useState(new Animated.Value(0));
   const [currentTime, setCurrentTime] = useState(new Date());
   const [programData, setProgramData] = useState<DayProgram[]>([]);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
@@ -118,19 +115,6 @@ export default function HomeScreen() {
   const [sportScale] = useState(new Animated.Value(1));
   const [recipesScale] = useState(new Animated.Value(1));
   const [relaxScale] = useState(new Animated.Value(1));
-
-  // Animation pour le bandeau vert
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [Platform.OS === 'ios' ? 140 : 130, 0],
-    extrapolate: 'clamp'
-  });
-
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 80],
-    outputRange: [1, 0],
-    extrapolate: 'clamp'
-  });
   
   // Badge pour le streak
   let badge = '';
@@ -454,16 +438,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.headerContainer,
-          {
-            height: headerHeight,
-            opacity: headerOpacity,
-            overflow: 'hidden'
-          }
-        ]}
-      >
+      <View style={styles.headerContainer}>
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
@@ -490,7 +465,7 @@ export default function HomeScreen() {
             </View>
           </View>
         </LinearGradient>
-      </Animated.View>
+      </View>
 
       <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
         <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
@@ -500,9 +475,6 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
@@ -696,17 +668,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    position: 'relative',
   },
   headerContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
+    width: '100%',
   },
   header: {
-    flex: 1,
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
@@ -760,7 +726,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginTop: Platform.OS === 'ios' ? 140 : 130,
   },
   scrollContent: {
     paddingBottom: 100,
