@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -59,6 +59,7 @@ export default function ProgrammeScreen() {
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   
   // États pour le système de choix
+  const modalScrollViewRef = useRef(null);
   const [todayButtonScale] = useState(new Animated.Value(1));
   const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
@@ -568,6 +569,9 @@ export default function ProgrammeScreen() {
   const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
     if (!selectedDay) return;
 
+    // Mémoriser la position de défilement actuelle
+    const scrollPosition = modalScrollViewRef.current?.scrollTop;
+
     // Créer une copie des activités du jour sélectionné
     const updatedActivities = { ...selectedDay.activities };
     // Inverser l'état de l'activité sélectionnée
@@ -601,6 +605,13 @@ export default function ProgrammeScreen() {
     const progress = (completed / 28) * 100;
     setOverallProgress(progress);
     setCompletionPercentage(Math.round(progress));
+    
+    // Restaurer la position de défilement après le rendu
+    setTimeout(() => {
+      if (modalScrollViewRef.current && scrollPosition) {
+        modalScrollViewRef.current.scrollTop = scrollPosition;
+      }
+    }, 0);
   };
 
   const WeekSelector = () => (
@@ -783,8 +794,7 @@ export default function ProgrammeScreen() {
       <TouchableOpacity
         style={styles.activityRow}
         onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.9}
-        onStartShouldSetResponder={() => false}
+        activeOpacity={0.8}
       >
         <Text style={styles.activityName}>{activity.name}</Text>
         {/* Checkbox pour marquer comme complété */}
@@ -799,7 +809,8 @@ export default function ProgrammeScreen() {
               if (isPastDay && !selectedDay?.isToday) {
                 Alert.alert(
                   "Modification impossible",
-                  "Vous ne pouvez pas modifier les activités des jours passés."
+                  "Vous ne pouvez pas modifier les activités des jours passés.",
+                  [{ text: "OK" }]
                 );
               } else {
                 toggleActivityCompletion(activityType);
@@ -849,9 +860,10 @@ export default function ProgrammeScreen() {
           </View>
           
           <ScrollView 
+            ref={modalScrollViewRef}
             style={styles.modalBody} 
             contentContainerStyle={{ paddingBottom: 20 }}
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
             <ActivityRow
