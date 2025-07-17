@@ -19,6 +19,8 @@ import { isPastDay } from '@/utils/dateUtils';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
+import { useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 
 // Import des données pour la navigation directe
 import recipesData from '@/data/recettes_agp.json';
@@ -1203,6 +1205,7 @@ const styles = StyleSheet.create({
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
+  },
   progressContainer: {
     backgroundColor: Colors.surface,
     marginHorizontal: 20,
