@@ -1,280 +1,58 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  Alert,
-  Switch,
-  ActivityIndicator,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
-import { router } from 'expo-router';
+import Slider from '@react-native-community/slider';
+import { Scale, Ruler, Target } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
-import NotificationSettings from '@/components/NotificationSettings';
 
-export default function ProfilScreen() {
-  const { user, logout, updateProfile } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    username: user?.username || '',
-    niveauSport: user?.niveauSport || 'debutant',
-    preferencesAlimentaires: user?.preferencesAlimentaires || [],
-    objectifs: user?.objectifs || [],
-  });
-  const [notifications, setNotifications] = useState(true);
-  const [waterNotifications, setWaterNotifications] = useState(true);
-  const [waterObjective, setWaterObjective] = useState(8);
-  // État pour suivre le processus de déconnexion
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+interface ChoiceButtonProps {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+}
 
-  // Fonctions mémorisées pour éviter les re-renders
-  const updateFirstName = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, firstName: text }));
-  }, []);
+const ChoiceButton = ({ label, selected, onPress }: ChoiceButtonProps) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={[
+      styles.choiceButton,
+      selected && styles.choiceButtonSelected,
+    ]}
+  >
+    <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>
+      {label}
+    </Text>
+  </TouchableOpacity>
+);
 
-  const updateLastName = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, lastName: text }));
-  }, []);
+export default function SuiviScreen() {
+  const { user } = useAuth();
+  const [height, setHeight] = useState(170);
+  const [weight, setWeight] = useState(70);
+  const [waist, setWaist] = useState(85);
+  const [progress, setProgress] = useState('');
+  const [shape, setShape] = useState('');
 
-  const updateUsername = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, username: text }));
-  }, []);
-
-  const updateNiveauSport = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, niveauSport: value as any }));
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        username: user.username || '',
-        niveauSport: user.niveauSport || 'debutant',
-        preferencesAlimentaires: user.preferencesAlimentaires || [],
-        objectifs: user.objectifs || [],
-      });
-    }
-  }, [user]);
-
-  const handleSave = async () => {
-    if (!user) return;
-
-    try {
-      // Sauvegarder les informations de base
-      const result = await updateProfile(user.id, formData);
-      
-      if (result.success) {
-        setIsEditing(false);
-        Alert.alert('Succès', 'Profil mis à jour avec succès !');
-      } else {
-        Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
-      }
-    } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue');
-    }
+  // Calcul de l'IMC
+  const calculateBMI = () => {
+    const heightInMeters = height / 100;
+    return (weight / (heightInMeters * heightInMeters)).toFixed(1);
   };
 
-  const handleLogout = () => {
-    console.log('Bouton de déconnexion cliqué');
-    Alert.alert(
-      'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Déconnexion',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsLoggingOut(true);
-              console.log('🔄 Déconnexion en cours...');
-              await logout();
-              console.log('✅ Déconnexion réussie');
-              // La redirection est gérée automatiquement par le contexte d'auth
-            } catch (error) {
-              setIsLoggingOut(false);
-              console.error('❌ Erreur lors de la déconnexion:', error);
-              Alert.alert(
-                'Erreur',
-                'Impossible de se déconnecter. Veuillez réessayer.',
-                [{ text: 'OK' }]
-              );
-            }
-          },
-        },
-      ]
-    );
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return { text: 'Insuffisance pondérale', color: Colors.agpBlue };
+    if (bmi < 25) return { text: 'Corpulence normale', color: Colors.agpGreen };
+    if (bmi < 30) return { text: 'Surpoids', color: Colors.morning };
+    return { text: 'Obésité', color: Colors.relaxation };
   };
 
-  const togglePreference = useCallback((preference: string) => {
-    setFormData(prev => ({
-      ...prev,
-      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
-        ? prev.preferencesAlimentaires.filter(p => p !== preference)
-        : [...prev.preferencesAlimentaires, preference]
-    }));
-  }, []);
-
-  const toggleObjectif = useCallback((objectif: string) => {
-    setFormData(prev => ({
-      ...prev,
-      objectifs: prev.objectifs.includes(objectif)
-        ? prev.objectifs.filter(o => o !== objectif)
-        : [...prev.objectifs, objectif]
-    }));
-  }, []);
-
-  const preferencesOptions = [
-    'Végétarien',
-    'Vegan',
-    'Sans gluten',
-    'Sans lactose',
-    'Paléo',
-    'Cétogène'
-  ];
-
-  const objectifsOptions = [
-    'Perte de poids',
-    'Prise de muscle',
-    'Améliorer l\'énergie',
-    'Réduire le stress',
-    'Mieux dormir',
-    'Améliorer la digestion'
-  ];
-
-  const niveauxSport = [
-    { value: 'debutant', label: 'Débutant' },
-    { value: 'intermediaire', label: 'Intermédiaire' },
-    { value: 'avance', label: 'Avancé' }
-  ];
-
-  const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {children}
-    </View>
-  );
-
-  const EditableField = ({ 
-    label, 
-    value, 
-    onChangeText, 
-    placeholder 
-  }: { 
-    label: string; 
-    value: string; 
-    onChangeText: (text: string) => void; 
-    placeholder?: string;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.textInput}
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={Colors.textSecondary}
-        />
-      ) : (
-        <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
-      )}
-    </View>
-  );
-
-  const SelectField = ({ 
-    label, 
-    value, 
-    options, 
-    onSelect 
-  }: { 
-    label: string; 
-    value: string; 
-    options: { value: string; label: string }[]; 
-    onSelect: (value: string) => void;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <View style={styles.selectContainer}>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option.value}
-              style={[
-                styles.selectOption,
-                value === option.value && styles.selectOptionSelected
-              ]}
-              onPress={() => onSelect(option.value)}
-            >
-              <Text style={[
-                styles.selectOptionText,
-                value === option.value && styles.selectOptionTextSelected
-              ]}>
-                {option.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text style={styles.fieldValue}>
-          {options.find(opt => opt.value === value)?.label || 'Non renseigné'}
-        </Text>
-      )}
-    </View>
-  );
-
-  const MultiSelectField = ({ 
-    label, 
-    values, 
-    options, 
-    onToggle 
-  }: { 
-    label: string; 
-    values: string[]; 
-    options: string[]; 
-    onToggle: (value: string) => void;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <View style={styles.multiSelectContainer}>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={[
-                styles.multiSelectOption,
-                values.includes(option) && styles.multiSelectOptionSelected
-              ]}
-              onPress={() => onToggle(option)}
-            >
-              <Text style={[
-                styles.multiSelectOptionText,
-                values.includes(option) && styles.multiSelectOptionTextSelected
-              ]}>
-                {option}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text style={styles.fieldValue}>
-          {values.length > 0 ? values.join(', ') : 'Aucune préférence'}
-        </Text>
-      )}
-    </View>
-  );
+  const bmi = parseFloat(calculateBMI());
+  const bmiCategory = getBMICategory(bmi);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       {/* Header */}
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
@@ -285,193 +63,195 @@ export default function ProfilScreen() {
             <AGPLogo size={50} />
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Mon Profil</Text>
+            <Text style={styles.headerTitle}>Mon Suivi</Text>
             <Text style={styles.headerSubtitle}>
-              Personnalisez votre expérience AGP
+              Suivez votre évolution corporelle
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => {
-              if (isEditing) {
-                handleSave();
-              } else {
-                setIsEditing(true);
-              }
-            }}
-          >
-            {isEditing ? (
-              <Save size={24} color={Colors.textLight} />
-            ) : (
-              <Edit3 size={24} color={Colors.textLight} />
-            )}
-          </TouchableOpacity>
+          <View style={styles.headerIcon}>
+            <Scale size={32} color={Colors.textLight} />
+          </View>
         </View>
       </LinearGradient>
 
-      <View style={styles.content}>
-        {/* Informations personnelles */}
-        <ProfileSection title="👤 Informations personnelles">
-          <EditableField
-            label="Prénom"
-            value={formData.firstName}
-            onChangeText={updateFirstName}
-            placeholder="Votre prénom"
-          />
-          
-          <EditableField
-            label="Nom"
-            value={formData.lastName}
-            onChangeText={updateLastName}
-            placeholder="Votre nom"
-          />
-          
-          <EditableField
-            label="Nom d'utilisateur"
-            value={formData.username}
-            onChangeText={updateUsername}
-            placeholder="Votre nom d'utilisateur"
-          />
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Message de bienvenue */}
+        <View style={styles.welcomeCard}>
+          <Text style={styles.welcomeTitle}>
+            Bonjour {user?.firstName || 'Utilisateur'} ! 👋
+          </Text>
+          <Text style={styles.welcomeText}>
+            Utilisez les curseurs ci-dessous pour renseigner vos mensurations actuelles et suivre votre évolution.
+          </Text>
+        </View>
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Email</Text>
-            <Text style={styles.fieldValue}>{user?.email}</Text>
-          </View>
-        </ProfileSection>
+        {/* Section Point de départ */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🎯 Mon point de départ</Text>
 
-        {/* Préférences sportives */}
-        <ProfileSection title="💪 Préférences sportives">
-          <SelectField
-            label="Niveau sportif"
-            value={formData.niveauSport}
-            options={niveauxSport}
-            onSelect={updateNiveauSport}
-          />
-        </ProfileSection>
-
-        {/* Préférences alimentaires */}
-        <ProfileSection title="🍽️ Préférences alimentaires">
-          <MultiSelectField
-            label="Régimes alimentaires"
-            values={formData.preferencesAlimentaires}
-            options={preferencesOptions}
-            onToggle={togglePreference}
-          />
-        </ProfileSection>
-
-        {/* Objectifs */}
-        <ProfileSection title="🎯 Objectifs">
-          <MultiSelectField
-            label="Vos objectifs"
-            values={formData.objectifs}
-            options={objectifsOptions}
-            onToggle={toggleObjectif}
-          />
-        </ProfileSection>
-
-        {/* Paramètres */}
-        <ProfileSection title="⚙️ Paramètres">
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Bell size={20} color={Colors.agpBlue} />
-              <Text style={styles.settingLabel}>Notifications</Text>
+          {/* Taille */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Ruler size={20} color={Colors.agpBlue} />
+              <Text style={styles.label}>Taille</Text>
             </View>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
-              thumbColor={notifications ? Colors.agpBlue : Colors.textSecondary}
+            <Slider
+              value={height}
+              onValueChange={v => setHeight(Math.round(v))}
+              minimumValue={140}
+              maximumValue={200}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.agpBlue}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
             />
+            <Text style={styles.valueText}>{height} cm</Text>
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Droplets size={20} color={Colors.agpBlue} />
-              <Text style={styles.settingLabel}>Rappels d'hydratation</Text>
-            </View>
-            <Switch
-              value={waterNotifications}
-              onValueChange={setWaterNotifications}
-              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
-              thumbColor={waterNotifications ? Colors.agpBlue : Colors.textSecondary}
-            />
-          </View>
-          
-          <NotificationSettings />
 
-          {waterNotifications && (
-            <View style={styles.waterObjectiveSetting}>
-              <Text style={styles.waterObjectiveLabel}>Objectif quotidien d'eau</Text>
-              <View style={styles.waterObjectiveControls}>
-                <TouchableOpacity
-                  style={styles.waterObjectiveButton}
-                  onPress={() => setWaterObjective(Math.max(1, waterObjective - 1))}
-                >
-                  <Text style={styles.waterObjectiveButtonText}>-</Text>
-                </TouchableOpacity>
-                <View style={styles.waterObjectiveValue}>
-                  <Text style={styles.waterObjectiveValueText}>{waterObjective}</Text>
-                  <Text style={styles.waterObjectiveUnit}>verres</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.waterObjectiveButton}
-                  onPress={() => setWaterObjective(waterObjective + 1)}
-                >
-                  <Text style={styles.waterObjectiveButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.waterObjectiveHelp}>
-                Recommandation : 8 verres (environ 2L) par jour
+          {/* Poids */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Scale size={20} color={Colors.agpGreen} />
+              <Text style={styles.label}>Poids</Text>
+            </View>
+            <Slider
+              value={weight}
+              onValueChange={v => setWeight(Math.round(v))}
+              minimumValue={40}
+              maximumValue={150}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.agpGreen}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
+            />
+            <Text style={styles.valueText}>{weight} kg</Text>
+          </View>
+
+          {/* Tour de taille */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Target size={20} color={Colors.morning} />
+              <Text style={styles.label}>Tour de taille</Text>
+            </View>
+            <Slider
+              value={waist}
+              onValueChange={v => setWaist(Math.round(v))}
+              minimumValue={60}
+              maximumValue={140}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.morning}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
+            />
+            <Text style={styles.valueText}>{waist} cm</Text>
+          </View>
+
+          {/* Calcul IMC */}
+          <View style={styles.bmiContainer}>
+            <Text style={styles.bmiTitle}>📊 Votre IMC</Text>
+            <View style={styles.bmiCard}>
+              <Text style={styles.bmiValue}>{calculateBMI()}</Text>
+              <Text style={[styles.bmiCategory, { color: bmiCategory.color }]}>
+                {bmiCategory.text}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Section Évolution */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>📆 Évolution à 1 mois</Text>
+
+          <View style={styles.evolutionContainer}>
+            <Text style={styles.label}>Évolution du poids</Text>
+            <View style={styles.choicesRow}>
+              <ChoiceButton 
+                label="📉 J'ai perdu" 
+                selected={progress === 'perdu'} 
+                onPress={() => setProgress('perdu')} 
+              />
+              <ChoiceButton 
+                label="➖ Stable" 
+                selected={progress === 'stable'} 
+                onPress={() => setProgress('stable')} 
+              />
+              <ChoiceButton 
+                label="📈 J'ai repris" 
+                selected={progress === 'repris'} 
+                onPress={() => setProgress('repris')} 
+              />
+            </View>
+
+            <Text style={styles.label}>Silhouette</Text>
+            <View style={styles.choicesRow}>
+              <ChoiceButton 
+                label="👖 Plus ample" 
+                selected={shape === 'ample'} 
+                onPress={() => setShape('ample')} 
+              />
+              <ChoiceButton 
+                label="🎯 Inchangée" 
+                selected={shape === 'identique'} 
+                onPress={() => setShape('identique')} 
+              />
+              <ChoiceButton 
+                label="📏 Plus serrée" 
+                selected={shape === 'serrée'} 
+                onPress={() => setShape('serrée')} 
+              />
+            </View>
+          </View>
+        </View>
+
+        {/* Conseils personnalisés */}
+        <View style={styles.tipsSection}>
+          <Text style={styles.tipsTitle}>💡 Conseils personnalisés</Text>
+          
+          {bmi < 18.5 && (
+            <View style={styles.tipCard}>
+              <Text style={styles.tipText}>
+                💪 Votre IMC indique une corpulence légère. Concentrez-vous sur une alimentation équilibrée et riche en nutriments.
               </Text>
             </View>
           )}
-        </ProfileSection>
+          
+          {bmi >= 18.5 && bmi < 25 && (
+            <View style={styles.tipCard}>
+              <Text style={styles.tipText}>
+                ✅ Excellent ! Votre IMC est dans la norme. Maintenez vos bonnes habitudes alimentaires et votre activité physique.
+              </Text>
+            </View>
+          )}
+          
+          {bmi >= 25 && bmi < 30 && (
+            <View style={styles.tipCard}>
+              <Text style={styles.tipText}>
+                🎯 Votre IMC indique un léger surpoids. Le programme AGP peut vous aider à retrouver un poids de forme naturellement.
+              </Text>
+            </View>
+          )}
+          
+          {bmi >= 30 && (
+            <View style={styles.tipCard}>
+              <Text style={styles.tipText}>
+                🌱 Le programme AGP est parfait pour vous ! Suivez les recommandations chronobiologiques pour une perte de poids durable.
+              </Text>
+            </View>
+          )}
 
-        {/* Actions */}
-        <View style={styles.actionsSection}>
-          <TouchableOpacity 
-            style={[
-              styles.actionButton,
-              isLoggingOut && { opacity: 0.6 }
-            ]}
-            onPress={handleLogout}
-            disabled={isLoggingOut}
-            activeOpacity={0.7}
-          >
-            {isLoggingOut ? (
-              <ActivityIndicator size="small" color={Colors.relaxation} />
-            ) : (
-              <LogOut size={24} color={Colors.relaxation} />
-            )}
-            <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
-              {isLoggingOut ? 'Déconnexion...' : 'Déconnexion'}
+          <View style={styles.motivationCard}>
+            <Text style={styles.motivationTitle}>🌟 Restez motivé(e) !</Text>
+            <Text style={styles.motivationText}>
+              "Les changements durables prennent du temps. Soyez patient(e) avec vous-même et célébrez chaque petit progrès !"
             </Text>
-            <ChevronRight size={24} color={Colors.relaxation} />
-          </TouchableOpacity>
+          </View>
         </View>
-
-        {/* Informations de compte */}
-        <View style={styles.accountInfo}>
-          <Text style={styles.accountInfoTitle}>Informations du compte</Text>
-          <Text style={styles.accountInfoText}>
-            Membre depuis : {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
-          </Text>
-          <Text style={styles.accountInfoText}>
-            Dernière mise à jour : {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('fr-FR') : 'Jamais'}
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
-}
-
-// Fonction pour obtenir la catégorie d'IMC
-function getBMICategory(bmi: number): string {
-  if (bmi < 18.5) return 'Insuffisance pondérale';
-  if (bmi < 25) return 'Corpulence normale';
-  if (bmi < 30) return 'Surpoids';
-  if (bmi < 35) return 'Obésité modérée';
-  if (bmi < 40) return 'Obésité sévère';
-  return 'Obésité morbide';
 }
 
 const styles = StyleSheet.create({
@@ -510,13 +290,39 @@ const styles = StyleSheet.create({
     color: Colors.textLight,
     opacity: 0.9,
   },
-  editButton: {
+  headerIcon: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 25,
-    padding: 12,
+    padding: 8,
   },
   content: {
+    flex: 1,
     padding: 20,
+  },
+  welcomeCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  welcomeTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  welcomeText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 20,
   },
   section: {
     backgroundColor: Colors.surface,
@@ -533,199 +339,151 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginBottom: 16,
+    marginBottom: 20,
   },
-  fieldContainer: {
-    marginBottom: 16,
+  measurementContainer: {
+    marginBottom: 24,
   },
-  fieldLabel: {
-    fontSize: 14,
+  measurementHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  label: {
+    fontSize: 16,
     fontFamily: 'Poppins-Medium',
     color: Colors.text,
-    marginBottom: 8,
   },
-  fieldValue: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    paddingVertical: 8,
+  slider: {
+    width: '100%',
+    height: 40,
+    marginVertical: 8,
   },
-  textInput: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-  },
-  selectContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  selectOption: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  selectOptionSelected: {
-    backgroundColor: Colors.agpBlue,
+  sliderThumb: {
+    backgroundColor: Colors.surface,
+    borderWidth: 2,
     borderColor: Colors.agpBlue,
   },
-  selectOptionText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
+  valueText: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
     color: Colors.text,
-  },
-  selectOptionTextSelected: {
-    color: Colors.textLight,
-  },
-  multiSelectContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  multiSelectOption: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  multiSelectOptionSelected: {
-    backgroundColor: Colors.agpGreen,
-    borderColor: Colors.agpGreen,
-  },
-  multiSelectOptionText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-  },
-  multiSelectOptionTextSelected: {
-    color: Colors.textLight,
-  },
-  // Styles pour les mensurations
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    textAlign: 'center',
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
     paddingVertical: 8,
+    marginTop: 8,
   },
-  settingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  bmiContainer: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
   },
-  settingLabel: {
+  bmiTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
+    marginBottom: 12,
   },
-  waterObjectiveSetting: {
+  bmiCard: {
     backgroundColor: Colors.agpLightBlue,
     borderRadius: 12,
     padding: 16,
-    marginTop: 12,
-    marginLeft: 36,
-  },
-  waterObjectiveLabel: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    marginBottom: 12,
-  },
-  waterObjectiveControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  waterObjectiveButton: {
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 20,
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
     alignItems: 'center',
   },
-  waterObjectiveButtonText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-  },
-  waterObjectiveValue: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    paddingHorizontal: 16,
-  },
-  waterObjectiveValueText: {
-    fontSize: 24,
+  bmiValue: {
+    fontSize: 32,
     fontFamily: 'Poppins-Bold',
     color: Colors.agpBlue,
-    marginRight: 4,
+    marginBottom: 4,
   },
-  waterObjectiveUnit: {
+  bmiCategory: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
+    fontFamily: 'Poppins-SemiBold',
   },
-  waterObjectiveHelp: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
+  evolutionContainer: {
+    gap: 16,
+  },
+  choicesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    marginBottom: 20,
+    gap: 8,
+  },
+  choiceButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
+    backgroundColor: Colors.background,
+    alignItems: 'center',
+  },
+  choiceButtonSelected: {
+    backgroundColor: Colors.agpLightBlue,
+    borderColor: Colors.agpBlue,
+  },
+  choiceText: {
     textAlign: 'center',
-    fontStyle: 'italic',
+    fontFamily: 'Poppins-Regular',
+    color: Colors.text,
+    fontSize: 12,
+    lineHeight: 16,
   },
-  actionsSection: {
+  choiceTextSelected: {
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.agpBlue,
+  },
+  tipsSection: {
     marginBottom: 20,
   },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 24,
-    paddingHorizontal: 24,
-    gap: 16,
-    marginBottom: 12,
-    elevation: 8,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    borderWidth: 1,
-    borderColor: Colors.relaxation,
-  },
-  actionButtonText: {
+  tipsTitle: {
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
-    flex: 1,
+    color: Colors.text,
+    marginBottom: 16,
   },
-  accountInfo: {
-    backgroundColor: Colors.agpLightBlue,
+  tipCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpGreen,
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  tipText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    lineHeight: 20,
+  },
+  motivationCard: {
+    backgroundColor: Colors.agpLightGreen,
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
+    borderLeftColor: Colors.agpGreen,
   },
-  accountInfoTitle: {
-    fontSize: 14,
+  motivationTitle: {
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
     marginBottom: 8,
   },
-  accountInfoText: {
-    fontSize: 12,
+  motivationText: {
+    fontSize: 14,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    marginBottom: 4,
+    lineHeight: 20,
+    fontStyle: 'italic',
   },
 });
