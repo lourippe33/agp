@@ -1,660 +1,268 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Switch,
+  ActivityIndicator,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3, Save, Ruler } from 'lucide-react-native';
+import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
-import DailyTrackingModal from '@/components/DailyTrackingModal';
-import { DailyTracking } from '@/types/Tracking';
-import { TrackingService } from '@/services/TrackingService';
-import { LocalStorageService } from '@/services/LocalStorageService';
-import { router } from 'expo-router';
+import NotificationSettings from '@/components/NotificationSettings';
 
-const { width } = Dimensions.get('window');
-
-interface Measurements {
-  weight: string;
-  waist: string;
-  hips: string;
-  thighs: string;
-  arms: string;
-}
-
-interface UserMeasurements {
-  day1: Measurements;
-  day30: Measurements;
-  day1Locked: boolean;
-  day30Locked: boolean;
-}
-
-interface Stats {
-  totalExercises: number;
-  totalDuration: number;
-  favoriteRecipes: number;
-  streakDays: number;
-  weeklyActivity: number[];
-  lastActivity: string | null;
-}
-
-export default function SuiviScreen() {
-  const { user, getCompletedExercises, getFavoriteRecipes } = useAuth();
-  const [stats, setStats] = useState<Stats>({
-    totalExercises: 0,
-    totalDuration: 0,
-    favoriteRecipes: 0,
-    streakDays: 0,
-    weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
-    lastActivity: null,
+export default function ProfilScreen() {
+  const { user, logout, updateProfile } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    username: user?.username || '',
+    niveauSport: user?.niveauSport || 'debutant',
+    preferencesAlimentaires: user?.preferencesAlimentaires || [],
+    objectifs: user?.objectifs || [],
   });
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
-  const [trackingModalVisible, setTrackingModalVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dailyTrackings, setDailyTrackings] = useState<DailyTracking[]>([]);
+  const [notifications, setNotifications] = useState(true);
+  const [waterNotifications, setWaterNotifications] = useState(true);
+  const [waterObjective, setWaterObjective] = useState(8);
+  // État pour suivre le processus de déconnexion
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // États pour les mensurations
-  const [measurements, setMeasurements] = useState<UserMeasurements>({
-    day1: { weight: '', waist: '', hips: '', thighs: '', arms: '' },
-    day30: { weight: '', waist: '', hips: '', thighs: '', arms: '' },
-    day1Locked: false,
-    day30Locked: false,
-  });
-  const [editingMeasurements, setEditingMeasurements] = useState<'day1' | 'day30' | null>(null);
-
-  useEffect(() => {
-    loadUserStats();
-    loadTrackingData();
-    loadMeasurements();
-  }, [user]);
-
-  const navigateToJournal = () => {
-    router.push('/journal');
-  };
-
-  const loadUserStats = async () => {
-    if (!user) return;
-
-    try {
-      // Récupérer les exercices complétés
-      const exercisesResult = await getCompletedExercises(user.id);
-      const favoritesResult = await getFavoriteRecipes(user.id);
-
-      if (exercisesResult.success && favoritesResult.success) {
-        const exercises = exercisesResult.data || [];
-        const favorites = favoritesResult.data || [];
-
-        // Calculer les statistiques
-        const totalDuration = exercises.reduce((sum: number, ex: any) => sum + ex.duration, 0);
-        const weeklyActivity = calculateWeeklyActivity(exercises);
-        const streakDays = calculateStreak(exercises);
-        const lastActivity = exercises.length > 0 ? exercises[0].completedAt : null;
-
-        setStats({
-          totalExercises: exercises.length,
-          totalDuration,
-          favoriteRecipes: favorites.length,
-          streakDays,
-          weeklyActivity,
-          lastActivity,
-        });
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des statistiques:', error);
-    }
-  };
-
-  const loadMeasurements = async () => {
-    if (!user) return;
-    
-    try {
-      const savedMeasurements = await LocalStorageService.getItem(`@agp_measurements_${user.id}`);
-      if (savedMeasurements) {
-        setMeasurements(JSON.parse(savedMeasurements));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des mensurations:', error);
-    }
-  };
-
-  const saveMeasurements = async (newMeasurements: UserMeasurements) => {
-    if (!user) return;
-    
-    try {
-      await LocalStorageService.setItem(`@agp_measurements_${user.id}`, JSON.stringify(newMeasurements));
-      setMeasurements(newMeasurements);
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des mensurations:', error);
-    }
-  };
-
-  const updateMeasurement = useCallback((day: 'day1' | 'day30', field: keyof Measurements, value: string) => {
-    setMeasurements(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        [field]: value
-      }
-    }));
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateFirstName = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, firstName: text }));
   }, []);
 
-  const lockMeasurements = async (day: 'day1' | 'day30') => {
-    const newMeasurements = {
-      ...measurements,
-      [`${day}Locked`]: true
-    };
-    await saveMeasurements(newMeasurements);
-    setEditingMeasurements(null);
-    Alert.alert(
-      '✅ Mensurations enregistrées',
-      `Vos mensurations du ${day === 'day1' ? 'Jour 1' : 'Jour 30'} ont été sauvegardées avec succès !`
-    );
+  const updateLastName = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, lastName: text }));
+  }, []);
+
+  const updateUsername = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, username: text }));
+  }, []);
+
+  const updateNiveauSport = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, niveauSport: value as any }));
+        preferencesAlimentaires: user.preferencesAlimentaires || [],
+        objectifs: user.objectifs || [],
+      });
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      // Sauvegarder les informations de base
+      const result = await updateProfile(user.id, formData);
+      
+      if (result.success) {
+        setIsEditing(false);
+        Alert.alert('Succès', 'Profil mis à jour avec succès !');
+      } else {
+        Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
+      }
+    } catch (error) {
+      Alert.alert('Erreur', 'Une erreur est survenue');
+    }
   };
 
-  const unlockMeasurements = (day: 'day1' | 'day30') => {
+  const handleLogout = () => {
+    console.log('Bouton de déconnexion cliqué');
     Alert.alert(
-      'Modifier les mensurations',
-      `Voulez-vous modifier vos mensurations du ${day === 'day1' ? 'Jour 1' : 'Jour 30'} ?`,
+      'Déconnexion',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
       [
         { text: 'Annuler', style: 'cancel' },
         {
-          text: 'Modifier',
-          onPress: () => setEditingMeasurements(day)
-        }
+          text: 'Déconnexion',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setIsLoggingOut(true);
+              console.log('🔄 Déconnexion en cours...');
+              await logout();
+              console.log('✅ Déconnexion réussie');
+              // La redirection est gérée automatiquement par le contexte d'auth
+            } catch (error) {
+              setIsLoggingOut(false);
+              console.error('❌ Erreur lors de la déconnexion:', error);
+              Alert.alert(
+                'Erreur',
+                'Impossible de se déconnecter. Veuillez réessayer.',
+                [{ text: 'OK' }]
+              );
+            }
+          },
+        },
       ]
     );
   };
 
-  const loadTrackingData = async () => {
-    if (!user) return;
+  const togglePreference = useCallback((preference: string) => {
+    setFormData(prev => ({
+      ...prev,
+      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
+        ? prev.preferencesAlimentaires.filter(p => p !== preference)
+        : [...prev.preferencesAlimentaires, preference]
+    }));
+  }, []);
 
-    try {
-      // Calculer les dates pour la semaine en cours
-      const today = new Date();
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
+  const toggleObjectif = useCallback((objectif: string) => {
+    setFormData(prev => ({
+      ...prev,
+      objectifs: prev.objectifs.includes(objectif)
+        ? prev.objectifs.filter(o => o !== objectif)
+        : [...prev.objectifs, objectif]
+    }));
+  }, []);
 
-      const startDateStr = startOfWeek.toISOString().split('T')[0];
-      const endDateStr = endOfWeek.toISOString().split('T')[0];
+  const preferencesOptions = [
+    'Végétarien',
+    'Vegan',
+    'Sans gluten',
+    'Sans lactose',
+    'Paléo',
+    'Cétogène'
+  ];
 
-      // Récupérer les données de suivi pour la semaine
-      const trackings = await TrackingService.getWeeklyTracking(
-        user.id,
-        startDateStr,
-        endDateStr
-      );
+  const objectifsOptions = [
+    'Perte de poids',
+    'Prise de muscle',
+    'Améliorer l\'énergie',
+    'Réduire le stress',
+    'Mieux dormir',
+    'Améliorer la digestion'
+  ];
 
-      setDailyTrackings(trackings);
-    } catch (error) {
-      console.error('Erreur lors du chargement des données de suivi:', error);
-    }
-  };
+  const niveauxSport = [
+    { value: 'debutant', label: 'Débutant' },
+    { value: 'intermediaire', label: 'Intermédiaire' },
+    { value: 'avance', label: 'Avancé' }
+  ];
 
-  const calculateWeeklyActivity = (exercises: any[]) => {
-    const today = new Date();
-    const weekActivity = [0, 0, 0, 0, 0, 0, 0]; // Lun à Dim
-
-    exercises.forEach(exercise => {
-      const exerciseDate = new Date(exercise.completedAt);
-      const daysDiff = Math.floor((today.getTime() - exerciseDate.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (daysDiff < 7) {
-        const dayOfWeek = (exerciseDate.getDay() + 6) % 7; // Convertir Dim=0 vers Lun=0
-        weekActivity[dayOfWeek]++;
-      }
-    });
-
-    return weekActivity;
-  };
-
-  const calculateStreak = (exercises: any[]) => {
-    if (exercises.length === 0) return 0;
-
-    const today = new Date();
-    const sortedExercises = exercises.sort((a: any, b: any) => 
-      new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
-    );
-
-    let streak = 0;
-    let currentDate = new Date(today);
-    
-    // Vérifier les jours consécutifs d'activité
-    for (let i = 0; i < 30; i++) { // Vérifier les 30 derniers jours max
-      const dateStr = currentDate.toDateString();
-      const hasActivity = sortedExercises.some((ex: any) => 
-        new Date(ex.completedAt).toDateString() === dateStr
-      );
-      
-      if (hasActivity) {
-        streak++;
-      } else if (streak > 0) {
-        break; // Arrêter si on trouve un jour sans activité après avoir commencé le streak
-      }
-      
-      currentDate.setDate(currentDate.getDate() - 1);
-    }
-
-    return streak;
-  };
-
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}min`;
-    }
-    return `${mins}min`;
-  };
-
-  const getMotivationalMessage = () => {
-    if (stats.streakDays >= 7) {
-      return "🔥 Incroyable ! Vous êtes en feu !";
-    } else if (stats.streakDays >= 3) {
-      return "💪 Excellente régularité !";
-    } else if (stats.totalExercises > 0) {
-      return "🌱 Bon début, continuez !";
-    }
-    return "🚀 Prêt à commencer votre parcours ?";
-  };
-
-  const handleAddTracking = (date: string) => {
-    setSelectedDate(date);
-    setTrackingModalVisible(true);
-  };
-
-  const handleSaveTracking = (tracking: DailyTracking) => {
-    // Mettre à jour la liste des suivis
-    setDailyTrackings(prev => {
-      const existingIndex = prev.findIndex(t => t.date === tracking.date);
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex] = tracking;
-        return updated;
-      } else {
-        return [...prev, tracking];
-      }
-    });
-  };
-
-  const StatCard = ({ icon: Icon, title, value, subtitle, color }: {
-    icon: any;
-    title: string;
-    value: string | number;
-    subtitle?: string;
-    color: string;
-  }) => (
-    <View style={[styles.statCard, { borderLeftColor: color }]}>
-      <View style={styles.statHeader}>
-        <Icon size={24} color={color} />
-        <Text style={styles.statTitle}>{title}</Text>
-      </View>
-      <Text style={[styles.statValue, { color }]}>{value}</Text>
-      {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
+  const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {children}
     </View>
   );
 
-  const WeeklyChart = () => {
-    const maxActivity = Math.max(...stats.weeklyActivity, 1);
-    const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  const EditableField = ({ 
+    label, 
+    value, 
+    onChangeText, 
+    placeholder 
+  }: { 
+    label: string; 
+    value: string; 
+    onChangeText: (text: string) => void; 
+    placeholder?: string;
+  }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <TextInput
+          style={styles.textInput}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.textSecondary}
+        />
+      ) : (
+        <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
+      )}
+    </View>
+  );
 
-    return (
-      <View style={styles.chartContainer}>
-        <View style={styles.chartHeader}>
-          <Text style={styles.chartTitle}>Activité de la semaine</Text>
-          <TouchableOpacity
-            style={styles.journalButton}
-            onPress={navigateToJournal}
-          >
-            <BookOpen size={16} color={Colors.textLight} />
-            <Text style={styles.journalButtonText}>Journal</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.chart}>
-          {stats.weeklyActivity.map((activity, index) => (
-            <View key={index} style={styles.chartBar}>
-              <View 
-                style={[
-                  styles.bar, 
-                  { 
-                    height: Math.max((activity / maxActivity) * 60, 4),
-                    backgroundColor: activity > 0 ? Colors.agpGreen : Colors.border
-                  }
-                ]} 
-              />
-              <Text style={styles.dayLabel}>{days[index]}</Text>
-            </View>
+  const SelectField = ({ 
+    label, 
+    value, 
+    options, 
+    onSelect 
+  }: { 
+    label: string; 
+    value: string; 
+    options: { value: string; label: string }[]; 
+    onSelect: (value: string) => void;
+  }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <View style={styles.selectContainer}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.selectOption,
+                value === option.value && styles.selectOptionSelected
+              ]}
+              onPress={() => onSelect(option.value)}
+            >
+              <Text style={[
+                styles.selectOptionText,
+                value === option.value && styles.selectOptionTextSelected
+              ]}>
+                {option.label}
+              </Text>
+            </TouchableOpacity>
           ))}
         </View>
-      </View>
-    );
-  };
+      ) : (
+        <Text style={styles.fieldValue}>
+          {options.find(opt => opt.value === value)?.label || 'Non renseigné'}
+        </Text>
+      )}
+    </View>
+  );
 
-  const DailyStatusCards = () => {
-    // Générer les 7 derniers jours
-    const today = new Date();
-    const days = [];
-    
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      days.push(date);
-    }
-
-    return (
-      <View style={styles.dailyStatusSection}>
-        <Text style={styles.sectionTitle}>📅 Suivi quotidien</Text>
-        <View style={styles.dailyStatusCards}>
-          {days.map((day, index) => {
-            const dateStr = day.toISOString().split('T')[0];
-            const tracking = dailyTrackings.find(t => t.date === dateStr);
-            const dayStatus = tracking ? TrackingService.calculateDayStatus(tracking) : null;
-            
-            return (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.dayStatusCard,
-                  dayStatus && dayStatus.status === 'green' && styles.dayStatusCardGreen,
-                  dayStatus && dayStatus.status === 'orange' && styles.dayStatusCardOrange,
-                  dayStatus && dayStatus.status === 'red' && styles.dayStatusCardRed,
-                ]}
-                onPress={() => handleAddTracking(dateStr)}
-              >
-                <Text style={styles.dayStatusDate}>
-                  {day.toLocaleDateString('fr-FR', { weekday: 'short' })}
-                </Text>
-                <Text style={styles.dayStatusDay}>
-                  {day.getDate()}
-                </Text>
-                {dayStatus ? (
-                  <View style={styles.dayStatusPercentage}>
-                    <Text style={styles.dayStatusPercentageText}>
-                      {dayStatus.completionPercentage}%
-                    </Text>
-                    {tracking.waterIntake > 0 && 
-                      <View>
-                        <Text style={styles.waterStatusText}>
-                          💧{tracking.waterIntake}/{tracking.waterIntakeObjective || 8}
-                        </Text>
-                      </View>
-                    }
-                  </View>
-                ) : (
-                  <View style={styles.dayStatusAdd}>
-                    <Plus size={16} color={Colors.textSecondary} />
-                  </View>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-    );
-  };
-
-  const MeasurementsSection = () => {
-    const hasDay1Data = Object.values(measurements.day1).some(value => value.trim() !== '');
-    const hasDay30Data = Object.values(measurements.day30).some(value => value.trim() !== '');
-    const showEncouragement = hasDay1Data && hasDay30Data;
-
-    return (
-      <View style={styles.measurementsSection}>
-        <Text style={styles.sectionTitle}>📏 Évolution de votre silhouette (Jour 1 vs Jour 30)</Text>
-        
-        <View style={styles.measurementsContainer}>
-          {/* En-têtes des colonnes */}
-          <View style={styles.measurementsHeader}>
-            <Text style={styles.measurementColumnTitle}>Mensuration</Text>
-            <View style={styles.measurementColumn}>
-              <Text style={styles.measurementColumnTitle}>Jour 1</Text>
-              {!measurements.day1Locked && editingMeasurements !== 'day1' ? (
-                <TouchableOpacity
-                  style={styles.editMeasurementButton}
-                  onPress={() => setEditingMeasurements('day1')}
-                >
-                  <Edit3 size={14} color={Colors.agpBlue} />
-                  <Text style={styles.editMeasurementText}>Saisir</Text>
-                </TouchableOpacity>
-              ) : measurements.day1Locked ? (
-                <TouchableOpacity
-                  style={styles.modifyMeasurementButton}
-                  onPress={() => unlockMeasurements('day1')}
-                >
-                  <Edit3 size={14} color={Colors.textSecondary} />
-                  <Text style={styles.modifyMeasurementText}>Modifier</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.saveMeasurementButton}
-                  onPress={() => lockMeasurements('day1')}
-                >
-                  <Save size={14} color={Colors.agpGreen} />
-                  <Text style={styles.saveMeasurementText}>Valider</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.measurementColumn}>
-              <Text style={styles.measurementColumnTitle}>Jour 30</Text>
-              {!measurements.day30Locked && editingMeasurements !== 'day30' ? (
-                <TouchableOpacity
-                  style={styles.editMeasurementButton}
-                  onPress={() => setEditingMeasurements('day30')}
-                >
-                  <Edit3 size={14} color={Colors.agpBlue} />
-                  <Text style={styles.editMeasurementText}>Saisir</Text>
-                </TouchableOpacity>
-              ) : measurements.day30Locked ? (
-                <TouchableOpacity
-                  style={styles.modifyMeasurementButton}
-                  onPress={() => unlockMeasurements('day30')}
-                >
-                  <Edit3 size={14} color={Colors.textSecondary} />
-                  <Text style={styles.modifyMeasurementText}>Modifier</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.saveMeasurementButton}
-                  onPress={() => lockMeasurements('day30')}
-                >
-                  <Save size={14} color={Colors.agpGreen} />
-                  <Text style={styles.saveMeasurementText}>Valider</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
-          {/* Lignes de mensurations */}
-          <View style={styles.measurementsTable}>
-            {/* Poids */}
-            <View style={styles.measurementTableRow}>
-              <Text style={styles.measurementRowLabel}>Poids</Text>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day1.weight}
-                  onChangeText={(text) => updateMeasurement('day1', 'weight', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day1'}
-                />
-                <Text style={styles.measurementUnit}>kg</Text>
-              </View>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day30.weight}
-                  onChangeText={(text) => updateMeasurement('day30', 'weight', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day30'}
-                />
-                <Text style={styles.measurementUnit}>kg</Text>
-              </View>
-            </View>
-
-            {/* Tour de taille */}
-            <View style={styles.measurementTableRow}>
-              <Text style={styles.measurementRowLabel}>Tour de taille</Text>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day1.waist}
-                  onChangeText={(text) => updateMeasurement('day1', 'waist', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day1'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day30.waist}
-                  onChangeText={(text) => updateMeasurement('day30', 'waist', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day30'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-            </View>
-
-            {/* Tour de hanches */}
-            <View style={styles.measurementTableRow}>
-              <Text style={styles.measurementRowLabel}>Tour de hanches</Text>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day1.hips}
-                  onChangeText={(text) => updateMeasurement('day1', 'hips', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day1'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day30.hips}
-                  onChangeText={(text) => updateMeasurement('day30', 'hips', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day30'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-            </View>
-
-            {/* Tour de cuisses */}
-            <View style={styles.measurementTableRow}>
-              <Text style={styles.measurementRowLabel}>Tour de cuisses</Text>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day1.thighs}
-                  onChangeText={(text) => updateMeasurement('day1', 'thighs', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day1'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day30.thighs}
-                  onChangeText={(text) => updateMeasurement('day30', 'thighs', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day30'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-            </View>
-
-            {/* Tour de bras */}
-            <View style={styles.measurementTableRow}>
-              <Text style={styles.measurementRowLabel}>Tour de bras</Text>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day1.arms}
-                  onChangeText={(text) => updateMeasurement('day1', 'arms', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day1'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-              <View style={styles.measurementInputContainer}>
-                <TextInput
-                  style={[
-                    styles.measurementInput,
-                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
-                  ]}
-                  value={measurements.day30.arms}
-                  onChangeText={(text) => updateMeasurement('day30', 'arms', text)}
-                  placeholder="--"
-                  placeholderTextColor={Colors.textSecondary}
-                  keyboardType="decimal-pad"
-                  editable={editingMeasurements === 'day30'}
-                />
-                <Text style={styles.measurementUnit}>cm</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Message d'encouragement */}
-          {showEncouragement && (
-            <View style={styles.encouragementCard}>
-              <Text style={styles.encouragementTitle}>Bravo pour votre engagement 👏</Text>
-              <Text style={styles.encouragementText}>
-                Même les petits changements comptent dans votre transformation AGP !
+  const MultiSelectField = ({ 
+    label, 
+    values, 
+    options, 
+    onToggle 
+  }: { 
+    label: string; 
+    values: string[]; 
+    options: string[]; 
+    onToggle: (value: string) => void;
+  }) => (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      {isEditing ? (
+        <View style={styles.multiSelectContainer}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={[
+                styles.multiSelectOption,
+                values.includes(option) && styles.multiSelectOptionSelected
+              ]}
+              onPress={() => onToggle(option)}
+            >
+              <Text style={[
+                styles.multiSelectOptionText,
+                values.includes(option) && styles.multiSelectOptionTextSelected
+              ]}>
+                {option}
               </Text>
-            </View>
-          )}
+            </TouchableOpacity>
+          ))}
         </View>
-      </View>
-    );
-  };
+      ) : (
+        <Text style={styles.fieldValue}>
+          {values.length > 0 ? values.join(', ') : 'Aucune préférence'}
+        </Text>
+      )}
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -668,614 +276,82 @@ export default function SuiviScreen() {
             <AGPLogo size={50} />
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Suivi Personnel</Text>
+            <Text style={styles.headerTitle}>Mon Profil</Text>
             <Text style={styles.headerSubtitle}>
-              Votre progression AGP
+              Personnalisez votre expérience AGP
             </Text>
           </View>
-          <View style={styles.headerIcon}>
-            <BarChart3 size={32} color={Colors.textLight} />
-          </View>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              if (isEditing) {
+                handleSave();
+              } else {
+                setIsEditing(true);
+              }
+            }}
+          >
+            {isEditing ? (
+              <Save size={24} color={Colors.textLight} />
+            ) : (
+              <Edit3 size={24} color={Colors.textLight} />
+            )}
+          </TouchableOpacity>
         </View>
       </LinearGradient>
 
       <View style={styles.content}>
-        {/* Message de motivation */}
-        <View style={styles.motivationCard}>
-          <Text style={styles.motivationText}>{getMotivationalMessage()}</Text>
-          {user && (
-            <Text style={styles.welcomeText}>
-              Bonjour {user.firstName || user.username} ! 👋
-            </Text>
-          )}
-        </View>
-
-        {/* Suivi quotidien */}
-        <DailyStatusCards />
-
-        {/* Statistiques principales */}
-        <View style={styles.statsGrid}>
-          <StatCard
-            icon={Dumbbell}
-            title="Exercices"
-            value={stats.totalExercises}
-            subtitle="complétés"
-            color={Colors.agpBlue}
+        {/* Informations personnelles */}
+        <ProfileSection title="👤 Informations personnelles">
+          <EditableField
+            label="Prénom"
+            value={formData.firstName}
+            onChangeText={updateFirstName}
+            placeholder="Votre prénom"
           />
-          <StatCard
-            icon={Clock}
-            title="Temps total"
-            value={formatDuration(stats.totalDuration)}
-            subtitle="d'activité"
-            color={Colors.agpGreen}
-          />
-          <StatCard
-            icon={Heart}
-            title="Favoris"
-            value={stats.favoriteRecipes}
-            subtitle="recettes"
-            color={Colors.relaxation}
-          />
-          <StatCard
-            icon={Award}
-            title="Série"
-            value={stats.streakDays}
-            subtitle="jours consécutifs"
-            color={Colors.morning}
-          />
-        </View>
-
-        {/* Graphique d'activité */}
-        <WeeklyChart />
-
-        {/* Suivi des mensurations */}
-        <MeasurementsSection />
-
-        {/* Objectifs et badges */}
-        <View style={styles.achievementsSection}>
-          <Text style={styles.sectionTitle}>🏆 Vos Réussites</Text>
           
-          <View style={styles.badgesContainer}>
-            <View style={[styles.badge, stats.totalExercises >= 1 ? styles.badgeUnlocked : styles.badgeLocked]}>
-              <Star size={20} color={stats.totalExercises >= 1 ? Colors.morning : Colors.textSecondary} />
-              <Text style={[styles.badgeText, stats.totalExercises >= 1 && styles.badgeTextUnlocked]}>
-                Premier pas
-              </Text>
-            </View>
-            
-            <View style={[styles.badge, stats.totalExercises >= 10 ? styles.badgeUnlocked : styles.badgeLocked]}>
-              <Target size={20} color={stats.totalExercises >= 10 ? Colors.agpBlue : Colors.textSecondary} />
-              <Text style={[styles.badgeText, stats.totalExercises >= 10 && styles.badgeTextUnlocked]}>
-                Régulier
-              </Text>
-            </View>
-            
-            <View style={[styles.badge, stats.streakDays >= 7 ? styles.badgeUnlocked : styles.badgeLocked]}>
-              <TrendingUp size={20} color={stats.streakDays >= 7 ? Colors.agpGreen : Colors.textSecondary} />
-              <Text style={[styles.badgeText, stats.streakDays >= 7 && styles.badgeTextUnlocked]}>
-                Une semaine !
-              </Text>
-            </View>
-            
-            <View style={[styles.badge, stats.favoriteRecipes >= 5 ? styles.badgeUnlocked : styles.badgeLocked]}>
-              <Utensils size={20} color={stats.favoriteRecipes >= 5 ? Colors.relaxation : Colors.textSecondary} />
-              <Text style={[styles.badgeText, stats.favoriteRecipes >= 5 && styles.badgeTextUnlocked]}>
-                Gourmet
-              </Text>
-            </View>
+          <EditableField
+            label="Nom"
+            value={formData.lastName}
+            onChangeText={updateLastName}
+            placeholder="Votre nom"
+          />
+          
+          <EditableField
+            label="Nom d'utilisateur"
+            value={formData.username}
+            onChangeText={updateUsername}
+            placeholder="Votre nom d'utilisateur"
+          />
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.fieldLabel}>Email</Text>
+            <Text style={styles.fieldValue}>{user?.email}</Text>
           </View>
-        </View>
+        </ProfileSection>
 
-        {/* Conseils personnalisés */}
-        <View style={styles.tipsSection}>
-          <Text style={styles.sectionTitle}>💡 Conseils Personnalisés</Text>
-          
-          {stats.totalExercises === 0 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🌟 Commencez par un exercice de respiration de 2 minutes pour découvrir les bienfaits de la détente !
-              </Text>
-            </View>
-          )}
-          
-          {stats.totalExercises > 0 && stats.streakDays < 3 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🔄 Essayez de pratiquer un petit exercice chaque jour pour créer une habitude durable.
-              </Text>
-            </View>
-          )}
-          
-          {stats.favoriteRecipes === 0 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🍽️ Explorez nos recettes et ajoutez vos préférées en favoris pour les retrouver facilement !
-              </Text>
-            </View>
-          )}
-          
-          {stats.streakDays >= 7 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🎉 Félicitations pour votre régularité ! Vous pouvez maintenant essayer des exercices plus longs.
-              </Text>
-            </View>
-          )}
-        </View>
+        {/* Préférences sportives */}
+        <ProfileSection title="💪 Préférences sportives">
+          <SelectField
+            label="Niveau sportif"
+            value={formData.niveauSport}
+            options={niveauxSport}
+            onSelect={updateNiveauSport}
+          />
+        </ProfileSection>
 
-        {/* Dernière activité */}
-        {stats.lastActivity && (
-          <View style={styles.lastActivitySection}>
-            <Text style={styles.sectionTitle}>📅 Dernière Activité</Text>
-            <Text style={styles.lastActivityText}>
-              {new Date(stats.lastActivity).toLocaleDateString('fr-FR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </Text>
-          </View>
-        )}
-      </View>
+        {/* Préférences alimentaires */}
+        <ProfileSection title="🍽️ Préférences alimentaires">
+          <MultiSelectField
+            label="Régimes alimentaires"
+            values={formData.preferencesAlimentaires}
+            options={preferencesOptions}
+            onToggle={togglePreference}
+          />
+        </ProfileSection>
 
-      {/* Modal de suivi quotidien */}
-      <DailyTrackingModal
-        visible={trackingModalVisible}
-        onClose={() => setTrackingModalVisible(false)}
-        date={selectedDate}
-        onSave={handleSaveTracking}
-      />
-    </ScrollView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logoContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
-    padding: 8,
-  },
-  headerText: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textLight,
-    opacity: 0.9,
-  },
-  headerIcon: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    padding: 8,
-  },
-  content: {
-    padding: 20,
-  },
-  motivationCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  motivationText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  welcomeText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-  },
-  dailyStatusSection: {
-    marginBottom: 24,
-  },
-  dailyStatusCards: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  dayStatusCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 8,
-    alignItems: 'center',
-    width: (width - 56) / 7,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderTopWidth: 3,
-    borderTopColor: Colors.border,
-  },
-  dayStatusCardGreen: {
-    borderTopColor: Colors.agpGreen,
-  },
-  dayStatusCardOrange: {
-    borderTopColor: Colors.morning,
-  },
-  dayStatusCardRed: {
-    borderTopColor: Colors.relaxation,
-  },
-  dayStatusDate: {
-    fontSize: 10,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    textTransform: 'uppercase',
-  },
-  dayStatusDay: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginVertical: 4,
-  },
-  dayStatusPercentage: {
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  dayStatusPercentageText: {
-    fontSize: 10,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.agpGreen
-  },
-  waterStatusText: {
-    fontSize: 10,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-    marginTop: 2
-  },
-  dayStatusAdd: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 12,
-    padding: 4,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  statCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    width: (width - 52) / 2,
-    borderLeftWidth: 4,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  statHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  statTitle: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    marginLeft: 8,
-  },
-  statValue: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 4,
-  },
-  statSubtitle: {
-    fontSize: 11,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-  },
-  chartContainer: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  chartHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  chartTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-  },
-  journalButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    gap: 6,
-  },
-  journalButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.textLight,
-  },
-  chart: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-    height: 80,
-  },
-  chartBar: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  bar: {
-    width: 20,
-    borderRadius: 10,
-    marginBottom: 8,
-  },
-  dayLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 16,
-  },
-  achievementsSection: {
-    marginBottom: 24,
-  },
-  badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  badge: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    width: (width - 52) / 2,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  badgeUnlocked: {
-    borderWidth: 2,
-    borderColor: Colors.agpGreen,
-  },
-  badgeLocked: {
-    opacity: 0.5,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.textSecondary,
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  badgeTextUnlocked: {
-    color: Colors.text,
-  },
-  tipsSection: {
-    marginBottom: 24,
-  },
-  tipCard: {
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpGreen,
-  },
-  tipText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-    lineHeight: 20,
-  },
-  lastActivitySection: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  lastActivityText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-  },
-  measurementsSection: {
-    marginBottom: 24,
-  },
-  measurementsContainer: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  measurementsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  measurementColumnTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    textAlign: 'center',
-    flex: 1,
-  },
-  measurementColumn: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 8,
-  },
-  editMeasurementButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    gap: 4,
-  },
-  editMeasurementText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-  },
-  modifyMeasurementButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  modifyMeasurementText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.textSecondary,
-  },
-  saveMeasurementButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    gap: 4,
-  },
-  saveMeasurementText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpGreen,
-  },
-  measurementsTable: {
-    gap: 12,
-  },
-  measurementTableRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  measurementRowLabel: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    flex: 1,
-  },
-  measurementInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    gap: 4,
-  },
-  measurementInput: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-    textAlign: 'center',
-    minWidth: 60,
-  },
-  measurementInputDisabled: {
-    backgroundColor: Colors.border,
-    color: Colors.textSecondary,
-  },
-  measurementUnit: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  },
-  encouragementCard: {
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 20,
-    alignItems: 'center',
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpGreen,
-  },
-  encouragementTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  encouragementText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
+        {/* Objectifs */}
+        <ProfileSection title="🎯 Objectifs">
+          <MultiSelectField
+            label="Vos objectifs"
 });
