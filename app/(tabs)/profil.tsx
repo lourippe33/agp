@@ -374,61 +374,6 @@ export default function ProfilScreen() {
           </View>
         </ProfileSection>
 
-        {/* Mesures corporelles */}
-        <ProfileSection title="⚖️ Mesures corporelles">
-          <EditableField
-            label="Poids actuel (kg)"
-            value={profileData.currentWeight ? profileData.currentWeight.toString() : ''}
-            onChangeText={(text) => setProfileData(prev => ({ 
-              ...prev, 
-              currentWeight: parseFloat(text) || 0 
-            }))}
-            placeholder="Ex: 70.5"
-          />
-          
-          <EditableField
-            label="Poids cible (kg)"
-            value={profileData.targetWeight ? profileData.targetWeight.toString() : ''}
-            onChangeText={(text) => setProfileData(prev => ({ 
-              ...prev, 
-              targetWeight: parseFloat(text) || 0 
-            }))}
-            placeholder="Ex: 65"
-          />
-          
-          <EditableField
-            label="Taille (cm)"
-            value={profileData.height ? profileData.height.toString() : ''}
-            onChangeText={(text) => setProfileData(prev => ({ 
-              ...prev, 
-              height: parseFloat(text) || 0 
-            }))}
-            placeholder="Ex: 175"
-          />
-          
-          <EditableField
-            label="Tour de taille (cm)"
-            value={profileData.waistMeasurement ? profileData.waistMeasurement.toString() : ''}
-            onChangeText={(text) => setProfileData(prev => ({ 
-              ...prev, 
-              waistMeasurement: parseFloat(text) || 0 
-            }))}
-            placeholder="Ex: 80"
-          />
-          
-          {!isEditing && profileData.height > 0 && profileData.currentWeight > 0 && (
-            <View style={styles.bmiContainer}>
-              <Text style={styles.bmiLabel}>IMC :</Text>
-              <Text style={styles.bmiValue}>
-                {TrackingService.calculateBMI(profileData.currentWeight, profileData.height)}
-              </Text>
-              <Text style={styles.bmiCategory}>
-                {getBMICategory(TrackingService.calculateBMI(profileData.currentWeight, profileData.height))}
-              </Text>
-            </View>
-          )}
-        </ProfileSection>
-
         {/* Préférences sportives */}
         <ProfileSection title="💪 Préférences sportives">
           <SelectField
