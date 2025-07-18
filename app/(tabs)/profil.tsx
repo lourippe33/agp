@@ -228,7 +228,6 @@ export default function ProfilScreen() {
     );
   };
 
-  const togglePreference = (preference: string) => {
   const togglePreference = useCallback((preference: string) => {
     setFormData(prev => ({
       ...prev,
@@ -238,7 +237,6 @@ export default function ProfilScreen() {
     }));
   }, []);
 
-  const toggleObjectif = (objectif: string) => {
   const toggleObjectif = useCallback((objectif: string) => {
     setFormData(prev => ({
       ...prev,
