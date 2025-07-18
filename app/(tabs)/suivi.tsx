@@ -50,6 +50,15 @@ export default function ProfilScreen() {
 
   const updateNiveauSport = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, niveauSport: value as any }));
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        username: user.username || '',
+        niveauSport: user.niveauSport || 'debutant',
         preferencesAlimentaires: user.preferencesAlimentaires || [],
         objectifs: user.objectifs || [],
       });
@@ -354,4 +363,140 @@ export default function ProfilScreen() {
         <ProfileSection title="🎯 Objectifs">
           <MultiSelectField
             label="Vos objectifs"
+            values={formData.objectifs}
+            options={objectifsOptions}
+            onToggle={toggleObjectif}
+          />
+        </ProfileSection>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logoContainer: {
+    marginRight: 15,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.textLight,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  editButton: {
+    padding: 8,
+  },
+  content: {
+    padding: 20,
+  },
+  section: {
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.textPrimary,
+    marginBottom: 15,
+  },
+  fieldContainer: {
+    marginBottom: 20,
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  fieldValue: {
+    fontSize: 16,
+    color: Colors.textSecondary,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  textInput: {
+    fontSize: 16,
+    color: Colors.textPrimary,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  selectOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectOptionSelected: {
+    backgroundColor: Colors.agpBlue,
+    borderColor: Colors.agpBlue,
+  },
+  selectOptionText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
+  selectOptionTextSelected: {
+    color: Colors.textLight,
+    fontWeight: '600',
+  },
+  multiSelectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  multiSelectOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  multiSelectOptionSelected: {
+    backgroundColor: Colors.agpGreen,
+    borderColor: Colors.agpGreen,
+  },
+  multiSelectOptionText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
+  multiSelectOptionTextSelected: {
+    color: Colors.textLight,
+    fontWeight: '600',
+  },
 });
