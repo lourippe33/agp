@@ -12,13 +12,26 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
-          height: 70,
-          paddingBottom: 10,
-          paddingTop: 10,
+          height: 80,
+          paddingBottom: 12,
+          paddingTop: 8,
+          elevation: 8,
+          shadowColor: Colors.shadow,
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontFamily: 'Poppins-Medium',
+          fontSize: 13,
+          fontFamily: 'Poppins-SemiBold',
+          marginTop: 4,
+          marginBottom: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
       }}
     >
