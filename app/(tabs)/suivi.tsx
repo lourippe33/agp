@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
+import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets, Scale, Ruler } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -368,9 +368,110 @@ export default function ProfilScreen() {
             onToggle={toggleObjectif}
           />
         </ProfileSection>
+
+        {/* Paramètres */}
+        <ProfileSection title="⚙️ Paramètres">
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Bell size={20} color={Colors.agpBlue} />
+              <Text style={styles.settingLabel}>Notifications</Text>
+            </View>
+            <Switch
+              value={notifications}
+              onValueChange={setNotifications}
+              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
+              thumbColor={notifications ? Colors.agpBlue : Colors.textSecondary}
+            />
+          </View>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Droplets size={20} color={Colors.agpBlue} />
+              <Text style={styles.settingLabel}>Rappels d'hydratation</Text>
+            </View>
+            <Switch
+              value={waterNotifications}
+              onValueChange={setWaterNotifications}
+              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
+              thumbColor={waterNotifications ? Colors.agpBlue : Colors.textSecondary}
+            />
+          </View>
+          
+          <NotificationSettings />
+
+          {waterNotifications && (
+            <View style={styles.waterObjectiveSetting}>
+              <Text style={styles.waterObjectiveLabel}>Objectif quotidien d'eau</Text>
+              <View style={styles.waterObjectiveControls}>
+                <TouchableOpacity
+                  style={styles.waterObjectiveButton}
+                  onPress={() => setWaterObjective(Math.max(1, waterObjective - 1))}
+                >
+                  <Text style={styles.waterObjectiveButtonText}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.waterObjectiveValue}>
+                  <Text style={styles.waterObjectiveValueText}>{waterObjective}</Text>
+                  <Text style={styles.waterObjectiveUnit}>verres</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.waterObjectiveButton}
+                  onPress={() => setWaterObjective(waterObjective + 1)}
+                >
+                  <Text style={styles.waterObjectiveButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.waterObjectiveHelp}>
+                Recommandation : 8 verres (environ 2L) par jour
+              </Text>
+            </View>
+          )}
+        </ProfileSection>
+
+        {/* Actions */}
+        <View style={styles.actionsSection}>
+          <TouchableOpacity 
+            style={[
+              styles.actionButton,
+              isLoggingOut && { opacity: 0.6 }
+            ]}
+            onPress={handleLogout}
+            disabled={isLoggingOut}
+            activeOpacity={0.7}
+          >
+            {isLoggingOut ? (
+              <ActivityIndicator size="small" color={Colors.relaxation} />
+            ) : (
+              <LogOut size={24} color={Colors.relaxation} />
+            )}
+            <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
+              {isLoggingOut ? 'Déconnexion...' : 'Déconnexion'}
+            </Text>
+            <ChevronRight size={24} color={Colors.relaxation} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Informations de compte */}
+        <View style={styles.accountInfo}>
+          <Text style={styles.accountInfoTitle}>Informations du compte</Text>
+          <Text style={styles.accountInfoText}>
+            Membre depuis : {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+          </Text>
+          <Text style={styles.accountInfoText}>
+            Dernière mise à jour : {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('fr-FR') : 'Jamais'}
+          </Text>
+        </View>
       </View>
     </ScrollView>
   );
+}
+
+// Fonction pour obtenir la catégorie d'IMC
+function getBMICategory(bmi: number): string {
+  if (bmi < 18.5) return 'Insuffisance pondérale';
+  if (bmi < 25) return 'Corpulence normale';
+  if (bmi < 30) return 'Surpoids';
+  if (bmi < 35) return 'Obésité modérée';
+  if (bmi < 40) return 'Obésité sévère';
+  return 'Obésité morbide';
 }
 
 const styles = StyleSheet.create({
@@ -389,78 +490,89 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   logoContainer: {
-    marginRight: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 30,
+    padding: 8,
   },
   headerText: {
     flex: 1,
+    marginLeft: 16,
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
   },
   editButton: {
-    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 25,
+    padding: 12,
   },
   content: {
     padding: 20,
   },
   section: {
-    marginBottom: 30,
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.textPrimary,
-    marginBottom: 15,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 16,
   },
   fieldContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   fieldLabel: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textPrimary,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
     marginBottom: 8,
   },
   fieldValue: {
     fontSize: 16,
+    fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: Colors.cardBackground,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    paddingVertical: 8,
   },
   textInput: {
-    fontSize: 16,
-    color: Colors.textPrimary,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: Colors.cardBackground,
+    backgroundColor: Colors.background,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
   },
   selectContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
+    flexWrap: 'wrap',
   },
   selectOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: Colors.cardBackground,
-    borderRadius: 20,
+    backgroundColor: Colors.background,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   selectOptionSelected: {
     backgroundColor: Colors.agpBlue,
@@ -468,11 +580,11 @@ const styles = StyleSheet.create({
   },
   selectOptionText: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
   },
   selectOptionTextSelected: {
     color: Colors.textLight,
-    fontWeight: '600',
   },
   multiSelectContainer: {
     flexDirection: 'row',
@@ -480,23 +592,140 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   multiSelectOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: Colors.cardBackground,
-    borderRadius: 20,
+    backgroundColor: Colors.background,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   multiSelectOptionSelected: {
     backgroundColor: Colors.agpGreen,
     borderColor: Colors.agpGreen,
   },
   multiSelectOptionText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
   },
   multiSelectOptionTextSelected: {
     color: Colors.textLight,
-    fontWeight: '600',
+  },
+  // Styles pour les mensurations
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+  },
+  settingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+  },
+  waterObjectiveSetting: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    marginLeft: 36,
+  },
+  waterObjectiveLabel: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    marginBottom: 12,
+  },
+  waterObjectiveControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  waterObjectiveButton: {
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  waterObjectiveButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+  },
+  waterObjectiveValue: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    paddingHorizontal: 16,
+  },
+  waterObjectiveValueText: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+    marginRight: 4,
+  },
+  waterObjectiveUnit: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  waterObjectiveHelp: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  actionsSection: {
+    marginBottom: 20,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 24,
+    paddingHorizontal: 24,
+    gap: 16,
+    marginBottom: 12,
+    elevation: 8,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.relaxation,
+  },
+  actionButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    flex: 1,
+  },
+  accountInfo: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  accountInfoTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  accountInfoText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    marginBottom: 4,
   },
 });
