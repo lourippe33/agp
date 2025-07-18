@@ -42,18 +42,52 @@ export default function PersistentTabBar() {
     router.replace('/(tabs)/home');
   };
 
-  // Ne pas afficher la tab bar sur la page d'accueil elle-même
-  // Ni sur aucune page des tabs principales qui ont déjà la navigation en bas
-  if (pathname === '/(tabs)/home' || pathname === '/' || 
-      pathname === '/(tabs)/programme' || 
-      pathname === '/(tabs)/suivi' || 
-      pathname === '/(tabs)/communaute' || 
-      pathname === '/(tabs)/profil' ||
-      pathname === '/(tabs)/journal') {
+  // Afficher la tab bar seulement sur les pages qui ne sont PAS dans les tabs principaux
+  const isTabPage = pathname.startsWith('/(tabs)/');
+  
+  // Ne pas afficher sur les pages qui ont déjà leur propre navigation
+  if (isTabPage) {
     return null;
   }
 
-  return null;
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.homeButton}
+        onPress={navigateToHome}
+        activeOpacity={0.8}
+      >
+        <Home size={24} color={Colors.textLight} />
+        <Text style={styles.homeButtonText}>Retour Accueil</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
-// Styles supprimés car ils ne sont plus utilisés
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    zIndex: 1000,
+  },
+  homeButton: {
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    elevation: 6,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  homeButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+});
