@@ -1,16 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3 } from 'lucide-react-native';
+import { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3, Save, Ruler } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import DailyTrackingModal from '@/components/DailyTrackingModal';
 import { DailyTracking } from '@/types/Tracking';
 import { TrackingService } from '@/services/TrackingService';
+import { LocalStorageService } from '@/services/LocalStorageService';
 import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
+
+interface Measurements {
+  weight: string;
+  waist: string;
+  hips: string;
+  thighs: string;
+  arms: string;
+}
+
+interface UserMeasurements {
+  day1: Measurements;
+  day30: Measurements;
+  day1Locked: boolean;
+  day30Locked: boolean;
+}
 
 interface Stats {
   totalExercises: number;
@@ -36,9 +52,19 @@ export default function SuiviScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [dailyTrackings, setDailyTrackings] = useState<DailyTracking[]>([]);
 
+  // États pour les mensurations
+  const [measurements, setMeasurements] = useState<UserMeasurements>({
+    day1: { weight: '', waist: '', hips: '', thighs: '', arms: '' },
+    day30: { weight: '', waist: '', hips: '', thighs: '', arms: '' },
+    day1Locked: false,
+    day30Locked: false,
+  });
+  const [editingMeasurements, setEditingMeasurements] = useState<'day1' | 'day30' | null>(null);
+
   useEffect(() => {
     loadUserStats();
     loadTrackingData();
+    loadMeasurements();
   }, [user]);
 
   const navigateToJournal = () => {
@@ -75,6 +101,67 @@ export default function SuiviScreen() {
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error);
     }
+  };
+
+  const loadMeasurements = async () => {
+    if (!user) return;
+    
+    try {
+      const savedMeasurements = await LocalStorageService.getItem(`@agp_measurements_${user.id}`);
+      if (savedMeasurements) {
+        setMeasurements(JSON.parse(savedMeasurements));
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des mensurations:', error);
+    }
+  };
+
+  const saveMeasurements = async (newMeasurements: UserMeasurements) => {
+    if (!user) return;
+    
+    try {
+      await LocalStorageService.setItem(`@agp_measurements_${user.id}`, JSON.stringify(newMeasurements));
+      setMeasurements(newMeasurements);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde des mensurations:', error);
+    }
+  };
+
+  const updateMeasurement = (day: 'day1' | 'day30', field: keyof Measurements, value: string) => {
+    setMeasurements(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value
+      }
+    }));
+  };
+
+  const lockMeasurements = async (day: 'day1' | 'day30') => {
+    const newMeasurements = {
+      ...measurements,
+      [`${day}Locked`]: true
+    };
+    await saveMeasurements(newMeasurements);
+    setEditingMeasurements(null);
+    Alert.alert(
+      '✅ Mensurations enregistrées',
+      `Vos mensurations du ${day === 'day1' ? 'Jour 1' : 'Jour 30'} ont été sauvegardées avec succès !`
+    );
+  };
+
+  const unlockMeasurements = (day: 'day1' | 'day30') => {
+    Alert.alert(
+      'Modifier les mensurations',
+      `Voulez-vous modifier vos mensurations du ${day === 'day1' ? 'Jour 1' : 'Jour 30'} ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Modifier',
+          onPress: () => setEditingMeasurements(day)
+        }
+      ]
+    );
   };
 
   const loadTrackingData = async () => {
@@ -306,6 +393,269 @@ export default function SuiviScreen() {
     );
   };
 
+  const MeasurementsSection = () => {
+    const hasDay1Data = Object.values(measurements.day1).some(value => value.trim() !== '');
+    const hasDay30Data = Object.values(measurements.day30).some(value => value.trim() !== '');
+    const showEncouragement = hasDay1Data && hasDay30Data;
+
+    return (
+      <View style={styles.measurementsSection}>
+        <Text style={styles.sectionTitle}>📏 Évolution de votre silhouette (Jour 1 vs Jour 30)</Text>
+        
+        <View style={styles.measurementsContainer}>
+          {/* En-têtes des colonnes */}
+          <View style={styles.measurementsHeader}>
+            <Text style={styles.measurementColumnTitle}>Mensuration</Text>
+            <View style={styles.measurementColumn}>
+              <Text style={styles.measurementColumnTitle}>Jour 1</Text>
+              {!measurements.day1Locked && editingMeasurements !== 'day1' ? (
+                <TouchableOpacity
+                  style={styles.editMeasurementButton}
+                  onPress={() => setEditingMeasurements('day1')}
+                >
+                  <Edit3 size={14} color={Colors.agpBlue} />
+                  <Text style={styles.editMeasurementText}>Saisir</Text>
+                </TouchableOpacity>
+              ) : measurements.day1Locked ? (
+                <TouchableOpacity
+                  style={styles.modifyMeasurementButton}
+                  onPress={() => unlockMeasurements('day1')}
+                >
+                  <Edit3 size={14} color={Colors.textSecondary} />
+                  <Text style={styles.modifyMeasurementText}>Modifier</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.saveMeasurementButton}
+                  onPress={() => lockMeasurements('day1')}
+                >
+                  <Save size={14} color={Colors.agpGreen} />
+                  <Text style={styles.saveMeasurementText}>Valider</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.measurementColumn}>
+              <Text style={styles.measurementColumnTitle}>Jour 30</Text>
+              {!measurements.day30Locked && editingMeasurements !== 'day30' ? (
+                <TouchableOpacity
+                  style={styles.editMeasurementButton}
+                  onPress={() => setEditingMeasurements('day30')}
+                >
+                  <Edit3 size={14} color={Colors.agpBlue} />
+                  <Text style={styles.editMeasurementText}>Saisir</Text>
+                </TouchableOpacity>
+              ) : measurements.day30Locked ? (
+                <TouchableOpacity
+                  style={styles.modifyMeasurementButton}
+                  onPress={() => unlockMeasurements('day30')}
+                >
+                  <Edit3 size={14} color={Colors.textSecondary} />
+                  <Text style={styles.modifyMeasurementText}>Modifier</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.saveMeasurementButton}
+                  onPress={() => lockMeasurements('day30')}
+                >
+                  <Save size={14} color={Colors.agpGreen} />
+                  <Text style={styles.saveMeasurementText}>Valider</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          {/* Lignes de mensurations */}
+          <View style={styles.measurementsTable}>
+            {/* Poids */}
+            <View style={styles.measurementTableRow}>
+              <Text style={styles.measurementRowLabel}>Poids</Text>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day1.weight}
+                  onChangeText={(text) => updateMeasurement('day1', 'weight', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day1'}
+                />
+                <Text style={styles.measurementUnit}>kg</Text>
+              </View>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day30.weight}
+                  onChangeText={(text) => updateMeasurement('day30', 'weight', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day30'}
+                />
+                <Text style={styles.measurementUnit}>kg</Text>
+              </View>
+            </View>
+
+            {/* Tour de taille */}
+            <View style={styles.measurementTableRow}>
+              <Text style={styles.measurementRowLabel}>Tour de taille</Text>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day1.waist}
+                  onChangeText={(text) => updateMeasurement('day1', 'waist', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day1'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day30.waist}
+                  onChangeText={(text) => updateMeasurement('day30', 'waist', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day30'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+            </View>
+
+            {/* Tour de hanches */}
+            <View style={styles.measurementTableRow}>
+              <Text style={styles.measurementRowLabel}>Tour de hanches</Text>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day1.hips}
+                  onChangeText={(text) => updateMeasurement('day1', 'hips', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day1'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day30.hips}
+                  onChangeText={(text) => updateMeasurement('day30', 'hips', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day30'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+            </View>
+
+            {/* Tour de cuisses */}
+            <View style={styles.measurementTableRow}>
+              <Text style={styles.measurementRowLabel}>Tour de cuisses</Text>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day1.thighs}
+                  onChangeText={(text) => updateMeasurement('day1', 'thighs', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day1'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day30.thighs}
+                  onChangeText={(text) => updateMeasurement('day30', 'thighs', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day30'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+            </View>
+
+            {/* Tour de bras */}
+            <View style={styles.measurementTableRow}>
+              <Text style={styles.measurementRowLabel}>Tour de bras</Text>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day1' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day1.arms}
+                  onChangeText={(text) => updateMeasurement('day1', 'arms', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day1'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+              <View style={styles.measurementInputContainer}>
+                <TextInput
+                  style={[
+                    styles.measurementInput,
+                    editingMeasurements !== 'day30' && styles.measurementInputDisabled
+                  ]}
+                  value={measurements.day30.arms}
+                  onChangeText={(text) => updateMeasurement('day30', 'arms', text)}
+                  placeholder="--"
+                  placeholderTextColor={Colors.textSecondary}
+                  keyboardType="decimal-pad"
+                  editable={editingMeasurements === 'day30'}
+                />
+                <Text style={styles.measurementUnit}>cm</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Message d'encouragement */}
+          {showEncouragement && (
+            <View style={styles.encouragementCard}>
+              <Text style={styles.encouragementTitle}>Bravo pour votre engagement 👏</Text>
+              <Text style={styles.encouragementText}>
+                Même les petits changements comptent dans votre transformation AGP !
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
@@ -377,6 +727,9 @@ export default function SuiviScreen() {
 
         {/* Graphique d'activité */}
         <WeeklyChart />
+
+        {/* Suivi des mensurations */}
+        <MeasurementsSection />
 
         {/* Objectifs et badges */}
         <View style={styles.achievementsSection}>
@@ -781,5 +1134,148 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     textAlign: 'center',
+  },
+  measurementsSection: {
+    marginBottom: 24,
+  },
+  measurementsContainer: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  measurementsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  measurementColumnTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    textAlign: 'center',
+    flex: 1,
+  },
+  measurementColumn: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 8,
+  },
+  editMeasurementButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
+  },
+  editMeasurementText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.agpBlue,
+  },
+  modifyMeasurementButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  modifyMeasurementText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.textSecondary,
+  },
+  saveMeasurementButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.agpLightGreen,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
+  },
+  saveMeasurementText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.agpGreen,
+  },
+  measurementsTable: {
+    gap: 12,
+  },
+  measurementTableRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  measurementRowLabel: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    flex: 1,
+  },
+  measurementInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    gap: 4,
+  },
+  measurementInput: {
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    textAlign: 'center',
+    minWidth: 60,
+  },
+  measurementInputDisabled: {
+    backgroundColor: Colors.border,
+    color: Colors.textSecondary,
+  },
+  measurementUnit: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  encouragementCard: {
+    backgroundColor: Colors.agpLightGreen,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 20,
+    alignItems: 'center',
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpGreen,
+  },
+  encouragementTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  encouragementText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
