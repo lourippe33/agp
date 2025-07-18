@@ -867,6 +867,36 @@
   }
 },
     {
+  "id": 41,
+  "titre": "Filet de poulet à la moutarde et haricots verts",
+  "moment": "midi",
+  "image": "https://i.ibb.co/mqk4ZyL/Filet-poulet-moutarde-haricots.jpg",
+  "tempsPreparation": 10,
+  "tempsCuisson": 15,
+  "temperatureCuisson": "Poêle",
+  "difficulte": "Facile",
+  "tags": ["AGP", "chronobiologie"],
+  "ingredients": [
+    {"nom": "filet de poulet", "quantite": "150 g"},
+    {"nom": "moutarde à l'ancienne", "quantite": "1 c. à soupe"},
+    {"nom": "haricots verts", "quantite": "150 g"},
+    {"nom": "huile d’olive", "quantite": "1 c. à café"}
+  ],
+  "etapes": [
+    "Faire cuire les haricots à la vapeur ou à l’eau.",
+    "Saisir le filet de poulet dans l’huile d’olive 5 min par face.",
+    "Ajouter la moutarde et laisser mijoter 2 min.",
+    "Servir avec les haricots verts."
+  ],
+  "nutritionPour100g": {
+    "calories": 95,
+    "proteines": 11.5,
+    "glucides": 3.2,
+    "lipides": 4.2,
+    "fibres": 2.1
+  }
+},
+    {
       "id": 11,
       "titre": "Poke bowl saumon-avocat",
       "moment": "midi",
