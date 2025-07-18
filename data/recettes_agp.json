@@ -951,6 +951,66 @@
   }
 },
     {
+  "id": 41,
+  "titre": "Sauté de dinde aux légumes croquants",
+  "moment": "midi",
+  "image": "https://i.ibb.co/67ZFSd6G/Chat-GPT-Image-18-juil-compressed-3.jpg",
+  "tempsPreparation": 15,
+  "tempsCuisson": 12,
+  "temperatureCuisson": "Poêle à feu moyen-vif",
+  "difficulte": "Facile",
+  "tags": [
+    "AGP",
+    "chronobiologie",
+    "plat rapide",
+    "traditionnel"
+  ],
+  "ingredients": [
+    {
+      "nom": "escalope de dinde",
+      "quantite": "120 g"
+    },
+    {
+      "nom": "brocolis",
+      "quantite": "100 g"
+    },
+    {
+      "nom": "carottes",
+      "quantite": "100 g"
+    },
+    {
+      "nom": "huile d'olive",
+      "quantite": "1 c. à soupe"
+    },
+    {
+      "nom": "sauce soja allégée",
+      "quantite": "1 c. à soupe"
+    },
+    {
+      "nom": "ail",
+      "quantite": "1 gousse"
+    },
+    {
+      "nom": "graines de sésame (optionnel)",
+      "quantite": "1 c. à café"
+    }
+  ],
+  "etapes": [
+    "Couper la dinde en lanières et les légumes en morceaux.",
+    "Faire chauffer l’huile d’olive dans une poêle.",
+    "Faire revenir l’ail, puis ajouter la dinde. Cuire 5-6 minutes.",
+    "Ajouter les légumes et la sauce soja. Cuire encore 6 minutes en remuant.",
+    "Saupoudrer de graines de sésame avant de servir (optionnel)."
+  ],
+  "nutritionPour100g": {
+    "calories": 95,
+    "proteines": 13.5,
+    "glucides": 4.2,
+    "lipides": 2.7,
+    "fibres": 2.1
+  }
+},
+    {
       "id": 11,
       "titre": "Poke bowl saumon-avocat",
       "moment": "midi",
