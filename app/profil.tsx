@@ -61,6 +61,8 @@ export default function ProfilScreen() {
     return 'Obésité morbide';
   };
 
+  const handleSave = async () => {
+    try {
       const result = await updateProfile(user.id, { firstName, lastName, username, niveauSport });
       
       if (result.success) {
@@ -71,6 +73,22 @@ export default function ProfilScreen() {
     } catch (error) {
       Alert.alert('Erreur', 'Une erreur est survenue');
     }
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Déconnexion',
+          style: 'destructive',
+          onPress: async () => {
+            setIsLoggingOut(true);
+            await logout();
+            setIsLoggingOut(false);
+          }
         },
       ]
     );
