@@ -2,12 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
-// Cette page a été vidée - tout le contenu a été migré vers app/(tabs)/profil.tsx
 export default function ProfilScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.message}>
-        Cette page a été déplacée vers l'onglet Profil principal.
+        Cette page a été déplacée vers l'onglet Suivi principal.
       </Text>
     </View>
   );
