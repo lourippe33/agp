@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets } from 'lucide-react-native';
+import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets, Scale } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -45,6 +45,14 @@ export default function ProfilScreen() {
   const [notifications, setNotifications] = useState(true);
   const [waterNotifications, setWaterNotifications] = useState(true);
   const [waterObjective, setWaterObjective] = useState(8);
+  
+  // États pour les données physiques - séparés pour éviter les re-renders
+  const [physicalData, setPhysicalData] = useState({
+    weight: '',
+    height: '',
+    targetWeight: '',
+    startDate: null as string | null,
+  });
 
   // État pour suivre le processus de déconnexion
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -84,6 +92,33 @@ export default function ProfilScreen() {
     } catch (error) {
       console.error('Erreur lors du chargement du profil:', error);
     }
+  };
+
+  // Calcul IMC simple sans re-render
+  const calculateIMC = () => {
+    const weight = parseFloat(physicalData.weight);
+    const height = parseFloat(physicalData.height);
+    
+    if (weight > 0 && height > 0) {
+      const heightInM = height / 100;
+      const imc = weight / (heightInM * heightInM);
+      return Math.round(imc * 100) / 100; // 2 chiffres après la virgule
+    }
+    return null;
+  };
+
+  // Mise à jour des données physiques sans re-render global
+  const updatePhysicalData = (field: string, value: string) => {
+    setPhysicalData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Définir la date de début automatiquement si c'est la première saisie
+      if (!prev.startDate && (field === 'weight' || field === 'height') && value.trim()) {
+        newData.startDate = new Date().toISOString().split('T')[0];
+      }
+      
+      return newData;
+    });
   };
 
   const handleSave = async () => {
@@ -466,6 +501,81 @@ export default function ProfilScreen() {
           )}
         </ProfileSection>
 
+        {/* Données physiques */}
+        <ProfileSection title="⚖️ Données physiques">
+          <View style={styles.physicalDataContainer}>
+            <View style={styles.physicalField}>
+              <Text style={styles.fieldLabel}>Poids (kg)</Text>
+              <TextInput
+                style={styles.physicalInput}
+                value={physicalData.weight}
+                onChangeText={(value) => updatePhysicalData('weight', value)}
+                placeholder="70"
+                keyboardType="decimal-pad"
+                autoCorrect={false}
+                autoCapitalize="none"
+                selectTextOnFocus={true}
+              />
+            </View>
+
+            <View style={styles.physicalField}>
+              <Text style={styles.fieldLabel}>Taille (cm)</Text>
+              <TextInput
+                style={styles.physicalInput}
+                value={physicalData.height}
+                onChangeText={(value) => updatePhysicalData('height', value)}
+                placeholder="175"
+                keyboardType="decimal-pad"
+                autoCorrect={false}
+                autoCapitalize="none"
+                selectTextOnFocus={true}
+              />
+            </View>
+
+            <View style={styles.physicalField}>
+              <Text style={styles.fieldLabel}>Poids cible (kg)</Text>
+              <TextInput
+                style={styles.physicalInput}
+                value={physicalData.targetWeight}
+                onChangeText={(value) => updatePhysicalData('targetWeight', value)}
+                placeholder="65"
+                keyboardType="decimal-pad"
+                autoCorrect={false}
+                autoCapitalize="none"
+                selectTextOnFocus={true}
+              />
+            </View>
+
+            {physicalData.startDate && (
+              <View style={styles.physicalField}>
+                <Text style={styles.fieldLabel}>Date de début</Text>
+                <Text style={styles.fieldValue}>
+                  {new Date(physicalData.startDate).toLocaleDateString('fr-FR')}
+                </Text>
+              </View>
+            )}
+
+            {(() => {
+              const imc = calculateIMC();
+              if (imc) {
+                return (
+                  <View style={styles.imcDisplay}>
+                    <Scale size={24} color={Colors.agpBlue} />
+                    <View style={styles.imcContent}>
+                      <Text style={styles.imcLabel}>IMC</Text>
+                      <View style={styles.imcValueContainer}>
+                        <Text style={styles.imcValue}>{imc}</Text>
+                        <Text style={styles.imcUnit}>kg/m²</Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              }
+              return null;
+            })()}
+          </View>
+        </ProfileSection>
+
         {/* Statistiques */}
         <ProfileSection title="📊 Statistiques">
           <View style={styles.statsGrid}>
@@ -802,6 +912,57 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     marginBottom: 4,
+  },
+  physicalDataContainer: {
+    gap: 16,
+  },
+  physicalField: {
+    marginBottom: 12,
+  },
+  physicalInput: {
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+  },
+  imcDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+    gap: 12,
+  },
+  imcContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  imcLabel: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  imcValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  imcValue: {
+    fontSize: 28,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+  },
+  imcUnit: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginLeft: 4,
   },
   bmiContainer: {
     flexDirection: 'row',
