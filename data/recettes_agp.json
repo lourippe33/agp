@@ -897,6 +897,60 @@
   }
 },
     {
+  "id": 42,
+  "titre": "Poulet aux champignons et riz complet",
+  "moment": "midi",
+  "image": "https://i.ibb.co/DPvt7XPd/Chat-GPT-Image-18-juil-compressed-2.jpg",
+  "tempsPreparation": 10,
+  "tempsCuisson": 20,
+  "temperatureCuisson": "Feu moyen",
+  "difficulte": "Facile",
+  "tags": [
+    "AGP",
+    "chronobiologie"
+  ],
+  "ingredients": [
+    {
+      "nom": "blanc de poulet",
+      "quantite": "120 g"
+    },
+    {
+      "nom": "champignons de Paris",
+      "quantite": "100 g"
+    },
+    {
+      "nom": "riz complet cuit",
+      "quantite": "100 g"
+    },
+    {
+      "nom": "huile d’olive",
+      "quantite": "1 c. à café"
+    },
+    {
+      "nom": "ail",
+      "quantite": "1 gousse"
+    },
+    {
+      "nom": "persil frais",
+      "quantite": "1 c. à soupe"
+    }
+  ],
+  "etapes": [
+    "Pendant la cuisson du riz",
+    "Émincer les champignons et l’ail",
+    "Faire revenir l’ail avec les champignons dans l’huile d’olive 5 min",
+    "Ajouter le poulet coupé en morceaux et faire cuire 10-12 min",
+    "Servir avec le riz réchauffé et saupoudrer de persil"
+  ],
+  "nutritionPour100g": {
+    "calories": 115,
+    "proteines": 11.5,
+    "glucides": 8,
+    "lipides": 4.2,
+    "fibres": 1.6
+  }
+},
+    {
       "id": 11,
       "titre": "Poke bowl saumon-avocat",
       "moment": "midi",
