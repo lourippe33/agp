@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,13 +23,68 @@ export default function ProfilScreen() {
   const [firstName, setFirstName] = useState(user?.firstName || '');
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [username, setUsername] = useState(user?.username || '');
+  const [niveauSport, setNiveauSport] = useState(user?.niveauSport || 'debutant');
+  
+  // États pour les champs IMC (en tant que strings pour éviter les problèmes de focus)
+  const [currentWeightText, setCurrentWeightText] = useState('');
+  const [targetWeightText, setTargetWeightText] = useState('');
+  const [heightText, setHeightText] = useState('');
+  const [waistMeasurementText, setWaistMeasurementText] = useState('');
+  
   const [notifications, setNotifications] = useState(true);
+  const [waterNotifications, setWaterNotifications] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setUsername(user.username || '');
+      setNiveauSport(user.niveauSport || 'debutant');
+    }
+    
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
+
+  // Initialiser les champs IMC quand le profil est chargé
+  useEffect(() => {
+    if (userProfile) {
+      setCurrentWeightText(userProfile.currentWeight ? userProfile.currentWeight.toString() : '');
+      setTargetWeightText(userProfile.targetWeight ? userProfile.targetWeight.toString() : '');
+      setHeightText(userProfile.height ? userProfile.height.toString() : '');
+      setWaistMeasurementText(userProfile.waistMeasurement ? userProfile.waistMeasurement.toString() : '');
+    }
+  }, [userProfile]);
+
+  const loadUserProfile = async () => {
 
   const handleSave = async () => {
     if (!user) return;
+
     try {
-      const formData = { firstName, lastName, username };
-      const result = await updateProfile(user.id, formData);
+      const result = await updateProfile(user.id, { firstName, lastName, username, niveauSport });
+      
+      // Convertir les valeurs texte en nombres pour la sauvegarde
+      const weightValue = parseFloat(currentWeightText) || 0;
+      const targetValue = parseFloat(targetWeightText) || 0;
+      const heightValue = parseFloat(heightText) || 0;
+      const waistValue = parseFloat(waistMeasurementText) || 0;
+      
+      if (weightValue > 0) {
+        const profileToSave: UserProfile = {
+          id: userProfile?.id || TrackingService.generateId(),
+          currentWeight: weightValue,
+          targetWeight: targetValue,
+          height: heightValue,
+          waistMeasurement: waistValue,
+          startDate: userProfile?.startDate || new Date().toISOString().split('T')[0],
+        };
+        
+        await TrackingService.saveUserProfile(user.id, profileToSave);
+        setUserProfile(profileToSave);
+      }
+      
       if (result.success) {
         Alert.alert('Succès', 'Profil mis à jour avec succès !');
         // Suppression de setIsEditing(false) ici
@@ -65,7 +120,18 @@ export default function ProfilScreen() {
     );
   };
 
-  const TextField = ({ label, value, onChangeText, placeholder }) => (
+  // Fonction pour calculer l'IMC de manière sécurisée
+  const calculateBMI = () => {
+    const weight = parseFloat(currentWeightText);
+    const heightInM = parseFloat(heightText);
+    
+    if (weight > 0 && heightInM > 0) {
+      return TrackingService.calculateBMI(weight, heightInM);
+    }
+    return null;
+  };
+
+  const TextField = ({ label, value, onChangeText, placeholder, keyboardType = 'default' }) => (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
       {isEditing ? (
@@ -75,6 +141,7 @@ export default function ProfilScreen() {
           onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor={Colors.textSecondary}
+          keyboardType={keyboardType}
         />
       ) : (
         <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
@@ -121,6 +188,50 @@ export default function ProfilScreen() {
             <Text style={styles.fieldLabel}>Email</Text>
             <Text style={styles.fieldValue}>{user?.email}</Text>
           </View>
+          
+          <TextField
+            label="Poids actuel (kg)"
+            value={currentWeightText}
+            onChangeText={setCurrentWeightText}
+            placeholder="Ex: 70.5"
+            keyboardType="decimal-pad"
+          />
+          
+          <TextField
+            label="Poids cible (kg)"
+            value={targetWeightText}
+            onChangeText={setTargetWeightText}
+            placeholder="Ex: 65"
+            keyboardType="decimal-pad"
+          />
+          
+          <TextField
+            label="Taille (cm)"
+            value={heightText}
+            onChangeText={setHeightText}
+            placeholder="Ex: 175"
+            keyboardType="numeric"
+          />
+          
+          <TextField
+            label="Tour de taille (cm)"
+            value={waistMeasurementText}
+            onChangeText={setWaistMeasurementText}
+            placeholder="Ex: 80"
+            keyboardType="numeric"
+          />
+          
+          {!isEditing && calculateBMI() && (
+            <View style={styles.bmiContainer}>
+              <Text style={styles.bmiLabel}>IMC :</Text>
+              <Text style={styles.bmiValue}>
+                {calculateBMI()}
+              </Text>
+              <Text style={styles.bmiCategory}>
+                {getBMICategory(calculateBMI()!)}
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -173,7 +284,7 @@ export default function ProfilScreen() {
             onPress={() => setIsEditing(false)}
           >
             <Text style={[styles.actionButtonText, { color: Colors.textLight }]}>
-              Terminer l’édition
+              Terminer l'édition
             </Text>
           </TouchableOpacity>
         )}
