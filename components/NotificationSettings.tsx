@@ -494,5 +494,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
-import React, { useState, useEffect, useCallback } from 'react';
     fontWeight: '600',
+  },
+});
