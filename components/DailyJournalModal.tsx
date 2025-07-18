@@ -10,7 +10,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { X, Camera, Droplets, Check, Plus, Clock } from 'lucide-react-native';
+import { X, Camera, Droplets, Check, Plus, Clock, Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import { JournalEntry, MealEntry } from '@/types/Journal';
@@ -22,6 +22,15 @@ interface DailyJournalModalProps {
   date: string;
   onSave: (entry: JournalEntry) => void;
 }
+
+const MOOD_OPTIONS = [
+  { id: 'very-good', label: 'Très bonne humeur', emoji: '😊' },
+  { id: 'good', label: 'Bonne humeur', emoji: '🙂' },
+  { id: 'average', label: 'Moyenne', emoji: '😐' },
+  { id: 'tired', label: 'Fatigué(e)', emoji: '😕' },
+  { id: 'bad', label: 'Mauvaise humeur', emoji: '😞' },
+  { id: 'stressed', label: 'Stressé(e)', emoji: '😠' },
+];
 
 export default function DailyJournalModal({
   visible,
@@ -35,14 +44,14 @@ export default function DailyJournalModal({
     userId: '',
     date: date,
     meals: [
-      { id: '1', type: 'matin', consumed: false, time: '', photo: '', notes: '' },
-      { id: '2', type: 'midi', consumed: false, time: '', photo: '', notes: '' },
-      { id: '3', type: 'gouter', consumed: false, time: '', photo: '', notes: '' },
-      { id: '4', type: 'soir', consumed: false, time: '', photo: '', notes: '' },
+      { id: '1', type: 'matin', consumed: false, time: '', photo: '' },
+      { id: '2', type: 'midi', consumed: false, time: '', photo: '' },
+      { id: '3', type: 'gouter', consumed: false, time: '', photo: '' },
+      { id: '4', type: 'soir', consumed: false, time: '', photo: '' },
     ],
     waterIntake: 0,
     waterIntakeObjective: 8,
-    notes: '',
+    mood: '',
   });
 
   useEffect(() => {
@@ -65,13 +74,13 @@ export default function DailyJournalModal({
           userId: user.id,
           date: date,
           meals: [
-            { id: '1', type: 'matin', consumed: false, time: '', photo: '', notes: '' },
-            { id: '2', type: 'midi', consumed: false, time: '', photo: '', notes: '' },
-            { id: '3', type: 'gouter', consumed: false, time: '', photo: '', notes: '' },
-            { id: '4', type: 'soir', consumed: false, time: '', photo: '', notes: '' },
+            { id: '1', type: 'matin', consumed: false, time: '', photo: '' },
+            { id: '2', type: 'midi', consumed: false, time: '', photo: '' },
+            { id: '3', type: 'gouter', consumed: false, time: '', photo: '' },
+            { id: '4', type: 'soir', consumed: false, time: '', photo: '' },
           ],
           waterIntake: 0,
-          notes: '',
+          mood: '',
         });
       }
     } catch (error) {
@@ -97,12 +106,8 @@ export default function DailyJournalModal({
     updateMeal(mealId, { time });
   }, []);
 
-  const updateMealNotes = useCallback((mealId: string, notes: string) => {
-    updateMeal(mealId, { notes });
-  }, []);
-
-  const updateJournalNotes = useCallback((notes: string) => {
-    setJournalEntry(prev => ({ ...prev, notes }));
+  const updateMood = useCallback((mood: string) => {
+    setJournalEntry(prev => ({ ...prev, mood }));
   }, []);
 
   const updateMeal = (mealId: string, updates: Partial<MealEntry>) => {
@@ -197,14 +202,6 @@ export default function DailyJournalModal({
             </TouchableOpacity>
           )}
 
-          <TextInput
-            style={styles.notesInput}
-            placeholder="Notes sur ce repas (optionnel)"
-            value={meal.notes}
-            onChangeText={(notes) => updateMealNotes(meal.id, notes)}
-            multiline
-            numberOfLines={2}
-          />
         </View>
       </View>
     );
@@ -295,17 +292,33 @@ export default function DailyJournalModal({
             </View>
           </View>
 
-          {/* Notes générales */}
+          {/* Humeur du jour */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📝 Notes générales</Text>
-            <TextInput
-              style={styles.generalNotesInput}
-              placeholder="Notes sur votre journée (optionnel)"
-              value={journalEntry.notes}
-             onChangeText={updateJournalNotes}
-              multiline
-              numberOfLines={3}
-            />
+            <Text style={styles.sectionTitle}>😊 Humeur du jour</Text>
+            <View style={styles.moodSection}>
+              <Text style={styles.moodLabel}>Comment vous sentez-vous aujourd'hui ?</Text>
+              <View style={styles.moodGrid}>
+                {MOOD_OPTIONS.map((mood) => (
+                  <TouchableOpacity
+                    key={mood.id}
+                    style={[
+                      styles.moodButton,
+                      journalEntry.mood === mood.id && styles.moodButtonSelected
+                    ]}
+                    onPress={() => updateMood(mood.id)}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+                    <Text style={[
+                      styles.moodText,
+                      journalEntry.mood === mood.id && styles.moodTextSelected
+                    ]}>
+                      {mood.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -464,15 +477,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: Colors.textLight,
   },
-  notesInput: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-    textAlignVertical: 'top',
-  },
   waterSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -551,14 +555,62 @@ const styles = StyleSheet.create({
     minWidth: 40,
     textAlign: 'center',
   },
-  generalNotesInput: {
+  moodSection: {
     backgroundColor: Colors.surface,
     borderRadius: 12,
     padding: 16,
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  moodLabel: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
     color: Colors.text,
-    textAlignVertical: 'top',
-    minHeight: 100,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  moodGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    justifyContent: 'center',
+  },
+  moodButton: {
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    minWidth: 100,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  moodButtonSelected: {
+    backgroundColor: Colors.agpLightBlue,
+    borderColor: Colors.agpBlue,
+    elevation: 3,
+    shadowOpacity: 0.15,
+  },
+  moodEmoji: {
+    fontSize: 24,
+    marginBottom: 6,
+  },
+  moodText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+  moodTextSelected: {
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.agpBlue,
   },
 });

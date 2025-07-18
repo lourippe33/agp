@@ -4,7 +4,6 @@ export interface MealEntry {
   consumed: boolean;
   time?: string;
   photo?: string;
-  notes?: string;
 }
 
 export interface JournalEntry {
@@ -13,7 +12,7 @@ export interface JournalEntry {
   date: string;
   meals: MealEntry[];
   waterIntake: number;
-  notes?: string;
+  mood?: string;
 }
 
 export interface JournalStats {
