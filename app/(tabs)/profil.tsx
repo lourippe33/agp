@@ -429,18 +429,23 @@ export default function ProfilScreen() {
 
         {/* Actions */}
         <View style={styles.actionsSection}>
-          <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
-            {isLoggingOut ? (
-              <ActivityIndicator size="small" color={Colors.relaxation} />
+          <TouchableOpacity 
+            style={[
+              styles.actionButton,
+              isLoggingOut && { opacity: 0.6 }
+            ]}
+            onPress={handleLogout}
             disabled={isLoggingOut}
             activeOpacity={0.7}
+          >
+            {isLoggingOut ? (
+              <ActivityIndicator size="small" color={Colors.relaxation} />
             ) : (
               <LogOut size={24} color={Colors.relaxation} />
             )}
             <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
-              Déconnexion
               {isLoggingOut ? 'Déconnexion...' : 'Déconnexion'}
-              isLoggingOut && { opacity: 0.6 }
+            </Text>
             <ChevronRight size={24} color={Colors.relaxation} />
           </TouchableOpacity>
         </View>
