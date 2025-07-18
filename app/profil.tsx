@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -25,11 +25,10 @@ export default function ProfilScreen() {
   const [username, setUsername] = useState(user?.username || '');
   const [niveauSport, setNiveauSport] = useState(user?.niveauSport || 'debutant');
   const [notifications, setNotifications] = useState(true);
-  const [waterNotifications, setWaterNotifications] = useState(true);
   
-  // États pour les champs IMC - approche simplifiée
-  const [weightText, setWeightText] = useState('');
-  const [heightText, setHeightText] = useState('');
+  // États IMC complètement isolés
+  const [currentWeight, setCurrentWeight] = useState('');
+  const [currentHeight, setCurrentHeight] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -40,27 +39,27 @@ export default function ProfilScreen() {
     }
   }, [user]);
 
-  // Calcul IMC avec useMemo pour éviter les re-calculs inutiles
-  const imcData = useMemo(() => {
-    const weight = parseFloat(weightText);
-    const heightInM = parseFloat(heightText) / 100;
+  // Calcul IMC simple et isolé
+  const calculateIMC = () => {
+    const weight = parseFloat(currentWeight);
+    const height = parseFloat(currentHeight);
     
-    if (weight > 0 && heightInM > 0) {
+    if (weight > 0 && height > 0) {
+      const heightInM = height / 100;
       const imc = weight / (heightInM * heightInM);
-      const imcRounded = Math.round(imc * 10) / 10;
-      
-      let category = '';
-      if (imcRounded < 18.5) category = 'Insuffisance pondérale';
-      else if (imcRounded < 25) category = 'Corpulence normale';
-      else if (imcRounded < 30) category = 'Surpoids';
-      else if (imcRounded < 35) category = 'Obésité modérée';
-      else if (imcRounded < 40) category = 'Obésité sévère';
-      else category = 'Obésité morbide';
-      
-      return { value: imcRounded, category };
+      return Math.round(imc * 10) / 10;
     }
     return null;
-  }, [weightText, heightText]);
+  };
+
+  const getIMCCategory = (imc: number) => {
+    if (imc < 18.5) return 'Insuffisance pondérale';
+    if (imc < 25) return 'Corpulence normale';
+    if (imc < 30) return 'Surpoids';
+    if (imc < 35) return 'Obésité modérée';
+    if (imc < 40) return 'Obésité sévère';
+    return 'Obésité morbide';
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -178,64 +177,40 @@ export default function ProfilScreen() {
           </View>
         </View>
 
-        {/* Section IMC séparée */}
+        {/* Section IMC complètement refaite */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>⚖️ Calcul IMC</Text>
           
-          {/* Champ Poids - recréé proprement */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Poids (kg)</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={weightText}
-                onChangeText={setWeightText}
-                placeholder="Ex: 70.5"
-                placeholderTextColor={Colors.textSecondary}
-                keyboardType="decimal-pad"
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{weightText || 'Non renseigné'}</Text>
-            )}
-          </View>
-
-          {/* Champ Taille - recréé proprement */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Taille (cm)</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.textInput}
-                value={heightText}
-                onChangeText={setHeightText}
-                placeholder="Ex: 175"
-                placeholderTextColor={Colors.textSecondary}
-                keyboardType="numeric"
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-            ) : (
-              <Text style={styles.fieldValue}>{heightText || 'Non renseigné'}</Text>
-            )}
-          </View>
-
-          {/* Affichage IMC - calcul passif avec useMemo */}
-          {!isEditing && imcData && (
-            <View style={styles.imcDisplay}>
-              <View style={styles.imcHeader}>
-                <Text style={styles.imcTitle}>Votre IMC</Text>
+          <TextField 
+            label="Poids actuel (kg)" 
+            value={currentWeight} 
+            onChangeText={setCurrentWeight} 
+            placeholder="Ex: 70.5" 
+            keyboardType="decimal-pad"
+          />
+          
+          <TextField 
+            label="Taille (cm)" 
+            value={currentHeight} 
+            onChangeText={setCurrentHeight} 
+            placeholder="Ex: 175" 
+            keyboardType="numeric"
+          />
+          
+          {/* Affichage IMC seulement si les deux valeurs sont présentes et en mode lecture */}
+          {!isEditing && currentWeight && currentHeight && (() => {
+            const imc = calculateIMC();
+            return imc ? (
+              <View style={styles.imcResult}>
+                <Text style={styles.imcLabel}>Votre IMC :</Text>
+                <View style={styles.imcValueContainer}>
+                  <Text style={styles.imcValue}>{imc}</Text>
+                  <Text style={styles.imcUnit}>kg/m²</Text>
+                </View>
+                <Text style={styles.imcCategory}>{getIMCCategory(imc)}</Text>
               </View>
-              <View style={styles.imcContent}>
-                <Text style={styles.imcValue}>{imcData.value}</Text>
-                <Text style={styles.imcUnit}>kg/m²</Text>
-              </View>
-              <Text style={styles.imcCategory}>{imcData.category}</Text>
-              <Text style={styles.imcNote}>
-                Consultez un professionnel de santé pour une évaluation personnalisée.
-              </Text>
-            </View>
-          )}
+            ) : null;
+          })()}
         </View>
 
         <View style={styles.section}>
@@ -488,19 +463,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginLeft: 6,
   },
-  imcCategory: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 12,
-  },
-  imcNote: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -571,5 +533,35 @@ const styles = StyleSheet.create({
   accountInfoText: {
     fontSize: 14,
     color: Colors.textSecondary,
+  },
+  imcResult: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    alignItems: 'center',
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  imcLabel: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  imcValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 8,
+  },
+  imcValue: {
+    fontSize: 32,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+  },
+  imcCategory: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
   },
 });
