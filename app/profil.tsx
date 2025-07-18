@@ -24,15 +24,12 @@ export default function ProfilScreen() {
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [username, setUsername] = useState(user?.username || '');
   const [niveauSport, setNiveauSport] = useState(user?.niveauSport || 'debutant');
-  
-  // États pour les champs IMC (en tant que strings pour éviter les problèmes de focus)
-  const [currentWeightText, setCurrentWeightText] = useState('');
-  const [targetWeightText, setTargetWeightText] = useState('');
-  const [heightText, setHeightText] = useState('');
-  const [waistMeasurementText, setWaistMeasurementText] = useState('');
-  
   const [notifications, setNotifications] = useState(true);
   const [waterNotifications, setWaterNotifications] = useState(true);
+  
+  // États pour les champs IMC - approche simplifiée
+  const [weightText, setWeightText] = useState('');
+  const [heightText, setHeightText] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -42,6 +39,28 @@ export default function ProfilScreen() {
       setNiveauSport(user.niveauSport || 'debutant');
     }
   }, [user]);
+
+  // Calcul IMC avec useMemo pour éviter les re-calculs inutiles
+  const imcData = useMemo(() => {
+    const weight = parseFloat(weightText);
+    const heightInM = parseFloat(heightText) / 100;
+    
+    if (weight > 0 && heightInM > 0) {
+      const imc = weight / (heightInM * heightInM);
+      const imcRounded = Math.round(imc * 10) / 10;
+      
+      let category = '';
+      if (imcRounded < 18.5) category = 'Insuffisance pondérale';
+      else if (imcRounded < 25) category = 'Corpulence normale';
+      else if (imcRounded < 30) category = 'Surpoids';
+      else if (imcRounded < 35) category = 'Obésité modérée';
+      else if (imcRounded < 40) category = 'Obésité sévère';
+      else category = 'Obésité morbide';
+      
+      return { value: imcRounded, category };
+    }
+    return null;
+  }, [weightText, heightText]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -81,27 +100,6 @@ export default function ProfilScreen() {
         },
       ]
     );
-  };
-
-  const getBMICategory = (bmi: number): string => {
-    if (bmi < 18.5) return 'Insuffisance pondérale';
-    if (bmi < 25) return 'Corpulence normale';
-    if (bmi < 30) return 'Surpoids';
-    if (bmi < 35) return 'Obésité modérée';
-    if (bmi < 40) return 'Obésité sévère';
-    return 'Obésité morbide';
-  };
-
-  // Fonction pour calculer l'IMC
-  const calculateBMI = (): number | null => {
-    const weight = parseFloat(currentWeightText);
-    const heightInM = parseFloat(heightText) / 100; // Conversion cm en m
-    
-    if (weight > 0 && heightInM > 0) {
-      const bmi = weight / (heightInM * heightInM);
-      return Math.round(bmi * 10) / 10; // Arrondi à 1 décimale
-    }
-    return null;
   };
 
   const TextField = ({ label, value, onChangeText, placeholder, keyboardType = 'default' }) => (
@@ -178,62 +176,64 @@ export default function ProfilScreen() {
             <Text style={styles.fieldLabel}>Email</Text>
             <Text style={styles.fieldValue}>{user?.email}</Text>
           </View>
+        </View>
+
+        {/* Section IMC séparée */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>⚖️ Calcul IMC</Text>
           
-          <TextField
-            label="Poids actuel (kg)"
-            value={currentWeightText}
-            onChangeText={setCurrentWeightText}
-            placeholder="Ex: 70.5"
-            keyboardType="decimal-pad"
-          />
-          
-          <TextField
-            label="Poids cible (kg)"
-            value={targetWeightText}
-            onChangeText={setTargetWeightText}
-            placeholder="Ex: 65"
-            keyboardType="decimal-pad"
-          />
-          
-          <TextField
-            label="Taille (cm)"
-            value={heightText}
-            onChangeText={setHeightText}
-            placeholder="Ex: 175"
-            keyboardType="numeric"
-          />
-          
-          <TextField
-            label="Tour de taille (cm)"
-            value={waistMeasurementText}
-            onChangeText={setWaistMeasurementText}
-            placeholder="Ex: 80"
-            keyboardType="numeric"
-          />
-          
-          {/* Affichage de l'IMC si les valeurs sont disponibles */}
-          {!isEditing && calculateBMI() && (
-            <View style={styles.bmiContainer}>
-              <View style={styles.bmiHeader}>
-                <Text style={styles.bmiLabel}>Indice de Masse Corporelle (IMC)</Text>
+          {/* Champ Poids - recréé proprement */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.fieldLabel}>Poids (kg)</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.textInput}
+                value={weightText}
+                onChangeText={setWeightText}
+                placeholder="Ex: 70.5"
+                placeholderTextColor={Colors.textSecondary}
+                keyboardType="decimal-pad"
+                autoCorrect={false}
+                autoCapitalize="none"
+              />
+            ) : (
+              <Text style={styles.fieldValue}>{weightText || 'Non renseigné'}</Text>
+            )}
+          </View>
+
+          {/* Champ Taille - recréé proprement */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.fieldLabel}>Taille (cm)</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.textInput}
+                value={heightText}
+                onChangeText={setHeightText}
+                placeholder="Ex: 175"
+                placeholderTextColor={Colors.textSecondary}
+                keyboardType="numeric"
+                autoCorrect={false}
+                autoCapitalize="none"
+              />
+            ) : (
+              <Text style={styles.fieldValue}>{heightText || 'Non renseigné'}</Text>
+            )}
+          </View>
+
+          {/* Affichage IMC - calcul passif avec useMemo */}
+          {!isEditing && imcData && (
+            <View style={styles.imcDisplay}>
+              <View style={styles.imcHeader}>
+                <Text style={styles.imcTitle}>Votre IMC</Text>
               </View>
-              <View style={styles.bmiContent}>
-                <View style={styles.bmiValueContainer}>
-                  <Text style={styles.bmiValue}>{calculateBMI()}</Text>
-                  <Text style={styles.bmiUnit}>kg/m²</Text>
-                </View>
-                <View style={styles.bmiCategoryContainer}>
-                  <Text style={styles.bmiCategory}>
-                    {getBMICategory(calculateBMI()!)}
-                  </Text>
-                </View>
+              <View style={styles.imcContent}>
+                <Text style={styles.imcValue}>{imcData.value}</Text>
+                <Text style={styles.imcUnit}>kg/m²</Text>
               </View>
-              <View style={styles.bmiInfo}>
-                <Text style={styles.bmiInfoText}>
-                  L'IMC est un indicateur qui permet d'évaluer la corpulence. 
-                  Consultez un professionnel de santé pour une évaluation personnalisée.
-                </Text>
-              </View>
+              <Text style={styles.imcCategory}>{imcData.category}</Text>
+              <Text style={styles.imcNote}>
+                Consultez un professionnel de santé pour une évaluation personnalisée.
+              </Text>
             </View>
           )}
         </View>
@@ -452,6 +452,53 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 16,
+    fontStyle: 'italic',
+  },
+  // Nouveaux styles pour l'affichage IMC simplifié
+  imcDisplay: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 16,
+    alignItems: 'center',
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  imcHeader: {
+    marginBottom: 12,
+  },
+  imcTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  imcContent: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 8,
+  },
+  imcValue: {
+    fontSize: 36,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+  },
+  imcUnit: {
+    fontSize: 16,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginLeft: 6,
+  },
+  imcCategory: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 12,
+  },
+  imcNote: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
     fontStyle: 'italic',
   },
   settingRow: {
