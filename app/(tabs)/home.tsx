@@ -637,7 +637,6 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      <PersistentTabBar />
     </View>
   );
 }
