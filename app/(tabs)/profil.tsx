@@ -16,18 +16,11 @@ import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
-import { TrackingService } from '@/services/TrackingService';
-import { UserProfile } from '@/types/Tracking';
 import NotificationSettings from '@/components/NotificationSettings';
-import NotificationTester from '@/components/NotificationTester';
-
-// Variable pour contrôler l'affichage du testeur de notifications
-const showNotificationSettings = true;
 
 export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
@@ -36,24 +29,10 @@ export default function ProfilScreen() {
     preferencesAlimentaires: user?.preferencesAlimentaires || [],
     objectifs: user?.objectifs || [],
   });
-  const [profileData, setProfileData] = useState({
-    currentWeight: 0,
-    targetWeight: 0,
-    height: 0,
-    waistMeasurement: 0,
-  });
   const [notifications, setNotifications] = useState(true);
   const [waterNotifications, setWaterNotifications] = useState(true);
   const [waterObjective, setWaterObjective] = useState(8);
   
-  // États pour les données physiques - séparés pour éviter les re-renders
-  const [physicalData, setPhysicalData] = useState({
-    weight: '',
-    height: '',
-    targetWeight: '',
-    startDate: null as string | null,
-  });
-
   // État pour suivre le processus de déconnexion
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -74,31 +53,6 @@ export default function ProfilScreen() {
     setFormData(prev => ({ ...prev, niveauSport: value as any }));
   }, []);
 
-  // Fonctions mémorisées pour les données physiques
-  const updateWeight = useCallback((value: string) => {
-    setPhysicalData(prev => {
-      const newData = { ...prev, weight: value };
-      if (!prev.startDate && value.trim()) {
-        newData.startDate = new Date().toISOString().split('T')[0];
-      }
-      return newData;
-    });
-  }, []);
-
-  const updateHeight = useCallback((value: string) => {
-    setPhysicalData(prev => {
-      const newData = { ...prev, height: value };
-      if (!prev.startDate && value.trim()) {
-        newData.startDate = new Date().toISOString().split('T')[0];
-      }
-      return newData;
-    });
-  }, []);
-
-  const updateTargetWeight = useCallback((value: string) => {
-    setPhysicalData(prev => ({ ...prev, targetWeight: value }));
-  }, []);
-
   useEffect(() => {
     if (user) {
       setFormData({
@@ -110,58 +64,7 @@ export default function ProfilScreen() {
         objectifs: user.objectifs || [],
       });
     }
-    
-    // Charger le profil de suivi
-    if (user) {
-      loadUserProfile();
-    }
   }, [user]);
-
-  const loadUserProfile = async () => {
-    if (!user) return;
-    
-    try {
-      const profile = await TrackingService.getUserProfile(user.id);
-      if (profile) {
-        setUserProfile(profile);
-        setProfileData({
-          currentWeight: profile.currentWeight || 0,
-          targetWeight: profile.targetWeight || 0,
-          height: profile.height || 0,
-          waistMeasurement: profile.waistMeasurement || 0,
-        });
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement du profil:', error);
-    }
-  };
-
-  // Calcul IMC simple sans re-render
-  const calculateIMC = () => {
-    const weight = parseFloat(physicalData.weight);
-    const height = parseFloat(physicalData.height);
-    
-    if (weight > 0 && height > 0) {
-      const heightInM = height / 100;
-      const imc = weight / (heightInM * heightInM);
-      return Math.round(imc * 100) / 100; // 2 chiffres après la virgule
-    }
-    return null;
-  };
-
-  // Mise à jour des données physiques sans re-render global
-  // Calcul IMC mémorisé
-  const calculatedIMC = useCallback(() => {
-    const weight = parseFloat(physicalData.weight);
-    const height = parseFloat(physicalData.height);
-    
-    if (weight > 0 && height > 0) {
-      const heightInM = height / 100;
-      const imc = weight / (heightInM * heightInM);
-      return Math.round(imc * 100) / 100;
-    }
-    return null;
-  }, [physicalData.weight, physicalData.height]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -169,21 +72,6 @@ export default function ProfilScreen() {
     try {
       // Sauvegarder les informations de base
       const result = await updateProfile(user.id, formData);
-      
-      // Sauvegarder le profil de suivi
-      if (profileData.currentWeight > 0) {
-        const profileToSave: UserProfile = {
-          id: userProfile?.id || TrackingService.generateId(),
-          currentWeight: profileData.currentWeight,
-          targetWeight: profileData.targetWeight,
-          height: profileData.height,
-          waistMeasurement: profileData.waistMeasurement,
-          startDate: userProfile?.startDate || new Date().toISOString().split('T')[0],
-        };
-        
-        await TrackingService.saveUserProfile(user.id, profileToSave);
-        setUserProfile(profileToSave);
-      }
       
       if (result.success) {
         setIsEditing(false);
@@ -510,11 +398,6 @@ export default function ProfilScreen() {
           
           <NotificationSettings />
 
-          {/* Testeur de notifications */}
-          {showNotificationSettings && (
-            <NotificationTester />
-          )}
-
           {waterNotifications && (
             <View style={styles.waterObjectiveSetting}>
               <Text style={styles.waterObjectiveLabel}>Objectif quotidien d'eau</Text>
@@ -541,104 +424,6 @@ export default function ProfilScreen() {
               </Text>
             </View>
           )}
-        </ProfileSection>
-
-        {/* Données physiques */}
-        <ProfileSection title="⚖️ Données physiques">
-          <View style={styles.physicalDataContainer}>
-            <View style={styles.physicalField}>
-              <Text style={styles.fieldLabel}>Poids (kg)</Text>
-              <TextInput
-                style={styles.physicalInput}
-                value={physicalData.weight}
-                onChangeText={updateWeight}
-                placeholder="70"
-                keyboardType="decimal-pad"
-                autoCorrect={false}
-                autoCapitalize="none"
-                selectTextOnFocus={true}
-              />
-            </View>
-
-            <View style={styles.physicalField}>
-              <Text style={styles.fieldLabel}>Taille (cm)</Text>
-              <TextInput
-                style={styles.physicalInput}
-                value={physicalData.height}
-                onChangeText={updateHeight}
-                placeholder="175"
-                keyboardType="decimal-pad"
-                autoCorrect={false}
-                autoCapitalize="none"
-                selectTextOnFocus={true}
-              />
-            </View>
-
-            <View style={styles.physicalField}>
-              <Text style={styles.fieldLabel}>Poids cible (kg)</Text>
-              <TextInput
-                style={styles.physicalInput}
-                value={physicalData.targetWeight}
-                onChangeText={updateTargetWeight}
-                placeholder="65"
-                keyboardType="decimal-pad"
-                autoCorrect={false}
-                autoCapitalize="none"
-                selectTextOnFocus={true}
-              />
-            </View>
-
-            {physicalData.startDate && (
-              <View style={styles.physicalField}>
-                <Text style={styles.fieldLabel}>Date de début</Text>
-                <Text style={styles.fieldValue}>
-                  {new Date(physicalData.startDate).toLocaleDateString('fr-FR')}
-                </Text>
-              </View>
-            )}
-
-            {(() => {
-              const imc = calculatedIMC();
-              if (imc) {
-                return (
-                  <View style={styles.imcDisplay}>
-                    <Scale size={24} color={Colors.agpBlue} />
-                    <View style={styles.imcContent}>
-                      <Text style={styles.imcLabel}>IMC</Text>
-                      <View style={styles.imcValueContainer}>
-                        <Text style={styles.imcValue}>{imc}</Text>
-                        <Text style={styles.imcUnit}>kg/m²</Text>
-                      </View>
-                    </View>
-                  </View>
-                );
-              }
-              return null;
-            })()}
-          </View>
-        </ProfileSection>
-
-        {/* Statistiques */}
-        <ProfileSection title="📊 Statistiques">
-          <View style={styles.statsGrid}>
-            <View style={styles.statItem}>
-              <Activity size={24} color={Colors.agpGreen} />
-              <Text style={styles.statValue}>0</Text>
-              <Text style={styles.statLabel}>Exercices</Text>
-            </View>
-            
-            <View style={styles.statItem}>
-              <Heart size={24} color={Colors.relaxation} />
-              <Text style={styles.statValue}>0</Text>
-              <Text style={styles.statLabel}>Favoris</Text>
-            </View>
-            
-            <View style={styles.statItem}>
-              <Target size={24} color={Colors.morning} />
-              <Text style={styles.statValue}>0</Text>
-              <Text style={styles.statLabel}>Jours actifs</Text>
-            </View>
-          </View>
         </ProfileSection>
 
         {/* Actions */}
@@ -889,27 +674,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-  },
   actionsSection: {
     marginBottom: 20,
   },
@@ -954,81 +718,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     marginBottom: 4,
-  },
-  physicalDataContainer: {
-    gap: 16,
-  },
-  physicalField: {
-    marginBottom: 12,
-  },
-  physicalInput: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-  },
-  imcDisplay: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-    gap: 12,
-  },
-  imcContent: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  imcLabel: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  imcValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
-  imcValue: {
-    fontSize: 28,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.agpBlue,
-  },
-  imcUnit: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    marginLeft: 4,
-  },
-  bmiContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 8,
-  },
-  bmiLabel: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    marginRight: 8,
-  },
-  bmiValue: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.agpBlue,
-    marginRight: 8,
-  },
-  bmiCategory: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
   },
 });
