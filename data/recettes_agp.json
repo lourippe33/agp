@@ -29,9 +29,9 @@
         }
       ],
       "etapes": [
-        "Mixer flocons+lait+chia",
+        "Mixer les flocons+lait+chia",
         "Cuire 3 min à feu doux en remuant",
-        "Ajouter fruits rouges"
+        "Ajouter les fruits rouges"
       ],
       "nutritionPour100g": {
         "calories": 110,
@@ -68,9 +68,9 @@
         }
       ],
       "etapes": [
-        "Mixer ingrédients",
-        "Verser en bol",
-        "Ajouter fruits/graines"
+        "Mixer les ingrédients",
+        "Verser dans un  bol",
+        "Ajouter les fruits/graines"
       ],
       "nutritionPour100g": {
         "calories": 120,
@@ -108,10 +108,10 @@
         }
       ],
       "etapes": [
-        "Griller pain au grille-pain",
-        "Cuire œuf 6 min dans l'eau bouillante",
-        "Écraser avocat sur le pain",
-        "Déposer œuf et assaisonner"
+        "Griller le pain au grille-pain",
+        "Cuire les œufs 6 min dans l'eau bouillante",
+        "Écraser l'avocat sur le pain",
+        "Déposer l'œuf et assaisonner"
       ],
       "nutritionPour100g": {
         "calories": 190,
@@ -151,7 +151,7 @@
       "etapes": [
         "Mélanger tous les ingrédients sauf mangue",
         "Laisser reposer 8h au frigo",
-        "Ajouter mangue avant de servir"
+        "Ajouter la mangue avant de servir"
       ],
       "nutritionPour100g": {
         "calories": 140,
@@ -228,9 +228,9 @@
         }
       ],
       "etapes": [
-        "Mélanger flocons, œuf et lait",
+        "Mélanger les flocons, œuf et lait",
         "Cuire 4 min au micro-ondes (800W)",
-        "Ajouter framboises"
+        "Ajouter les framboises"
       ],
       "nutritionPour100g": {
         "calories": 150,
@@ -268,9 +268,9 @@
         }
       ],
       "etapes": [
-        "Écraser banane à la fourchette",
-        "Ajouter œuf, farine et levure",
-        "Cuire pancakes 2-3 min par face à feu moyen"
+        "Écraser la banane à la fourchette",
+        "Ajouter l'œuf, la farine et la levure",
+        "Cuire les pancakes 2-3 min par face à feu moyen"
       ],
       "nutritionPour100g": {
         "calories": 170,
@@ -309,7 +309,7 @@
       ],
       "etapes": [
         "Mélanger tous les ingrédients",
-        "Étaler sur plaque et griller 12 min à 180°C"
+        "Étaler sur la plaque et griller 12 min à 180°C"
       ],
       "nutritionPour100g": {
         "calories": 180,
@@ -377,7 +377,7 @@
         }
       ],
       "etapes": [
-        "Mixer fruits, avoine et lait jusqu'à consistance lisse"
+        "Mixer les fruits, l'avoine et le lait jusqu'à consistance lisse"
       ],
       "nutritionPour100g": {
         "calories": 130,
@@ -398,7 +398,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "protéiné"],
       "ingredients": [
         {
-          "nom": "Huel vanille",
+          "nom": "Farine Huel vanille",
           "quantite": "30 g"
         },
         {
@@ -420,7 +420,7 @@
       ],
       "etapes": [
         "Écrase la banane dans un bol",
-        "Ajoute l'œuf, le Huel, la levure et le lait",
+        "Ajoute l'œuf, la farine Huel, la levure et le lait",
         "Mélange bien jusqu'à obtenir une pâte homogène",
         "Fais cuire 2 à 3 petits pancakes dans une poêle antiadhésive chaude",
         "Optionnel : ajoute quelques rondelles de banane sur le dessus avant de servir"
@@ -447,7 +447,7 @@
           "quantite": "200 ml"
         },
         {
-          "nom": "Huel vanille",
+          "nom": "Farine Huel vanille",
           "quantite": "30 g"
         },
         {
@@ -479,7 +479,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "coco"],
       "ingredients": [
         {
-          "nom": "Huel neutre",
+          "nom": "Farine Huel neutre",
           "quantite": "30 g"
         },
         {
@@ -500,7 +500,7 @@
         }
       ],
       "etapes": [
-        "Mélange le Huel, les flocons, le lait et la noix de coco dans un bol",
+        "Mélange la farine Huel, les flocons, le lait et la noix de coco dans un bol",
         "Laisse poser 10 à 15 minutes au réfrigérateur",
         "Ajoute les fruits rouges au moment de servir"
       ],
@@ -527,7 +527,7 @@
           "quantite": "1"
         },
         {
-          "nom": "Huel chocolat",
+          "nom": "Farine Huel chocolat",
           "quantite": "30 g"
         },
         {
@@ -541,7 +541,7 @@
       ],
       "etapes": [
         "Écrase la banane dans une tasse",
-        "Ajoute l'œuf, le Huel et la purée d'amande",
+        "Ajoute l'œuf, la farine Huel et la purée d'amande",
         "Mélange bien",
         "Fais cuire 1 min 30 au micro-ondes (puissance moyenne)",
         "Laisse tiédir avant de déguster"
@@ -565,7 +565,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "pomme"],
       "ingredients": [
         {
-          "nom": "Huel vanille",
+          "nom": "Farine Huel vanille",
           "quantite": "30 g"
         },
         {
@@ -582,7 +582,7 @@
         }
       ],
       "etapes": [
-        "Dans une petite casserole, chauffe le lait avec le Huel",
+        "Dans une petite casserole, chauffe le lait avec la farine Huel",
         "Ajoute la pomme râpée et la cannelle",
         "Laisse cuire à feu doux pendant 4 à 5 minutes en remuant",
         "Servir chaud, éventuellement avec un filet de sirop d'érable"
@@ -610,7 +610,7 @@
           "quantite": "1"
         },
         {
-          "nom": "Huel vanille",
+          "nom": "Farine Huel vanille",
           "quantite": "30 g"
         },
         {
@@ -660,12 +660,12 @@
           "quantite": "1/2"
         },
         {
-          "nom": "Huel vanille",
+          "nom": "Farine Huel vanille",
           "quantite": "30 g"
         }
       ],
       "etapes": [
-        "Écrase la banane et mélange-la avec l'œuf et le Huel",
+        "Écrase la banane et mélange-la avec l'œuf et la farine Huel",
         "Étale cette crème sur la tranche de pain",
         "Passe au four 10 minutes à 180°C",
         "Déguste tiède"
@@ -689,7 +689,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "cajou"],
       "ingredients": [
         {
-          "nom": "Huel",
+          "nom": "Farine Huel vanille ou autres",
           "quantite": "30 g"
         },
         {
@@ -729,7 +729,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "overnight"],
       "ingredients": [
         {
-          "nom": "Huel",
+          "nom": "Farine Huel vanille ou autres",
           "quantite": "30 g"
         },
         {
@@ -746,7 +746,7 @@
         }
       ],
       "etapes": [
-        "Dans un bocal, mélange le Huel, les flocons et le lait",
+        "Dans un bocal, mélange la farine Huel, les flocons et le lait",
         "Ajoute le carré de chocolat cassé en petits morceaux",
         "Laisse reposer une nuit au frigo",
         "Consommer froid le matin"
@@ -770,7 +770,7 @@
       "tags": ["matin", "chronobiologie", "Huel", "barres"],
       "ingredients": [
         {
-          "nom": "Huel",
+          "nom": "Farine huel vanille ou chocolat",
           "quantite": "40 g"
         },
         {
@@ -799,6 +799,73 @@
         "lipides": 9
       }
     },
+    {
+  "id": 101,
+  "titre": "Poulet rôti aux herbes, pommes de terre et haricots verts",
+  "moment": "midi",
+  "image": "https://i.ibb.co/N3YyMC4/Poulet-roti-haricots.jpg",
+  "tempsPreparation": 15,
+  "tempsCuisson": 35,
+  "temperatureCuisson": "Four 200°C + poêle",
+  "difficulte": "Facile",
+  "tags": [
+    "AGP",
+    "chronobiologie",
+    "traditionnelle"
+  ],
+  "ingredients": [
+    {
+      "nom": "blanc de poulet",
+      "quantite": "150 g"
+    },
+    {
+      "nom": "pommes de terre",
+      "quantite": "100 g (poids cru)"
+    },
+    {
+      "nom": "haricots verts",
+      "quantite": "200 g"
+    },
+    {
+      "nom": "huile d’olive",
+      "quantite": "1 c. à soupe"
+    },
+    {
+      "nom": "ail",
+      "quantite": "1 gousse"
+    },
+    {
+      "nom": "thym",
+      "quantite": "1 c. à café"
+    },
+    {
+      "nom": "romarin",
+      "quantite": "1 pincée"
+    },
+    {
+      "nom": "sel",
+      "quantite": "à discrétion"
+    },
+    {
+      "nom": "poivre",
+      "quantite": "à discrétion"
+    }
+  ],
+  "etapes": [
+    "Préchauffer le four à 200°C.",
+    "Couper les pommes de terre en cubes, les assaisonner avec huile, thym, romarin, sel et poivre. Enfourner 30 à 35 min.",
+    "Cuire les haricots verts à la vapeur ou à l’eau salée pendant 10 à 12 minutes.",
+    "Faire revenir le poulet dans une poêle chaude avec un filet d’huile et l’ail jusqu’à ce qu’il soit bien doré (6 à 8 min de chaque côté).",
+    "Servir le tout chaud, en arrosant les légumes avec le jus de cuisson du poulet."
+  ],
+  "nutritionPour100g": {
+    "calories": 120,
+    "proteines": 14,
+    "glucides": 9,
+    "lipides": 4,
+    "fibres": 2
+  }
+},
     {
       "id": 11,
       "titre": "Poke bowl saumon-avocat",
@@ -832,7 +899,7 @@
       ],
       "etapes": [
         "Disposer le riz dans un bol",
-        "Ajouter le saumon, avocat, concombre",
+        "Ajouter le saumon, l'avocat, le concombre",
         "Verser la sauce soja"
       ],
       "nutritionPour100g": {
@@ -917,7 +984,7 @@
       ],
       "etapes": [
         "Cuire les lentilles 20 min dans l'eau bouillante",
-        "Faire revenir échalote 2 min à feu vif",
+        "Faire revenir l'échalote 2 min à feu vif",
         "Mélanger tous les ingrédients"
       ],
       "nutritionPour100g": {
@@ -958,7 +1025,7 @@
       "etapes": [
         "Sauter les légumes 8 min à feu vif",
         "Ajouter le tofu et cuire 4 min",
-        "Ajouter sauce soja en fin de cuisson"
+        "Ajouter la sauce soja en fin de cuisson"
       ],
       "nutritionPour100g": {
         "calories": 145,
@@ -997,7 +1064,7 @@
       ],
       "etapes": [
         "Cuire le poulet 10 min à feu moyen",
-        "Ajouter lait coco et curry, mijoter 10 min",
+        "Ajouter le lait coco et curry, mijoter 10 min",
         "Servir avec riz"
       ],
       "nutritionPour100g": {
@@ -1036,8 +1103,8 @@
         }
       ],
       "etapes": [
-        "Cuire quinoa 15 min dans l'eau bouillante",
-        "Égoutter pois chiches en conserve",
+        "Cuire le quinoa 15 min dans l'eau bouillante",
+        "Égoutter les pois chiches en conserve",
         "Mélanger tous les ingrédients"
       ],
       "nutritionPour100g": {
@@ -1077,7 +1144,7 @@
       ],
       "etapes": [
         "Griller le poulet 6 min à feu moyen",
-        "Réchauffer galette 30 sec",
+        "Réchauffer la galette 30 sec au micro onde",
         "Assembler dans la galette et rouler"
       ],
       "nutritionPour100g": {
@@ -1116,9 +1183,9 @@
         }
       ],
       "etapes": [
-        "Faire revenir épices 1 min",
-        "Ajouter légumes et mijoter 15 min à feu doux",
-        "Cuire semoule 5 min dans l'eau bouillante"
+        "Faire revenir l'épice 1 min",
+        "Ajouter les légumes et mijoter 15 min à feu doux",
+        "Cuire la semoule 5 min dans l'eau bouillante"
       ],
       "nutritionPour100g": {
         "calories": 170,
@@ -1156,9 +1223,9 @@
         }
       ],
       "etapes": [
-        "Cuire riz 18 min dans l'eau bouillante",
-        "Sauter crevettes 3 min à feu vif",
-        "Ajouter légumes et riz, sauter 5 min"
+        "Cuire le riz 18 min dans l'eau bouillante",
+        "Sauter les crevettes 3 min à feu vif",
+        "Ajouter les légumes et riz, faire sauter à la poêle 5 min"
       ],
       "nutritionPour100g": {
         "calories": 185,
@@ -1196,9 +1263,9 @@
         }
       ],
       "etapes": [
-        "Faire revenir protéines de soja 5 min",
-        "Ajouter tomates et mijoter 15 min à feu moyen",
-        "Cuire pâtes selon emballage"
+        "Faire revenir les protéines de soja 5 min",
+        "Ajouter la tomates et mijoter 15 min à feu moyen",
+        "Cuire la pâtes selon emballage"
       ],
       "nutritionPour100g": {
         "calories": 195,
@@ -1237,7 +1304,7 @@
       ],
       "etapes": [
         "Mélanger les ingrédients secs",
-        "Ajouter œuf et purée de noisette",
+        "Ajouter l'œuf et la purée de noisette",
         "Cuire 25 min au four à 180°C"
       ],
       "nutritionPour100g": {
@@ -1272,8 +1339,8 @@
         }
       ],
       "etapes": [
-        "Éplucher et couper pommes en morceaux",
-        "Cuire 15 min à feu doux avec cannelle",
+        "Éplucher et couper les pommes en morceaux",
+        "Cuire 15 min à feu doux avec la cannelle",
         "Mixer selon texture souhaitée"
       ],
       "nutritionPour100g": {
@@ -1313,7 +1380,7 @@
       ],
       "etapes": [
         "Mélanger tous les ingrédients",
-        "Étaler sur plaque et tasser",
+        "Étaler sur une plaque et tasser",
         "Cuire 15 min au four à 180°C"
       ],
       "nutritionPour100g": {
@@ -1381,7 +1448,7 @@
       ],
       "etapes": [
         "Griller légèrement le pain",
-        "Tartiner purée de noisette",
+        "Tartiner de purée de noisette",
         "Ajouter les tranches de pomme"
       ],
       "nutritionPour100g": {
@@ -1403,7 +1470,7 @@
       "tags": ["gouter", "chronobiologie", "AGP"],
       "ingredients": [
         {
-          "nom": "poudre Huel chocolat",
+          "nom": "Farine Huel chocolat",
           "quantite": "30 g"
         },
         {
@@ -1450,8 +1517,8 @@
         }
       ],
       "etapes": [
-        "Mettre yaourt dans un bol",
-        "Ajouter granola et fruits rouges"
+        "Mettre le yaourt dans un bol",
+        "Ajouter le granola et les fruits rouges"
       ],
       "nutritionPour100g": {
         "calories": 140,
@@ -1560,8 +1627,8 @@
         }
       ],
       "etapes": [
-        "Tartiner purée d'amande sur galettes",
-        "Ajouter pomme râpée sur le dessus"
+        "Tartiner la purée d'amande sur les galettes",
+        "Ajouter de la pomme râpée sur le dessus"
       ],
       "nutritionPour100g": {
         "calories": 160,
@@ -1649,8 +1716,8 @@
       "etapes": [
         "Chauffer le bouillon à feu doux",
         "Diluer la pâte miso dans un peu de bouillon",
-        "Ajouter champignons et cuire 10 min",
-        "Ajouter épinards en fin de cuisson"
+        "Ajouter les champignons et cuire 10 min",
+        "Ajouter les épinards en fin de cuisson"
       ],
       "nutritionPour100g": {
         "calories": 45,
@@ -1692,7 +1759,7 @@
       ],
       "etapes": [
         "Spiraler les courgettes en spaghettis",
-        "Couper tomates cerises en deux",
+        "Couper les tomates cerises en deux",
         "Mélanger avec pesto et pignons",
         "Laisser mariner 10 min avant de servir"
       ],
@@ -1736,10 +1803,10 @@
         }
       ],
       "etapes": [
-        "Couper légumes en cubes",
-        "Faire revenir pâte de curry 1 min",
-        "Ajouter légumes et cuire 10 min",
-        "Verser lait de coco et mijoter 10 min à feu moyen"
+        "Couper les légumes en cubes",
+        "Faire revenir la pâte de curry 1 min",
+        "Ajouter les légumes et cuire 10 min",
+        "Verser le lait de coco et mijoter 10 min à feu moyen"
       ],
       "nutritionPour100g": {
         "calories": 75,
@@ -1782,8 +1849,8 @@
       ],
       "etapes": [
         "Battre les œufs avec herbes",
-        "Faire revenir épinards 2 min",
-        "Verser œufs et cuire 3 min par face à feu moyen",
+        "Faire revenir les épinards 2 min",
+        "Verser les œufs battus et cuire 3 min par face à feu moyen",
         "Plier l'omelette en deux"
       ],
       "nutritionPour100g": {
@@ -1826,10 +1893,10 @@
         }
       ],
       "etapes": [
-        "Cuire quinoa 15 min dans l'eau bouillante",
-        "Griller légumes 15 min au four à 200°C",
-        "Mélanger quinoa et légumes tièdes",
-        "Assaisonner avec vinaigrette"
+        "Cuire le quinoa 15 min dans l'eau bouillante",
+        "Griller les légumes 15 min au four à 200°C",
+        "Mélanger le quinoa et légumes tièdes",
+        "Assaisonner avec une vinaigrette"
       ],
       "nutritionPour100g": {
         "calories": 110,
@@ -1871,10 +1938,10 @@
         }
       ],
       "etapes": [
-        "Cuire brocoli 15 min dans le bouillon",
-        "Ajouter gingembre râpé",
+        "Cuire le brocoli 15 min dans le bouillon",
+        "Ajouter le gingembre râpé",
         "Mixer jusqu'à consistance lisse",
-        "Ajouter lait de coco et réchauffer 2 min"
+        "Ajouter le lait de coco et réchauffer 2 min"
       ],
       "nutritionPour100g": {
         "calories": 55,
@@ -1916,10 +1983,10 @@
         }
       ],
       "etapes": [
-        "Réchauffer lentilles 5 min à feu doux",
-        "Couper légumes en petits dés",
-        "Mélanger lentilles tièdes et légumes crus",
-        "Assaisonner avec vinaigrette"
+        "Réchauffer les lentilles 5 min à feu doux",
+        "Couper les légumes en petits dés",
+        "Mélanger les lentilles tièdes et légumes crus",
+        "Assaisonner avec une vinaigrette"
       ],
       "nutritionPour100g": {
         "calories": 95,
@@ -1962,8 +2029,8 @@
       ],
       "etapes": [
         "Couper tous les légumes en cubes",
-        "Faire revenir aubergine 5 min",
-        "Ajouter courgette et tomate",
+        "Faire revenir l'aubergine 5 min",
+        "Ajouter la courgette et la tomate",
         "Mijoter 25 min à feu doux avec herbes"
       ],
       "nutritionPour100g": {
@@ -2006,8 +2073,8 @@
         }
       ],
       "etapes": [
-        "Couper légumes en lamelles",
-        "Disposer sur papier sulfurisé",
+        "Couper les légumes en lamelles",
+        "Disposer sur un papier sulfurisé",
         "Arroser de jus de citron et thym",
         "Cuire en papillote 20 min au four à 180°C"
       ],
