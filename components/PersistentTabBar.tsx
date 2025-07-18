@@ -42,8 +42,8 @@ export default function PersistentTabBar() {
     router.replace('/(tabs)/home');
   };
 
-  // Afficher la tab bar seulement sur les pages qui ne sont PAS dans les tabs principaux
-  const isTabPage = pathname.startsWith('/(tabs)/');
+  // Ne pas afficher sur les pages des tabs principales ET sur la page d'accueil
+  const isTabPage = pathname.startsWith('/(tabs)/') || pathname === '/';
   
   // Ne pas afficher sur les pages des tabs principales
   if (isTabPage) {
