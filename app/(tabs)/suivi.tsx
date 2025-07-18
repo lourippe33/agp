@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChartBar as BarChart3, TrendingUp, Calendar, Target, Award, Clock, Heart, Utensils, Dumbbell, Star, Plus, BookOpen, CircleCheck as CheckCircle, CreditCard as Edit3, Save, Ruler } from 'lucide-react-native';
@@ -127,7 +128,7 @@ export default function SuiviScreen() {
     }
   };
 
-  const updateMeasurement = (day: 'day1' | 'day30', field: keyof Measurements, value: string) => {
+  const updateMeasurement = useCallback((day: 'day1' | 'day30', field: keyof Measurements, value: string) => {
     setMeasurements(prev => ({
       ...prev,
       [day]: {
@@ -135,7 +136,7 @@ export default function SuiviScreen() {
         [field]: value
       }
     }));
-  };
+  }, []);
 
   const lockMeasurements = async (day: 'day1' | 'day30') => {
     const newMeasurements = {
