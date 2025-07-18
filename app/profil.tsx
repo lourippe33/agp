@@ -41,23 +41,7 @@ export default function ProfilScreen() {
       setUsername(user.username || '');
       setNiveauSport(user.niveauSport || 'debutant');
     }
-    
-    if (user) {
-      loadUserProfile();
-    }
   }, [user]);
-
-  // Initialiser les champs IMC quand le profil est chargé
-  useEffect(() => {
-    if (userProfile) {
-      setCurrentWeightText(userProfile.currentWeight ? userProfile.currentWeight.toString() : '');
-      setTargetWeightText(userProfile.targetWeight ? userProfile.targetWeight.toString() : '');
-      setHeightText(userProfile.height ? userProfile.height.toString() : '');
-      setWaistMeasurementText(userProfile.waistMeasurement ? userProfile.waistMeasurement.toString() : '');
-    }
-  }, [userProfile]);
-
-  const loadUserProfile = async () => {
 
   const handleSave = async () => {
     if (!user) return;
@@ -65,29 +49,8 @@ export default function ProfilScreen() {
     try {
       const result = await updateProfile(user.id, { firstName, lastName, username, niveauSport });
       
-      // Convertir les valeurs texte en nombres pour la sauvegarde
-      const weightValue = parseFloat(currentWeightText) || 0;
-      const targetValue = parseFloat(targetWeightText) || 0;
-      const heightValue = parseFloat(heightText) || 0;
-      const waistValue = parseFloat(waistMeasurementText) || 0;
-      
-      if (weightValue > 0) {
-        const profileToSave: UserProfile = {
-          id: userProfile?.id || TrackingService.generateId(),
-          currentWeight: weightValue,
-          targetWeight: targetValue,
-          height: heightValue,
-          waistMeasurement: waistValue,
-          startDate: userProfile?.startDate || new Date().toISOString().split('T')[0],
-        };
-        
-        await TrackingService.saveUserProfile(user.id, profileToSave);
-        setUserProfile(profileToSave);
-      }
-      
       if (result.success) {
         Alert.alert('Succès', 'Profil mis à jour avec succès !');
-        // Suppression de setIsEditing(false) ici
       } else {
         Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
       }
@@ -123,12 +86,20 @@ export default function ProfilScreen() {
   // Fonction pour calculer l'IMC de manière sécurisée
   const calculateBMI = () => {
     const weight = parseFloat(currentWeightText);
-    const heightInM = parseFloat(heightText);
+    const heightInM = parseFloat(heightText) / 100; // Conversion cm en m
     
     if (weight > 0 && heightInM > 0) {
-      return TrackingService.calculateBMI(weight, heightInM);
+      const bmi = weight / (heightInM * heightInM);
+      return bmi.toFixed(1);
     }
     return null;
+  };
+
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return 'Insuffisance pondérale';
+    if (bmi < 25) return 'Poids normal';
+    if (bmi < 30) return 'Surpoids';
+    return 'Obésité';
   };
 
   const TextField = ({ label, value, onChangeText, placeholder, keyboardType = 'default' }) => (
@@ -153,7 +124,9 @@ export default function ProfilScreen() {
     <View style={styles.container}>
       <LinearGradient colors={[Colors.agpBlue, Colors.agpGreen]} style={styles.header}>
         <View style={styles.headerContent}>
-          <View style={styles.logoContainer}><AGPLogo size={50} /></View>
+          <View style={styles.logoContainer}>
+            <AGPLogo size={50} />
+          </View>
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>Mon Profil</Text>
             <Text style={styles.headerSubtitle}>Personnalisez votre expérience AGP</Text>
@@ -181,9 +154,24 @@ export default function ProfilScreen() {
       >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>👤 Informations personnelles</Text>
-          <TextField label="Prénom" value={firstName} onChangeText={setFirstName} placeholder="Votre prénom" />
-          <TextField label="Nom" value={lastName} onChangeText={setLastName} placeholder="Votre nom" />
-          <TextField label="Nom d'utilisateur" value={username} onChangeText={setUsername} placeholder="Votre nom d'utilisateur" />
+          <TextField 
+            label="Prénom" 
+            value={firstName} 
+            onChangeText={setFirstName} 
+            placeholder="Votre prénom" 
+          />
+          <TextField 
+            label="Nom" 
+            value={lastName} 
+            onChangeText={setLastName} 
+            placeholder="Votre nom" 
+          />
+          <TextField 
+            label="Nom d'utilisateur" 
+            value={username} 
+            onChangeText={setUsername} 
+            placeholder="Votre nom d'utilisateur" 
+          />
           <View style={styles.fieldContainer}>
             <Text style={styles.fieldLabel}>Email</Text>
             <Text style={styles.fieldValue}>{user?.email}</Text>
@@ -228,7 +216,7 @@ export default function ProfilScreen() {
                 {calculateBMI()}
               </Text>
               <Text style={styles.bmiCategory}>
-                {getBMICategory(calculateBMI()!)}
+                {getBMICategory(parseFloat(calculateBMI()!))}
               </Text>
             </View>
           )}
@@ -300,4 +288,185 @@ export default function ProfilScreen() {
   );
 }
 
-// Les styles restent inchangés : tu peux garder ceux que tu avais déjà
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logoContainer: {
+    marginRight: 15,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.textLight,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  editButton: {
+    padding: 8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  section: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.textPrimary,
+    marginBottom: 16,
+  },
+  fieldContainer: {
+    marginBottom: 16,
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  fieldValue: {
+    fontSize: 16,
+    color: Colors.textSecondary,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.inputBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  textInput: {
+    fontSize: 16,
+    color: Colors.textPrimary,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.inputBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  bmiContainer: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  bmiLabel: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    marginBottom: 4,
+  },
+  bmiValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.agpBlue,
+    marginBottom: 4,
+  },
+  bmiCategory: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  settingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingLabel: {
+    fontSize: 16,
+    color: Colors.textPrimary,
+    marginLeft: 12,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.textPrimary,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  actionButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  accountInfo: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  accountInfoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  accountInfoText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
+});
