@@ -83,23 +83,25 @@ export default function ProfilScreen() {
     );
   };
 
-  // Fonction pour calculer l'IMC de manière sécurisée
-  const calculateBMI = () => {
+  const getBMICategory = (bmi: number): string => {
+    if (bmi < 18.5) return 'Insuffisance pondérale';
+    if (bmi < 25) return 'Corpulence normale';
+    if (bmi < 30) return 'Surpoids';
+    if (bmi < 35) return 'Obésité modérée';
+    if (bmi < 40) return 'Obésité sévère';
+    return 'Obésité morbide';
+  };
+
+  // Fonction pour calculer l'IMC
+  const calculateBMI = (): number | null => {
     const weight = parseFloat(currentWeightText);
     const heightInM = parseFloat(heightText) / 100; // Conversion cm en m
     
     if (weight > 0 && heightInM > 0) {
       const bmi = weight / (heightInM * heightInM);
-      return bmi.toFixed(1);
+      return Math.round(bmi * 10) / 10; // Arrondi à 1 décimale
     }
     return null;
-  };
-
-  const getBMICategory = (bmi: number) => {
-    if (bmi < 18.5) return 'Insuffisance pondérale';
-    if (bmi < 25) return 'Poids normal';
-    if (bmi < 30) return 'Surpoids';
-    return 'Obésité';
   };
 
   const TextField = ({ label, value, onChangeText, placeholder, keyboardType = 'default' }) => (
@@ -209,15 +211,29 @@ export default function ProfilScreen() {
             keyboardType="numeric"
           />
           
+          {/* Affichage de l'IMC si les valeurs sont disponibles */}
           {!isEditing && calculateBMI() && (
             <View style={styles.bmiContainer}>
-              <Text style={styles.bmiLabel}>IMC :</Text>
-              <Text style={styles.bmiValue}>
-                {calculateBMI()}
-              </Text>
-              <Text style={styles.bmiCategory}>
-                {getBMICategory(parseFloat(calculateBMI()!))}
-              </Text>
+              <View style={styles.bmiHeader}>
+                <Text style={styles.bmiLabel}>Indice de Masse Corporelle (IMC)</Text>
+              </View>
+              <View style={styles.bmiContent}>
+                <View style={styles.bmiValueContainer}>
+                  <Text style={styles.bmiValue}>{calculateBMI()}</Text>
+                  <Text style={styles.bmiUnit}>kg/m²</Text>
+                </View>
+                <View style={styles.bmiCategoryContainer}>
+                  <Text style={styles.bmiCategory}>
+                    {getBMICategory(calculateBMI()!)}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.bmiInfo}>
+                <Text style={styles.bmiInfoText}>
+                  L'IMC est un indicateur qui permet d'évaluer la corpulence. 
+                  Consultez un professionnel de santé pour une évaluation personnalisée.
+                </Text>
+              </View>
             </View>
           )}
         </View>
@@ -378,25 +394,65 @@ const styles = StyleSheet.create({
   },
   bmiContainer: {
     backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     marginTop: 16,
-    alignItems: 'center',
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  bmiHeader: {
+    marginBottom: 12,
   },
   bmiLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginBottom: 4,
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    textAlign: 'center',
+  },
+  bmiContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  bmiValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
   },
   bmiValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontFamily: 'Poppins-Bold',
     color: Colors.agpBlue,
-    marginBottom: 4,
+  },
+  bmiUnit: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginLeft: 4,
+  },
+  bmiCategoryContainer: {
+    backgroundColor: Colors.surface,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   bmiCategory: {
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  bmiInfo: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 8,
+    padding: 12,
+  },
+  bmiInfoText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 16,
+    fontStyle: 'italic',
   },
   settingRow: {
     flexDirection: 'row',
