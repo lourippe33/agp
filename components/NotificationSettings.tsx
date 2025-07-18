@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -83,6 +83,23 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
     
     saveSettings();
   };
+
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateMealTime = useCallback((timeType: string, value: string) => {
+    handleTimeChange(timeType, value);
+  }, []);
+
+  const updateWaterTime = useCallback((value: string, index: number) => {
+    handleTimeChange('water', value, index);
+  }, []);
+
+  const updateTrackingTime = useCallback((value: string) => {
+    handleTimeChange('tracking', value);
+  }, []);
+
+  const updateMotivationalTime = useCallback((value: string) => {
+    handleTimeChange('motivational', value);
+  }, []);
 
   const handleTimeChange = (timeType: string, value: string, index?: number) => {
     if (!settings) return;
@@ -187,7 +204,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.mealTimes.breakfast}
-                      onChangeText={(value) => handleTimeChange('breakfast', value)}
+                      onChangeText={(value) => updateMealTime('breakfast', value)}
                       placeholder="07:30"
                       keyboardType="numbers-and-punctuation"
                     />
@@ -198,7 +215,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.mealTimes.lunch}
-                      onChangeText={(value) => handleTimeChange('lunch', value)}
+                      onChangeText={(value) => updateMealTime('lunch', value)}
                       placeholder="12:30"
                       keyboardType="numbers-and-punctuation"
                     />
@@ -209,7 +226,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.mealTimes.snack}
-                      onChangeText={(value) => handleTimeChange('snack', value)}
+                      onChangeText={(value) => updateMealTime('snack', value)}
                       placeholder="16:00"
                       keyboardType="numbers-and-punctuation"
                     />
@@ -220,7 +237,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.mealTimes.dinner}
-                      onChangeText={(value) => handleTimeChange('dinner', value)}
+                      onChangeText={(value) => updateMealTime('dinner', value)}
                       placeholder="19:30"
                       keyboardType="numbers-and-punctuation"
                     />
@@ -266,7 +283,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                       <TextInput
                         style={styles.timeInput}
                         value={time}
-                        onChangeText={(value) => handleTimeChange('water', value, index)}
+                        onChangeText={(value) => updateWaterTime(value, index)}
                         placeholder="09:00"
                         keyboardType="numbers-and-punctuation"
                       />
@@ -312,7 +329,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.trackingTime}
-                      onChangeText={(value) => handleTimeChange('tracking', value)}
+                      onChangeText={updateTrackingTime}
                       placeholder="20:30"
                       keyboardType="numbers-and-punctuation"
                     />
@@ -357,7 +374,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                     <TextInput
                       style={styles.timeInput}
                       value={settings.motivationalTime}
-                      onChangeText={(value) => handleTimeChange('motivational', value)}
+                      onChangeText={updateMotivationalTime}
                       placeholder="08:00"
                       keyboardType="numbers-and-punctuation"
                     />
