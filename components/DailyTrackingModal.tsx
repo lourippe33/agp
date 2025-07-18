@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -86,6 +87,35 @@ export default function DailyTrackingModal({
       }
     }
   };
+
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateMealTime = useCallback((mealId: string, time: string) => {
+    updateMeal(mealId, { time });
+  }, []);
+
+  const updateMealNotes = useCallback((mealId: string, notes: string) => {
+    updateMeal(mealId, { notes });
+  }, []);
+
+  const updateActivityType = useCallback((type: string) => {
+    setActivityForm(prev => ({ ...prev, type }));
+  }, []);
+
+  const updateActivityDuration = useCallback((text: string) => {
+    setActivityForm(prev => ({ ...prev, duration: parseInt(text) || 0 }));
+  }, []);
+
+  const updateActivityNotes = useCallback((notes: string) => {
+    setActivityForm(prev => ({ ...prev, notes }));
+  }, []);
+
+  const updateWeight = useCallback((text: string) => {
+    setTracking(prev => ({ ...prev, weight: parseFloat(text) || undefined }));
+  }, []);
+
+  const updateTrackingNotes = useCallback((notes: string) => {
+    setTracking(prev => ({ ...prev, notes }));
+  }, []);
 
   const updateMeal = (mealId: string, updates: Partial<DailyMeal>) => {
     setTracking(prev => ({
@@ -192,7 +222,7 @@ export default function DailyTrackingModal({
               style={styles.timeTextInput}
               placeholder="Heure (ex: 12:30)"
               value={meal.time || ''}
-              onChangeText={(time) => updateMeal(meal.id, { time })}
+              onChangeText={(time) => updateMealTime(meal.id, time)}
             />
           </View>
 
@@ -216,7 +246,7 @@ export default function DailyTrackingModal({
             style={styles.notesInput}
             placeholder="Notes (optionnel)"
             value={meal.notes || ''}
-            onChangeText={(notes) => updateMeal(meal.id, { notes })}
+            onChangeText={(notes) => updateMealNotes(meal.id, notes)}
             multiline
             numberOfLines={2}
           />
@@ -444,7 +474,7 @@ export default function DailyTrackingModal({
                           styles.activityTypeButton,
                           activityForm.type === type && styles.activityTypeButtonActive
                         ]}
-                        onPress={() => setActivityForm(prev => ({ ...prev, type }))}
+                        onPress={() => updateActivityType(type)}
                       >
                         <Text style={[
                           styles.activityTypeText,
@@ -463,10 +493,7 @@ export default function DailyTrackingModal({
                     style={styles.durationInput}
                     placeholder="30"
                     value={activityForm.duration.toString()}
-                    onChangeText={(text) => setActivityForm(prev => ({ 
-                      ...prev, 
-                      duration: parseInt(text) || 0 
-                    }))}
+                   onChangeText={updateActivityDuration}
                     keyboardType="numeric"
                   />
                 </View>
@@ -501,7 +528,7 @@ export default function DailyTrackingModal({
                   style={styles.activityNotesInput}
                   placeholder="Remarques (optionnel)"
                   value={activityForm.notes || ''}
-                  onChangeText={(notes) => setActivityForm(prev => ({ ...prev, notes }))}
+                  onChangeText={updateActivityNotes}
                   multiline
                   numberOfLines={2}
                 />
@@ -516,10 +543,7 @@ export default function DailyTrackingModal({
               style={styles.weightInput}
               placeholder="Ex: 70.5"
               value={tracking.weight?.toString() || ''}
-              onChangeText={(text) => setTracking(prev => ({ 
-                ...prev, 
-                weight: parseFloat(text) || undefined 
-              }))}
+              onChangeText={updateWeight}
               keyboardType="decimal-pad"
             />
           </View>
@@ -531,7 +555,7 @@ export default function DailyTrackingModal({
               style={styles.generalNotesInput}
               placeholder="Comment s'est passée votre journée ?"
               value={tracking.notes || ''}
-              onChangeText={(notes) => setTracking(prev => ({ ...prev, notes }))}
+              onChangeText={updateTrackingNotes}
               multiline
               numberOfLines={3}
             />

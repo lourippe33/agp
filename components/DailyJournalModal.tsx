@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -92,6 +93,19 @@ export default function DailyJournalModal({
     }
   };
 
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateMealTime = useCallback((mealId: string, time: string) => {
+    updateMeal(mealId, { time });
+  }, []);
+
+  const updateMealNotes = useCallback((mealId: string, notes: string) => {
+    updateMeal(mealId, { notes });
+  }, []);
+
+  const updateJournalNotes = useCallback((notes: string) => {
+    setJournalEntry(prev => ({ ...prev, notes }));
+  }, []);
+
   const updateMeal = (mealId: string, updates: Partial<MealEntry>) => {
     setJournalEntry(prev => ({
       ...prev,
@@ -159,7 +173,7 @@ export default function DailyJournalModal({
               style={styles.timeTextInput}
               placeholder="Heure (ex: 12:30)"
               value={meal.time}
-              onChangeText={(time) => updateMeal(meal.id, { time })}
+              onChangeText={(time) => updateMealTime(meal.id, time)}
             />
           </View>
 
@@ -188,7 +202,7 @@ export default function DailyJournalModal({
             style={styles.notesInput}
             placeholder="Notes sur ce repas (optionnel)"
             value={meal.notes}
-            onChangeText={(notes) => updateMeal(meal.id, { notes })}
+            onChangeText={(notes) => updateMealNotes(meal.id, notes)}
             multiline
             numberOfLines={2}
           />
@@ -289,7 +303,7 @@ export default function DailyJournalModal({
               style={styles.generalNotesInput}
               placeholder="Notes sur votre journée (optionnel)"
               value={journalEntry.notes}
-              onChangeText={(notes) => setJournalEntry(prev => ({ ...prev, notes }))}
+             onChangeText={updateJournalNotes}
               multiline
               numberOfLines={3}
             />

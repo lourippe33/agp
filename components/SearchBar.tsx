@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   TextInput,
@@ -31,6 +32,9 @@ export default function SearchBar({
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
+  // Fonction mémorisée pour éviter les re-renders
+  const updateQuery = useCallback((text: string) => setQuery(text), []);
+
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
       onSearch(query);
@@ -54,7 +58,7 @@ export default function SearchBar({
           placeholder={placeholder}
           placeholderTextColor={Colors.textSecondary}
           value={query}
-          onChangeText={setQuery}
+          onChangeText={updateQuery}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           autoCapitalize="none"

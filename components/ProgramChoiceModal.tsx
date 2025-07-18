@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -164,6 +165,9 @@ export default function ProgramChoiceModal({
   const [choices, setChoices] = useState<Choice[]>([]);
   
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Fonction mémorisée pour éviter les re-renders
+  const updateSearchQuery = useCallback((text: string) => setSearchQuery(text), []);
   
   const IconComponent = ACTIVITY_ICONS[activityType];
   const activityTitle = ACTIVITY_TITLES[activityType];
@@ -289,7 +293,7 @@ export default function ProgramChoiceModal({
             style={styles.searchInput}
             placeholder="Rechercher..."
             value={searchQuery}
-            onChangeText={setSearchQuery}
+           onChangeText={updateSearchQuery}
             placeholderTextColor={Colors.textSecondary}
           />
           {searchQuery.length > 0 && (

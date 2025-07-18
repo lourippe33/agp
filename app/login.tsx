@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -29,6 +30,13 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const { login, register } = useAuth();
+
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateEmail = useCallback((text: string) => setEmail(text), []);
+  const updatePassword = useCallback((text: string) => setPassword(text), []);
+  const updateUsername = useCallback((text: string) => setUsername(text), []);
+  const updateFirstName = useCallback((text: string) => setFirstName(text), []);
+  const updateLastName = useCallback((text: string) => setLastName(text), []);
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
@@ -135,7 +143,7 @@ export default function LoginScreen() {
                   placeholder="Email"
                   placeholderTextColor={Colors.textSecondary}
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={updateEmail}
                   autoCapitalize="none"
                   autoCorrect={false}
                   keyboardType="email-address"
@@ -154,7 +162,7 @@ export default function LoginScreen() {
                       placeholder="Nom d'utilisateur"
                       placeholderTextColor={Colors.textSecondary}
                       value={username}
-                      onChangeText={setUsername}
+                      onChangeText={updateUsername}
                       autoCapitalize="none"
                       autoCorrect={false}
                       editable={!isLoading}
@@ -170,7 +178,7 @@ export default function LoginScreen() {
                         placeholder="Prénom"
                         placeholderTextColor={Colors.textSecondary}
                         value={firstName}
-                        onChangeText={setFirstName}
+                        onChangeText={updateFirstName}
                         autoCapitalize="words"
                         editable={!isLoading}
                       />
@@ -184,7 +192,7 @@ export default function LoginScreen() {
                         placeholder="Nom"
                         placeholderTextColor={Colors.textSecondary}
                         value={lastName}
-                        onChangeText={setLastName}
+                        onChangeText={updateLastName}
                         autoCapitalize="words"
                         editable={!isLoading}
                       />
@@ -203,7 +211,7 @@ export default function LoginScreen() {
                   placeholder="Mot de passe"
                   placeholderTextColor={Colors.textSecondary}
                   value={password}
-                  onChangeText={setPassword}
+                  onChangeText={updatePassword}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
