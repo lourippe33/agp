@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -57,6 +58,48 @@ export default function ProfilScreen() {
   // État pour suivre le processus de déconnexion
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // Fonctions mémorisées pour éviter les re-renders
+  const updateFirstName = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, firstName: text }));
+  }, []);
+
+  const updateLastName = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, lastName: text }));
+  }, []);
+
+  const updateUsername = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, username: text }));
+  }, []);
+
+  const updateNiveauSport = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, niveauSport: value as any }));
+  }, []);
+
+  // Fonctions mémorisées pour les données physiques
+  const updateWeight = useCallback((value: string) => {
+    setPhysicalData(prev => {
+      const newData = { ...prev, weight: value };
+      if (!prev.startDate && value.trim()) {
+        newData.startDate = new Date().toISOString().split('T')[0];
+      }
+      return newData;
+    });
+  }, []);
+
+  const updateHeight = useCallback((value: string) => {
+    setPhysicalData(prev => {
+      const newData = { ...prev, height: value };
+      if (!prev.startDate && value.trim()) {
+        newData.startDate = new Date().toISOString().split('T')[0];
+      }
+      return newData;
+    });
+  }, []);
+
+  const updateTargetWeight = useCallback((value: string) => {
+    setPhysicalData(prev => ({ ...prev, targetWeight: value }));
+  }, []);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -108,18 +151,18 @@ export default function ProfilScreen() {
   };
 
   // Mise à jour des données physiques sans re-render global
-  const updatePhysicalData = (field: string, value: string) => {
-    setPhysicalData(prev => {
-      const newData = { ...prev, [field]: value };
-      
-      // Définir la date de début automatiquement si c'est la première saisie
-      if (!prev.startDate && (field === 'weight' || field === 'height') && value.trim()) {
-        newData.startDate = new Date().toISOString().split('T')[0];
-      }
-      
-      return newData;
-    });
-  };
+  // Calcul IMC mémorisé
+  const calculatedIMC = useCallback(() => {
+    const weight = parseFloat(physicalData.weight);
+    const height = parseFloat(physicalData.height);
+    
+    if (weight > 0 && height > 0) {
+      const heightInM = height / 100;
+      const imc = weight / (heightInM * heightInM);
+      return Math.round(imc * 100) / 100;
+    }
+    return null;
+  }, [physicalData.weight, physicalData.height]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -186,22 +229,24 @@ export default function ProfilScreen() {
   };
 
   const togglePreference = (preference: string) => {
+  const togglePreference = useCallback((preference: string) => {
     setFormData(prev => ({
       ...prev,
       preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
         ? prev.preferencesAlimentaires.filter(p => p !== preference)
         : [...prev.preferencesAlimentaires, preference]
     }));
-  };
+  }, []);
 
   const toggleObjectif = (objectif: string) => {
+  const toggleObjectif = useCallback((objectif: string) => {
     setFormData(prev => ({
       ...prev,
       objectifs: prev.objectifs.includes(objectif)
         ? prev.objectifs.filter(o => o !== objectif)
         : [...prev.objectifs, objectif]
     }));
-  };
+  }, []);
 
   const preferencesOptions = [
     'Végétarien',
@@ -385,21 +430,21 @@ export default function ProfilScreen() {
           <EditableField
             label="Prénom"
             value={formData.firstName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
+            onChangeText={updateFirstName}
             placeholder="Votre prénom"
           />
           
           <EditableField
             label="Nom"
             value={formData.lastName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+            onChangeText={updateLastName}
             placeholder="Votre nom"
           />
           
           <EditableField
             label="Nom d'utilisateur"
             value={formData.username}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, username: text }))}
+            onChangeText={updateUsername}
             placeholder="Votre nom d'utilisateur"
           />
 
@@ -415,7 +460,7 @@ export default function ProfilScreen() {
             label="Niveau sportif"
             value={formData.niveauSport}
             options={niveauxSport}
-            onSelect={(value) => setFormData(prev => ({ ...prev, niveauSport: value as any }))}
+            onSelect={updateNiveauSport}
           />
         </ProfileSection>
 
@@ -509,7 +554,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.physicalInput}
                 value={physicalData.weight}
-                onChangeText={(value) => updatePhysicalData('weight', value)}
+                onChangeText={updateWeight}
                 placeholder="70"
                 keyboardType="decimal-pad"
                 autoCorrect={false}
@@ -523,7 +568,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.physicalInput}
                 value={physicalData.height}
-                onChangeText={(value) => updatePhysicalData('height', value)}
+                onChangeText={updateHeight}
                 placeholder="175"
                 keyboardType="decimal-pad"
                 autoCorrect={false}
@@ -537,7 +582,7 @@ export default function ProfilScreen() {
               <TextInput
                 style={styles.physicalInput}
                 value={physicalData.targetWeight}
-                onChangeText={(value) => updatePhysicalData('targetWeight', value)}
+                onChangeText={updateTargetWeight}
                 placeholder="65"
                 keyboardType="decimal-pad"
                 autoCorrect={false}
@@ -556,7 +601,7 @@ export default function ProfilScreen() {
             )}
 
             {(() => {
-              const imc = calculateIMC();
+              const imc = calculatedIMC();
               if (imc) {
                 return (
                   <View style={styles.imcDisplay}>
