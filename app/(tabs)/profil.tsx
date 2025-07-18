@@ -438,6 +438,8 @@ export default function ProfilScreen() {
             disabled={isLoggingOut}
             activeOpacity={0.7}
           >
+            {isLoggingOut ? (
+              <ActivityIndicator size="small" color={Colors.relaxation} />
             ) : (
               <LogOut size={24} color={Colors.relaxation} />
             )}
