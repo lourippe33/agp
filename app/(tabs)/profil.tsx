@@ -32,6 +32,9 @@ export default function SuiviScreen() {
   const [height, setHeight] = useState(170);
   const [weight, setWeight] = useState(70);
   const [waist, setWaist] = useState(85);
+  const [hips, setHips] = useState(95);
+  const [arms, setArms] = useState(30);
+  const [thighs, setThighs] = useState(55);
   const [progress, setProgress] = useState('');
   const [shape, setShape] = useState('');
 
@@ -147,6 +150,66 @@ export default function SuiviScreen() {
               thumbStyle={styles.sliderThumb}
             />
             <Text style={styles.valueText}>{waist} cm</Text>
+          </View>
+
+          {/* Tour de hanche */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Target size={20} color={Colors.agpGreen} />
+              <Text style={styles.label}>Tour de hanche</Text>
+            </View>
+            <Slider
+              value={hips}
+              onValueChange={v => setHips(Math.round(v))}
+              minimumValue={70}
+              maximumValue={150}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.agpGreen}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
+            />
+            <Text style={styles.valueText}>{hips} cm</Text>
+          </View>
+
+          {/* Tour de bras */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Target size={20} color={Colors.relaxation} />
+              <Text style={styles.label}>Tour de bras</Text>
+            </View>
+            <Slider
+              value={arms}
+              onValueChange={v => setArms(Math.round(v))}
+              minimumValue={20}
+              maximumValue={50}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.relaxation}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
+            />
+            <Text style={styles.valueText}>{arms} cm</Text>
+          </View>
+
+          {/* Tour de cuisse */}
+          <View style={styles.measurementContainer}>
+            <View style={styles.measurementHeader}>
+              <Target size={20} color={Colors.sport} />
+              <Text style={styles.label}>Tour de cuisse</Text>
+            </View>
+            <Slider
+              value={thighs}
+              onValueChange={v => setThighs(Math.round(v))}
+              minimumValue={40}
+              maximumValue={80}
+              step={1}
+              style={styles.slider}
+              minimumTrackTintColor={Colors.sport}
+              maximumTrackTintColor={Colors.border}
+              thumbStyle={styles.sliderThumb}
+            />
+            <Text style={styles.valueText}>{thighs} cm</Text>
           </View>
 
           {/* Calcul IMC */}
