@@ -46,7 +46,7 @@ export default function PersistentTabBar() {
   const isTabPage = pathname.startsWith('/(tabs)/');
   
   // Ne pas afficher sur les pages qui ont déjà leur propre navigation
-  if (isTabPage) {
+  if (isTabPage || pathname === '/(tabs)/home' || pathname === '/') {
     return null;
   }
 
