@@ -62,7 +62,6 @@ export default function ProfilScreen() {
         preferencesAlimentaires: user.preferencesAlimentaires || [],
         objectifs: user.objectifs || [],
       });
-      loadMeasurements();
     }
   }, [user]);
 
