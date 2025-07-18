@@ -62,10 +62,18 @@ export default function ProfilScreen() {
   };
 
   const handleSave = async () => {
+    if (!user) return;
+    
     try {
-      const result = await updateProfile(user.id, { firstName, lastName, username, niveauSport });
+      const result = await updateProfile(user.id, { 
+        firstName, 
+        lastName, 
+        username, 
+        niveauSport 
+      });
       
       if (result.success) {
+        setIsEditing(false);
         Alert.alert('Succès', 'Profil mis à jour avec succès !');
       } else {
         Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
@@ -170,41 +178,6 @@ export default function ProfilScreen() {
           </View>
         </View>
 
-        {/* Section IMC complètement refaite */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>⚖️ Calcul IMC</Text>
-          
-          <TextField 
-            label="Poids actuel (kg)" 
-            value={currentWeight} 
-            onChangeText={setCurrentWeight} 
-            placeholder="Ex: 70.5" 
-            keyboardType="decimal-pad"
-          />
-          
-          <TextField 
-            label="Taille (cm)" 
-            value={currentHeight} 
-            onChangeText={setCurrentHeight} 
-            placeholder="Ex: 175" 
-            keyboardType="numeric"
-          />
-          
-          {/* Affichage IMC seulement si les deux valeurs sont présentes et en mode lecture */}
-          {!isEditing && currentWeight && currentHeight && (() => {
-            const imc = calculateIMC();
-            return imc ? (
-              <View style={styles.imcResult}>
-                <Text style={styles.imcLabel}>Votre IMC :</Text>
-                <View style={styles.imcValueContainer}>
-                  <Text style={styles.imcValue}>{imc}</Text>
-                  <Text style={styles.imcUnit}>kg/m²</Text>
-                </View>
-                <Text style={styles.imcCategory}>{getIMCCategory(imc)}</Text>
-              </View>
-            ) : null;
-          })()}
-        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>⚙️ Paramètres</Text>
