@@ -88,7 +88,7 @@ export default function ProfilScreen() {
     console.log('Bouton de déconnexion cliqué');
     Alert.alert(
       'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter de l\'application AGP ?',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
       [
         { text: 'Annuler', style: 'cancel' },
         {
@@ -97,16 +97,17 @@ export default function ProfilScreen() {
           onPress: async () => {
             try {
               setIsLoggingOut(true);
-              console.log('🔄 Tentative de déconnexion initiée depuis le profil...');
+              console.log('🔄 Déconnexion en cours...');
               await logout();
-              console.log('✅ Déconnexion réussie, redirection vers login');
-              router.replace('/login');
+              console.log('✅ Déconnexion réussie');
+              // La redirection est gérée automatiquement par le contexte d'auth
             } catch (error) {
               setIsLoggingOut(false);
               console.error('❌ Erreur lors de la déconnexion:', error);
               Alert.alert(
                 'Erreur',
-                'Un problème est survenu lors de la déconnexion. Veuillez réessayer.'
+                'Impossible de se déconnecter. Veuillez réessayer.',
+                [{ text: 'OK' }]
               );
             }
           },
@@ -431,12 +432,15 @@ export default function ProfilScreen() {
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
             {isLoggingOut ? (
               <ActivityIndicator size="small" color={Colors.relaxation} />
+            disabled={isLoggingOut}
+            activeOpacity={0.7}
             ) : (
               <LogOut size={24} color={Colors.relaxation} />
             )}
             <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
               Déconnexion
-            </Text>
+              {isLoggingOut ? 'Déconnexion...' : 'Déconnexion'}
+              isLoggingOut && { opacity: 0.6 }
             <ChevronRight size={24} color={Colors.relaxation} />
           </TouchableOpacity>
         </View>
