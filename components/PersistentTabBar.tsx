@@ -45,8 +45,8 @@ export default function PersistentTabBar() {
   // Afficher la tab bar seulement sur les pages qui ne sont PAS dans les tabs principaux
   const isTabPage = pathname.startsWith('/(tabs)/');
   
-  // Ne pas afficher sur les pages qui ont déjà leur propre navigation
-  if (isTabPage || pathname === '/(tabs)/home' || pathname === '/') {
+  // Ne pas afficher sur les pages des tabs principales
+  if (isTabPage) {
     return null;
   }
 
