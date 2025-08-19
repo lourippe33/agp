@@ -568,8 +568,37 @@
   "momentIdeal": ["Matin", "Après-midi"],
   "frequence": "3 fois par semaine, 8 minutes"
 },
+    {
+  "id": 21,
+  "titre": "Mini Tabata Doux",
+  "type": "hiit",
+  "niveau": "debutant",
+  "image": "https://i.ibb.co/wFqPvbP2/Mini-Tabata.jpg",
+  "duree": 8,
+  "difficulte": "Facile",
+  "calories": 60,
+  "tags": ["tabata", "hiit", "debutant"],
+  "description": "Un petit circuit Tabata accessible pour débutants. Alternance de mouvements simples et pauses pour activer le corps sans forcer.",
+  "etapes": [
+    "1) Marche dynamique sur place (20 sec) : Lève bien les genoux, balance les bras. Puis repose-toi 10 sec.",
+    "2) Squats partiels (20 sec) : Descends légèrement comme pour t’asseoir sur une chaise, sans aller trop bas. Dos droit. Puis repose-toi 10 sec.",
+    "3) Pompes murales (20 sec) : Place les mains contre un mur, plie doucement les coudes puis repousse. Garde le dos droit. Puis repose-toi 10 sec.",
+    "4) Gainage assis (20 sec) : Assieds-toi sur une chaise, redresse le dos, contracte les abdos 20 sec. Respire lentement. Puis repose-toi 10 sec.",
+    "5) Pause longue (30 sec) : Bois un peu d’eau, respire calmement.",
+    "6) Répète la séquence complète 3 fois (≈ 8 minutes au total)."
+  ],
+  "benefices": [
+    "Active la circulation sanguine",
+    "Brûle des calories en douceur",
+    "Renforce légèrement muscles et souffle",
+    "Convient même aux débutants absolus",
+    "Permet une remise en forme progressive"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3 fois par semaine, 8 minutes"
+},
    {
-  "id": 22,
+  "id": 23,
   "titre": "Yoga doux perte de poids",
   "type": "yoga",
   "niveau": "debutant",
