@@ -26,6 +26,8 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedNotifications, setSelectedNotifications] = useState<string[]>([]);
+  const [selectionMode, setSelectionMode] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -75,11 +77,15 @@ export default function NotificationBell({ style }: NotificationBellProps) {
 
   const handleCloseNotifications = () => {
     setModalVisible(false);
+    setSelectionMode(false);
+    setSelectedNotifications([]);
   };
 
   const handleMarkAsRead = async (notificationId: string) => {
+    if (!user) return;
+    
     try {
-      await NotificationService.markAsRead(notificationId);
+      await NotificationService.markAsRead(user.id, notificationId);
       loadNotifications();
     } catch (error) {
       console.error('Erreur lors du marquage comme lu:', error);
@@ -87,14 +93,13 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   };
 
   const handleMarkAllAsRead = async () => {
+    if (!user) return;
+    
     try {
-      const unreadNotifications = notifications.filter(n => !n.read);
-      for (const notification of unreadNotifications) {
-        await NotificationService.markAsRead(notification.id);
-      }
+      await NotificationService.markAllAsRead(user.id);
       loadNotifications();
     } catch (error) {
-      console.error('Erreur lors du marquage de toutes les notifications:', error);
+      console.error('Erreur lors du marquage de toutes les notifications comme lues:', error);
     }
   };
 
