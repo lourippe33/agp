@@ -33,6 +33,7 @@ import HIITTimer from './HIITTimer';
 import PilatesTimer from './PilatesTimer';
 import YogaTimer from './YogaTimer';
 import TabataTimer from './TabataTimer';
+import YogaDouxTimer from './YogaDouxTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
@@ -84,6 +85,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [pilatesTimerVisible, setPilatesTimerVisible] = useState(false);
   const [yogaTimerVisible, setYogaTimerVisible] = useState(false);
   const [tabataTimerVisible, setTabataTimerVisible] = useState(false);
+  const [yogaDouxTimerVisible, setYogaDouxTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -118,6 +120,8 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         setYogaTimerVisible(true);
       } else if (selectedExercise.id === 21 || selectedExercise.id === 22) { // Mini Tabata Doux et Mini Tabata
         setTabataTimerVisible(true);
+      } else if (selectedExercise.id === 23) { // Yoga doux perte de poids
+        setYogaDouxTimerVisible(true);
       } else {
         // Timer générique pour les autres exercices
         setTimerModalVisible(true);
