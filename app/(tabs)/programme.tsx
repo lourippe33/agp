@@ -242,26 +242,26 @@ export default function ProgrammeScreen() {
     
     const breakfasts = [
       'Porridge aux fruits rouges',
-      'Smoothie bowl banane',
-      'Toast avocat œuf',
+      'Smoothie bowl banane épinards',
+      'Toast avocat œuf mollet',
       'Pancakes Huel banane',
-      'Overnight oats coco'
+      'Overnight oats coco mangue'
     ];
     
     const sports = [
       'Marche Active (15 min)',
       'Circuit Training (20 min)',
-      'Danse Fitness (15 min)',
-      'Yoga Dynamique (20 min)',
-      'HIIT Léger (15 min)'
+      'Danse Fitness (25 min)',
+      'Yoga Dynamique (30 min)',
+      'HIIT Intensif (18 min)'
     ];
     
     const relaxations = [
       'Cohérence Cardiaque (3 min)',
-      'Respiration Sourire (2 min)',
-      'Méditation 5 Sens (5 min)',
-      'Gratitude Express (2 min)',
-      'Relaxation Express (3 min)'
+      'Respiration du Sourire (2 min)',
+      'Méditation des 5 Sens (5 min)',
+      'Gratitude (2 min)',
+      'Relaxation musculaire (3 min)'
     ];
 
     return {
@@ -278,15 +278,15 @@ export default function ProgrammeScreen() {
         completed: false 
       },
       lunch: { 
-        name: choices.lunch || 'Poke bowl saumon-avocat', 
+        name: choices.lunch || 'Poke bowl saumon avocat', 
         completed: false 
       },
       snack: { 
-        name: choices.snack || 'Energy balls dattes', 
+        name: choices.snack || 'Energy balls dattes amandes', 
         completed: false 
       },
       dinner: { 
-        name: choices.dinner || 'Salade quinoa légumes', 
+        name: choices.dinner || 'Salade quinoa légumes grillés', 
         completed: false 
       }
     };
