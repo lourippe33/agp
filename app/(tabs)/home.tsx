@@ -58,8 +58,6 @@ export default function ProgrammeScreen() {
   const [overallProgress, setOverallProgress] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
-  const [showTodayProgram, setShowTodayProgram] = useState(true);
-  const [showTodayProgram, setShowTodayProgram] = useState(true);
   
   // États pour le système de choix
   const modalScrollViewRef = useRef(null);
@@ -79,16 +77,6 @@ export default function ProgrammeScreen() {
   useEffect(() => {
     if (programData.length > 0) {
       scrollToToday();
-      // Afficher automatiquement le programme du jour actuel
-      const today = programData.find(day => day.isToday);
-      if (today && showTodayProgram) {
-        setSelectedDay(today);
-      }
-      // Afficher automatiquement le programme du jour actuel
-      const today = programData.find(day => day.isToday);
-      if (today && showTodayProgram) {
-        setSelectedDay(today);
-      }
     }
   }, [programData]);
 
@@ -328,8 +316,6 @@ export default function ProgrammeScreen() {
   };
 
   const handleDayPress = (day: DayProgram) => {
-    setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
-    setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
     setSelectedDay(day);
   };
 
@@ -1025,94 +1011,6 @@ export default function ProgrammeScreen() {
 
         {/* Carrousel des jours */}
         <DayCarousel />
-
-        {/* Programme du jour affiché par défaut */}
-        {selectedDay && (
-          <View style={styles.todayProgramSection}>
-            <View style={styles.todayProgramHeader}>
-              <Text style={styles.todayProgramTitle}>
-                📅 Programme du Jour {selectedDay.day}
-              </Text>
-              <Text style={styles.todayProgramDate}>
-                {selectedDay.date.toLocaleDateString('fr-FR', { 
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long'
-                })}
-              </Text>
-              {selectedDay.isToday && (
-                <View style={styles.todayBadge}>
-                  <Text style={styles.todayBadgeText}>Aujourd'hui</Text>
-                </View>
-              )}
-            </View>
-
-        {/* Programme du jour affiché par défaut */}
-        {selectedDay && (
-          <View style={styles.todayProgramSection}>
-            <View style={styles.todayProgramHeader}>
-              <Text style={styles.todayProgramTitle}>
-                📅 Programme du Jour {selectedDay.day}
-              </Text>
-              <Text style={styles.todayProgramDate}>
-                {selectedDay.date.toLocaleDateString('fr-FR', { 
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long'
-                })}
-              </Text>
-              {selectedDay.isToday && (
-                <View style={styles.todayBadge}>
-                  <Text style={styles.todayBadgeText}>Aujourd'hui</Text>
-                </View>
-              )}
-            </View>
-
-        {/* Message motivationnel */}
-        <View style={styles.motivationCard}>
-          <Star size={24} color={Colors.morning} />
-          <View style={styles.motivationContent}>
-            <Text style={styles.motivationTitle}>
-              {currentStreak > 0 
-                ? `🔥 ${currentStreak} jours consécutifs !` 
-                : '🚀 Commencez votre transformation'
-              }
-            </Text>
-            <Text style={styles.motivationText}>
-              {currentStreak > 7 
-                ? 'Incroyable régularité ! Vous êtes sur la bonne voie.'
-                : currentStreak > 0
-                ? 'Excellent ! Continuez sur cette lancée.'
-                : 'Chaque grand voyage commence par un premier pas.'
-              }
-            </Text>
-          </View>
-        </View>
-
-        {/* Conseils de la semaine */}
-        <View style={styles.tipsCard}>
-          <Text style={styles.tipsTitle}>💡 Conseil de la semaine {currentWeek}</Text>
-          <Text style={styles.tipsText}>
-            {currentWeek === 1 && "Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection."}
-            {currentWeek === 2 && "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire."}
-            {currentWeek === 3 && "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé."}
-            {currentWeek === 4 && "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme."}
-          </Text>
-        </View>
-
-        {/* Info sur la navigation directe */}
-        <View style={styles.customizationInfo}>
-          <RefreshCw size={20} color={Colors.agpBlue} />
-          <View style={styles.customizationContent}>
-            <Text style={styles.customizationTitle}>🎯 Navigation Directe ACTIVE !</Text>
-            <Text style={styles.customizationText}>
-              Cliquez sur une activité pour accéder directement à la recette ou l'exercice spécifique ! 
-              Plus besoin de chercher dans les listes.
-            </Text>
-          </View>
-        </View>
-          </View>
-        )}
       </ScrollView>
 
       {/* Modal détail du jour */}
@@ -1379,122 +1277,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
-  },
-  todayProgramSection: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  todayProgramHeader: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  todayProgramTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  todayProgramDate: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textTransform: 'capitalize',
-  },
-  todayBadge: {
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  todayBadgeText: {
-    color: Colors.textLight,
-    fontSize: 12,
-    fontFamily: 'Poppins-SemiBold',
-  },
-  motivationCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.morning,
-  },
-  motivationContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  motivationTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  motivationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  tipsCard: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
-    marginBottom: 16,
-  },
-  tipsTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  tipsText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  customizationInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpGreen,
-  },
-  customizationContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  customizationTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  customizationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
   },
   modalOverlay: {
     position: 'absolute',
