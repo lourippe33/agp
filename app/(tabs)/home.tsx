@@ -637,7 +637,7 @@ export default function HomeScreen() {
                   "Ton corps est au top de sa forme 💪. Profite-en pour bouger, cuisiner, ou avancer sur tes objectifs."
                 }
                 {getCurrentMoment() === 'gouter' && 
-                  "Recharge-toi sans culpabiliser 😌. Étirements, respiration, ou snack malin : tout compte."
+                  "Recharge-toi sans culpabiliser 😌. Étirements, respiration, ou collation maligne : tout compte."
                 }
                 {getCurrentMoment() === 'soir' && 
                   "Offre-toi un vrai temps pour toi 🌙. Déconnexion, douceur et dîner léger : ton corps te dira merci."

@@ -222,7 +222,7 @@ export default function NotificationSettingsComponent({ onSave }: NotificationSe
                   </View>
                   
                   <View style={styles.timeSetting}>
-                    <Text style={styles.timeLabel}>Goûter</Text>
+                    <Text style={styles.timeLabel}>Collation</Text>
                     <TextInput
                       style={styles.timeInput}
                       value={settings.mealTimes.snack}

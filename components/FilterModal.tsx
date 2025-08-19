@@ -33,7 +33,7 @@ const { height } = Dimensions.get('window');
 const MOMENT_OPTIONS = [
   { id: 'matin', label: 'Matin', icon: '🌅' },
   { id: 'midi', label: 'Midi', icon: '☀️' },
-  { id: 'gouter', label: 'Goûter', icon: '🍪' },
+  { id: 'gouter', label: 'Collation', icon: '🍪' },
   { id: 'soir', label: 'Soir', icon: '🌙' },
 ];
 

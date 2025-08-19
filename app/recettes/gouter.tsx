@@ -22,7 +22,7 @@ export default function GouterScreen() {
       const recipeId = parseInt(params.recipeId as string);
       const recipe = gouterRecipes.find(r => r.id === recipeId);
       
-      console.log(`🎯 Recherche recette goûter ID: ${recipeId}`);
+      console.log(`🎯 Recherche recette collation ID: ${recipeId}`);
       console.log(`📋 Recette trouvée:`, recipe?.titre);
       
       if (recipe) {
@@ -58,7 +58,7 @@ export default function GouterScreen() {
         </TouchableOpacity>
         <MomentHeader
           moment="gouter"
-          title="Goûter"
+          title="Collation"
           subtitle="Une pause plaisir et énergisante"
           icon={<Coffee size={32} color={Colors.textLight} />}
         />

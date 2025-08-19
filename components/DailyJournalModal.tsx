@@ -140,7 +140,7 @@ export default function DailyJournalModal({
       switch (type) {
         case 'matin': return '🌅 Petit-déjeuner';
         case 'midi': return '☀️ Déjeuner';
-        case 'gouter': return '🍪 Goûter';
+        case 'gouter': return '🍪 Collation';
         case 'soir': return '🌙 Dîner';
         default: return type;
       }
@@ -175,7 +175,7 @@ export default function DailyJournalModal({
           <View style={styles.timeInput}>
             <Clock size={16} color={Colors.textSecondary} />
             <TextInput
-              style={styles.timeTextInput}
+              title="🍪 Collation"
               placeholder="Heure (ex: 12:30)"
               value={meal.time}
               onChangeText={(time) => updateMealTime(meal.id, time)}

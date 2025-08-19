@@ -188,7 +188,7 @@ export default function DailyTrackingModal({
       switch (moment) {
         case 'matin': return '🌅 Petit-déjeuner';
         case 'midi': return '☀️ Déjeuner';
-        case 'gouter': return '🍪 Goûter';
+        case 'gouter': return '🍪 Collation';
         case 'soir': return '🌙 Dîner';
         default: return moment;
       }

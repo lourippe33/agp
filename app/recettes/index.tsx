@@ -45,7 +45,7 @@ export default function RecettesIndexScreen() {
     },
     {
       id: 'gouter',
-      title: 'Goûter',
+      title: 'Collation',
       subtitle: 'Une pause plaisir et énergisante',
       icon: Coffee,
       gradient: Colors.gradientSnack,
@@ -120,7 +120,7 @@ export default function RecettesIndexScreen() {
             onPress={() => scrollToSection(2)}
           >
             <Coffee size={16} color={Colors.snack} />
-            <Text style={styles.quickNavText}>Goûter</Text>
+            <Text style={styles.quickNavText}>Collation</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
