@@ -444,6 +444,16 @@ export default function NotificationBell({ style }: NotificationBellProps) {
             </View>
 
             <View style={styles.modalActions}>
+              {/* Bouton de test toujours visible */}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={testAsyncStorage}
+              >
+                <Text style={[styles.actionButtonText, { color: Colors.morning }]}>
+                  Test Storage
+                </Text>
+              </TouchableOpacity>
+              
               {notifications.length > 0 && (
                 <>
                   {selectionMode ? (
@@ -515,16 +525,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
                   )}
                 </>
               )}
-              
-              {/* Bouton de test toujours visible */}
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={testAsyncStorage}
-              >
-                <Text style={[styles.actionButtonText, { color: Colors.morning }]}>
-                  Test Storage
-                </Text>
-              </TouchableOpacity>
             </View>
 
             {notifications.length > 0 ? (
