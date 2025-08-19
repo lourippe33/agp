@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Modal,
   Dimensions,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { X, Clock, ChefHat, Users, Flame } from 'lucide-react-native';
