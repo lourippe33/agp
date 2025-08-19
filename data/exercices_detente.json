@@ -1,42 +1,30 @@
 {
-  "exercices": [
-    {
-      "id": 1,
-      "titre": "Cohérence Cardiaque 3-3-3",
-      "type": "coherence",
-      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-      "duree": 3,
-      "difficulte": "Très facile",
-      "tags": ["respiration", "stress", "digestion"],
-      "description": "Version simplifiée de la cohérence cardiaque, parfaite pour débuter. 3 minutes, 3 fois par jour, avec un rythme 3-3.",
-      "etapes": [
-        "Asseyez-vous confortablement, pieds au sol",
-        "Posez une main sur votre ventre",
-        "Inspirez doucement par le nez en comptant jusqu'à 3",
-        "Expirez lentement par la bouche en comptant jusqu'à 3",
-        "Répétez pendant 3 minutes, sans forcer"
-      ],
-      "benefices": [
-        "Calme immédiatement le stress",
-        "Améliore la digestion",
-        "Régule la tension artérielle",
-        "Accessible même assis",
-        "Résultats dès la première séance"
-      ],
-      "momentIdeal": ["Avant chaque repas", "En cas de stress"],
-      "frequence": "3 fois par jour, 3 minutes",
-      "hasVideo": true,
-      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "videoThumbnail": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80",
-      "videoDuration": 180,
-      "videoSteps": [
-        {
-          "stepIndex": 1,
-          "videoUrl": "https://www.youtube.com/watch?v=step1",
-          "thumbnail": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&q=80",
-          "duration": 30,
-          "title": "Position de départ"
-        },
+  "id": 1,
+  "titre": "Cohérence Cardiaque Relax 4-6",
+  "type": "respiration",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg",
+  "duree": 5,
+  "difficulte": "Très facile",
+  "calories": 0,
+  "tags": ["respiration", "relaxation", "coherence-cardiaque"],
+  "description": "Un exercice de respiration simple pour apaiser le corps et calmer l’esprit grâce à une expiration plus longue que l’inspiration.",
+  "etapes": [
+    "1) Asseyez-vous confortablement, les pieds bien au sol.",
+    "2) Posez une main sur votre ventre pour sentir le mouvement respiratoire.",
+    "3) Inspirez doucement par le nez en comptant jusqu’à 4.",
+    "4) Expirez lentement par la bouche en comptant jusqu’à 6.",
+    "5) Continuez ce rythme 4-6 pendant 5 minutes, sans forcer."
+  ],
+  "benefices": [
+    "Apaise le système nerveux",
+    "Favorise la détente et le sommeil",
+    "Diminue le stress et l’anxiété",
+    "Améliore l’oxygénation du corps"
+  ],
+  "momentIdeal": ["Matin", "Soir", "Avant de dormir"],
+  "frequence": "Quotidien, 5 minutes"
+},
         {
           "stepIndex": 2,
           "videoUrl": "https://www.youtube.com/watch?v=step2",
