@@ -28,6 +28,7 @@ import {
 import { Colors } from '@/constants/Colors';
 import { Exercise } from '@/types/Exercise';
 import SportExerciseTimer from './SportExerciseTimer';
+import CardioTimer from './CardioTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
@@ -74,6 +75,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
+  const [cardioTimerVisible, setCardioTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -96,17 +98,25 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const handleStartExercise = () => {
     if (selectedExercise) {
       setExerciseDetailsModalVisible(false);
-      setTimerModalVisible(true);
+      
+      // Utiliser le timer spécialisé pour l'exercice Cardio Brûle-Graisse (ID 2)
+      if (selectedExercise.id === 2) {
+        setCardioTimerVisible(true);
+      } else {
+        setTimerModalVisible(true);
+      }
     }
   };
 
   const handleTimerComplete = () => {
     setTimerModalVisible(false);
+    setCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
   const handleTimerClose = () => {
     setTimerModalVisible(false);
+    setCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -379,6 +389,33 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           
           {selectedExercise && (
             <SportExerciseTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Cardio spécialisé */}
+      <Modal
+        visible={cardioTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Cardio Brûle-Graisse'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <CardioTimer
               exercise={selectedExercise}
               onComplete={handleTimerComplete}
               onClose={handleTimerClose}
