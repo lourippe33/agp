@@ -188,7 +188,7 @@ export default function ProgrammeScreen() {
         isPartiallyCompleted,
         isToday,
         activities,
-        totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
+        totalDuration: calculateDayTotalDuration(activities),
         badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
       });
     }
@@ -290,6 +290,42 @@ export default function ProgrammeScreen() {
         completed: false 
       }
     };
+  };
+
+  // Fonction pour calculer la durée réelle d'une activité
+  const getActivityDuration = (activityName: string, activityType: string) => {
+    // Extraire la durée du nom de l'activité si elle est entre parenthèses
+    const durationMatch = activityName.match(/\((\d+)\s*min\)/);
+    if (durationMatch) {
+      return parseInt(durationMatch[1]);
+    }
+    
+    // Durées par défaut basées sur les données réelles
+    const defaultDurations = {
+      breakfast: 10, // Temps de préparation moyen
+      lunch: 15,
+      snack: 5,
+      dinner: 15,
+      sport: 20, // Durée moyenne des exercices sportifs
+      relaxation: 3 // Durée moyenne des exercices de détente
+    };
+    
+    return defaultDurations[activityType] || 10;
+  };
+
+  // Fonction pour calculer la durée totale d'un jour
+  const calculateDayTotalDuration = (activities: any) => {
+    let totalDuration = 0;
+    
+    // Calculer la durée de chaque activité
+    totalDuration += getActivityDuration(activities.breakfast.name, 'breakfast');
+    totalDuration += getActivityDuration(activities.sport.name, 'sport');
+    totalDuration += getActivityDuration(activities.relaxation.name, 'relaxation');
+    totalDuration += getActivityDuration(activities.lunch.name, 'lunch');
+    totalDuration += getActivityDuration(activities.snack.name, 'snack');
+    totalDuration += getActivityDuration(activities.dinner.name, 'dinner');
+    
+    return totalDuration;
   };
 
   const getWeekDays = (week: number) => {
