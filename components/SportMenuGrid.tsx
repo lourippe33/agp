@@ -37,6 +37,10 @@ import YogaDouxTimer from './YogaDouxTimer';
 import CircuitTrainingTimer from './CircuitTrainingTimer';
 import StretchingTimer from './StretchingTimer';
 import AbdosCardioTimer from './AbdosCardioTimer';
+import CardioFunTimer from './CardioFunTimer';
+import YogaBruleCalmTimer from './YogaBruleCalmTimer';
+import ChaiseTimer from './ChaiseTimer';
+import MarcheBrasTimer from './MarcheBrasTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
@@ -92,6 +96,10 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [circuitTrainingTimerVisible, setCircuitTrainingTimerVisible] = useState(false);
   const [stretchingTimerVisible, setStretchingTimerVisible] = useState(false);
   const [abdosCardioTimerVisible, setAbdosCardioTimerVisible] = useState(false);
+  const [cardioFunTimerVisible, setCardioFunTimerVisible] = useState(false);
+  const [yogaBruleCalmTimerVisible, setYogaBruleCalmTimerVisible] = useState(false);
+  const [chaiseTimerVisible, setChaiseTimerVisible] = useState(false);
+  const [marcheBrasTimerVisible, setMarcheBrasTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -134,6 +142,14 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         setStretchingTimerVisible(true);
       } else if (selectedExercise.id === 28) { // Abdos + Cardio Express
         setAbdosCardioTimerVisible(true);
+      } else if (selectedExercise.id === 26) { // Cardio Fun Sans Saut
+        setCardioFunTimerVisible(true);
+      } else if (selectedExercise.id === 27) { // Yoga Brûle-Calm (Flow 15')
+        setYogaBruleCalmTimerVisible(true);
+      } else if (selectedExercise.id === 24) { // Chaise Brûle-Graisse
+        setChaiseTimerVisible(true);
+      } else if (selectedExercise.id === 25) { // Marche + Bras Actifs
+        setMarcheBrasTimerVisible(true);
       } else {
         // Timer générique pour les autres exercices
         setTimerModalVisible(true);
