@@ -84,34 +84,34 @@
       "momentIdeal": ["Matin", "Après-midi", "Début de soirée"],
       "frequence": "4-5 fois par semaine, 25 minutes"
     },
-    {
-      "id": 4,
-      "titre": "HIIT Intensif",
-      "type": "hiit",
-      "niveau": "avance",
-      "image": "https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg",
-      "duree": 18,
-      "difficulte": "Difficile",
-      "calories": 200,
-      "tags": ["hiit", "intensif", "brûle-graisse"],
-      "description": "Entraînement haute intensité pour maximiser la perte de poids. Réservé aux sportifs confirmés qui veulent des résultats rapides !",
-      "etapes": [
-        "Échauffement dynamique : 3 minutes",
-        "8 rounds de : 30 sec effort maximal, 30 sec repos",
-        "Exercices : Burpees, Sprint sur place, Squat jumps, Push-ups",
-        "Récupération active : 2 minutes de marche",
-        "Étirements : 3 minutes"
-      ],
-      "benefices": [
-        "Brûle un maximum de calories en minimum de temps",
-        "Effet afterburn : continue à brûler après l'effort",
-        "Améliore drastiquement la condition physique",
-        "Renforce le mental et la détermination",
-        "Résultats visibles rapidement"
-      ],
-      "momentIdeal": ["Matin", "Fin d'après-midi"],
-      "frequence": "2-3 fois par semaine maximum"
-    },
+   {
+  "id": 4,
+  "titre": "HIIT Intensif",
+  "type": "cardio",
+  "niveau": "avance",
+  "image": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+  "duree": 20,
+  "difficulte": "Difficile",
+  "calories": 250,
+  "tags": ["hiit", "cardio", "intensif"],
+  "description": "Séance de HIIT (High Intensity Interval Training) pour brûler un maximum de calories en un minimum de temps. Idéal pour les sportifs confirmés qui veulent progresser rapidement.",
+  "etapes": [
+    "1) Échauffement (3 min) : Marche rapide ou petits sauts sur place. Ajoute quelques rotations de bras et de hanches.",
+    "2) HIIT (8 rounds) : Alterne 30 secondes d’effort très intense et 30 secondes de repos. Bois de l’eau entre les rounds si nécessaire.",
+    "3) Exemples d’exercices : Burpees (descends, saute, remonte), Sprint sur place rapide, Squat jumps (sauts accroupis), Pompes. Change d’exercice à chaque round pour varier.",
+    "4) Récupération active (2 min) : Marche lente pour faire redescendre le rythme cardiaque.",
+    "5) Étirements (3 min) : Étire les cuisses (talon-fesse tenu 20 s par jambe), les bras (tirer un bras contre la poitrine), et respire profondément."
+  ],
+  "benefices": [
+    "Brûle un maximum de calories rapidement",
+    "Déclenche l’effet afterburn : continue à brûler après la séance",
+    "Améliore fortement la condition physique",
+    "Augmente l’endurance et la puissance",
+    "Optimise le temps d’entraînement"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "2–3 fois par semaine, 20 minutes"
+},
     {
       "id": 5,
       "titre": "Yoga Dynamique",
