@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Image,
+  Platform,
 } from 'react-native';
 import { 
   Heart, 
@@ -225,7 +226,13 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
 
   return (
     <>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={[
+          styles.container,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Exercices de Détente</Text>
           <Text style={styles.headerSubtitle}>

@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Image,
+  Platform,
 } from 'react-native';
 import { 
   Dumbbell, 
@@ -409,7 +410,13 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           </View>
           
           {selectedExercise && (
-            <ScrollView style={styles.detailsContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={[
+                styles.detailsContent,
+                Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+              ]}
+              showsVerticalScrollIndicator={false}
+            >
               {/* Image de l'exercice */}
               <Image 
                 source={{ uri: selectedExercise.image }} 

@@ -98,6 +98,10 @@ export default function SearchScreen() {
         style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
       >
         <SearchResults
           recipes={searchResults.recipes}

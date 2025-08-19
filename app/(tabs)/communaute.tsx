@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, Alert, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MessageCircle, Users, ExternalLink, Heart, Star } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
@@ -192,7 +192,13 @@ export default function CommunauteScreen() {
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={[
+        styles.container,
+        Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+      ]} 
+      showsVerticalScrollIndicator={false}
+    >
       {/* Header */}
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}

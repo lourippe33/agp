@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Heart, ArrowLeft } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';

@@ -929,7 +929,13 @@ export default function ProgrammeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ width: '100%' }}>
           {/* Header */}
           <LinearGradient

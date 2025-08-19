@@ -308,6 +308,10 @@ export default function JournalScreen() {
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
       >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>

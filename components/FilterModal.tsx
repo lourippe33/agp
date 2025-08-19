@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  Platform,
 } from 'react-native';
 import { X, Clock, Target, Utensils, Dumbbell, Heart, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
@@ -168,7 +169,13 @@ export default function FilterModal({
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={[
+            styles.content,
+            Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Moments */}
           <FilterSection
             title="Moments de la journée"

@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import { X, Camera, Droplets, Check, Plus, Clock, Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
@@ -227,7 +228,13 @@ export default function DailyJournalModal({
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={[
+            styles.content,
+            Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Section Repas */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🍽️ Repas de la journée</Text>
