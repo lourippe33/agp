@@ -704,6 +704,114 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           )}
         </View>
       </Modal>
+
+      {/* Modal Timer Cardio Fun spécialisé */}
+      <Modal
+        visible={cardioFunTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Cardio Fun Sans Saut'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <CardioFunTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Yoga Brûle-Calm spécialisé */}
+      <Modal
+        visible={yogaBruleCalmTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Yoga Brûle-Calm'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <YogaBruleCalmTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Chaise spécialisé */}
+      <Modal
+        visible={chaiseTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Chaise Brûle-Graisse'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <ChaiseTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Marche + Bras spécialisé */}
+      <Modal
+        visible={marcheBrasTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Marche + Bras Actifs'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <MarcheBrasTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
     </>
   );
 }
