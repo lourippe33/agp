@@ -149,9 +149,6 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setYogaTimerVisible(false);
     setTabataTimerVisible(false);
     setYogaDouxTimerVisible(false);
-    setCircuitTrainingTimerVisible(false);
-    setStretchingTimerVisible(false);
-    setAbdosCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -163,9 +160,6 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setYogaTimerVisible(false);
     setTabataTimerVisible(false);
     setYogaDouxTimerVisible(false);
-    setCircuitTrainingTimerVisible(false);
-    setStretchingTimerVisible(false);
-    setAbdosCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
