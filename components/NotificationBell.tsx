@@ -126,20 +126,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleClearAll = async () => {
     if (!user) return;
     
-    console.log('🔍 [DEBUG] Début handleClearAll');
-    console.log('🔍 [DEBUG] User ID:', user.id);
-    console.log('🔍 [DEBUG] Notifications actuelles:', notifications.length);
-    
-    // Test simple d'abord
-    try {
-      const testResult = await AsyncStorage.getItem(`@agp_notifications_${user.id}`);
-      console.log('🔍 [DEBUG] Test lecture clé notifications:', testResult ? 'Données trouvées' : 'Aucune donnée');
-    } catch (error) {
-      console.error('❌ [DEBUG] Erreur test lecture:', error);
-      Alert.alert('Erreur', 'Problème d\'accès au stockage local');
-      return;
-    }
-    
     Alert.alert(
       'Supprimer toutes les notifications',
       'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
@@ -150,34 +136,15 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log('🗑️ [DEBUG] Début de la suppression');
-              const notificationKey = `@agp_notifications_${user.id}`;
-              console.log('🔑 [DEBUG] Clé de stockage:', notificationKey);
+              // Utiliser le service de notification pour la suppression
+              const success = await NotificationService.clearAllNotifications(user.id);
               
-              // Vérifier d'abord ce qui existe
-              const existingData = await AsyncStorage.getItem(notificationKey);
-              console.log('📋 [DEBUG] Données existantes:', existingData ? 'Trouvées' : 'Aucune');
-              
-              // Supprimer les données
-              await AsyncStorage.removeItem(notificationKey);
-              console.log('🗑️ [DEBUG] removeItem exécuté');
-              
-              // Vérifier la suppression
-              const afterRemoval = await AsyncStorage.getItem(notificationKey);
-              console.log('🔍 [DEBUG] Après suppression:', afterRemoval);
-              
-              if (afterRemoval === null) {
-                console.log('✅ [DEBUG] Suppression vérifiée avec succès');
-                
+              if (success) {
                 // Mettre à jour l'état local
                 setNotifications([]);
                 setUnreadCount(0);
-                console.log('🔄 [DEBUG] État local mis à jour');
-                
-                // Sortir du mode sélection si actif
                 setSelectionMode(false);
                 setSelectedNotifications([]);
-                console.log('🔄 [DEBUG] Mode sélection désactivé');
                 
                 Alert.alert(
                   '✅ Suppression réussie',
@@ -185,14 +152,13 @@ export default function NotificationBell({ style }: NotificationBellProps) {
                   [{ text: 'OK', style: 'default' }]
                 );
               } else {
-                console.error('❌ [DEBUG] Échec de vérification, données encore présentes:', afterRemoval);
-                throw new Error('Les données n\'ont pas été supprimées');
+                throw new Error('Échec de la suppression via le service');
               }
             } catch (error) {
-              console.error('❌ [DEBUG] Erreur complète:', error);
+              console.error('❌ Erreur suppression:', error);
               Alert.alert(
                 'Erreur',
-                `Une erreur est survenue: ${error.message}. Veuillez réessayer.`,
+                'Impossible de supprimer les notifications. Veuillez réessayer.',
                 [{ text: 'OK', style: 'default' }]
               );
             }
@@ -205,9 +171,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleDeleteSelected = async () => {
     if (!user || selectedNotifications.length === 0) return;
     
-    console.log('🔍 [DEBUG] Début handleDeleteSelected');
-    console.log('🔍 [DEBUG] Notifications sélectionnées:', selectedNotifications.length);
-    
     Alert.alert(
       'Supprimer les notifications sélectionnées',
       `Êtes-vous sûr de vouloir supprimer ${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's' : ''} ?`,
@@ -218,65 +181,37 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log(`🗑️ [DEBUG] Suppression de ${selectedNotifications.length} notifications`);
-              console.log('📋 [DEBUG] IDs à supprimer:', selectedNotifications);
-              
               // Filtrer les notifications pour supprimer celles sélectionnées
               const updatedNotifications = notifications.filter(
                 notification => !selectedNotifications.includes(notification.id)
               );
               
-              console.log(`📊 [DEBUG] Notifications restantes: ${updatedNotifications.length}`);
-              
-              // Sauvegarder les notifications restantes
+              // Sauvegarder directement
               const notificationKey = `@agp_notifications_${user.id}`;
-              console.log('🔑 [DEBUG] Clé de sauvegarde:', notificationKey);
               
               if (updatedNotifications.length === 0) {
-                // Si plus de notifications, supprimer complètement la clé
                 await AsyncStorage.removeItem(notificationKey);
-                console.log('🗑️ [DEBUG] Clé supprimée (plus de notifications)');
               } else {
-                // Sinon sauvegarder les notifications restantes
                 await AsyncStorage.setItem(notificationKey, JSON.stringify(updatedNotifications));
-                console.log('💾 [DEBUG] Notifications restantes sauvegardées');
               }
               
-              // Vérifier la sauvegarde
-              const verification = await AsyncStorage.getItem(notificationKey);
-              const savedNotifications = verification ? JSON.parse(verification) : [];
-              console.log('🔍 [DEBUG] Vérification - Notifications sauvées:', savedNotifications.length);
+              // Mettre à jour l'état local
+              setNotifications(updatedNotifications);
+              const unread = updatedNotifications.filter(n => !n.read).length;
+              setUnreadCount(unread);
+              setSelectionMode(false);
+              setSelectedNotifications([]);
               
-              if (savedNotifications.length === updatedNotifications.length) {
-                console.log('✅ [DEBUG] Sauvegarde vérifiée avec succès');
-                
-                // Mettre à jour l'état local
-                setNotifications(updatedNotifications);
-                
-                // Recalculer le nombre de non lues
-                const unread = updatedNotifications.filter(n => !n.read).length;
-                setUnreadCount(unread);
-                console.log('🔄 [DEBUG] État local mis à jour');
-                
-                // Sortir du mode sélection
-                setSelectionMode(false);
-                setSelectedNotifications([]);
-                console.log('🔄 [DEBUG] Mode sélection désactivé');
-                
-                Alert.alert(
-                  '✅ Suppression réussie',
-                  `${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`,
-                  [{ text: 'OK', style: 'default' }]
-                );
-              } else {
-                console.error('❌ [DEBUG] Échec vérification - Attendu:', updatedNotifications.length, 'Trouvé:', savedNotifications.length);
-                throw new Error(`Vérification échouée: attendu ${updatedNotifications.length}, trouvé ${savedNotifications.length}`);
-              }
+              Alert.alert(
+                '✅ Suppression réussie',
+                `${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`,
+                [{ text: 'OK', style: 'default' }]
+              );
             } catch (error) {
-              console.error('❌ [DEBUG] Erreur suppression sélective:', error);
+              console.error('❌ Erreur suppression sélective:', error);
               Alert.alert(
                 'Erreur',
-                `Erreur de suppression: ${error.message}. Veuillez réessayer.`,
+                'Impossible de supprimer les notifications sélectionnées.',
                 [{ text: 'OK', style: 'default' }]
               );
             }
@@ -404,10 +339,47 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     );
   };
 
-  // Fonction de test simplifiée
+  // Fonction de test pour diagnostiquer AsyncStorage
   const testAsyncStorage = () => {
-    console.log('🧪 [TEST] Fonction testAsyncStorage appelée');
-    Alert.alert('Test', 'Fonction appelée avec succès !');
+    Alert.alert(
+      '🧪 Test AsyncStorage',
+      'Cette fonction teste le stockage local. Vérifiez la console pour les détails.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { 
+          text: 'Tester', 
+          onPress: async () => {
+            if (!user) return;
+            
+            try {
+              const testKey = `@agp_test_${Date.now()}`;
+              console.log('🧪 Test AsyncStorage - Début');
+              
+              // Test écriture
+              await AsyncStorage.setItem(testKey, 'test-data');
+              console.log('✅ Écriture OK');
+              
+              // Test lecture
+              const data = await AsyncStorage.getItem(testKey);
+              console.log('📖 Lecture:', data);
+              
+              // Test suppression
+              await AsyncStorage.removeItem(testKey);
+              const afterDelete = await AsyncStorage.getItem(testKey);
+              console.log('🗑️ Après suppression:', afterDelete);
+              
+              Alert.alert(
+                'Résultat du test',
+                `AsyncStorage fonctionne ${afterDelete === null ? 'correctement' : 'incorrectement'}`
+              );
+            } catch (error) {
+              console.error('❌ Erreur test:', error);
+              Alert.alert('Erreur', `Test échoué: ${error.message}`);
+            }
+          }
+        }
+      ]
+    );
   };
 
   return (
@@ -444,7 +416,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
             </View>
 
             <View style={styles.modalActions}>
-              {/* Bouton de test toujours visible */}
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={testAsyncStorage}
