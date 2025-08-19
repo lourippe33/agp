@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Droplets, Utensils, Plus, ChevronLeft, ChevronRight, Check, Clock } from 'lucide-react-native';
@@ -308,11 +309,7 @@ export default function JournalScreen() {
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
-        style={[
-          styles.content,
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
-        ]}
-        showsVerticalScrollIndicator={true}
+      >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
             <AGPLogo size={50} />
@@ -329,7 +326,13 @@ export default function JournalScreen() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
+        showsVerticalScrollIndicator={true}
+      >
         {/* Calendrier hebdomadaire */}
         <WeekCalendar />
 
