@@ -365,33 +365,36 @@
       "frequence": "Quotidien, 10 minutes"
     },
     {
-      "id": 14,
-      "titre": "Circuit cardio débutant",
-      "type": "circuit",
-      "niveau": "debutant",
-      "image": "https://i.ibb.co/3yCfMpyH/circuit-cardio-d-butant.jpg",
-      "duree": 12,
-      "difficulte": "Très facile",
-      "calories": 70,
-      "tags": ["circuit", "cardio", "débutant"],
-      "description": "Enchaînement cardio doux pour débuter la remise en forme.",
-      "etapes": [
-        "Effectue 30 secondes de jumping jacks.",
-        "Enchaîne 30 secondes de squats (fesses vers l'arrière).",
-        "Fais 30 secondes de montées de genoux (jusqu'aux hanches).",
-        "Repos pendant 30 secondes.",
-        "Répète l'enchaînement 4 fois."
-      ],
-      "benefices": [
-        "Active tout le corps.",
-        "Augmente la dépense calorique.",
-        "Améliore l'endurance.",
-        "Travaille jambes et tronc.",
-        "Dynamise le début de séance."
-      ],
-      "momentIdeal": ["Matin", "Après-midi"],
-      "frequence": "3-4 fois par semaine, 12 minutes"
-    },
+  "id": 14,
+  "titre": "Circuit Training Maison",
+  "type": "cardio",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg",
+  "duree": 18,
+  "difficulte": "Moyen",
+  "calories": 180,
+  "tags": ["cardio", "renforcement", "maison"],
+  "description": "Un circuit simple et efficace à faire chez soi, sans matériel. Idéal pour brûler des calories et renforcer tout le corps.",
+  "etapes": [
+    "1) Échauffement (3 min) : Marche rapide sur place en balançant les bras. Ajoute quelques montées de genoux légères pour activer le corps.",
+    "2) Circuit (à répéter 3 fois) : 30 secondes d’effort, 15 secondes de repos entre chaque exercice.",
+    "   - Squats : Plie les genoux comme si tu allais t’asseoir, garde le dos droit. 30 sec.",
+    "   - Pompes : Au sol, mains sous les épaules. Si c’est difficile, fais-les à genoux. 30 sec.",
+    "   - Mountain climbers : Position planche, ramène alternativement les genoux vers la poitrine rapidement. 30 sec.",
+    "   - Fentes : Avance un pied, plie les genoux à 90°, puis change de jambe. 30 sec.",
+    "   - Jumping jacks : Sauts écartés avec bras qui montent et descendent. 30 sec.",
+    "3) Retour au calme (2 min) : Étire doucement les jambes (talons au sol, penche le buste en avant) et les bras (tire un bras contre la poitrine, puis l’autre)."
+  ],
+  "benefices": [
+    "Brûle beaucoup de calories rapidement",
+    "Renforce tous les groupes musculaires",
+    "Améliore l’endurance cardiovasculaire",
+    "Boost le métabolisme pendant des heures",
+    "Ne nécessite aucun équipement"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3–4 fois par semaine, 18 minutes"
+},
     {
       "id": 15,
       "titre": "Montées de genoux + talons-fesses",
