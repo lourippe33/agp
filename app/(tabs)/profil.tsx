@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
 import { Scale, Ruler, Target } from 'lucide-react-native';
@@ -58,8 +58,9 @@ export default function SuiviScreen() {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         colors={[Colors.agpBlue, Colors.agpGreen]}
-        style={styles.header}
+        showsVerticalScrollIndicator={true}
       >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
