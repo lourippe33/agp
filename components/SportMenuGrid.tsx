@@ -12,25 +12,18 @@ import {
 } from 'react-native';
 import { 
   Dumbbell, 
-  Zap, 
-  Heart, 
-  Smile,
-  Clock,
+  Activity,
+  Heart,
   Target,
-  Calendar,
-  Users,
+  Flame,
   Wind,
-  Sparkles,
-  Coffee,
-  Moon,
+  Star,
+  Users,
+  TrendingUp,
   Play,
   X,
-  Activity,
-  TrendingUp,
-  Flame,
-  Trophy,
-  Star,
-  Timer
+  Clock,
+  Trophy
 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { Exercise } from '@/types/Exercise';
@@ -46,7 +39,7 @@ const cardSize = (width - 64) / 2;
 
 // Fonction pour obtenir l'icône selon le type d'exercice
 const getExerciseIcon = (exercise: any) => {
-  // Mapping basé sur le type ou les tags
+  // Mapping basé sur les tags
   if (exercise.tags?.includes('cardio')) return Activity;
   if (exercise.tags?.includes('renforcement')) return Dumbbell;
   if (exercise.tags?.includes('danse')) return Heart;
@@ -77,43 +70,24 @@ const getExerciseColor = (exercise: any) => {
   }
 };
 
-// Générer les items du menu à partir des données JSON
-const generateMenuItems = () => {
-  return sportsData.exercices.map(exercise => {
-    const IconComponent = getExerciseIcon(exercise);
-    const color = getExerciseColor(exercise);
-    
-    return {
-      id: exercise.id,
-      title: exercise.titre,
-      subtitle: `${exercise.duree} min • ${exercise.calories || 'N/A'} cal`,
-      icon: IconComponent,
-      color: color,
-      gradient: [color, color + '80'],
-      image: exercise.image,
-      exercise: exercise // Référence complète à l'exercice
-    };
-  });
-};
-
 export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
-  
-  // Générer les items du menu à partir des données JSON
-  const menuItems = generateMenuItems();
-  
+
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
 
   const handleExercisePress = (exerciseId: number) => {
-    // Trouver l'exercice dans les données
+    // Trouver l'exercice dans les données JSON
     const exercise = sportsData.exercices.find(ex => ex.id === exerciseId);
-    if (exercise && exercise.id) {
+    console.log(`🎯 Exercice sélectionné ID ${exerciseId}:`, exercise);
+    
+    if (exercise) {
       setSelectedExercise(exercise);
       setExerciseDetailsModalVisible(true);
     } else {
+      console.error(`❌ Exercice ID ${exerciseId} non trouvé dans le JSON`);
       // Fallback vers la sélection normale
       onExerciseSelect(exerciseId);
     }
@@ -141,19 +115,20 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setSelectedExercise(null);
   };
 
-  const renderMenuItem = (item: typeof menuItems[0]) => {
-    const IconComponent = item.icon;
+  const renderMenuItem = (exercise: any) => {
+    const IconComponent = getExerciseIcon(exercise);
+    const color = getExerciseColor(exercise);
     
     return (
       <TouchableOpacity
-        key={item.id}
+        key={exercise.id}
         style={styles.menuCard}
-        onPress={() => handleExercisePress(item.id)}
+        onPress={() => handleExercisePress(exercise.id)}
         activeOpacity={0.8}
       >
         <View style={styles.imageContainer}>
           <Image 
-            source={{ uri: item.image }} 
+            source={{ uri: exercise.image }} 
             style={styles.cardImage}
             resizeMode="cover"
           />
@@ -162,20 +137,20 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle} numberOfLines={2}>
-            {item.title}
+            {exercise.titre}
           </Text>
           
-          <Text style={[styles.cardSubtitle, { color: item.color }]}>
-            {item.subtitle}
+          <Text style={[styles.cardSubtitle, { color: color }]}>
+            {exercise.duree} min • {exercise.calories || 'N/A'} cal
           </Text>
         </View>
 
         {/* Bouton de démarrage rapide */}
         <TouchableOpacity 
-          style={[styles.quickStartButton, { backgroundColor: item.color }]}
+          style={[styles.quickStartButton, { backgroundColor: color }]}
           onPress={(e) => {
             e.stopPropagation();
-            handleExercisePress(item.id);
+            handleExercisePress(exercise.id);
           }}
           activeOpacity={0.8}
         >
@@ -187,7 +162,13 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
 
   return (
     <>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={[
+          styles.container,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
+        showsVerticalScrollIndicator={true}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🏃‍♀️ Activités Sportives</Text>
           <Text style={styles.headerSubtitle}>
@@ -201,13 +182,13 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           <View style={styles.adaptationContent}>
             <Text style={styles.adaptationTitle}>Adaptez à votre niveau</Text>
             <Text style={styles.adaptationText}>
-              Tous les exercices peuvent être adaptés à votre niveau. Commencez doucement et progressez à votre rythme. L'important est de rester régulier et de respecter vos limites.
+              Tous les exercices peuvent être adaptés à votre niveau. Commencez doucement et progressez à votre rythme.
             </Text>
           </View>
         </View>
         
         <View style={styles.grid}>
-          {menuItems.map(renderMenuItem)}
+          {sportsData.exercices.map(renderMenuItem)}
         </View>
         
         <View style={styles.footer}>
@@ -265,19 +246,19 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
               ]}
               showsVerticalScrollIndicator={true}
             >
-              {/* Image de l'exercice */}
-              <Image 
-                source={{ uri: selectedExercise.image }} 
-                style={styles.detailsImage}
-                resizeMode="cover"
-              />
-              
               {/* Debug info */}
               <View style={styles.debugInfo}>
                 <Text style={styles.debugText}>
                   Debug: ID {selectedExercise.id} - {selectedExercise.etapes?.length || 0} étapes
                 </Text>
               </View>
+              
+              {/* Image de l'exercice */}
+              <Image 
+                source={{ uri: selectedExercise.image }} 
+                style={styles.detailsImage}
+                resizeMode="cover"
+              />
               
               {/* Informations de base */}
               <View style={styles.detailsInfoSection}>
@@ -291,7 +272,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
                   <View style={styles.detailsInfoItem}>
                     <Flame size={20} color={Colors.relaxation} />
                     <Text style={styles.detailsInfoLabel}>Calories</Text>
-                    <Text style={styles.detailsInfoValue}>{selectedExercise.calories}</Text>
+                    <Text style={styles.detailsInfoValue}>{selectedExercise.calories || 'N/A'}</Text>
                   </View>
                   
                   <View style={styles.detailsInfoItem}>
@@ -302,20 +283,12 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
                 </View>
                 
                 <View style={styles.detailsTags}>
-                  {selectedExercise.tags.map((tag, index) => (
+                  {selectedExercise.tags?.map((tag, index) => (
                     <View key={index} style={styles.detailsTag}>
                       <Text style={styles.detailsTagText}>{tag}</Text>
                     </View>
-                  ))}
+                  )) || null}
                 </View>
-              </View>
-              
-              {/* Message d'adaptation */}
-              <View style={styles.adaptationMessageDetails}>
-                <Star size={20} color={Colors.agpGreen} />
-                <Text style={styles.adaptationMessageText}>
-                  Adaptez cet exercice à votre niveau en ajustant l'intensité, la durée ou les répétitions.
-                </Text>
               </View>
               
               {/* Description */}
@@ -355,14 +328,18 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
                 <Text style={styles.detailsSectionTitle}>Quand pratiquer</Text>
                 <View style={styles.detailsInfoBox}>
                   <View style={styles.detailsInfoBoxRow}>
-                    <Calendar size={18} color={Colors.agpBlue} />
+                    <Clock size={18} color={Colors.agpBlue} />
                     <Text style={styles.detailsInfoBoxLabel}>Moments idéaux :</Text>
-                    <Text style={styles.detailsInfoBoxValue}>{selectedExercise.momentIdeal.join(', ')}</Text>
+                    <Text style={styles.detailsInfoBoxValue}>
+                      {selectedExercise.momentIdeal?.join(', ') || 'Non spécifié'}
+                    </Text>
                   </View>
                   <View style={styles.detailsInfoBoxRow}>
-                    <Clock size={18} color={Colors.agpGreen} />
-                    <Text style={styles.detailsInfoBoxLabel}>Fréquence recommandée :</Text>
-                    <Text style={styles.detailsInfoBoxValue}>{selectedExercise.frequence}</Text>
+                    <Trophy size={18} color={Colors.agpGreen} />
+                    <Text style={styles.detailsInfoBoxLabel}>Fréquence :</Text>
+                    <Text style={styles.detailsInfoBoxValue}>
+                      {selectedExercise.frequence || 'Non spécifiée'}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -500,18 +477,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
-  iconOverlay: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
-    borderRadius: 16,
-    padding: 6,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
   cardContent: {
     padding: 12,
     flex: 1,
@@ -638,41 +603,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontStyle: 'italic',
   },
-  debugInfo: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    padding: 8,
-    marginTop: 8,
-  },
-  debugText: {
-    fontSize: 10,
-    fontFamily: 'Inter-Regular',
-    color: Colors.agpBlue,
-  },
-  timerModalContainer: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  timerModalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  closeButton: {
-    padding: 8,
-    marginRight: 12,
-  },
-  timerModalTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    flex: 1,
-  },
   // Styles pour la modal de détails
   detailsModalContainer: {
     flex: 1,
@@ -688,6 +618,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
+  closeButton: {
+    padding: 8,
+    marginRight: 12,
+  },
   detailsModalTitle: {
     fontSize: 20,
     fontFamily: 'Poppins-SemiBold',
@@ -697,6 +631,17 @@ const styles = StyleSheet.create({
   detailsContent: {
     flex: 1,
     padding: 16,
+  },
+  debugInfo: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 16,
+  },
+  debugText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.agpBlue,
   },
   detailsImage: {
     width: '100%',
@@ -751,22 +696,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-Medium',
     color: Colors.agpBlue,
-  },
-  adaptationMessageDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    gap: 10,
-  },
-  adaptationMessageText: {
-    flex: 1,
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    lineHeight: 20,
   },
   detailsSection: {
     marginBottom: 24,
@@ -871,5 +800,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
+  },
+  timerModalContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  timerModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  timerModalTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    flex: 1,
   },
 });
