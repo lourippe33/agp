@@ -166,15 +166,15 @@ export default function HomeScreen() {
         completed: false 
       },
       lunch: { 
-        name: 'Poke bowl saumon-avocat', 
+        name: 'Déjeuner équilibré', 
         completed: false 
       },
       snack: { 
-        name: 'Energy balls dattes', 
+        name: 'Collation saine', 
         completed: false 
       },
       dinner: { 
-        name: 'Salade quinoa légumes', 
+        name: 'Dîner léger', 
         completed: false 
       }
     };

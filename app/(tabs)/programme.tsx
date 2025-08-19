@@ -278,15 +278,15 @@ export default function ProgrammeScreen() {
         completed: false 
       },
       lunch: { 
-        name: choices.lunch || 'Poke bowl saumon-avocat', 
+        name: choices.lunch || 'Déjeuner équilibré', 
         completed: false 
       },
       snack: { 
-        name: choices.snack || 'Energy balls dattes', 
+        name: choices.snack || 'Collation saine', 
         completed: false 
       },
       dinner: { 
-        name: choices.dinner || 'Salade quinoa légumes', 
+        name: choices.dinner || 'Dîner léger', 
         completed: false 
       }
     };
