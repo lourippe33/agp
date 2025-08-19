@@ -152,14 +152,9 @@ export default function ProgrammeScreen() {
       
       // Logique de blocage des jours futurs
       if (isFuture) {
-        // Vérifier si le jour précédent est complété ou si on est après 23h59 aujourd'hui
-        const previousDayIndex = i - 1;
-        if (previousDayIndex >= 0) {
-          const previousDay = program[previousDayIndex];
-          // Bloquer si le jour précédent n'est pas complété ET qu'on n'est pas après 23h59
-          if (previousDay && !previousDay.isCompleted && !isAfter2359) {
-            isBlocked = true;
-          }
+        // Bloquer tous les jours futurs jusqu'à 23h59 du jour actuel
+        if (!isAfter2359) {
+          isBlocked = true;
         }
       }
       
@@ -327,7 +322,7 @@ export default function ProgrammeScreen() {
     if (day.isBlocked) {
       Alert.alert(
         "Jour bloqué",
-        "Vous devez d'abord terminer le jour précédent ou attendre 23h59 pour accéder à ce jour.",
+        "Les jours suivants sont bloqués jusqu'à 23h59. Revenez après minuit pour accéder à ce jour.",
         [{ text: "OK", style: "default" }]
       );
       return;
@@ -850,7 +845,7 @@ export default function ProgrammeScreen() {
               } else if (selectedDay?.isBlocked) {
                 Alert.alert(
                   "Jour bloqué",
-                  "Vous devez d'abord terminer le jour précédent ou attendre 23h59 pour modifier ce jour.",
+                  "Les jours suivants sont bloqués jusqu'à 23h59. Revenez après minuit pour modifier ce jour.",
                   [{ text: "OK" }]
                 );
               } else {
