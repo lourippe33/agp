@@ -404,37 +404,10 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     );
   };
 
-  // Fonction de test pour diagnostiquer le problème
-  const testAsyncStorage = async () => {
+  // Fonction de test simplifiée
+  const testAsyncStorage = () => {
     console.log('🧪 [TEST] Fonction testAsyncStorage appelée');
-    
-    if (!user) return;
-    
-    try {
-      const testKey = `@agp_test_${user.id}`;
-      console.log('🧪 [TEST] Test AsyncStorage avec clé:', testKey);
-      
-      // Test d'écriture
-      await AsyncStorage.setItem(testKey, 'test-data');
-      console.log('✅ [TEST] Écriture réussie');
-      
-      // Test de lecture
-      const readData = await AsyncStorage.getItem(testKey);
-      console.log('📖 [TEST] Lecture:', readData);
-      
-      // Test de suppression
-      await AsyncStorage.removeItem(testKey);
-      console.log('🗑️ [TEST] Suppression effectuée');
-      
-      // Vérification
-      const afterDelete = await AsyncStorage.getItem(testKey);
-      console.log('🔍 [TEST] Après suppression:', afterDelete);
-      
-      Alert.alert('Test AsyncStorage', `Résultat: ${afterDelete === null ? 'Succès' : 'Échec'}`);
-    } catch (error) {
-      console.error('❌ [TEST] Erreur test:', error);
-      Alert.alert('Test AsyncStorage', `Erreur: ${error.message}`);
-    }
+    Alert.alert('Test', 'Fonction appelée avec succès !');
   };
 
   return (
