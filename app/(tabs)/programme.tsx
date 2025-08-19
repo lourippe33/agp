@@ -58,6 +58,7 @@ export default function ProgrammeScreen() {
   const [overallProgress, setOverallProgress] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
+  const [showTodayProgram, setShowTodayProgram] = useState(true);
   
   // États pour le système de choix
   const modalScrollViewRef = useRef(null);
@@ -77,6 +78,11 @@ export default function ProgrammeScreen() {
   useEffect(() => {
     if (programData.length > 0) {
       scrollToToday();
+      // Afficher automatiquement le programme du jour actuel
+      const today = programData.find(day => day.isToday);
+      if (today && showTodayProgram) {
+        setSelectedDay(today);
+      }
     }
   }, [programData]);
 
@@ -316,6 +322,7 @@ export default function ProgrammeScreen() {
   };
 
   const handleDayPress = (day: DayProgram) => {
+    setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
     setSelectedDay(day);
   };
 
@@ -1011,6 +1018,27 @@ export default function ProgrammeScreen() {
 
         {/* Carrousel des jours */}
         <DayCarousel />
+
+        {/* Programme du jour affiché par défaut */}
+        {selectedDay && (
+          <View style={styles.todayProgramSection}>
+            <View style={styles.todayProgramHeader}>
+              <Text style={styles.todayProgramTitle}>
+                📅 Programme du Jour {selectedDay.day}
+              </Text>
+              <Text style={styles.todayProgramDate}>
+                {selectedDay.date.toLocaleDateString('fr-FR', { 
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long'
+                })}
+              </Text>
+              {selectedDay.isToday && (
+                <View style={styles.todayBadge}>
+                  <Text style={styles.todayBadgeText}>Aujourd'hui</Text>
+                </View>
+              )}
+            </View>
 
         {/* Message motivationnel */}
         <View style={styles.motivationCard}>
