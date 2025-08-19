@@ -149,6 +149,9 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setYogaTimerVisible(false);
     setTabataTimerVisible(false);
     setYogaDouxTimerVisible(false);
+    setCircuitTrainingTimerVisible(false);
+    setStretchingTimerVisible(false);
+    setAbdosCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -160,6 +163,9 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setYogaTimerVisible(false);
     setTabataTimerVisible(false);
     setYogaDouxTimerVisible(false);
+    setCircuitTrainingTimerVisible(false);
+    setStretchingTimerVisible(false);
+    setAbdosCardioTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -594,6 +600,87 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           
           {selectedExercise && (
             <YogaDouxTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Circuit Training spécialisé */}
+      <Modal
+        visible={circuitTrainingTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Circuit Training Maison'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <CircuitTrainingTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Stretching spécialisé */}
+      <Modal
+        visible={stretchingTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Stretching Actif'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <StretchingTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Abdos + Cardio spécialisé */}
+      <Modal
+        visible={abdosCardioTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Abdos + Cardio Express'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <AbdosCardioTimer
               exercise={selectedExercise}
               onComplete={handleTimerComplete}
               onClose={handleTimerClose}
