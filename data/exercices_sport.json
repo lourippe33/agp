@@ -253,33 +253,33 @@
       "frequence": "2 fois par semaine maximum"
     },
     {
-      "id": 10,
-      "titre": "Stretching Actif",
-      "type": "stretching",
-      "niveau": "debutant",
-      "image": "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg",
-      "duree": 20,
-      "difficulte": "Très facile",
-      "calories": 60,
-      "tags": ["étirements", "récupération", "mobilité"],
-      "description": "Des étirements dynamiques qui maintiennent votre corps en mouvement tout en améliorant votre flexibilité. Parfait pour la récupération active.",
-      "etapes": [
-        "Échauffement articulaire : rotations douces 3 minutes",
-        "Étirements dynamiques des jambes : 8 minutes",
-        "Mobilisation de la colonne vertébrale : 5 minutes",
-        "Étirements des bras et épaules : 3 minutes",
-        "Relaxation finale : 1 minute"
-      ],
-      "benefices": [
-        "Améliore la flexibilité",
-        "Prévient les blessures",
-        "Favorise la récupération musculaire",
-        "Réduit les tensions",
-        "Maintient une activité douce"
-      ],
-      "momentIdeal": ["Matin", "Soir", "Après un entraînement"],
-      "frequence": "Tous les jours, 20 minutes"
-    },
+  "id": 9,
+  "titre": "Stretching Actif",
+  "type": "stretching",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+  "duree": 20,
+  "difficulte": "Facile",
+  "calories": 70,
+  "tags": ["stretching", "souplesse", "detente"],
+  "description": "Un enchaînement d’étirements simples et dynamiques pour garder le corps souple, détendre les muscles et améliorer la récupération. Idéal après une journée active ou une séance de sport.",
+  "etapes": [
+    "1) Échauffement articulaire (3 min) : Debout, fais 5 cercles avec la tête (gauche/droite). Roule les épaules 5 fois vers l’avant puis 5 vers l’arrière. Mains sur les hanches, fais 5 cercles de bassin dans chaque sens.",
+    "2) Étirements des jambes (8 min) : Debout, lève un genou vers la poitrine et tiens 10 s, change de jambe. Talon droit devant, jambe gauche pliée, penche le buste (20 s), change de jambe. Attrape la cheville derrière toi (20 s), change de côté, répète 2 fois.",
+    "3) Mobilisation de la colonne (5 min) : Bras croisés sur la poitrine, tourne le buste doucement à gauche (10 s), puis à droite (10 s). Refais 3 fois. Ensuite, penche le buste en avant et laisse la tête/les bras pendre (20 s).",
+    "4) Étirements bras & épaules (3 min) : Tends le bras droit devant toi et tire-le vers la gauche avec l’autre bras (20 s), change de côté. Mets les mains derrière la tête, ouvre les coudes en arrière, respire 10 s.",
+    "5) Relaxation finale (1 min) : Debout, secoue doucement les bras et les jambes. Ferme les yeux, inspire profondément 3 fois et relâche."
+  ],
+  "benefices": [
+    "Améliore la flexibilité",
+    "Prévient les blessures",
+    "Détend les muscles après l’effort",
+    "Favorise la récupération active",
+    "Apaise le corps et l’esprit"
+  ],
+  "momentIdeal": ["Matin", "Soir", "Après sport"],
+  "frequence": "3–6 fois par semaine, 20 minutes"
+},
     {
       "id": 11,
       "titre": "Zumba Party",
