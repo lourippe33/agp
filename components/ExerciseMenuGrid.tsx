@@ -29,6 +29,7 @@ import {
 import { Colors } from '@/constants/Colors';
 import { Exercise } from '@/types/Exercise';
 import ExerciseTimer from './ExerciseTimer';
+import BreathingTimer from './BreathingTimer';
 import exercisesData from '@/data/exercices_detente.json';
 
 interface ExerciseMenuGridProps {
@@ -152,13 +153,20 @@ const menuItems = [
 export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
+  const [breathingTimerVisible, setBreathingTimerVisible] = useState(false);
 
   const handleExercisePress = (exerciseId: number) => {
     // Trouver l'exercice dans les données
     const exercise = exercisesData.exercices.find(ex => ex.id === exerciseId);
     if (exercise && exercise.id) {
       setSelectedExercise(exercise);
-      setTimerModalVisible(true);
+      
+      // Utiliser le timer spécialisé pour les exercices de respiration
+      if (exercise.type === 'respiration') {
+        setBreathingTimerVisible(true);
+      } else {
+        setTimerModalVisible(true);
+      }
     } else {
       // Fallback vers la sélection normale
       onExerciseSelect(exerciseId);
@@ -167,11 +175,13 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
 
   const handleTimerComplete = () => {
     setTimerModalVisible(false);
+    setBreathingTimerVisible(false);
     setSelectedExercise(null);
   };
 
   const handleTimerClose = () => {
     setTimerModalVisible(false);
+    setBreathingTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -288,6 +298,33 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
           
           {selectedExercise && (
             <ExerciseTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Respiration spécialisé */}
+      <Modal
+        visible={breathingTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Exercice de respiration'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <BreathingTimer
               exercise={selectedExercise}
               onComplete={handleTimerComplete}
               onClose={handleTimerClose}

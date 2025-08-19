@@ -29,6 +29,8 @@ import { Colors } from '@/constants/Colors';
 import { Exercise } from '@/types/Exercise';
 import SportExerciseTimer from './SportExerciseTimer';
 import CardioTimer from './CardioTimer';
+import HIITTimer from './HIITTimer';
+import PilatesTimer from './PilatesTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
@@ -76,6 +78,8 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
   const [cardioTimerVisible, setCardioTimerVisible] = useState(false);
+  const [hiitTimerVisible, setHiitTimerVisible] = useState(false);
+  const [pilatesTimerVisible, setPilatesTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -99,10 +103,15 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     if (selectedExercise) {
       setExerciseDetailsModalVisible(false);
       
-      // Utiliser le timer spécialisé pour l'exercice Cardio Brûle-Graisse (ID 2)
-      if (selectedExercise.id === 2) {
+      // Utiliser les timers spécialisés selon l'exercice
+      if (selectedExercise.id === 2) { // Cardio Brûle-Graisse
         setCardioTimerVisible(true);
+      } else if (selectedExercise.id === 4) { // HIIT Intensif
+        setHiitTimerVisible(true);
+      } else if (selectedExercise.id === 8) { // Pilates Minceur
+        setPilatesTimerVisible(true);
       } else {
+        // Timer générique pour les autres exercices
         setTimerModalVisible(true);
       }
     }
@@ -111,12 +120,16 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const handleTimerComplete = () => {
     setTimerModalVisible(false);
     setCardioTimerVisible(false);
+    setHiitTimerVisible(false);
+    setPilatesTimerVisible(false);
     setSelectedExercise(null);
   };
 
   const handleTimerClose = () => {
     setTimerModalVisible(false);
     setCardioTimerVisible(false);
+    setHiitTimerVisible(false);
+    setPilatesTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -416,6 +429,60 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           
           {selectedExercise && (
             <CardioTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer HIIT spécialisé */}
+      <Modal
+        visible={hiitTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'HIIT Intensif'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <HIITTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Pilates spécialisé */}
+      <Modal
+        visible={pilatesTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Pilates Minceur'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <PilatesTimer
               exercise={selectedExercise}
               onComplete={handleTimerComplete}
               onClose={handleTimerClose}
