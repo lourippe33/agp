@@ -12,8 +12,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
-          height: 85,
-          paddingBottom: 15,
+          height: 90,
+          paddingBottom: 20,
           paddingTop: 8,
           elevation: 8,
           shadowColor: Colors.shadow,
@@ -23,18 +23,20 @@ export default function TabLayout() {
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {
-          fontSize: 14,
+          fontSize: 12,
           fontFamily: 'Poppins-SemiBold',
-          marginTop: 2,
-          marginBottom: 4,
+          marginTop: 4,
+          marginBottom: 6,
           fontWeight: '600',
         },
         tabBarIconStyle: {
-          marginTop: 2,
+          marginTop: 4,
         },
         tabBarItemStyle: {
-          paddingVertical: 6,
-          minHeight: 65,
+          paddingVertical: 8,
+          minHeight: 70,
+          justifyContent: 'center',
+          alignItems: 'center',
         },
       }}
     >
