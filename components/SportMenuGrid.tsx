@@ -34,6 +34,9 @@ import PilatesTimer from './PilatesTimer';
 import YogaTimer from './YogaTimer';
 import TabataTimer from './TabataTimer';
 import YogaDouxTimer from './YogaDouxTimer';
+import CircuitTrainingTimer from './CircuitTrainingTimer';
+import StretchingTimer from './StretchingTimer';
+import AbdosCardioTimer from './AbdosCardioTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
@@ -86,6 +89,9 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [yogaTimerVisible, setYogaTimerVisible] = useState(false);
   const [tabataTimerVisible, setTabataTimerVisible] = useState(false);
   const [yogaDouxTimerVisible, setYogaDouxTimerVisible] = useState(false);
+  const [circuitTrainingTimerVisible, setCircuitTrainingTimerVisible] = useState(false);
+  const [stretchingTimerVisible, setStretchingTimerVisible] = useState(false);
+  const [abdosCardioTimerVisible, setAbdosCardioTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -122,6 +128,12 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         setTabataTimerVisible(true);
       } else if (selectedExercise.id === 23) { // Yoga doux perte de poids
         setYogaDouxTimerVisible(true);
+      } else if (selectedExercise.id === 14) { // Circuit Training Maison
+        setCircuitTrainingTimerVisible(true);
+      } else if (selectedExercise.id === 10) { // Stretching Actif
+        setStretchingTimerVisible(true);
+      } else if (selectedExercise.id === 28) { // Abdos + Cardio Express
+        setAbdosCardioTimerVisible(true);
       } else {
         // Timer générique pour les autres exercices
         setTimerModalVisible(true);
