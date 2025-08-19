@@ -87,13 +87,14 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   };
 
   const handleMarkAllAsRead = async () => {
-    if (!user) return;
-    
     try {
-      await NotificationService.markAllAsRead(user.id);
+      const unreadNotifications = notifications.filter(n => !n.read);
+      for (const notification of unreadNotifications) {
+        await NotificationService.markAsRead(notification.id);
+      }
       loadNotifications();
     } catch (error) {
-      console.error('Erreur lors du marquage de toutes les notifications comme lues:', error);
+      console.error('Erreur lors du marquage de toutes les notifications:', error);
     }
   };
 
@@ -271,8 +272,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
                 <Bell size={48} color={Colors.textSecondary} />
                 <Text style={styles.emptyStateTitle}>Aucune notification</Text>
                 <Text style={styles.emptyStateText}>
-                  Vous recevrez des notifications pour vos repas, hydratation et messages motivants. 
-                  Les notifications sont automatiquement effacées chaque soir à 23h59.
+                  Vous recevrez des notifications pour vos repas, hydratation et messages motivants.
                 </Text>
               </View>
             )}
@@ -375,6 +375,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.agpLightBlue,
     borderLeftWidth: 3,
     borderLeftColor: Colors.agpBlue,
+  },
+  notificationItemSelected: {
+    backgroundColor: Colors.agpLightGreen,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.agpGreen,
+  },
+  selectionCheckbox: {
+    padding: 8,
+    marginRight: 8,
   },
   notificationContent: {
     flex: 1,
