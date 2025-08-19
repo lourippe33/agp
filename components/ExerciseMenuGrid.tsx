@@ -42,7 +42,7 @@ const menuItems = [
   {
     id: 1,
     title: "Cohérence Cardiaque",
-    subtitle: "3 min",
+    subtitle: "5 min",
     icon: Heart,
     color: '#FF6B6B',
     gradient: ['#FF6B6B', '#FF8E8E'],

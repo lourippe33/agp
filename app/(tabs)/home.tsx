@@ -43,7 +43,7 @@ const dailyTips = [
   },
   {
     title: '🧘 Respiration apaisante',
-    description: "3 minutes de cohérence cardiaque suffisent à réduire le stress et recentrer votre énergie."
+    description: "5 minutes de cohérence cardiaque suffisent à réduire le stress et recentrer votre énergie."
   },
   {
     title: '🍽️ Manger en pleine conscience',
@@ -145,7 +145,7 @@ export default function HomeScreen() {
     ];
     
     const relaxations = [
-      'Cohérence Cardiaque (3 min)',
+      'Cohérence Cardiaque (5 min)',
       'Respiration du Sourire (2 min)',
       'Méditation des 5 Sens (5 min)',
       'Gratitude (2 min)',

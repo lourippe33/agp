@@ -239,7 +239,7 @@ export default function ProgrammeScreen() {
     ];
     
     const relaxations = [
-      'Cohérence Cardiaque (3 min)',
+      'Cohérence Cardiaque (5 min)',
       'Respiration du Sourire (2 min)',
       'Méditation des 5 Sens (5 min)',
       'Gratitude (2 min)',
