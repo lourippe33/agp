@@ -80,6 +80,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [cardioTimerVisible, setCardioTimerVisible] = useState(false);
   const [hiitTimerVisible, setHiitTimerVisible] = useState(false);
   const [pilatesTimerVisible, setPilatesTimerVisible] = useState(false);
+  const [yogaTimerVisible, setYogaTimerVisible] = useState(false);
 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
@@ -110,6 +111,8 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         setHiitTimerVisible(true);
       } else if (selectedExercise.id === 8) { // Pilates Minceur
         setPilatesTimerVisible(true);
+      } else if (selectedExercise.id === 5) { // Yoga Dynamique
+        setYogaTimerVisible(true);
       } else {
         // Timer générique pour les autres exercices
         setTimerModalVisible(true);
