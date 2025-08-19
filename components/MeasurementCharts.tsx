@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
 import { Scale, Ruler, Target, TrendingDown, TrendingUp, Minus } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -79,6 +78,121 @@ const generateMockData = (): MeasurementData[] => {
   return data;
 };
 
+// Composant de graphique simple sans dépendances externes
+const SimpleLineChart = ({ 
+  data, 
+  color, 
+  width, 
+  height, 
+  target 
+}: {
+  data: number[];
+  color: string;
+  width: number;
+  height: number;
+  target?: number;
+}) => {
+  if (data.length === 0) return null;
+
+  const minValue = Math.min(...data, target || 0);
+  const maxValue = Math.max(...data, target || 0);
+  const range = maxValue - minValue || 1;
+  
+  // Créer les points de la courbe
+  const points = data.map((value, index) => {
+    const x = (index / (data.length - 1)) * (width - 40) + 20;
+    const y = height - 40 - ((value - minValue) / range) * (height - 80);
+    return `${x},${y}`;
+  }).join(' ');
+
+  // Position de la ligne d'objectif
+  const targetY = target ? height - 40 - ((target - minValue) / range) * (height - 80) : null;
+
+  return (
+    <View style={[styles.chartContainer, { width, height }]}>
+      <View style={styles.svgContainer}>
+        {/* Grille de fond */}
+        <View style={styles.gridLines}>
+          {[0, 1, 2, 3, 4].map(i => (
+            <View 
+              key={i}
+              style={[
+                styles.gridLine,
+                { top: 20 + (i * (height - 80) / 4) }
+              ]}
+            />
+          ))}
+        </View>
+
+        {/* Ligne d'objectif */}
+        {targetY && (
+          <View style={[styles.targetLine, { top: targetY }]}>
+            <View style={styles.targetLineDash} />
+            <Text style={styles.targetLineLabel}>
+              Objectif: {target}
+            </Text>
+          </View>
+        )}
+
+        {/* Points de données */}
+        {data.map((value, index) => {
+          const x = (index / (data.length - 1)) * (width - 40) + 20;
+          const y = height - 40 - ((value - minValue) / range) * (height - 80);
+          
+          return (
+            <View
+              key={index}
+              style={[
+                styles.dataPoint,
+                {
+                  left: x - 4,
+                  top: y - 4,
+                  backgroundColor: color,
+                }
+              ]}
+            />
+          );
+        })}
+
+        {/* Ligne de courbe simulée avec des segments */}
+        <View style={styles.curveLine}>
+          {data.slice(0, -1).map((value, index) => {
+            const x1 = (index / (data.length - 1)) * (width - 40) + 20;
+            const y1 = height - 40 - ((value - minValue) / range) * (height - 80);
+            const x2 = ((index + 1) / (data.length - 1)) * (width - 40) + 20;
+            const y2 = height - 40 - ((data[index + 1] - minValue) / range) * (height - 80);
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            return (
+              <View
+                key={index}
+                style={[
+                  styles.lineSegment,
+                  {
+                    left: x1,
+                    top: y1,
+                    width: length,
+                    backgroundColor: color,
+                    transform: [{ rotate: `${angle}deg` }],
+                  }
+                ]}
+              />
+            );
+          })}
+        </View>
+      </View>
+
+      {/* Labels des axes */}
+      <View style={styles.chartLabels}>
+        <Text style={styles.minLabel}>{minValue.toFixed(1)}</Text>
+        <Text style={styles.maxLabel}>{maxValue.toFixed(1)}</Text>
+      </View>
+    </View>
+  );
+};
+
 export default function MeasurementCharts({ period = '30d' }: MeasurementChartsProps) {
   const { user } = useAuth();
   const [selectedMetric, setSelectedMetric] = useState<'weight' | 'waist' | 'hips' | 'arms'>('weight');
@@ -143,45 +257,6 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
   const startValue = data[0] || 0;
   const change = currentValue - startValue;
   const changePercentage = startValue > 0 ? ((change / startValue) * 100) : 0;
-
-  const chartConfig = {
-    backgroundColor: Colors.surface,
-    backgroundGradientFrom: Colors.surface,
-    backgroundGradientTo: Colors.surface,
-    decimalPlaces: 1,
-    color: (opacity = 1) => config.color + Math.round(opacity * 255).toString(16).padStart(2, '0'),
-    labelColor: (opacity = 1) => Colors.textSecondary + Math.round(opacity * 255).toString(16).padStart(2, '0'),
-    style: {
-      borderRadius: 16,
-    },
-    propsForDots: {
-      r: '4',
-      strokeWidth: '2',
-      stroke: config.color,
-      fill: config.color,
-    },
-    propsForBackgroundLines: {
-      strokeDasharray: '',
-      stroke: Colors.border,
-      strokeWidth: 1,
-    },
-  };
-
-  const chartData = {
-    labels: measurementData
-      .filter((_, index) => index % 5 === 0) // Afficher 1 label sur 5
-      .map(item => {
-        const date = new Date(item.date);
-        return `${date.getDate()}/${date.getMonth() + 1}`;
-      }),
-    datasets: [
-      {
-        data: data.length > 0 ? data : [0],
-        color: (opacity = 1) => config.color + Math.round(opacity * 255).toString(16).padStart(2, '0'),
-        strokeWidth: 3,
-      },
-    ],
-  };
 
   const MetricButton = ({ 
     metric, 
@@ -303,43 +378,31 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
           {getTrendIcon()}
           <Text style={styles.statLabel}>Évolution</Text>
           <Text style={[styles.statValue, { color: getTrendColor() }]}>
-            {getTrendMessage()}
+            {change >= 0 ? '+' : ''}{change.toFixed(1)} {config.unit}
           </Text>
         </View>
       </View>
 
       {/* Graphique principal */}
-      <View style={styles.chartContainer}>
+      <View style={styles.chartSection}>
         <Text style={styles.chartTitle}>{config.title} - 30 derniers jours</Text>
         
         {data.length > 0 ? (
           <View style={styles.chartWrapper}>
-            <LineChart
-              data={chartData}
+            <SimpleLineChart
+              data={data}
+              color={config.color}
               width={chartWidth}
               height={220}
-              chartConfig={chartConfig}
-              bezier
-              style={styles.chart}
-              withDots={true}
-              withShadow={false}
-              withVerticalLabels={true}
-              withHorizontalLabels={true}
-              fromZero={false}
-              segments={4}
+              target={config.target}
             />
             
-            {/* Ligne d'objectif */}
-            <View style={[
-              styles.targetLine,
-              { 
-                bottom: 40 + ((config.target - Math.min(...data)) / (Math.max(...data) - Math.min(...data))) * 180,
-                backgroundColor: Colors.textSecondary 
-              }
-            ]}>
-              <Text style={styles.targetLineText}>
-                Objectif: {config.target} {config.unit}
+            {/* Légendes des dates */}
+            <View style={styles.dateLabels}>
+              <Text style={styles.dateLabel}>
+                {measurementData[0]?.date ? new Date(measurementData[0].date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}
               </Text>
+              <Text style={styles.dateLabel}>Aujourd'hui</Text>
             </View>
           </View>
         ) : (
@@ -444,6 +507,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  introCard: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 16,
+    padding: 20,
+    margin: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  introTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  introText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    lineHeight: 20,
+  },
   metricsSelector: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
@@ -517,7 +600,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     textAlign: 'center',
   },
-  chartContainer: {
+  chartSection: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 16,
@@ -537,30 +620,107 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   chartWrapper: {
-    position: 'relative',
     alignItems: 'center',
   },
-  chart: {
-    borderRadius: 16,
+  chartContainer: {
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  svgContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+  gridLines: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    top: 0,
+    bottom: 0,
+  },
+  gridLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: Colors.border,
+    opacity: 0.5,
   },
   targetLine: {
     position: 'absolute',
-    left: 60,
+    left: 20,
     right: 20,
-    height: 1,
-    borderTopWidth: 2,
-    borderTopColor: Colors.textSecondary,
-    borderStyle: 'dashed',
+    height: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  targetLineText: {
+  targetLineDash: {
+    flex: 1,
+    height: 2,
+    backgroundColor: Colors.textSecondary,
+    opacity: 0.7,
+  },
+  targetLineLabel: {
     position: 'absolute',
     right: 0,
-    top: -10,
     fontSize: 10,
     fontFamily: 'Inter-Medium',
     color: Colors.textSecondary,
     backgroundColor: Colors.surface,
     paddingHorizontal: 4,
+    top: -8,
+  },
+  dataPoint: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: Colors.surface,
+  },
+  curveLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  lineSegment: {
+    position: 'absolute',
+    height: 3,
+    borderRadius: 1.5,
+    transformOrigin: 'left center',
+  },
+  chartLabels: {
+    position: 'absolute',
+    left: 0,
+    top: 20,
+    bottom: 40,
+    width: 15,
+    justifyContent: 'space-between',
+  },
+  minLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  maxLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  dateLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: chartWidth - 40,
+    marginTop: 8,
+  },
+  dateLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
   },
   noDataContainer: {
     height: 220,
@@ -663,25 +823,5 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
-  },
-  introCard: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 16,
-    padding: 20,
-    margin: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
-  },
-  introTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  introText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-    lineHeight: 20,
   },
 });
