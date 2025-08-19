@@ -588,33 +588,33 @@
       "momentIdeal": ["Matin", "Après-midi"],
       "frequence": "3 fois par semaine, 8 minutes"
     },
-    {
-      "id": 22,
-      "titre": "Yoga doux perte de poids",
-      "type": "yoga",
-      "niveau": "debutant",
-      "image": "https://i.ibb.co/Xr7LwLdW/Yoga-doux-perte-de-poids.jpg",
-      "duree": 20,
-      "difficulte": "Facile",
-      "calories": 70,
-      "tags": ["yoga", "doux", "perte de poids"],
-      "description": "Séquence de yoga fluide et douce pour activer le corps et l'esprit.",
-      "etapes": [
-        "Commence par chat-vache pour la colonne.",
-        "Passe en chien tête en bas, tiens 30 sec.",
-        "Enchaîne guerrier 1 puis 2 (chaque côté).",
-        "Termine par planche et cobra en douceur.",
-        "Respire calmement tout au long."
-      ],
-      "benefices": [
-        "Active la souplesse.",
-        "Favorise la perte de poids douce.",
-        "Travaille la respiration.",
-        "Mobilise le corps entier.",
-        "Apaise et recentre."
-      ],
-      "momentIdeal": ["Matin", "Soir"],
-      "frequence": "4-5 fois par semaine, 20 minutes"
-    }
+   {
+  "id": 22,
+  "titre": "Yoga doux perte de poids",
+  "type": "yoga",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg",
+  "duree": 20,
+  "difficulte": "Facile",
+  "calories": 60,
+  "tags": ["yoga", "souplesse", "respiration"],
+  "description": "Séquence de yoga fluide et accessible pour activer le corps, améliorer la respiration et favoriser une perte de poids douce.",
+  "etapes": [
+    "1) Chat-vache (2 min) : À quatre pattes, creuse doucement le dos en levant la tête (vache), puis arrondis le dos en rentrant le menton (chat). Répète 6 fois.",
+    "2) Chien tête en bas (3 min) : Depuis les quatre pattes, tends les jambes et pousse les hanches vers le haut pour former un V inversé. Garde les talons vers le sol. Respire calmement pendant 30 secondes, repose, puis refais 2 fois.",
+    "3) Guerrier 1 et 2 (6 min) : Debout, avance une jambe, plie le genou et tends les bras vers le haut (guerrier 1). Puis ouvre les bras de chaque côté et regarde vers la main avant (guerrier 2). Tiens 20 secondes chaque posture, chaque côté, répète 2 fois.",
+    "4) Planche + cobra (5 min) : Mets-toi en planche (bras tendus, corps droit). Tiens 10 à 20 secondes. Puis pose le ventre au sol, mains sous les épaules, pousse le buste vers le haut en cobra. Répète 3 fois.",
+    "5) Respiration finale (4 min) : Allonge-toi sur le dos, mains posées sur le ventre. Inspire par le nez, expire par la bouche. Reste calme et relâché pendant 1 à 2 minutes."
+  ],
+  "benefices": [
+    "Active la souplesse",
+    "Favorise une perte de poids douce",
+    "Améliore la respiration",
+    "Mobilise le corps en douceur",
+    "Apaise et recentre l’esprit"
+  ],
+  "momentIdeal": ["Matin", "Soir"],
+  "frequence": "3–5 fois par semaine, 20 minutes"
+}
   ]
 }
