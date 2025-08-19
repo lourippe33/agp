@@ -394,35 +394,7 @@
   ],
   "momentIdeal": ["Matin", "Après-midi"],
   "frequence": "3–4 fois par semaine, 18 minutes"
-    },
-    {
-      "id": 15,
-      "titre": "Montées de genoux + talons-fesses",
-      "type": "cardio",
-      "niveau": "debutant",
-      "image": "https://i.ibb.co/PZ61DZqZ/Mont-es-de-genoux-talons-fesses.jpg",
-      "duree": 6,
-      "difficulte": "Très facile",
-      "calories": 40,
-      "tags": ["cardio", "jambes", "coordination"],
-      "description": "Exercice cardio léger en alternance pour mobiliser les jambes.",
-      "etapes": [
-        "Fais 1 minute de montées de genoux dynamiques.",
-        "Puis 1 minute de talons-fesses (talon touche fesse).",
-        "Alterne ces 2 mouvements 3 fois.",
-        "Garde un rythme régulier sans t'épuiser.",
-        "Respire profondément tout au long."
-      ],
-      "benefices": [
-        "Tonifie les cuisses et les mollets.",
-        "Améliore la coordination.",
-        "Brûle des calories sans impact fort.",
-        "Prépare à des exercices plus intenses.",
-        "S'intègre facilement à une routine quotidienne."
-      ],
-      "momentIdeal": ["Matin", "Échauffement"],
-      "frequence": "Quotidien, 6 minutes"
-    },
+},
     {
       "id": 16,
       "titre": "Renforcement bas du corps",
