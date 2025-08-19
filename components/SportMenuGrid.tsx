@@ -31,6 +31,7 @@ import SportExerciseTimer from './SportExerciseTimer';
 import CardioTimer from './CardioTimer';
 import HIITTimer from './HIITTimer';
 import PilatesTimer from './PilatesTimer';
+import YogaTimer from './YogaTimer';
 import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
