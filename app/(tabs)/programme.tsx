@@ -96,36 +96,24 @@ export default function ProgrammeScreen() {
   const scrollToToday = () => {
     const todayIndex = getTodayIndex();
     if (todayIndex >= 0) {
-      const weekIndex = Math.floor(todayIndex / 7) + 1;
-      setCurrentWeek(weekIndex);
+      const weekNumber = Math.floor(todayIndex / 7) + 1;
+      setCurrentWeek(weekNumber);
       
       // Centrer le jour actuel dans la vue
       // Si le jour est au début ou à la fin de la semaine, ajuster pour montrer toute la semaine
       const dayInWeek = todayIndex % 7;
       if (dayInWeek <= 2) {
         // Début de semaine, montrer depuis le début
-        setVisibleDayIndex((weekIndex - 1) * 7);
+        setVisibleDayIndex((weekNumber - 1) * 7);
       } else if (dayInWeek >= 4) {
         // Fin de semaine, montrer jusqu'à la fin
-        setVisibleDayIndex(Math.max(0, (weekIndex - 1) * 7 + dayInWeek - 3));
+        setVisibleDayIndex(Math.max(0, (weekNumber - 1) * 7 + dayInWeek - 3));
       } else {
         // Milieu de semaine, centrer le jour
         setVisibleDayIndex(Math.max(0, todayIndex - 3));
       }
       
-      // Animation du bouton
-      Animated.sequence([
-        Animated.timing(todayButtonScale, {
-          toValue: 0.96,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(todayButtonScale, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start();
+      console.log(`📍 Navigation vers aujourd'hui - Jour ${todayIndex + 1}, Semaine ${weekNumber}`);
     }
   };
 
