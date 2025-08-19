@@ -116,33 +116,34 @@
   "frequence": "2–3 fois par semaine, 20 minutes"
 },
     {
-      "id": 5,
-      "titre": "Yoga Dynamique",
-      "type": "yoga",
-      "niveau": "intermediaire",
-      "image": "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg",
-      "duree": 30,
-      "difficulte": "Moyen",
-      "calories": 100,
-      "tags": ["yoga", "souplesse", "zen"],
-      "description": "Un yoga plus dynamique qui combine bien-être et dépense énergétique. Parfait pour tonifier en douceur tout en travaillant la flexibilité.",
-      "etapes": [
-        "Salutations au soleil : 5 minutes",
-        "Enchaînement de postures debout : guerrier, triangle",
-        "Séquence d'équilibre : arbre, danseur",
-        "Postures au sol : cobra, chien tête en bas",
-        "Relaxation finale : 5 minutes"
-      ],
-      "benefices": [
-        "Tonifie et allonge les muscles",
-        "Améliore la posture et l'équilibre",
-        "Réduit le stress et l'anxiété",
-        "Augmente la souplesse",
-        "Brûle des calories en douceur"
-      ],
-      "momentIdeal": ["Matin", "Fin d'après-midi", "Soir"],
-      "frequence": "3-4 fois par semaine, 30 minutes"
-    },
+  "id": 5,
+  "titre": "Yoga Dynamique",
+  "type": "yoga",
+  "niveau": "intermediaire",
+  "image": "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg",
+  "duree": 30,
+  "difficulte": "Moyen",
+  "calories": 100,
+  "tags": ["yoga", "souplesse", "zen"],
+  "description": "Un yoga plus dynamique qui combine bien-être et dépense énergétique. Parfait pour tonifier le corps en douceur tout en améliorant la flexibilité.",
+  "etapes": [
+    "1) Salutations au soleil (5 min) : Commence debout, mains jointes. Inspire, lève les bras au ciel. Expire, penche-toi en avant. Place les mains au sol, recule les pieds en planche. Descends en chaturanga (pompe yoga), inspire en cobra, expire en chien tête en bas. Ramène les pieds à l’avant et redresse-toi. Répète 3 à 5 fois.",
+    "2) Postures debout (8 min) : Passe en guerrier 1 (jambe avant pliée, bras vers le ciel), puis guerrier 2 (bras ouverts de chaque côté, regarde la main avant). Tiens 20 secondes de chaque côté. Ajoute la posture du triangle (jambe tendue, main vers la cheville, bras opposé vers le ciel). Répète 2 fois par côté.",
+    "3) Séquence d’équilibre (5 min) : Mets-toi en posture de l’arbre (debout, un pied posé contre la cuisse ou le mollet opposé, mains jointes devant la poitrine). Tiens 20 secondes de chaque côté. Puis essaie la posture du danseur : debout, attrape une cheville derrière toi, tends l’autre bras vers l’avant et penche légèrement. Tiens 15–20 secondes, chaque côté.",
+    "4) Postures au sol (7 min) : Allonge-toi sur le ventre, mains sous les épaules. Inspire et pousse sur les bras pour lever la poitrine (cobra). Tiens 10 secondes. Puis passe en chien tête en bas : mains et pieds au sol, fesses vers le ciel, corps en V inversé. Respire profondément 20 secondes. Répète 3 fois cette alternance cobra / chien tête en bas.",
+    "5) Relaxation finale (5 min) : Allonge-toi sur le dos, bras le long du corps, paumes vers le ciel (posture du cadavre / savasana). Ferme les yeux, inspire et expire profondément. Relâche tout le corps et reste immobile pendant 5 minutes."
+  ],
+  "benefices": [
+    "Tonifie et allonge les muscles",
+    "Améliore la posture et l’équilibre",
+    "Favorise la concentration et la respiration",
+    "Réduit le stress et l’anxiété",
+    "Augmente la souplesse et la mobilité articulaire",
+    "Brûle des calories en douceur"
+  ],
+  "momentIdeal": ["Matin", "Fin d'après-midi", "Soir"],
+  "frequence": "3-4 fois par semaine, 30 minutes"
+},
     {
       "id": 6,
       "titre": "Aqua Fitness",
