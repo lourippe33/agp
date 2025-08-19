@@ -101,7 +101,7 @@ const generateChoices = (activityType: string): Choice[] => {
           id: `recipe-${recipe.id}`,
           title: recipe.titre,
           description: recipe.tags.join(', '),
-            duration: `${recipe.tempsPreparation + recipe.tempsCuisson} min de préparation`,
+          duration: `${recipe.tempsPreparation + recipe.tempsCuisson} min de préparation`,
           image: recipe.image,
           originalId: recipe.id
         }));
@@ -111,8 +111,8 @@ const generateChoices = (activityType: string): Choice[] => {
       choices = sportsData.exercices.map(exercise => ({
         id: `sport-${exercise.id}`,
         title: exercise.titre,
-            description: 'Recette Huel nutritive',
-            duration: '5-10 min de préparation',
+        description: 'Recette Huel nutritive',
+        duration: '5-10 min de préparation',
         difficulty: exercise.difficulte,
         image: exercise.image,
         originalId: exercise.id
@@ -127,7 +127,7 @@ const generateChoices = (activityType: string): Choice[] => {
         duration: `${exercise.duree} min`,
         difficulty: exercise.difficulte,
         image: exercise.image,
-            duration: `${recipe.tempsPreparation + recipe.tempsCuisson} min de préparation`,
+        originalId: exercise.id
       }));
       break;
   }
@@ -135,12 +135,12 @@ const generateChoices = (activityType: string): Choice[] => {
   return choices;
 };
 
-          .filter(recipe => recipe.moment === 'gouter')
+const ACTIVITY_ICONS = {
   breakfast: Utensils,
   sport: Dumbbell,
   relaxation: Heart,
   lunch: Utensils,
-            duration: `${recipe.tempsPreparation + recipe.tempsCuisson} min de préparation`,
+  snack: Utensils,
   dinner: Utensils,
 };
 
@@ -153,7 +153,7 @@ const ACTIVITY_TITLES = {
   dinner: '🌙 Dîner',
 };
 
-            duration: `${recipe.tempsPreparation + recipe.tempsCuisson} min de préparation`,
+export default function ProgramChoiceModal({
   visible,
   onClose,
   activityType,
@@ -164,7 +164,7 @@ const ACTIVITY_TITLES = {
   const [choices, setChoices] = useState<Choice[]>([]);
   
   const [searchQuery, setSearchQuery] = useState('');
-          duration: `${exercise.duree} min d'exercice`,
+  
   // Fonction mémorisée pour éviter les re-renders
   const updateSearchQuery = useCallback((text: string) => setSearchQuery(text), []);
   
@@ -176,7 +176,6 @@ const ACTIVITY_TITLES = {
     if (visible) {
       const generatedChoices = generateChoices(activityType);
       setChoices(generatedChoices);
-          duration: `${exercise.duree} min de détente`,
     }
   }, [visible, activityType]);
 
