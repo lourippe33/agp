@@ -58,9 +58,8 @@ export default function SuiviScreen() {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         colors={[Colors.agpBlue, Colors.agpGreen]}
-        showsVerticalScrollIndicator={true}
+        style={styles.header}
       >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
@@ -78,7 +77,11 @@ export default function SuiviScreen() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.content} 
+        showsVerticalScrollIndicator={true}
+        {...(Platform.OS === 'web' ? { className: 'scroll-visible' } : {})}
+      >
         {/* Message de bienvenue */}
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeTitle}>
