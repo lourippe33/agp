@@ -134,7 +134,6 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setCardioTimerVisible(false);
     setHiitTimerVisible(false);
     setPilatesTimerVisible(false);
-    setYogaDouxTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -143,7 +142,6 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setCardioTimerVisible(false);
     setHiitTimerVisible(false);
     setPilatesTimerVisible(false);
-    setYogaDouxTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -572,7 +570,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
               <X size={24} color={Colors.text} />
             </TouchableOpacity>
             <Text style={styles.timerModalTitle}>
-              {selectedExercise?.titre || 'Yoga Doux'}
+              {selectedExercise?.titre || 'Yoga Doux Perte de Poids'}
             </Text>
           </View>
           
