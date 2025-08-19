@@ -780,6 +780,17 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontStyle: 'italic',
   },
+  debugInfo: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    padding: 8,
+    marginTop: 8,
+  },
+  debugText: {
+    fontSize: 10,
+    fontFamily: 'Inter-Regular',
+    color: Colors.agpBlue,
+  },
   timerModalContainer: {
     flex: 1,
     backgroundColor: Colors.background,
