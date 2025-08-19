@@ -300,12 +300,12 @@ export default function ProgrammeScreen() {
       return parseInt(durationMatch[1]);
     }
     
-    // Durées par défaut basées sur les données réelles
+    // Durées par défaut - seulement pour les exercices
     const defaultDurations = {
-      breakfast: 10, // Temps de préparation moyen
-      lunch: 15,
-      snack: 5,
-      dinner: 15,
+      breakfast: 0, // Pas de temps pour les recettes
+      lunch: 0,
+      snack: 0,
+      dinner: 0,
       sport: 20, // Durée moyenne des exercices sportifs
       relaxation: 3 // Durée moyenne des exercices de détente
     };
@@ -317,13 +317,9 @@ export default function ProgrammeScreen() {
   const calculateDayTotalDuration = (activities: any) => {
     let totalDuration = 0;
     
-    // Calculer la durée de chaque activité
-    totalDuration += getActivityDuration(activities.breakfast.name, 'breakfast');
+    // Calculer seulement la durée des exercices (sport et détente)
     totalDuration += getActivityDuration(activities.sport.name, 'sport');
     totalDuration += getActivityDuration(activities.relaxation.name, 'relaxation');
-    totalDuration += getActivityDuration(activities.lunch.name, 'lunch');
-    totalDuration += getActivityDuration(activities.snack.name, 'snack');
-    totalDuration += getActivityDuration(activities.dinner.name, 'dinner');
     
     return totalDuration;
   };
