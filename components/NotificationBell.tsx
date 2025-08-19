@@ -211,7 +211,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
               );
             } catch (error) {
               console.error('❌ Erreur test:', error);
-              Alert.alert('Erreur', `Test échoué: ${error.message}`);
+              Alert.alert('Test AsyncStorage', `Erreur: ${error.message}`, [{ text: 'OK' }]);
             }
           }
         }
