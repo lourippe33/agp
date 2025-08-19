@@ -136,19 +136,36 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-               const notificationKey = `@agp_notifications_${user.id}`;
-               await AsyncStorage.removeItem(notificationKey);
-               
-               // Mettre à jour l'état local
-               setNotifications([]);
-               setUnreadCount(0);
-               
-               Alert.alert(
-                 '✅ Suppression réussie',
-                 'Toutes vos notifications ont été supprimées.',
-                 [{ text: 'OK', style: 'default' }]
-               );
+              console.log('🗑️ Suppression de toutes les notifications');
+              const notificationKey = `@agp_notifications_${user.id}`;
+              
+              // Supprimer avec AsyncStorage
+              await AsyncStorage.removeItem(notificationKey);
+              
+              // Vérifier que la suppression a fonctionné
+              const afterRemoval = await AsyncStorage.getItem(notificationKey);
+              
+              if (afterRemoval === null) {
+                console.log('✅ Suppression vérifiée avec succès');
+                
+                // Mettre à jour l'état local
+                setNotifications([]);
+                setUnreadCount(0);
+                
+                // Sortir du mode sélection si actif
+                setSelectionMode(false);
+                setSelectedNotifications([]);
+                
+                Alert.alert(
+                  '✅ Suppression réussie',
+                  'Toutes vos notifications ont été supprimées.',
+                  [{ text: 'OK', style: 'default' }]
+                );
+              } else {
+                throw new Error('Échec de vérification de la suppression');
+              }
             } catch (error) {
+              console.error('❌ Erreur lors de la suppression complète:', error);
               Alert.alert(
                 'Erreur',
                 'Une erreur est survenue lors de la suppression. Veuillez réessayer.',
@@ -174,32 +191,47 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
+              console.log(`🗑️ Suppression de ${selectedNotifications.length} notifications sélectionnées`);
+              
               // Filtrer les notifications pour supprimer celles sélectionnées
               const updatedNotifications = notifications.filter(
                 notification => !selectedNotifications.includes(notification.id)
               );
               
-              // Sauvegarder dans AsyncStorage
+              console.log(`📊 Notifications restantes: ${updatedNotifications.length}`);
+              
+              // Sauvegarder directement avec AsyncStorage
               const notificationKey = `@agp_notifications_${user.id}`;
               await AsyncStorage.setItem(notificationKey, JSON.stringify(updatedNotifications));
               
-              // Mettre à jour l'état local
-              setNotifications(updatedNotifications);
+              // Vérifier que la sauvegarde a fonctionné
+              const saved = await AsyncStorage.getItem(notificationKey);
+              const savedNotifications = saved ? JSON.parse(saved) : [];
               
-              // Recalculer le nombre de non lues
-              const unread = updatedNotifications.filter(n => !n.read).length;
-              setUnreadCount(unread);
-              
-              // Sortir du mode sélection
-              setSelectionMode(false);
-              setSelectedNotifications([]);
-              
-              Alert.alert(
-                '✅ Suppression réussie',
-                `${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`,
-                [{ text: 'OK', style: 'default' }]
-              );
+              if (savedNotifications.length === updatedNotifications.length) {
+                console.log('✅ Sauvegarde vérifiée avec succès');
+                
+                // Mettre à jour l'état local
+                setNotifications(updatedNotifications);
+                
+                // Recalculer le nombre de non lues
+                const unread = updatedNotifications.filter(n => !n.read).length;
+                setUnreadCount(unread);
+                
+                // Sortir du mode sélection
+                setSelectionMode(false);
+                setSelectedNotifications([]);
+                
+                Alert.alert(
+                  '✅ Suppression réussie',
+                  `${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`,
+                  [{ text: 'OK', style: 'default' }]
+                );
+              } else {
+                throw new Error('Échec de vérification de la sauvegarde');
+              }
             } catch (error) {
+              console.error('❌ Erreur lors de la suppression:', error);
               Alert.alert(
                 'Erreur',
                 'Une erreur est survenue lors de la suppression. Veuillez réessayer.',
