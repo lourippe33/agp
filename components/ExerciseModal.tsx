@@ -111,7 +111,6 @@ export default function ExerciseModal({ exercise, visible, onClose }: ExerciseMo
             </View>
           ) : (
             // Mode Information
-            <ScrollView showsVerticalScrollIndicator={false}>
             <ScrollView 
               showsVerticalScrollIndicator={true}
               style={Platform.OS === 'web' ? { className: 'scroll-container' } : undefined}
