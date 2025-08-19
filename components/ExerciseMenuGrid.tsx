@@ -231,7 +231,7 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
           styles.container,
           Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         ]}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Exercices de Détente</Text>

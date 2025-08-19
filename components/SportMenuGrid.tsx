@@ -415,7 +415,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
                 styles.detailsContent,
                 Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
               ]}
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={true}
             >
               {/* Image de l'exercice */}
               <Image 
