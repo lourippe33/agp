@@ -66,6 +66,37 @@ export default function NotificationBell({ style }: NotificationBellProps) {
       loadNotifications();
     } catch (error) {
       console.error('Erreur lors de la vérification des notifications:', error);
+    }
+  };
+
+  const handleOpenNotifications = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseNotifications = () => {
+    setModalVisible(false);
+  };
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    try {
+      await NotificationService.markAsRead(notificationId);
+      loadNotifications();
+    } catch (error) {
+      console.error('Erreur lors du marquage comme lu:', error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    if (!user) return;
+    
+    try {
+      await NotificationService.markAllAsRead(user.id);
+      loadNotifications();
+    } catch (error) {
+      console.error('Erreur lors du marquage de toutes les notifications comme lues:', error);
+    }
+  };
+
   const renderNotificationItem = ({ item }: { item: Notification }) => {
     const getNotificationIcon = (type: string) => {
       switch (type) {
@@ -177,6 +208,11 @@ export default function NotificationBell({ style }: NotificationBellProps) {
               Alert.alert('Erreur', `Test échoué: ${error.message}`);
             }
           }
+        }
+      ]
+    );
+  };
+
   return (
     <>
       <TouchableOpacity
