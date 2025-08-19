@@ -59,7 +59,6 @@ export default function ProgrammeScreen() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
   const [showTodayProgram, setShowTodayProgram] = useState(true);
-  const [showTodayProgram, setShowTodayProgram] = useState(true);
   
   // États pour le système de choix
   const modalScrollViewRef = useRef(null);
@@ -79,11 +78,6 @@ export default function ProgrammeScreen() {
   useEffect(() => {
     if (programData.length > 0) {
       scrollToToday();
-      // Afficher automatiquement le programme du jour actuel
-      const today = programData.find(day => day.isToday);
-      if (today && showTodayProgram) {
-        setSelectedDay(today);
-      }
       // Afficher automatiquement le programme du jour actuel
       const today = programData.find(day => day.isToday);
       if (today && showTodayProgram) {
@@ -328,7 +322,6 @@ export default function ProgrammeScreen() {
   };
 
   const handleDayPress = (day: DayProgram) => {
-    setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
     setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
     setSelectedDay(day);
   };
@@ -1047,70 +1040,49 @@ export default function ProgrammeScreen() {
               )}
             </View>
 
-        {/* Programme du jour affiché par défaut */}
-        {selectedDay && (
-          <View style={styles.todayProgramSection}>
-            <View style={styles.todayProgramHeader}>
-              <Text style={styles.todayProgramTitle}>
-                📅 Programme du Jour {selectedDay.day}
-              </Text>
-              <Text style={styles.todayProgramDate}>
-                {selectedDay.date.toLocaleDateString('fr-FR', { 
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long'
-                })}
-              </Text>
-              {selectedDay.isToday && (
-                <View style={styles.todayBadge}>
-                  <Text style={styles.todayBadgeText}>Aujourd'hui</Text>
-                </View>
-              )}
+            {/* Message motivationnel */}
+            <View style={styles.motivationCard}>
+              <Star size={24} color={Colors.morning} />
+              <View style={styles.motivationContent}>
+                <Text style={styles.motivationTitle}>
+                  {currentStreak > 0 
+                    ? `🔥 ${currentStreak} jours consécutifs !` 
+                    : '🚀 Commencez votre transformation'
+                  }
+                </Text>
+                <Text style={styles.motivationText}>
+                  {currentStreak > 7 
+                    ? 'Incroyable régularité ! Vous êtes sur la bonne voie.'
+                    : currentStreak > 0
+                    ? 'Excellent ! Continuez sur cette lancée.'
+                    : 'Chaque grand voyage commence par un premier pas.'
+                  }
+                </Text>
+              </View>
             </View>
 
-        {/* Message motivationnel */}
-        <View style={styles.motivationCard}>
-          <Star size={24} color={Colors.morning} />
-          <View style={styles.motivationContent}>
-            <Text style={styles.motivationTitle}>
-              {currentStreak > 0 
-                ? `🔥 ${currentStreak} jours consécutifs !` 
-                : '🚀 Commencez votre transformation'
-              }
-            </Text>
-            <Text style={styles.motivationText}>
-              {currentStreak > 7 
-                ? 'Incroyable régularité ! Vous êtes sur la bonne voie.'
-                : currentStreak > 0
-                ? 'Excellent ! Continuez sur cette lancée.'
-                : 'Chaque grand voyage commence par un premier pas.'
-              }
-            </Text>
-          </View>
-        </View>
+            {/* Conseils de la semaine */}
+            <View style={styles.tipsCard}>
+              <Text style={styles.tipsTitle}>💡 Conseil de la semaine {currentWeek}</Text>
+              <Text style={styles.tipsText}>
+                {currentWeek === 1 && "Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection."}
+                {currentWeek === 2 && "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire."}
+                {currentWeek === 3 && "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé."}
+                {currentWeek === 4 && "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme."}
+              </Text>
+            </View>
 
-        {/* Conseils de la semaine */}
-        <View style={styles.tipsCard}>
-          <Text style={styles.tipsTitle}>💡 Conseil de la semaine {currentWeek}</Text>
-          <Text style={styles.tipsText}>
-            {currentWeek === 1 && "Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection."}
-            {currentWeek === 2 && "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire."}
-            {currentWeek === 3 && "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé."}
-            {currentWeek === 4 && "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme."}
-          </Text>
-        </View>
-
-        {/* Info sur la navigation directe */}
-        <View style={styles.customizationInfo}>
-          <RefreshCw size={20} color={Colors.agpBlue} />
-          <View style={styles.customizationContent}>
-            <Text style={styles.customizationTitle}>🎯 Navigation Directe ACTIVE !</Text>
-            <Text style={styles.customizationText}>
-              Cliquez sur une activité pour accéder directement à la recette ou l'exercice spécifique ! 
-              Plus besoin de chercher dans les listes.
-            </Text>
-          </View>
-        </View>
+            {/* Info sur la navigation directe */}
+            <View style={styles.customizationInfo}>
+              <RefreshCw size={20} color={Colors.agpBlue} />
+              <View style={styles.customizationContent}>
+                <Text style={styles.customizationTitle}>🎯 Navigation Directe ACTIVE !</Text>
+                <Text style={styles.customizationText}>
+                  Cliquez sur une activité pour accéder directement à la recette ou l'exercice spécifique ! 
+                  Plus besoin de chercher dans les listes.
+                </Text>
+              </View>
+            </View>
           </View>
         )}
       </ScrollView>
