@@ -37,10 +37,6 @@ import { Exercise } from '@/types/Exercise';
 import SportExerciseTimer from './SportExerciseTimer';
 import sportsData from '@/data/exercices_sport.json';
 
-// Debug: Vérifier le chargement des données
-console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
-console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
-
 interface SportMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
 }
@@ -48,215 +44,68 @@ interface SportMenuGridProps {
 const { width } = Dimensions.get('window');
 const cardSize = (width - 64) / 2;
 
-// Combinaison de tous les exercices sans filtrage par niveau
-const menuItems = [
-  // Exercices débutants
-  {
-    id: 1,
-    title: "Marche Active",
-    subtitle: "15 min • 80 cal",
-    icon: Users,
-    color: '#4CAF50',
-    gradient: ['#4CAF50', '#81C784'],
-    image: 'https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 3,
-    title: "Danse Fitness",
-    subtitle: "25 min • 120 cal",
-    icon: Heart,
-    color: '#E91E63',
-    gradient: ['#E91E63', '#F06292'],
-    image: 'https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 6,
-    title: "Aqua Fitness",
-    subtitle: "35 min • 140 cal",
-    icon: Zap,
-    color: '#00BCD4',
-    gradient: ['#00BCD4', '#4DD0E1'],
-    image: 'https://images.pexels.com/photos/1263349/pexels-photo-1263349.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 8,
-    title: "Pilates Minceur",
-    subtitle: "28 min • 90 cal",
-    icon: Star,
-    color: '#607D8B',
-    gradient: ['#607D8B', '#90A4AE'],
-    image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 10,
-    title: "Stretching Actif",
-    subtitle: "20 min • 60 cal",
-    icon: Timer,
-    color: '#8BC34A',
-    gradient: ['#8BC34A', '#AED581'],
-    image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  // Nouveaux exercices
-  {
-    id: 13,
-    title: "Marche active sur place",
-    subtitle: "10 min • 50 cal",
-    icon: Activity,
-    color: '#4CAF50',
-    gradient: ['#4CAF50', '#81C784'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 14,
-    title: "Circuit cardio débutant",
-    subtitle: "12 min • 70 cal",
-    icon: Target,
-    color: '#FF9800',
-    gradient: ['#FF9800', '#FFB74D'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 15,
-    title: "Montées de genoux + talons-fesses",
-    subtitle: "6 min • 40 cal",
-    icon: TrendingUp,
-    color: '#9C27B0',
-    gradient: ['#9C27B0', '#BA68C8'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 16,
-    title: "Renforcement bas du corps",
-    subtitle: "15 min • 80 cal",
-    icon: Dumbbell,
-    color: '#FF5722',
-    gradient: ['#FF5722', '#FF8A65'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 17,
-    title: "Gainage facile",
-    subtitle: "8 min • 45 cal",
-    icon: Star,
-    color: '#607D8B',
-    gradient: ['#607D8B', '#90A4AE'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 18,
-    title: "Danse libre",
-    subtitle: "12 min • 90 cal",
-    icon: Smile,
-    color: '#E91E63',
-    gradient: ['#E91E63', '#F06292'],
-    image: 'https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 19,
-    title: "Montée de marche ou escaliers",
-    subtitle: "10 min • 75 cal",
-    icon: TrendingUp,
-    color: '#3F51B5',
-    gradient: ['#3F51B5', '#7986CB'],
-    image: 'https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 20,
-    title: "Stretching actif",
-    subtitle: "8 min • 30 cal",
-    icon: Wind,
-    color: '#8BC34A',
-    gradient: ['#8BC34A', '#AED581'],
-    image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 21,
-    title: "Mini Tabata",
-    subtitle: "8 min • 85 cal",
-    icon: Flame,
-    color: '#FF5722',
-    gradient: ['#FF5722', '#FF8A65'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 22,
-    title: "Yoga doux perte de poids",
-    subtitle: "20 min • 70 cal",
-    icon: Heart,
-    color: '#9C27B0',
-    gradient: ['#9C27B0', '#BA68C8'],
-    image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  // Exercices plus avancés
-  {
-    id: 2,
-    title: "Circuit Training",
-    subtitle: "20 min • 150 cal",
-    icon: Dumbbell,
-    color: '#FF9800',
-    gradient: ['#FF9800', '#FFB74D'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 5,
-    title: "Yoga Dynamique",
-    subtitle: "30 min • 100 cal",
-    icon: Target,
-    color: '#9C27B0',
-    gradient: ['#9C27B0', '#BA68C8'],
-    image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 7,
-    title: "Boxe Fitness",
-    subtitle: "25 min • 180 cal",
-    icon: Trophy,
-    color: '#FF5722',
-    gradient: ['#FF5722', '#FF8A65'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 11,
-    title: "Zumba Party",
-    subtitle: "35 min • 160 cal",
-    icon: Heart,
-    color: '#E91E63',
-    gradient: ['#E91E63', '#F06292'],
-    image: 'https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 4,
-    title: "HIIT Intensif",
-    subtitle: "18 min • 200 cal",
-    icon: Flame,
-    color: '#F44336',
-    gradient: ['#F44336', '#EF5350'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 9,
-    title: "Course Fractionné",
-    subtitle: "22 min • 220 cal",
-    icon: TrendingUp,
-    color: '#3F51B5',
-    gradient: ['#3F51B5', '#7986CB'],
-    image: 'https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg?auto=compress&cs=tinysrgb&w=400'
-  },
-  {
-    id: 12,
-    title: "Bootcamp",
-    subtitle: "30 min • 250 cal",
-    icon: Flame,
-    color: '#F44336',
-    gradient: ['#F44336', '#EF5350'],
-    image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400'
+// Fonction pour obtenir l'icône selon le type d'exercice
+const getExerciseIcon = (exercise: any) => {
+  // Mapping basé sur le type ou les tags
+  if (exercise.tags?.includes('cardio')) return Activity;
+  if (exercise.tags?.includes('renforcement')) return Dumbbell;
+  if (exercise.tags?.includes('danse')) return Heart;
+  if (exercise.tags?.includes('yoga')) return Target;
+  if (exercise.tags?.includes('hiit')) return Flame;
+  if (exercise.tags?.includes('stretching')) return Wind;
+  if (exercise.tags?.includes('gainage')) return Star;
+  if (exercise.tags?.includes('pilates')) return Target;
+  if (exercise.tags?.includes('marche')) return Users;
+  if (exercise.tags?.includes('escaliers')) return TrendingUp;
+  
+  // Par défaut selon le niveau
+  switch (exercise.niveau) {
+    case 'debutant': return Users;
+    case 'intermediaire': return Dumbbell;
+    case 'avance': return Flame;
+    default: return Activity;
   }
-];
+};
+
+// Fonction pour obtenir la couleur selon le niveau
+const getExerciseColor = (exercise: any) => {
+  switch (exercise.niveau) {
+    case 'debutant': return '#4CAF50';
+    case 'intermediaire': return '#FF9800';
+    case 'avance': return '#F44336';
+    default: return '#4CAF50';
+  }
+};
+
+// Générer les items du menu à partir des données JSON
+const generateMenuItems = () => {
+  return sportsData.exercices.map(exercise => {
+    const IconComponent = getExerciseIcon(exercise);
+    const color = getExerciseColor(exercise);
+    
+    return {
+      id: exercise.id,
+      title: exercise.titre,
+      subtitle: `${exercise.duree} min • ${exercise.calories || 'N/A'} cal`,
+      icon: IconComponent,
+      color: color,
+      gradient: [color, color + '80'],
+      image: exercise.image,
+      exercise: exercise // Référence complète à l'exercice
+    };
+  });
+};
 
 export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
+  
+  // Générer les items du menu à partir des données JSON
+  const menuItems = generateMenuItems();
+  
+  console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
+  console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
 
   const handleExercisePress = (exerciseId: number) => {
     // Trouver l'exercice dans les données
@@ -423,6 +272,13 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
                 resizeMode="cover"
               />
               
+              {/* Debug info */}
+              <View style={styles.debugInfo}>
+                <Text style={styles.debugText}>
+                  Debug: ID {selectedExercise.id} - {selectedExercise.etapes?.length || 0} étapes
+                </Text>
+              </View>
+              
               {/* Informations de base */}
               <View style={styles.detailsInfoSection}>
                 <View style={styles.detailsInfoRow}>
@@ -465,13 +321,15 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
               {/* Description */}
               <View style={styles.detailsSection}>
                 <Text style={styles.detailsSectionTitle}>Description</Text>
-                <Text style={styles.detailsDescription}>{selectedExercise.description}</Text>
+                <Text style={styles.detailsDescription}>
+                  {selectedExercise.description || 'Description non disponible'}
+                </Text>
               </View>
               
               {/* Étapes */}
               <View style={styles.detailsSection}>
                 <Text style={styles.detailsSectionTitle}>Comment faire</Text>
-                {selectedExercise.etapes.map((etape, index) => (
+                {(selectedExercise.etapes || []).map((etape, index) => (
                   <View key={index} style={styles.detailsStep}>
                     <View style={styles.detailsStepNumber}>
                       <Text style={styles.detailsStepNumberText}>{index + 1}</Text>
@@ -484,7 +342,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
               {/* Bénéfices */}
               <View style={styles.detailsSection}>
                 <Text style={styles.detailsSectionTitle}>Bénéfices</Text>
-                {selectedExercise.benefices.map((benefice, index) => (
+                {(selectedExercise.benefices || []).map((benefice, index) => (
                   <View key={index} style={styles.detailsBenefit}>
                     <View style={styles.detailsBenefitBullet} />
                     <Text style={styles.detailsBenefitText}>{benefice}</Text>
