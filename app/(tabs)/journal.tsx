@@ -333,10 +333,6 @@ export default function JournalScreen() {
         ]}
         showsVerticalScrollIndicator={true}
       >
-        {/* Calendrier hebdomadaire */}
-        <WeekCalendar />
-
-        {/* Aperçu quotidien */}
         <DailyOverview />
 
         {/* Bouton d'ajout flottant */}
