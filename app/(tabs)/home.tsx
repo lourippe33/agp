@@ -1,42 +1,84 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  ScrollView,
-  FlatList,
-  Dimensions,
-  Alert,
   Animated,
+  Dimensions,
   Platform,
+  ScrollView,
+  StyleSheet,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Lock, Zap } from 'lucide-react-native';
-import { Chrome as Home, ChartBar as BarChart3, Users, User } from 'lucide-react-native';
-import { Colors } from '@/constants/Colors';
-import DayProgramCard from '@/components/DayProgramCard';
-import { isPastDay } from '@/utils/dateUtils';
-import { useAuth } from '@/contexts/AuthContext';
-import AGPLogo from '@/components/AGPLogo';
-import ProgramChoiceModal from '@/components/ProgramChoiceModal';
-import { useLocalSearchParams } from 'expo-router';
-import { router } from 'expo-router';
+import { 
+  Calendar, 
+  TrendingUp, 
+  Target, 
+  Award, 
+  Clock, 
+  Activity, 
+  Heart, 
+  Zap, 
+  Sun, 
+  Moon, 
+  Coffee, 
+  Utensils, 
+  Dumbbell, 
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react-native';
 
-// Import des données pour la navigation directe
-import recipesData from '@/data/recettes_agp.json';
-import huelRecipesData from '@/data/recettes_huel_matin.json';
-import exercisesData from '@/data/exercices_detente.json';
-import sportsData from '@/data/exercices_sport.json';
+import { router, useRouter } from 'expo-router';
+import { Colors } from '@/constants/Colors';
+import { useAuth } from '@/contexts/AuthContext';
+import { isPastDay } from '@/utils/dateUtils';
+import NotificationBell from '@/components/NotificationBell';
+import PersistentTabBar from '@/components/PersistentTabBar';
+import DayProgramCard from '@/components/DayProgramCard';
+
+const dailyTips = [
+  {
+    title: '💧 Hydratation optimale',
+    description: "Buvez un grand verre d'eau dès le réveil pour relancer votre métabolisme et améliorer votre concentration."
+  },
+  {
+    title: '🧘 Respiration apaisante',
+    description: "3 minutes de cohérence cardiaque suffisent à réduire le stress et recentrer votre énergie."
+  },
+  {
+    title: '🍽️ Manger en pleine conscience',
+    description: "Prenez le temps de savourer chaque bouchée. Cela favorise la satiété et réduit les fringales."
+  },
+  {
+    title: '🧠 Visualisation positive',
+    description: "Imaginez votre objectif atteint. Cela active des circuits neuronaux qui renforcent la motivation."
+  },
+  {
+    title: '🚶 Bouger un peu plus',
+    description: "Un pas après l'autre : 15 min de marche quotidienne suffisent à améliorer votre bien-être."
+  },
+  {
+    title: '🛌 Préparer son sommeil',
+    description: "Coupez les écrans 1h avant de dormir et détendez-vous avec une routine calme pour optimiser votre récupération."
+  },
+  {
+    title: '🎯 Célébrer ses petits pas',
+    description: "Notez chaque réussite, même minime. Cela booste votre estime et vous ancre dans la progression durable."
+  }
+];
+
 
 const { width } = Dimensions.get('window');
+
+const actionCardWidth = (width - 60) / 2;
+const statCardWidth = (width - 56) / 2;
+const dayCardWidth = (width - 100) / 7;
 
 interface DayProgram {
   day: number;
   date: Date;
   isCompleted: boolean;
   isToday: boolean;
-  isPartiallyCompleted?: boolean;
   activities: {
     breakfast: { name: string; completed: boolean };
     sport: { name: string; completed: boolean };
@@ -49,214 +91,42 @@ interface DayProgram {
   badges?: string[];
 }
 
-export default function ProgrammeScreen() {
+const HeaderTitle = ({ name }: { name: string }) => (
+  <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+    <View style={{ alignItems: 'center', marginBottom: 6 }}>
+      <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
+      Bienvenue sur AGP, {name} 👋
+      </Text>
+    </View>
+  </View>
+);
+
+export default function HomeScreen() {
   const { user } = useAuth();
-  const params = useLocalSearchParams();
-  const [currentWeek, setCurrentWeek] = useState(1);
-  const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [programData, setProgramData] = useState<DayProgram[]>([]);
-  const [overallProgress, setOverallProgress] = useState(0);
-  const [currentStreak, setCurrentStreak] = useState(0);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
-  const [showTodayProgram, setShowTodayProgram] = useState(true);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
+  const todayIndex = new Date().getDay();
+  const todayTip = dailyTips[todayIndex];
+
+  // Animation scales
+  const sportScale = useState(new Animated.Value(1))[0];
+  const recipesScale = useState(new Animated.Value(1))[0];
+  const relaxScale = useState(new Animated.Value(1))[0];
   
-  // États pour le système de choix
-  const modalScrollViewRef = useRef(null);
-  const [todayButtonScale] = useState(new Animated.Value(1));
-  const [choiceModalVisible, setChoiceModalVisible] = useState(false);
-  const [currentActivityType, setCurrentActivityType] = useState<'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner'>('breakfast');
-  const [userChoices, setUserChoices] = useState<{[key: string]: {[key: string]: string}}>({});
-  const [completionPercentage, setCompletionPercentage] = useState(0);
-  const scrollPositionRef = useRef(0);
-
-  // Supprimer les références qui causent des problèmes
-  useEffect(() => {
-    generateProgramData();
-  }, [user]);
-  
-  // Centrer le jour actuel au chargement initial
-  useEffect(() => {
-    if (programData.length > 0) {
-      scrollToToday();
-      // Afficher automatiquement le programme du jour actuel
-      const today = programData.find(day => day.isToday);
-      if (today && showTodayProgram) {
-        setSelectedDay(today);
-      }
-    }
-  }, [programData]);
-
-  // Fonction pour obtenir l'index du jour actuel
-  const getTodayIndex = () => {
-    const todayIndex = programData.findIndex(day => day.isToday);
-    return todayIndex !== -1 ? todayIndex : 0;
-  };
-
-  // Fonction pour obtenir la semaine actuelle (1-4)
-  const getCurrentWeek = () => {
-    const todayIndex = getTodayIndex();
-    return Math.floor(todayIndex / 7) + 1;
-  };
-
-  // Fonction pour scroller automatiquement à la semaine actuelle
-  const scrollToToday = () => {
-    const todayIndex = getTodayIndex();
-    if (todayIndex >= 0) {
-      const weekIndex = Math.floor(todayIndex / 7) + 1;
-      setCurrentWeek(weekIndex);
-      
-      // Centrer le jour actuel dans la vue
-      // Si le jour est au début ou à la fin de la semaine, ajuster pour montrer toute la semaine
-      const dayInWeek = todayIndex % 7;
-      if (dayInWeek <= 2) {
-        // Début de semaine, montrer depuis le début
-        setVisibleDayIndex((weekIndex - 1) * 7);
-      } else if (dayInWeek >= 4) {
-        // Fin de semaine, montrer jusqu'à la fin
-        setVisibleDayIndex(Math.max(0, (weekIndex - 1) * 7 + dayInWeek - 3));
-      } else {
-        // Milieu de semaine, centrer le jour
-        setVisibleDayIndex(Math.max(0, todayIndex - 3));
-      }
-      
-      // Animation du bouton
-      Animated.sequence([
-        Animated.timing(todayButtonScale, {
-          toValue: 0.96,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(todayButtonScale, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start();
-    }
-  };
-
-  const generateProgramData = () => {
-    console.log('Generating program data with params:', params);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const yesterdayStr = yesterday.toDateString();
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() - (today.getDay() || 7) + 1); // Lundi de cette semaine
-    const todayStr = today.toDateString();
-
-    const program: DayProgram[] = [];
-
-    for (let i = 0; i < 28; i++) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(startDate.getDate() + i);
-      
-      // Déterminer si le jour est aujourd'hui, hier ou un autre jour passé
-      const isToday = currentDate.toDateString() === todayStr;
-      const isYesterday = currentDate.toDateString() === yesterdayStr;
-      const isPast = currentDate.getTime() < today.getTime() && !isToday;
-      
-      // Générer les activités du jour
-      const activities = generateDayActivities(i + 1);
-      
-      // Pour hier, déterminer si toutes les activités ont été cochées
-      let isCompleted = false;
-      let isPartiallyCompleted = false;
-      
-      if (isYesterday) {
-        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
-        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
-        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
-        
-        if (allActivitiesChecked) {
-          isCompleted = true;
-          // Marquer toutes les activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = true;
-          });
-        } else if (someActivitiesChecked) {
-          isPartiallyCompleted = true;
-          // Marquer certaines activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = Math.random() > 0.5;
-          });
-        }
-      } else if (isPast && !isYesterday) {
-        // Pour les jours plus anciens, simuler une progression aléatoire
-        isCompleted = Math.random() > 0.3;
-        isPartiallyCompleted = !isCompleted && Math.random() > 0.5;
-        
-        if (isCompleted) {
-          // Marquer toutes les activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = true;
-          });
-        } else if (isPartiallyCompleted) {
-          // Marquer certaines activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = Math.random() > 0.5;
-          });
-        }
-      }
-      
-      program.push({
-        day: i + 1,
-        date: currentDate,
-        isCompleted,
-        isPartiallyCompleted,
-        isToday,
-        activities,
-        totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
-        badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
-      });
-    }
-
-    setProgramData(program);
-    
-    // Trouver l'index du jour actuel pour le carrousel
-    const todayIndex = program.findIndex(day => day.isToday);
-    const currentWeekNumber = Math.floor(todayIndex / 7) + 1;
-    
-    // If we have a day parameter, find and select that day
-    if (params.day) {
-      const dayNumber = parseInt(params.day as string);
-      const dayToSelect = program.find(day => day.day === dayNumber);
-      if (dayToSelect) {
-        setSelectedDay(dayToSelect);
-        // Set the visible week based on the selected day
-        const weekIndex = Math.floor((dayNumber - 1) / 7) + 1;
-        setCurrentWeek(weekIndex);
-        setVisibleDayIndex((weekIndex - 1) * 7);
-      }
-    }
-    
-    if (todayIndex !== -1) {
-      // Centrer automatiquement sur la semaine actuelle
-      setCurrentWeek(currentWeekNumber);
-      setVisibleDayIndex((currentWeekNumber - 1) * 7);
-    }
-    
-    // Calculer la progression
-    const completed = program.filter(day => day.isCompleted).length;
-    const progress = (completed / 28) * 100;
-    setOverallProgress(progress);
-    setCompletionPercentage(Math.round(progress));
-    
-    // Calculer le streak
-    let streak = 0;
-    for (let i = program.length - 1; i >= 0; i--) {
-      if (program[i].isCompleted) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    setCurrentStreak(streak);
-  };
+  // Badge pour le streak
+  let badge = '';
+  if (currentStreak >= 7 && currentStreak < 14) badge = '🌱';
+  else if (currentStreak >= 14 && currentStreak < 21) badge = '🌿';
+  else if (currentStreak >= 21 && currentStreak < 28) badge = '🌳';
+  else if (currentStreak >= 28) badge = '🏆';
 
   const generateDayActivities = (day: number) => {
     const dayKey = `day-${day}`;
-    const choices = userChoices[dayKey] || {};
+    const choices = {}; // userChoices[dayKey] || {}; // Simplified for home screen
     
     const breakfasts = [
       'Porridge aux fruits rouges',
@@ -284,456 +154,232 @@ export default function ProgrammeScreen() {
 
     return {
       breakfast: { 
-        name: choices.breakfast || breakfasts[day % breakfasts.length], 
+        name: breakfasts[day % breakfasts.length], 
         completed: false 
       },
       sport: { 
-        name: choices.sport || sports[day % sports.length], 
+        name: sports[day % sports.length], 
         completed: false 
       },
       relaxation: { 
-        name: choices.relaxation || relaxations[day % relaxations.length], 
+        name: relaxations[day % relaxations.length], 
         completed: false 
       },
       lunch: { 
-        name: choices.lunch || 'Poke bowl saumon-avocat', 
+        name: 'Poke bowl saumon-avocat', 
         completed: false 
       },
       snack: { 
-        name: choices.snack || 'Energy balls dattes', 
+        name: 'Energy balls dattes', 
         completed: false 
       },
       dinner: { 
-        name: choices.dinner || 'Salade quinoa légumes', 
+        name: 'Salade quinoa légumes', 
         completed: false 
       }
     };
   };
 
-  const getWeekDays = (week: number) => {
-    const startIndex = (week - 1) * 7;
-    return programData.slice(startIndex, startIndex + 7);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+  
+  useEffect(() => {
+    generateProgramData();
+  }, []);
+
+  const generateProgramData = () => {
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - (today.getDay() || 7) + 1); // Lundi de cette semaine
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+    const todayStr = today.toDateString();
+
+    const program: DayProgram[] = [];
+
+    for (let i = 0; i < 28; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      
+      // Déterminer si le jour est aujourd'hui, hier ou un autre jour passé
+      const isToday = currentDate.toDateString() === todayStr;
+      const isYesterday = currentDate.toDateString() === yesterdayStr;
+      const isPast = isPastDay(currentDate);
+      
+      // Générer les activités du jour
+      const activities = generateDayActivities(i + 1);
+      
+      // Pour hier et les jours passés, déterminer si toutes les activités ont été cochées
+      let isCompleted = false;
+      let isPartiallyCompleted = false;
+      
+      if (isYesterday || (isPast && !isToday)) {
+        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
+        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
+        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
+        
+        if (allActivitiesChecked) {
+          isCompleted = true;
+          // Marquer toutes les activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = true;
+          });
+        } else if (someActivitiesChecked) {
+          isPartiallyCompleted = true;
+          // Marquer certaines activités comme complétées
+          Object.keys(activities).forEach(key => {
+            activities[key].completed = Math.random() > 0.5;
+          });
+        }
+      }
+      
+      program.push({
+        day: i + 1,
+        date: currentDate,
+        isCompleted,
+        isPartiallyCompleted,
+        isToday,
+        activities,
+        totalDuration: 15 + Math.floor(Math.random() * 10), // 15-25 min
+        badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
+      });
+    }
+
+    setProgramData(program);
+    
+    // Calculate current streak
+    let streak = 0;
+    today.setHours(0, 0, 0, 0);
+    
+    // Count consecutive completed days leading up to today
+    for (let i = program.length - 1; i >= 0; i--) {
+      const dayDate = new Date(program[i].date);
+      dayDate.setHours(0, 0, 0, 0);
+      
+      if (dayDate.getTime() < today.getTime() && program[i].isCompleted) {
+        streak++;
+      } else if (dayDate.getTime() < today.getTime()) {
+        break;
+      }
+    }
+    setCurrentStreak(streak);
+    
+    // Calculate overall progress
+    const completedDays = program.filter(day => day.isCompleted).length;
+    const progress = (completedDays / program.length) * 100;
+    setOverallProgress(progress);
+    
+    // Trouver l'index du jour actuel pour le carrousel
+    const todayIdx = program.findIndex(day => day.isToday);
+    if (todayIdx !== -1) {
+      setVisibleDayIndex(Math.floor(todayIdx / 7) * 7);
+    }
   };
 
-  const getWeekProgress = (week: number) => {
-    const weekDays = getWeekDays(week);
-    const completed = weekDays.filter(day => day.isCompleted).length;
-    return (completed / 7) * 100;
+  const HeaderTitle = ({ name }: { name: string }) => (
+    <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+        <Activity size={24} color={Colors.agpBlue} strokeWidth={2} />
+        <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', marginLeft: 8, color: Colors.text }}>
+          Tableau de bord
+        </Text>
+      </View>
+      <Text style={{ fontSize: 16, fontFamily: 'Inter-Regular', color: Colors.textSecondary }}>
+        Bienvenue sur AGP, {name} 👋
+      </Text>
+    </View>
+  );
+
+
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Bonjour';
+    if (hour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  };
+
+  const getCurrentMoment = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 6 && hour < 12) return 'matin';
+    if (hour >= 12 && hour < 16) return 'midi';
+    if (hour >= 16 && hour < 20) return 'gouter';
+    return 'soir';
+  };
+
+  const getMomentIcon = () => {
+    const moment = getCurrentMoment();
+    switch (moment) {
+      case 'matin': return <Sun size={24} color={Colors.morning} strokeWidth={2} />;
+      case 'midi': return <Utensils size={24} color={Colors.agpBlue} strokeWidth={2} />;
+      case 'gouter': return <Coffee size={24} color={Colors.relaxation} strokeWidth={2} />;
+      case 'soir': return <Moon size={24} color={Colors.evening} strokeWidth={2} />;
+      default: return <Sun size={24} color={Colors.morning} strokeWidth={2} />;
+    }
+  };
+
+  const getMomentColor = () => {
+    const moment = getCurrentMoment();
+    switch (moment) {
+      case 'matin': return Colors.morning;
+      case 'midi': return Colors.agpBlue;
+      case 'gouter': return Colors.relaxation;
+      case 'soir': return Colors.evening;
+      default: return Colors.morning;
+    }
+  };
+
+  const animateScale = (scale: Animated.Value, value: number) => {
+    Animated.spring(scale, {
+      toValue: value,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 100
+    }).start();
+  };
+
+  const navigateToSport = () => {
+    router.push('/sport');
+  };
+
+  const navigateToRecipes = () => {
+    router.push('/recettes');
+  };
+
+  const navigateToDetente = () => {
+    router.push('/detente');
   };
 
   const handleDayPress = (day: DayProgram) => {
-    setShowTodayProgram(false); // Désactiver l'affichage automatique après interaction manuelle
-    setSelectedDay(day);
-  };
-
-  const handlePreviousWeek = () => {
-    const newWeek = Math.max(1, currentWeek - 1);
-    setCurrentWeek(newWeek);
-    // Synchroniser l'index des jours visibles avec la semaine sélectionnée
-    setVisibleDayIndex((newWeek - 1) * 7);
-  };
-
-  const handleNextWeek = () => {
-    const newWeek = Math.min(4, currentWeek + 1);
-    setCurrentWeek(newWeek);
-    // Synchroniser l'index des jours visibles avec la semaine sélectionnée
-    setVisibleDayIndex((newWeek - 1) * 7);
-  };
-
-  const handleActivityChange = (activityType: 'breakfast' | 'sport' | 'relaxation' | 'lunch' | 'snack' | 'dinner') => {
-    // Vérifier si le jour est passé
-    if (selectedDay && isPastDay(selectedDay.date) && !selectedDay.isToday) {
-      Alert.alert(
-        "Modification impossible",
-        "Vous ne pouvez pas modifier les activités des jours passés.",
-        [{ text: "OK", style: "default" }]
-      );
-      return;
-    }
-    
-    setCurrentActivityType(activityType);
-    setChoiceModalVisible(true);
-  };
-
-  const handleChoiceSelect = (choice: any) => {
-    if (!selectedDay) return;
-    
-    const dayKey = `day-${selectedDay.day}`;
-    const newChoices = {
-      ...userChoices,
-      [dayKey]: {
-        ...userChoices[dayKey],
-        [currentActivityType]: choice.title
+    // Navigate to the program screen with the selected day
+    router.push({
+      pathname: '/(tabs)/programme',
+      params: { 
+        day: day.day.toString(),
+        openDetails: 'true'
       }
-    };
-    
-    setUserChoices(newChoices);
-    
-    // Mettre à jour les données du programme
-    setProgramData(prev => prev.map(day => {
-      if (day.day === selectedDay.day) {
-        const updatedActivities = { ...day.activities };
-        updatedActivities[currentActivityType] = {
-          name: choice.title,
-          completed: updatedActivities[currentActivityType].completed
-        };
-        
-        return {
-          ...day,
-          activities: updatedActivities
-        };
-      }
-      return day;
-    }));
-    
-    // Mettre à jour le jour sélectionné
-    setSelectedDay(prev => {
-      if (!prev) return null;
-      
-      const updatedActivities = { ...prev.activities };
-      updatedActivities[currentActivityType] = {
-        name: choice.title,
-        completed: updatedActivities[currentActivityType].completed
-      };
-      
-      return {
-        ...prev,
-        activities: updatedActivities
-      };
     });
   };
-
-  // Fonction pour trouver l'ID exact de l'activité avec recherche améliorée
-  const findActivityId = (activityName: string, activityType: string) => {
-    let foundItem = null;
-    
-    // Nettoyer le nom de l'activité (enlever les durées entre parenthèses)
-    const cleanActivityName = activityName.replace(/\s*\([^)]*\)\s*/g, '').trim();
-    
-    console.log(`🔍 Recherche: "${cleanActivityName}" (type: ${activityType})`);
-    
-    switch (activityType) {
-      case 'breakfast':
-        // Chercher dans les recettes AGP matin
-        foundItem = recipesData.recettes.find(recipe => 
-          recipe.moment === 'matin' && (
-            recipe.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-            cleanActivityName.toLowerCase().includes(recipe.titre.toLowerCase())
-          )
-        );
-        
-        // Si pas trouvé, chercher dans les recettes Huel
-        if (!foundItem) {
-          foundItem = huelRecipesData.find(recipe => 
-            recipe.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-            cleanActivityName.toLowerCase().includes(recipe.titre.toLowerCase())
-          );
-          
-          if (foundItem) {
-            // Ajouter un offset pour les recettes Huel
-            foundItem = { ...foundItem, id: foundItem.id + 1000 };
-          }
-        }
-        break;
-        
-      case 'lunch':
-        foundItem = recipesData.recettes.find(recipe => 
-          recipe.moment === 'midi' && (
-            recipe.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-            cleanActivityName.toLowerCase().includes(recipe.titre.toLowerCase())
-          )
-        );
-        break;
-        
-      case 'snack':
-        foundItem = recipesData.recettes.find(recipe => 
-          recipe.moment === 'gouter' && (
-            recipe.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-            cleanActivityName.toLowerCase().includes(recipe.titre.toLowerCase())
-          )
-        );
-        break;
-        
-      case 'dinner':
-        foundItem = recipesData.recettes.find(recipe => 
-          recipe.moment === 'soir' && (
-            recipe.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-            cleanActivityName.toLowerCase().includes(recipe.titre.toLowerCase())
-          )
-        );
-        break;
-        
-      case 'sport':
-        foundItem = sportsData.exercices.find(exercise => 
-          exercise.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-          cleanActivityName.toLowerCase().includes(exercise.titre.toLowerCase())
-        );
-        break;
-        
-      case 'relaxation':
-        foundItem = exercisesData.exercices.find(exercise => 
-          exercise.titre.toLowerCase().includes(cleanActivityName.toLowerCase()) ||
-          cleanActivityName.toLowerCase().includes(exercise.titre.toLowerCase())
-        );
-        break;
-    }
-    
-    console.log(`📋 Résultat: ${foundItem ? `ID ${foundItem.id} - ${foundItem.titre}` : 'Non trouvé'}`);
-    return foundItem?.id || null;
-  };
-
-  // Navigation vers les activités spécifiques avec ID exact
-  const navigateToActivity = (activityType: string, activityName: string) => {
-    const activityId = findActivityId(activityName, activityType);
-    
-    console.log(`🎯 Navigation vers: ${activityName} (Type: ${activityType}, ID: ${activityId})`);
-    
-    switch (activityType) {
-      case 'breakfast':
-        if (activityId) {
-          router.push({
-            pathname: '/recettes/matin',
-            params: { 
-              recipeId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/recettes/matin');
-        }
-        break;
-        
-      case 'lunch':
-        if (activityId) {
-          router.push({
-            pathname: '/recettes/midi',
-            params: { 
-              recipeId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/recettes/midi');
-        }
-        break;
-        
-      case 'snack':
-        if (activityId) {
-          router.push({
-            pathname: '/recettes/gouter',
-            params: { 
-              recipeId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/recettes/gouter');
-        }
-        break;
-        
-      case 'dinner':
-        if (activityId) {
-          router.push({
-            pathname: '/recettes/soir',
-            params: { 
-              recipeId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/recettes/soir');
-        }
-        break;
-        
-      case 'sport':
-        if (activityId) {
-          router.push({
-            pathname: '/sport',
-            params: { 
-              exerciseId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/sport');
-        }
-        break;
-        
-      case 'relaxation':
-        if (activityId) {
-          router.push({
-            pathname: '/detente',
-            params: { 
-              exerciseId: activityId.toString(),
-              openModal: 'true'
-            }
-          });
-        } else {
-          router.push('/detente');
-        }
-        break;
-    }
-  };
-
-  const toggleActivityCompletion = (activityType: keyof DayProgram['activities']) => {
-    if (!selectedDay) return;
-
-    // Capturer la position de défilement actuelle
-    const currentScrollPosition = modalScrollViewRef.current?.scrollTop;
-    if (currentScrollPosition !== undefined) {
-      scrollPositionRef.current = currentScrollPosition;
-    }
-
-    // Créer une copie des activités du jour sélectionné
-    const updatedActivities = { ...selectedDay.activities };
-    // Inverser l'état de l'activité sélectionnée
-    updatedActivities[activityType].completed = !updatedActivities[activityType].completed;
-
-    // Vérifier si toutes les activités sont complétées
-    const allCompleted = Object.values(updatedActivities).every(activity => activity.completed);
-    // Vérifier si au moins une activité est complétée
-    const someCompleted = Object.values(updatedActivities).some(activity => activity.completed);
-    
-    // Créer un jour mis à jour
-    const updatedDay = {
-      ...selectedDay,
-      activities: updatedActivities,
-      isCompleted: allCompleted,
-      isPartiallyCompleted: !allCompleted && someCompleted
-    };
-    
-    // Mettre à jour le jour sélectionné
-    setSelectedDay(updatedDay);
-    
-    // Mettre à jour le programme complet
-    const updatedProgram = programData.map(day => 
-      day.day === selectedDay.day ? updatedDay : day
-    );
-    
-    setProgramData(updatedProgram);
-    
-    // Recalculer les statistiques
-    const completed = updatedProgram.filter(day => day.isCompleted).length;
-    const progress = (completed / 28) * 100;
-    setOverallProgress(progress);
-    setCompletionPercentage(Math.round(progress));
-    
-    // Restaurer la position de défilement après le rendu
-    // Utiliser un délai plus long pour s'assurer que le rendu est terminé
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (modalScrollViewRef.current && scrollPositionRef.current) {
-          modalScrollViewRef.current.scrollTop = scrollPositionRef.current;
-        }
-      }, 50);
-    });
-  };
-
-  const WeekSelector = () => (
-    <View style={styles.weekSelector}>
-      <TouchableOpacity
-        style={[styles.weekArrow, currentWeek === 1 && styles.weekArrowDisabled, styles.weekArrowLeft]}
-        onPress={handlePreviousWeek}
-        disabled={currentWeek === 1}
-      >
-        <ChevronLeft size={20} color={currentWeek === 1 ? Colors.textSecondary : Colors.agpBlue} />
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={styles.weekInfo}
-        onPress={() => {
-          Alert.alert(
-            `Semaine ${currentWeek}`,
-            `Durée totale: ${getWeekDays(currentWeek).reduce((sum, day) => sum + day.totalDuration, 0)} minutes\n\nJours complétés: ${getWeekDays(currentWeek).filter(day => day.isCompleted).length}/7\n\n${getWeekMotivationalMessage(currentWeek)}`,
-            [{ text: 'OK', style: 'default' }]
-          );
-        }}
-      >
-        <View>
-          <Text style={styles.weekTitle}>Semaine {currentWeek}</Text>
-          <View style={styles.weekProgress}>
-            <View style={styles.weekProgressBar}>
-              <View 
-                style={[
-                  styles.weekProgressFill, 
-                  { width: `${getWeekProgress(currentWeek)}%` }
-                ]} 
-              />
-            </View>
-            <Text style={styles.weekProgressText}>
-              {Math.round(getWeekProgress(currentWeek))}%
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        style={[styles.weekArrow, currentWeek === 4 && styles.weekArrowDisabled, styles.weekArrowRight]}
-        onPress={handleNextWeek}
-        disabled={currentWeek === 4}
-      >
-        <ChevronRight size={20} color={currentWeek === 4 ? Colors.textSecondary : Colors.agpBlue} />
-      </TouchableOpacity>
-    </View>
-  );
-
-  // Fonction pour obtenir un message motivant selon la semaine
-  const getWeekMotivationalMessage = (week: number) => {
-    switch (week) {
-      case 1:
-        return "Semaine de démarrage ! Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection.";
-      case 2:
-        return "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire.";
-      case 3:
-        return "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé.";
-      case 4:
-        return "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme.";
-      default:
-        return "Chaque jour compte dans votre transformation !";
-    }
-  };
-
-  const OverallStats = () => (
-    <View style={styles.statsContainer}>
-      <View style={styles.statCard}>
-        <Trophy size={24} color={Colors.morning} />
-        <Text style={styles.statValue}>{Math.round(overallProgress)}%</Text>
-        <Text style={styles.statLabel}>Progression</Text>
-      </View>
-      
-      <View style={styles.statCard}>
-        <Flame size={24} color={Colors.relaxation} />
-        <Text style={styles.statValue}>{currentStreak}</Text>
-        <Text style={styles.statLabel}>Jours consécutifs</Text>
-      </View>
-      
-      <View style={styles.statCard}>
-        <Target size={24} color={Colors.agpGreen} />
-        <Text style={styles.statValue}>{28 - Math.round(overallProgress * 28 / 100)}</Text>
-        <Text style={styles.statLabel}>Jours restants</Text>
-      </View>
-    </View>
-  );
 
   const DayCarousel = () => {
-    // Afficher 7 jours à partir de l'index visible
     const days = programData.slice(visibleDayIndex, visibleDayIndex + 7);
-    const canScrollLeft = currentWeek > 1;
-    const canScrollRight = currentWeek < 4;
+    const canScrollLeft = visibleDayIndex > 0;
+    const canScrollRight = visibleDayIndex + 7 < programData.length;
     
     const scrollLeft = () => {
       if (canScrollLeft) {
-        const newWeek = Math.max(1, currentWeek - 1);
-        setCurrentWeek(newWeek);
-        setVisibleDayIndex((newWeek - 1) * 7);
+        setVisibleDayIndex(Math.max(0, visibleDayIndex - 7));
       }
     };
     
     const scrollRight = () => {
       if (canScrollRight) {
-        const newWeek = Math.min(4, currentWeek + 1);
-        setCurrentWeek(newWeek);
-        setVisibleDayIndex((newWeek - 1) * 7);
+        setVisibleDayIndex(Math.min(programData.length - 7, visibleDayIndex + 7));
       }
     };
     
@@ -768,336 +414,233 @@ export default function ProgrammeScreen() {
     );
   };
 
-  const ActivityRow = ({ 
-    title, 
-    activity, 
-    activityType,
-    isPastDay
-  }: { 
-    title: string; 
-    activity: { name: string; completed: boolean }; 
-    activityType: keyof DayProgram['activities'];
-    isPastDay: boolean;
-  }) => (
-    <View style={styles.activitySection}>
-      {/* En-tête de l'activité */}
-      <View style={styles.activityHeader}>
-        <Text style={styles.activityTitle}>{title}</Text>
-        <View style={styles.activityActions}>
-          <TouchableOpacity
-            style={styles.goToButton}
-            onPress={() => navigateToActivity(activityType, activity.name)}
-            disabled={isPastDay}
-            activeOpacity={0.8}
-          >
-            <ExternalLink size={14} color={isPastDay ? Colors.textSecondary : Colors.agpGreen} />
-            <Text style={[styles.goToButtonText, isPastDay && styles.disabledButtonText]}>Accéder</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.changeButton}
-            onPress={() => handleActivityChange(activityType)}
-            disabled={isPastDay}
-            activeOpacity={0.8}
-          >
-            <RefreshCw size={14} color={isPastDay ? Colors.textSecondary : Colors.agpBlue} />
-            <Text style={[styles.changeButtonText, isPastDay && styles.disabledButtonText]}>
-              {isPastDay ? "Verrouillé" : "Changer"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <TouchableOpacity
-        style={styles.activityRow}
-        onPress={() => navigateToActivity(activityType, activity.name)}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.activityName}>{activity.name}</Text>
-        {/* Checkbox pour marquer comme complété */}
-        <View style={styles.checkboxWrapper}>
-          <TouchableOpacity
-          style={[
-            styles.checkboxContainer,
-            activity.completed && styles.checkboxContainerChecked,
-            isPastDay && !selectedDay?.isToday && styles.checkboxContainerLocked
-          ]}
-            onPress={() => {
-              if (isPastDay && !selectedDay?.isToday) {
-                Alert.alert(
-                  "Modification impossible",
-                  "Vous ne pouvez pas modifier les activités des jours passés.",
-                  [{ text: "OK" }]
-                );
-              } else {
-                toggleActivityCompletion(activityType);
-              }
-            }}
-          activeOpacity={0.7}
-          disabled={isPastDay && !selectedDay?.isToday}
-        >
-          {/* Afficher une icône de cadenas pour les jours passés non complétés */}
-          {activity.completed ? (
-            <CheckCircle size={20} color={Colors.textLight} />
-          ) : (isPastDay && !selectedDay?.isToday) ? (
-            <Lock size={16} color={Colors.textSecondary} />
-          ) : (
-            <View style={styles.checkbox} />
-          )}
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-
-  // Modal pour afficher les détails du jour
-  const DayDetailModal = () => {
-    if (!selectedDay) return null;
-
-    return (
-      <View 
-        style={styles.modalOverlay} 
-        onStartShouldSetResponder={() => true}
-        onStartShouldSetResponderCapture={() => true}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Jour {selectedDay.day}</Text>
-            <TouchableOpacity onPress={() => setSelectedDay(null)}>
-              <Text style={styles.modalClose} accessibilityLabel="Fermer">✕</Text>
-            </TouchableOpacity>
-            {isPastDay(selectedDay.date) && !selectedDay.isToday && (
-              <View style={styles.pastDayBadge}>
-                <Lock size={14} color={Colors.textLight} />
-                <Text style={styles.pastDayBadgeText}>
-                  Jour passé - Lecture seule
-                </Text>
-              </View>
-            )}
-            
-          </View>
-          
-          <ScrollView 
-            ref={modalScrollViewRef}
-            style={styles.modalBody} 
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-            onScroll={(event) => {
-              const y = event.nativeEvent.contentOffset.y;
-              scrollPositionRef.current = y;
-            }}
-            scrollEventThrottle={16}
-          >
-            <ActivityRow
-              title="🌅 Petit-déjeuner"
-              activity={selectedDay.activities.breakfast}
-              activityType="breakfast" 
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-            
-            <ActivityRow
-              title="💪 Sport"
-              activity={selectedDay.activities.sport}
-              activityType="sport"
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-            
-            <ActivityRow
-              title="🧘 Détente"
-              activity={selectedDay.activities.relaxation}
-              activityType="relaxation"
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-            
-            <ActivityRow
-              title="🍽️ Déjeuner"
-              activity={selectedDay.activities.lunch}
-              activityType="lunch"
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-            
-            <ActivityRow
-              title="🍪 Collation"
-              activity={selectedDay.activities.snack}
-              activityType="snack"
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-            
-            <ActivityRow
-              title="🌙 Dîner"
-              activity={selectedDay.activities.dinner}
-              activityType="dinner"
-              isPastDay={isPastDay(selectedDay.date) && !selectedDay.isToday}
-            />
-          </ScrollView>
-        </View>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={true}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
         style={[
           styles.content,
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+          Platform.OS === 'web' ? { className: 'scroll-container' } : undefined
         ]}
-        showsVerticalScrollIndicator={true}
       >
-        <View style={{ width: '100%' }}>
-          {/* Header */}
-          <LinearGradient
-            colors={[Colors.agpBlue, Colors.agpGreen]}
-            style={styles.header}
-          >
-            <View style={styles.headerContent}>
-              <View style={styles.logoContainer}>
-                <AGPLogo size={50} />
-              </View>
-              <View style={styles.headerText}>
-                <Text style={styles.headerTitle}>Programme 28 Jours</Text>
-                <Text style={styles.headerSubtitle}>
-                  Votre transformation AGP personnalisée
+        {/* Header */}
+        <LinearGradient
+          colors={[Colors.agpBlue, Colors.agpGreen]} 
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.greeting}>
+                {getGreeting()}, {user?.firstName || 'Utilisateur'}
+              </Text>
+              <Text style={styles.subtitle}>
+                Votre parcours chronobiologique vous attend
+              </Text>
+            </View>
+
+            <View style={styles.headerRight}>
+              <NotificationBell style={styles.notificationBell} />
+              
+              <View style={styles.momentIndicator}>
+                {getMomentIcon()}
+                <Text style={styles.momentText}>
+                  {getCurrentMoment().charAt(0).toUpperCase() + getCurrentMoment().slice(1)}
                 </Text>
               </View>
-              <View style={styles.headerIcon}>
-                <Calendar size={32} color={Colors.textLight} />
-              </View>
             </View>
-          </LinearGradient>
-        </View>
+          </View>
+        </LinearGradient>
 
-        {/* Statistiques générales */}
-        <OverallStats />
-        
-        {/* Progression globale */}
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>
-            🎯 Vous avez complété {completionPercentage}% du programme !
+        {/* Welcome message */}
+        <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
+            Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
           </Text>
+        </View>
+
+        {/* Programme 28 Jours */}
+        <View style={styles.programSection}>
+          <Text style={styles.sectionTitle}>Programme 28 Jours</Text>
+          <DayCarousel />
+        </View>
+
+        <View style={styles.quickActions}>
+          <Text style={styles.sectionTitle}>Actions rapides</Text>
           
-          <Animated.View style={{
-            transform: [{ scale: todayButtonScale }]
-          }}>
-            <TouchableOpacity
-              style={styles.todayButton}
-              onPress={scrollToToday}
-              onPressIn={() => {
-                Animated.timing(todayButtonScale, {
-                  toValue: 0.96,
-                  duration: 100,
-                  useNativeDriver: true
-                }).start();
-              }}
-              onPressOut={() => {
-                Animated.timing(todayButtonScale, {
-                  toValue: 1,
-                  duration: 100,
-                  useNativeDriver: true
-                }).start();
-              }}
+          <View style={styles.actionsGrid}>
+            <View style={styles.actionRow}>
+              <Animated.View style={{ transform: [{ scale: sportScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: '#FF5722' }]} 
+                  onPress={navigateToSport}
+                  onPressIn={() => animateScale(sportScale, 0.96)}
+                  onPressOut={() => animateScale(sportScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Dumbbell size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Sport</Text>
+                  <Text style={styles.actionSubtitle}>activités</Text>
+                </TouchableOpacity>
+              </Animated.View>
+              
+              <Animated.View style={{ transform: [{ scale: recipesScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
+                  onPress={navigateToRecipes}
+                  onPressIn={() => animateScale(recipesScale, 0.96)}
+                  onPressOut={() => animateScale(recipesScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Utensils size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Recettes</Text>
+                  <Text style={styles.actionSubtitle}>adaptées</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+            
+            <View style={styles.centerButtonContainer}>
+              <Animated.View style={{ transform: [{ scale: relaxScale }] }}>
+                <TouchableOpacity 
+                  style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
+                  onPress={navigateToDetente}
+                  onPressIn={() => animateScale(relaxScale, 0.96)}
+                  onPressOut={() => animateScale(relaxScale, 1)}
+                  activeOpacity={1}
+                >
+                  <Heart size={32} color={Colors.textLight} />
+                  <Text style={styles.actionTitle}>Détente</Text>
+                  <Text style={styles.actionSubtitle}>& bien-être</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.achievementsSection}>
+          <Text style={styles.sectionTitle}>Vos Réussites</Text>
+          
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.morning }]}>
+            <View style={styles.achievementIconContainer}>
+              <Award size={32} color={Colors.morning} />
+            </View>
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                {currentStreak > 0 
+                  ? `🔥 Bravo ! ${currentStreak} jours consécutifs !` 
+                  : '🚀 Prêt à commencer votre transformation ?'
+                }
+                {badge && <Text style={{ fontSize: 24 }}>{badge}</Text>}
+              </Text>
+              <Text style={styles.achievementText}>
+                {currentStreak >= 5 
+                  ? "Vous êtes incroyable ! Votre régularité est la clé du succès. Continuez sur cette lancée !" 
+                  : currentStreak > 0
+                  ? "Chaque jour compte ! Votre constance commence à porter ses fruits. Continuez ainsi !"
+                  : "Les changements durables commencent par de petites actions quotidiennes. Lancez-vous dès aujourd'hui !"
+                }
+              </Text>
+            </View>
+          </View>
+          
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.agpBlue }]}>
+            <View style={styles.achievementIconContainer}>
+              <Target size={32} color={Colors.agpBlue} />
+            </View>
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                {overallProgress > 0 
+                  ? `✅ ${Math.round(overallProgress)}% du programme complété` 
+                  : '🎯 Votre programme vous attend'
+                }
+              </Text>
+              <Text style={styles.achievementText}>
+                {overallProgress >= 50 
+                  ? "Vous êtes à mi-chemin ! Vos efforts quotidiens transforment votre bien-être." 
+                  : overallProgress > 0
+                  ? "Chaque étape franchie vous rapproche de vos objectifs. Persévérez !"
+                  : "Suivre le programme AGP vous aidera à harmoniser votre mode de vie avec votre chronobiologie."
+                }
+              </Text>
+            </View>
+          </View>
+          
+          <View style={[styles.achievementCard, { borderLeftColor: Colors.relaxation }]}>
+            <View style={styles.achievementIconContainer}>
+              <Zap size={32} color={Colors.relaxation} />
+            </View>
+            <View style={styles.achievementContent}>
+              <Text style={styles.achievementTitle}>
+                💪 Votre potentiel est illimité
+              </Text>
+              <Text style={styles.achievementText}>
+                En appliquant les principes de chronobiologie, vous optimisez votre énergie et votre bien-être au quotidien. Chaque petit changement compte !
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.todaySection}>
+          <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+          
+          <View style={styles.todayCard}>
+            <LinearGradient
+              colors={[getMomentColor(), `${getMomentColor()}CC`]}
+              style={styles.todayGradient}
             >
-              <Text style={styles.todayButtonText}>
-                📍 Aller à aujourd'hui
+              <View style={styles.todayHeader}>
+                {getMomentIcon()}
+                <Text style={styles.todayTitle}>
+                  Moment {getCurrentMoment()}
+                </Text>
+              </View>
+              
+              <Text style={styles.todayDescription}>
+                {getCurrentMoment() === 'matin' && 
+                  "C'est le moment idéal pour activer ton métabolisme 💥 ! Un bon petit-déjeuner et 10 minutes d'énergie suffisent à transformer ta journée."
+                }
+                {getCurrentMoment() === 'midi' && 
+                  "Ton corps est au top de sa forme 💪. Profite-en pour bouger, cuisiner, ou avancer sur tes objectifs."
+                }
+                {getCurrentMoment() === 'gouter' && 
+                  "Recharge-toi sans culpabiliser 😌. Étirements, respiration, ou snack malin : tout compte."
+                }
+                {getCurrentMoment() === 'soir' && 
+                  "Offre-toi un vrai temps pour toi 🌙. Déconnexion, douceur et dîner léger : ton corps te dira merci."
+                }
               </Text>
-            </TouchableOpacity>
-          </Animated.View>
+              
+              <TouchableOpacity 
+                style={styles.todayButton}
+                onPress={() => router.push('/(tabs)/programme')}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.todayButtonText}>
+                  Voir le programme
+                </Text>
+                <Clock size={16} color={Colors.textLight} />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+        </View>
+
+        <View style={styles.tipsSection}>
+          <Text style={styles.sectionTitle}>Conseil du jour</Text>
           
-          {/* Indicateur de semaine actuelle */}
-          <View style={styles.currentWeekIndicator}>
-            <Calendar size={16} color={Colors.agpBlue} />
-            <Text style={styles.currentWeekText}>
-              Vous êtes dans la semaine {getCurrentWeek()} 🗓️
-            </Text>
-          </View>
-        </View>
-
-        {/* Sélecteur de semaine */}
-        <View style={styles.weekSelectorContainer}>
-          <WeekSelector />
-        </View>
-
-        {/* Carrousel des jours */}
-        <DayCarousel />
-
-        {/* Programme du jour affiché par défaut */}
-        {selectedDay && (
-          <View style={styles.todayProgramSection}>
-            <View style={styles.todayProgramHeader}>
-              <Text style={styles.todayProgramTitle}>
-                📅 Programme du Jour {selectedDay.day}
-              </Text>
-              <Text style={styles.todayProgramDate}>
-                {selectedDay.date.toLocaleDateString('fr-FR', { 
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long'
-                })}
-              </Text>
-              {selectedDay.isToday && (
-                <View style={styles.todayBadge}>
-                  <Text style={styles.todayBadgeText}>Aujourd'hui</Text>
-                </View>
-              )}
+          <View style={styles.tipCard}>
+            <View style={styles.tipIcon}>
+              <Heart size={24} color={Colors.agpBlue} />
             </View>
-
-            {/* Message motivationnel */}
-            <View style={styles.motivationCard}>
-              <Star size={24} color={Colors.morning} />
-              <View style={styles.motivationContent}>
-                <Text style={styles.motivationTitle}>
-                  {currentStreak > 0 
-                    ? `🔥 ${currentStreak} jours consécutifs !` 
-                    : '🚀 Commencez votre transformation'
-                  }
-                </Text>
-                <Text style={styles.motivationText}>
-                  {currentStreak > 7 
-                    ? 'Incroyable régularité ! Vous êtes sur la bonne voie.'
-                    : currentStreak > 0
-                    ? 'Excellent ! Continuez sur cette lancée.'
-                    : 'Chaque grand voyage commence par un premier pas.'
-                  }
-                </Text>
-              </View>
-            </View>
-
-            {/* Conseils de la semaine */}
-            <View style={styles.tipsCard}>
-              <Text style={styles.tipsTitle}>💡 Conseil de la semaine {currentWeek}</Text>
-              <Text style={styles.tipsText}>
-                {currentWeek === 1 && "Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection."}
-                {currentWeek === 2 && "Votre corps s'adapte ! Écoutez vos sensations et ajustez l'intensité si nécessaire."}
-                {currentWeek === 3 && "Vous êtes à mi-parcours ! C'est le moment de célébrer vos progrès et rester motivé."}
-                {currentWeek === 4 && "Dernière ligne droite ! Préparez-vous déjà à maintenir ces bonnes habitudes après le programme."}
-              </Text>
-            </View>
-
-            {/* Info sur la navigation directe */}
-            <View style={styles.customizationInfo}>
-              <RefreshCw size={20} color={Colors.agpBlue} />
-              <View style={styles.customizationContent}>
-                <Text style={styles.customizationTitle}>🎯 Navigation Directe ACTIVE !</Text>
-                <Text style={styles.customizationText}>
-                  Cliquez sur une activité pour accéder directement à la recette ou l'exercice spécifique ! 
-                  Plus besoin de chercher dans les listes.
-                </Text>
-              </View>
+            <View style={styles.tipContent}>
+              <Text style={styles.tipTitle}>{todayTip.title}</Text>
+              <Text style={styles.tipDescription}>{todayTip.description}</Text>
             </View>
           </View>
-        )}
+        </View>
       </ScrollView>
 
-      {/* Modal détail du jour */}
-      {selectedDay && <DayDetailModal />}
-
-      {/* Modal de choix d'activité */}
-      <ProgramChoiceModal
-        visible={choiceModalVisible}
-        onClose={() => setChoiceModalVisible(false)}
-        activityType={currentActivityType}
-        currentChoice={selectedDay?.activities[currentActivityType].name || ''}
-        onChoiceSelect={handleChoiceSelect}
-      />
     </View>
   );
 }
@@ -1108,118 +651,303 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 60,
-    paddingBottom: 30,
-    paddingHorizontal: 20, 
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
     width: '100%',
   },
   headerContent: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  logoContainer: {
+  headerLeft: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerRight: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 12,
+  },
+  notificationBell: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
+    borderRadius: 20,
     padding: 8,
   },
-  headerText: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
+  greeting: {
+    fontSize: 28,
     fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
+    color: Colors.textLight, 
     marginBottom: 4,
+    textAlign: 'center',
   },
-  headerSubtitle: {
+  subtitle: {
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
+    lineHeight: 22,
   },
-  headerIcon: {
+  momentIndicator: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    padding: 8,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  momentText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 0,
-    paddingBottom: 20,
+    paddingTop: 0,
   },
-  statsContainer: {
+  scrollContent: {
+    paddingBottom: 100,
+    paddingTop: 0,
+  },
+  quickActions: {
+    padding: 20,
+  },
+  programSection: {
     paddingHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  actionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    width: '100%',
+    marginBottom: 12,
+  },
+  centerButtonContainer: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  actionCard: {
+    width: actionCardWidth,
+    marginBottom: 12,
+    borderRadius: 16,
+    padding: 20, 
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  actionTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginTop: 12,
+  },
+  actionSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  statsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
   },
   statCard: {
-    flex: 1,
+    width: statCardWidth,
     backgroundColor: Colors.surface,
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 3,
+  },
+  statHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   statValue: {
     fontSize: 24,
     fontFamily: 'Poppins-Bold',
     color: Colors.text,
-    marginTop: 8,
-    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    textAlign: 'center',
+    lineHeight: 16,
   },
-  weekSelector: {
+  achievementsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  achievementCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 16,
-    marginBottom: 20,
+    marginBottom: 12,
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    borderLeftWidth: 4,
   },
-  weekArrow: {
+  achievementIconContainer: {
+    backgroundColor: Colors.agpLightBlue,
     padding: 8,
+    borderRadius: 50,
   },
-  weekArrowDisabled: {
-    opacity: 0.3,
-  },
-  weekArrowLeft: {
-    marginRight: 8,
-  },
-  weekArrowRight: {
-    marginLeft: 8,
-  },
-  weekInfo: {
+  achievementContent: {
     flex: 1,
+    marginLeft: 16,
+  },
+  achievementTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  achievementText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  todaySection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  todayCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 6,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+  todayGradient: {
+    padding: 20,
+  },
+  todayHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  todayTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+  },
+  todayDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    lineHeight: 20,
+    marginBottom: 16,
+    opacity: 0.9,
+  },
+  todayButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 12,
+  },
+  todayButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  tipsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  tipCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    gap: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+    backgroundColor: 'rgba(230, 245, 255, 0.8)',
+  },
+  tipIcon: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  weekSelectorContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 20,
+  tipContent: {
+    flex: 1,
+  },
+  tipTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  tipDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 20,
   },
   carouselContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 20,
+    marginTop: 12,
   },
   carouselArrow: {
     backgroundColor: Colors.surface,
@@ -1237,379 +965,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   carouselContent: {
-    paddingHorizontal: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: width - 80, // Largeur de l'écran moins les flèches et marges
-  },
-  weekTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  weekProgress: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  weekProgressBar: {
-    width: 100,
-    height: 6,
-    backgroundColor: Colors.border,
-    borderRadius: 3,
-  },
-  weekProgressFill: {
-    height: '100%',
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 3,
-  },
-  weekProgressText: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.agpGreen,
-  },
-  pastDayBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  weekCalendar: {
-    marginBottom: 24,
-  },
-  daysGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  pastDayBadgeText: {
-    color: Colors.textLight,
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-  },
-  dayCard: {
-    width: (width - 56) / 7,
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 8,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-  },
-  progressContainer: {
-    backgroundColor: Colors.surface,
-    marginHorizontal: 20,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  progressText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.agpBlue,
-    marginBottom: 12
-  },
-  currentWeekIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginTop: 12,
-  },
-  currentWeekText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-    marginLeft: 8,
-  },
-  todayButton: {
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    elevation: 3,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  todayButtonText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-  },
-  todayProgramSection: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  todayProgramHeader: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  todayProgramTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  todayProgramDate: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    textTransform: 'capitalize',
-  },
-  todayBadge: {
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  todayBadgeText: {
-    color: Colors.textLight,
-    fontSize: 12,
-    fontFamily: 'Poppins-SemiBold',
-  },
-  motivationCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.morning,
-  },
-  motivationContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  motivationTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  motivationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  tipsCard: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
-    marginBottom: 16,
-  },
-  tipsTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  tipsText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  customizationInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpGreen,
-  },
-  customizationContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  customizationTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  customizationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    width: '100%',
-    maxHeight: '80%',
-    elevation: 8,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-  },
-  modalClose: {
-    fontSize: 24,
-    color: Colors.textSecondary,
-    padding: 4,
-  },
-  modalBody: {
-    padding: 20,
-    maxHeight: 400,
-    // Empêcher le défilement automatique
-    scrollBehavior: 'auto'
-  },
-  activitySection: {
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  activityHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  activityTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-  },
-  activityActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  goToButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightGreen,
-    borderRadius: 8,
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    gap: 4,
-  },
-  goToButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpGreen,
-  },
-  changeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    gap: 4,
-  },
-  changeButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-  },
-  activityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-  },
-  activityName: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    flex: 1,
-    marginRight: 8,
-  },
-  checkboxContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-  },
-  checkboxContainerChecked: {
-    backgroundColor: Colors.agpGreen,
-    borderColor: Colors.agpGreen,
-  },
-  checkboxContainerLocked: {
-    backgroundColor: Colors.border,
-    borderColor: Colors.textSecondary,
-    opacity: 0.7,
-  },
-  checkboxContainerDisabled: {
-    backgroundColor: Colors.border,
-    borderColor: Colors.textSecondary,
-  },
-  disabledButtonText: {
-    color: Colors.textSecondary,
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: 'transparent',
-  },
-  checkboxWrapper: {
-    padding: 8, // Agrandit la zone tactile
-    marginLeft: 8,
   },
 });
