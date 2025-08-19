@@ -261,6 +261,15 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
       ]}
       showsVerticalScrollIndicator={true}
     >
+      {/* Message d'introduction */}
+      <View style={styles.introCard}>
+        <Text style={styles.introTitle}>📈 Vos Courbes d'Évolution</Text>
+        <Text style={styles.introText}>
+          Suivez vos progrès sur 30 jours avec des données simulées réalistes. 
+          Cliquez sur les boutons ci-dessous pour changer de métrique.
+        </Text>
+      </View>
+
       {/* Sélecteur de métriques */}
       <View style={styles.metricsSelector}>
         <Text style={styles.selectorTitle}>Choisissez la métrique à suivre</Text>
@@ -654,5 +663,25 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
+  },
+  introCard: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 16,
+    padding: 20,
+    margin: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  introTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  introText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    lineHeight: 20,
   },
 });

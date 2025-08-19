@@ -108,7 +108,10 @@ export default function SuiviScreen() {
       <ScrollView 
         style={styles.content} 
         showsVerticalScrollIndicator={true}
-        {...(Platform.OS === 'web' ? { className: 'scroll-visible' } : {})}
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
       >
         {/* Onglets */}
         <View style={styles.tabsContainer}>
@@ -134,7 +137,7 @@ export default function SuiviScreen() {
                 Bonjour {user?.firstName || 'Utilisateur'} ! 👋
               </Text>
               <Text style={styles.welcomeText}>
-                Utilisez les curseurs ci-dessous pour renseigner vos mensurations actuelles et suivre votre évolution.
+                Renseignez vos mensurations actuelles, puis consultez l'onglet "Courbes d'évolution" pour voir vos progrès !
               </Text>
             </View>
 
