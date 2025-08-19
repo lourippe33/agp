@@ -26,16 +26,15 @@ import OfflineBanner from '@/components/OfflineBanner';
 const globalScrollStyles = `
   /* Forcer les barres de défilement sur TOUS les éléments */
   *, *::before, *::after {
-    scrollbar-width: thin;
-    scrollbar-color: #4A90E2 #f1f1f1;
+    scrollbar-width: none;
   }
   
   *::-webkit-scrollbar, 
   div::-webkit-scrollbar,
   .scroll-container::-webkit-scrollbar,
   .scroll-visible::-webkit-scrollbar {
-    width: 14px !important;
-    height: 14px !important;
+    width: 8px !important;
+    height: 8px !important;
     display: block !important;
   }
   
@@ -43,8 +42,8 @@ const globalScrollStyles = `
   div::-webkit-scrollbar-track,
   .scroll-container::-webkit-scrollbar-track,
   .scroll-visible::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 6px;
+    background: transparent !important;
+    border-radius: 0 !important;
   }
   
   *::-webkit-scrollbar-thumb,
@@ -52,8 +51,8 @@ const globalScrollStyles = `
   .scroll-container::-webkit-scrollbar-thumb,
   .scroll-visible::-webkit-scrollbar-thumb {
     background: #4A90E2;
-    border-radius: 6px;
-    border: 2px solid #f1f1f1;
+    border-radius: 4px;
+    border: none !important;
   }
   
   *::-webkit-scrollbar-thumb:hover,
@@ -67,7 +66,7 @@ const globalScrollStyles = `
   div::-webkit-scrollbar-corner,
   .scroll-container::-webkit-scrollbar-corner,
   .scroll-visible::-webkit-scrollbar-corner {
-    background: #f1f1f1;
+    background: transparent !important;
   }
   
   /* Classes spécifiques pour forcer le défilement */
@@ -75,38 +74,47 @@ const globalScrollStyles = `
   .scroll-container,
   [data-scroll="true"] {
     overflow-y: scroll !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
     overflow-x: hidden !important;
   }
   
   /* Forcer sur les conteneurs React Native Web */
   div[style*="overflow"] {
     overflow-y: scroll !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
   }
   
   /* Spécifique aux ScrollView React Native */
   div[data-focusable="true"],
   div[role="scrollbar"] {
     overflow-y: scroll !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
   }
   
   /* Forcer sur tous les conteneurs avec scroll */
   div[style*="flex: 1"] {
     overflow-y: auto !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
   }
   
   /* Améliorer la visibilité sur tous les éléments scrollables */
   div {
-    scrollbar-width: thin;
-    scrollbar-color: #4A90E2 #f1f1f1;
+    scrollbar-width: none;
   }
   
   div::-webkit-scrollbar {
-    width: 14px !important;
+    width: 8px !important;
     display: block !important;
+  }
+  
+  div::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+  div::-webkit-scrollbar-thumb {
+    background: #4A90E2 !important;
+    border-radius: 4px !important;
+    border: none !important;
   }
   
   /* Navigation au clavier sur TOUS les éléments */
@@ -129,14 +137,14 @@ const globalScrollStyles = `
   /* Forcer le défilement sur le body et html */
   html, body {
     overflow-y: scroll !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
   }
   
   /* Spécifique aux modales et overlays */
   div[style*="position: absolute"],
   div[style*="position: fixed"] {
     overflow-y: auto !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
   }
 `;
 
