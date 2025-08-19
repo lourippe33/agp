@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
-import { Scale, Ruler, Target } from 'lucide-react-native';
+import { Scale, Ruler, Target, TrendingUp } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
+import MeasurementCharts from '@/components/MeasurementCharts';
 
 interface ChoiceButtonProps {
   label: string;
@@ -29,6 +30,7 @@ const ChoiceButton = ({ label, selected, onPress }: ChoiceButtonProps) => (
 
 export default function SuiviScreen() {
   const { user } = useAuth();
+  const [selectedTab, setSelectedTab] = useState<'measurements' | 'charts'>('measurements');
   const [height, setHeight] = useState(170);
   const [weight, setWeight] = useState(70);
   const [waist, setWaist] = useState(85);
@@ -53,6 +55,32 @@ export default function SuiviScreen() {
 
   const bmi = parseFloat(calculateBMI());
   const bmiCategory = getBMICategory(bmi);
+
+  const TabButton = ({ 
+    id, 
+    label, 
+    icon: IconComponent, 
+    isActive 
+  }: {
+    id: 'measurements' | 'charts';
+    label: string;
+    icon: any;
+    isActive: boolean;
+  }) => (
+    <TouchableOpacity
+      style={[styles.tabButton, isActive && styles.tabButtonActive]}
+      onPress={() => setSelectedTab(id)}
+      activeOpacity={0.8}
+    >
+      <IconComponent size={16} color={isActive ? Colors.textLight : Colors.textSecondary} />
+      <Text style={[
+        styles.tabButtonText,
+        isActive && styles.tabButtonTextActive
+      ]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -82,240 +110,263 @@ export default function SuiviScreen() {
         showsVerticalScrollIndicator={true}
         {...(Platform.OS === 'web' ? { className: 'scroll-visible' } : {})}
       >
-        {/* Message de bienvenue */}
-        <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>
-            Bonjour {user?.firstName || 'Utilisateur'} ! 👋
-          </Text>
-          <Text style={styles.welcomeText}>
-            Utilisez les curseurs ci-dessous pour renseigner vos mensurations actuelles et suivre votre évolution.
-          </Text>
+        {/* Onglets */}
+        <View style={styles.tabsContainer}>
+          <TabButton
+            id="measurements"
+            label="Mensurations"
+            icon={Ruler}
+            isActive={selectedTab === 'measurements'}
+          />
+          <TabButton
+            id="charts"
+            label="Courbes d'évolution"
+            icon={TrendingUp}
+            isActive={selectedTab === 'charts'}
+          />
         </View>
 
-        {/* Section Point de départ */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🎯 Mon point de départ</Text>
-
-          {/* Taille */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Ruler size={20} color={Colors.agpBlue} />
-              <Text style={styles.label}>Taille</Text>
-            </View>
-            <Slider
-              value={height}
-              onValueChange={v => setHeight(Math.round(v))}
-              minimumValue={140}
-              maximumValue={200}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.agpBlue}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{height} cm</Text>
-          </View>
-
-          {/* Poids */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Scale size={20} color={Colors.agpGreen} />
-              <Text style={styles.label}>Poids</Text>
-            </View>
-            <Slider
-              value={weight}
-              onValueChange={v => setWeight(Math.round(v))}
-              minimumValue={40}
-              maximumValue={150}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.agpGreen}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{weight} kg</Text>
-          </View>
-
-          {/* Tour de taille */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Target size={20} color={Colors.morning} />
-              <Text style={styles.label}>Tour de taille</Text>
-            </View>
-            <Slider
-              value={waist}
-              onValueChange={v => setWaist(Math.round(v))}
-              minimumValue={60}
-              maximumValue={140}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.morning}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{waist} cm</Text>
-          </View>
-
-          {/* Tour de hanche */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Target size={20} color={Colors.agpGreen} />
-              <Text style={styles.label}>Tour de hanche</Text>
-            </View>
-            <Slider
-              value={hips}
-              onValueChange={v => setHips(Math.round(v))}
-              minimumValue={70}
-              maximumValue={150}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.agpGreen}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{hips} cm</Text>
-          </View>
-
-          {/* Tour de bras */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Target size={20} color={Colors.relaxation} />
-              <Text style={styles.label}>Tour de bras</Text>
-            </View>
-            <Slider
-              value={arms}
-              onValueChange={v => setArms(Math.round(v))}
-              minimumValue={20}
-              maximumValue={50}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.relaxation}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{arms} cm</Text>
-          </View>
-
-          {/* Tour de cuisse */}
-          <View style={styles.measurementContainer}>
-            <View style={styles.measurementHeader}>
-              <Target size={20} color={Colors.sport} />
-              <Text style={styles.label}>Tour de cuisse</Text>
-            </View>
-            <Slider
-              value={thighs}
-              onValueChange={v => setThighs(Math.round(v))}
-              minimumValue={40}
-              maximumValue={80}
-              step={1}
-              style={styles.slider}
-              minimumTrackTintColor={Colors.sport}
-              maximumTrackTintColor={Colors.border}
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.valueText}>{thighs} cm</Text>
-          </View>
-
-          {/* Calcul IMC */}
-          <View style={styles.bmiContainer}>
-            <Text style={styles.bmiTitle}>📊 Votre IMC</Text>
-            <View style={styles.bmiCard}>
-              <Text style={styles.bmiValue}>{calculateBMI()}</Text>
-              <Text style={[styles.bmiCategory, { color: bmiCategory.color }]}>
-                {bmiCategory.text}
+        {selectedTab === 'measurements' ? (
+          <>
+            {/* Message de bienvenue */}
+            <View style={styles.welcomeCard}>
+              <Text style={styles.welcomeTitle}>
+                Bonjour {user?.firstName || 'Utilisateur'} ! 👋
+              </Text>
+              <Text style={styles.welcomeText}>
+                Utilisez les curseurs ci-dessous pour renseigner vos mensurations actuelles et suivre votre évolution.
               </Text>
             </View>
-          </View>
-        </View>
 
-        {/* Section Évolution */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📆 Évolution à 1 mois</Text>
+            {/* Section Point de départ */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>🎯 Mon point de départ</Text>
 
-          <View style={styles.evolutionContainer}>
-            <Text style={styles.label}>Évolution du poids</Text>
-            <View style={styles.choicesRow}>
-              <ChoiceButton 
-                label="📉 J'ai perdu" 
-                selected={progress === 'perdu'} 
-                onPress={() => setProgress('perdu')} 
-              />
-              <ChoiceButton 
-                label="➖ Stable" 
-                selected={progress === 'stable'} 
-                onPress={() => setProgress('stable')} 
-              />
-              <ChoiceButton 
-                label="📈 J'ai repris" 
-                selected={progress === 'repris'} 
-                onPress={() => setProgress('repris')} 
-              />
+              {/* Taille */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Ruler size={20} color={Colors.agpBlue} />
+                  <Text style={styles.label}>Taille</Text>
+                </View>
+                <Slider
+                  value={height}
+                  onValueChange={v => setHeight(Math.round(v))}
+                  minimumValue={140}
+                  maximumValue={200}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.agpBlue}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{height} cm</Text>
+              </View>
+
+              {/* Poids */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Scale size={20} color={Colors.agpGreen} />
+                  <Text style={styles.label}>Poids</Text>
+                </View>
+                <Slider
+                  value={weight}
+                  onValueChange={v => setWeight(Math.round(v))}
+                  minimumValue={40}
+                  maximumValue={150}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.agpGreen}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{weight} kg</Text>
+              </View>
+
+              {/* Tour de taille */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Target size={20} color={Colors.morning} />
+                  <Text style={styles.label}>Tour de taille</Text>
+                </View>
+                <Slider
+                  value={waist}
+                  onValueChange={v => setWaist(Math.round(v))}
+                  minimumValue={60}
+                  maximumValue={140}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.morning}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{waist} cm</Text>
+              </View>
+
+              {/* Tour de hanche */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Target size={20} color={Colors.agpGreen} />
+                  <Text style={styles.label}>Tour de hanche</Text>
+                </View>
+                <Slider
+                  value={hips}
+                  onValueChange={v => setHips(Math.round(v))}
+                  minimumValue={70}
+                  maximumValue={150}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.agpGreen}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{hips} cm</Text>
+              </View>
+
+              {/* Tour de bras */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Target size={20} color={Colors.relaxation} />
+                  <Text style={styles.label}>Tour de bras</Text>
+                </View>
+                <Slider
+                  value={arms}
+                  onValueChange={v => setArms(Math.round(v))}
+                  minimumValue={20}
+                  maximumValue={50}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.relaxation}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{arms} cm</Text>
+              </View>
+
+              {/* Tour de cuisse */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Target size={20} color={Colors.sport} />
+                  <Text style={styles.label}>Tour de cuisse</Text>
+                </View>
+                <Slider
+                  value={thighs}
+                  onValueChange={v => setThighs(Math.round(v))}
+                  minimumValue={40}
+                  maximumValue={80}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.sport}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{thighs} cm</Text>
+              </View>
+
+              {/* Calcul IMC */}
+              <View style={styles.bmiContainer}>
+                <Text style={styles.bmiTitle}>📊 Votre IMC</Text>
+                <View style={styles.bmiCard}>
+                  <Text style={styles.bmiValue}>{calculateBMI()}</Text>
+                  <Text style={[styles.bmiCategory, { color: bmiCategory.color }]}>
+                    {bmiCategory.text}
+                  </Text>
+                </View>
+              </View>
             </View>
 
-            <Text style={styles.label}>Silhouette</Text>
-            <View style={styles.choicesRow}>
-              <ChoiceButton 
-                label="👖 Plus ample" 
-                selected={shape === 'ample'} 
-                onPress={() => setShape('ample')} 
-              />
-              <ChoiceButton 
-                label="🎯 Inchangée" 
-                selected={shape === 'identique'} 
-                onPress={() => setShape('identique')} 
-              />
-              <ChoiceButton 
-                label="📏 Plus serrée" 
-                selected={shape === 'serrée'} 
-                onPress={() => setShape('serrée')} 
-              />
-            </View>
-          </View>
-        </View>
+            {/* Section Évolution */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>📆 Évolution à 1 mois</Text>
 
-        {/* Conseils personnalisés */}
-        <View style={styles.tipsSection}>
-          <Text style={styles.tipsTitle}>💡 Conseils personnalisés</Text>
-          
-          {bmi < 18.5 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                💪 Votre IMC indique une corpulence légère. Concentrez-vous sur une alimentation équilibrée et riche en nutriments.
-              </Text>
-            </View>
-          )}
-          
-          {bmi >= 18.5 && bmi < 25 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                ✅ Excellent ! Votre IMC est dans la norme. Maintenez vos bonnes habitudes alimentaires et votre activité physique.
-              </Text>
-            </View>
-          )}
-          
-          {bmi >= 25 && bmi < 30 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🎯 Votre IMC indique un léger surpoids. Le programme AGP peut vous aider à retrouver un poids de forme naturellement.
-              </Text>
-            </View>
-          )}
-          
-          {bmi >= 30 && (
-            <View style={styles.tipCard}>
-              <Text style={styles.tipText}>
-                🌱 Le programme AGP est parfait pour vous ! Suivez les recommandations chronobiologiques pour une perte de poids durable.
-              </Text>
-            </View>
-          )}
+              <View style={styles.evolutionContainer}>
+                <Text style={styles.label}>Évolution du poids</Text>
+                <View style={styles.choicesRow}>
+                  <ChoiceButton 
+                    label="📉 J'ai perdu" 
+                    selected={progress === 'perdu'} 
+                    onPress={() => setProgress('perdu')} 
+                  />
+                  <ChoiceButton 
+                    label="➖ Stable" 
+                    selected={progress === 'stable'} 
+                    onPress={() => setProgress('stable')} 
+                  />
+                  <ChoiceButton 
+                    label="📈 J'ai repris" 
+                    selected={progress === 'repris'} 
+                    onPress={() => setProgress('repris')} 
+                  />
+                </View>
 
-          <View style={styles.motivationCard}>
-            <Text style={styles.motivationTitle}>🌟 Restez motivé(e) !</Text>
-            <Text style={styles.motivationText}>
-              "Les changements durables prennent du temps. Soyez patient(e) avec vous-même et célébrez chaque petit progrès !"
-            </Text>
-          </View>
-        </View>
+                <Text style={styles.label}>Silhouette</Text>
+                <View style={styles.choicesRow}>
+                  <ChoiceButton 
+                    label="👖 Plus ample" 
+                    selected={shape === 'ample'} 
+                    onPress={() => setShape('ample')} 
+                  />
+                  <ChoiceButton 
+                    label="🎯 Inchangée" 
+                    selected={shape === 'identique'} 
+                    onPress={() => setShape('identique')} 
+                  />
+                  <ChoiceButton 
+                    label="📏 Plus serrée" 
+                    selected={shape === 'serrée'} 
+                    onPress={() => setShape('serrée')} 
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* Conseils personnalisés */}
+            <View style={styles.tipsSection}>
+              <Text style={styles.tipsTitle}>💡 Conseils personnalisés</Text>
+              
+              {bmi < 18.5 && (
+                <View style={styles.tipCard}>
+                  <Text style={styles.tipText}>
+                    💪 Votre IMC indique une corpulence légère. Concentrez-vous sur une alimentation équilibrée et riche en nutriments.
+                  </Text>
+                </View>
+              )}
+              
+              {bmi >= 18.5 && bmi < 25 && (
+                <View style={styles.tipCard}>
+                  <Text style={styles.tipText}>
+                    ✅ Excellent ! Votre IMC est dans la norme. Maintenez vos bonnes habitudes alimentaires et votre activité physique.
+                  </Text>
+                </View>
+              )}
+              
+              {bmi >= 25 && bmi < 30 && (
+                <View style={styles.tipCard}>
+                  <Text style={styles.tipText}>
+                    🎯 Votre IMC indique un léger surpoids. Le programme AGP peut vous aider à retrouver un poids de forme naturellement.
+                  </Text>
+                </View>
+              )}
+              
+              {bmi >= 30 && (
+                <View style={styles.tipCard}>
+                  <Text style={styles.tipText}>
+                    🌱 Le programme AGP est parfait pour vous ! Suivez les recommandations chronobiologiques pour une perte de poids durable.
+                  </Text>
+                </View>
+              )}
+
+              <View style={styles.motivationCard}>
+                <Text style={styles.motivationTitle}>🌟 Restez motivé(e) !</Text>
+                <Text style={styles.motivationText}>
+                  "Les changements durables prennent du temps. Soyez patient(e) avec vous-même et célébrez chaque petit progrès !"
+                </Text>
+              </View>
+            </View>
+          </>
+        ) : (
+          /* Onglet Courbes d'évolution */
+          <MeasurementCharts />
+        )}
       </ScrollView>
     </View>
   );
@@ -552,5 +603,40 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 4,
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    gap: 6,
+  },
+  tabButtonActive: {
+    backgroundColor: Colors.agpBlue,
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.textSecondary,
+  },
+  tabButtonTextActive: {
+    color: Colors.textLight,
   },
 });
