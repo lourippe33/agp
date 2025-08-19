@@ -9,6 +9,7 @@ import {
   Alert,
   Switch,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets, Scale, Ruler } from 'lucide-react-native';
@@ -279,6 +280,10 @@ export default function ProfilScreen() {
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
       >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
