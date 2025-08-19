@@ -540,33 +540,34 @@
       "frequence": "Quotidien, 8 minutes"
     },
     {
-      "id": 21,
-      "titre": "Mini Tabata",
-      "type": "hiit",
-      "niveau": "debutant",
-      "image": "https://i.ibb.co/wFqPvbP2/Mini-Tabata.jpg",
-      "duree": 8,
-      "difficulte": "Moyen",
-      "calories": 85,
-      "tags": ["tabata", "hiit", "intensif"],
-      "description": "Petit circuit à haute intensité courte pour booster le métabolisme.",
-      "etapes": [
-        "20 sec jumping jacks / 10 sec pause.",
-        "20 sec squats / 10 sec pause.",
-        "20 sec pompes genoux / 10 sec pause.",
-        "20 sec planche / 10 sec pause.",
-        "Repose-toi puis fais 3 tours au total."
-      ],
-      "benefices": [
-        "Active tout le corps rapidement.",
-        "Brûle des calories efficacement.",
-        "Renforce cardio et muscles.",
-        "Courte durée, grand effet.",
-        "Améliore l'endurance."
-      ],
-      "momentIdeal": ["Matin", "Après-midi"],
-      "frequence": "3 fois par semaine, 8 minutes"
-    },
+  "id": 21,
+  "titre": "Mini Tabata",
+  "type": "hiit",
+  "niveau": "debutant",
+  "image": "https://i.ibb.co/wFqPvbP2/Mini-Tabata.jpg",
+  "duree": 8,
+  "difficulte": "Moyen",
+  "calories": 85,
+  "tags": ["tabata", "hiit", "intensif"],
+  "description": "Un petit circuit HIIT de 8 minutes, avec alternance d’efforts courts et pauses, pour booster le métabolisme et brûler des calories rapidement.",
+  "etapes": [
+    "1) Jumping jacks (20 sec) : Debout, saute en ouvrant bras et jambes, puis referme. Rythme rapide mais contrôlé. Repose-toi 10 sec.",
+    "2) Squats (20 sec) : Pieds écartés largeur épaules, plie les genoux comme pour t’asseoir, dos droit. Descends et remontes sans bloquer les genoux. Repose-toi 10 sec.",
+    "3) Pompes genoux (20 sec) : Au sol, mains sous les épaules, genoux posés. Fléchis les bras en gardant le dos droit, puis pousse pour remonter. Repose-toi 10 sec.",
+    "4) Planche (20 sec) : Position gainage, avant-bras au sol, corps droit, abdos serrés. Ne creuse pas le dos. Tiens la position. Repose-toi 10 sec.",
+    "5) Pause longue (30 sec) : Bois une gorgée d’eau, marche sur place.",
+    "6) Répète la séquence complète 3 fois au total (≈ 8 minutes)."
+  ],
+  "benefices": [
+    "Active tout le corps en peu de temps",
+    "Brûle des calories efficacement",
+    "Renforce le cœur et les muscles",
+    "Améliore l’endurance et le souffle",
+    "Se fait sans matériel, n’importe où"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3 fois par semaine, 8 minutes"
+},
    {
   "id": 22,
   "titre": "Yoga doux perte de poids",
