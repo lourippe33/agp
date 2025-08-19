@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: Colors.relaxation, // Rouge par défaut pour les jours non complétés
     marginHorizontal: 2,
     width: 45, // Largeur fixe pour assurer que tous les jours sont visibles
   },
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.agpGreen,
   },
   dayCardPartiallyCompleted: {
-    backgroundColor: '#FFE0E6', // Fond rouge clair
+    backgroundColor: '#FFE0E6',
     borderColor: Colors.relaxation,
   },
   dayCardToday: {

@@ -247,29 +247,12 @@ export default function HomeScreen() {
       // Générer les activités du jour
       const activities = generateDayActivities(i + 1);
       
-      // Pour hier et les jours passés, déterminer si toutes les activités ont été cochées
+      // Initialiser les états de completion
       let isCompleted = false;
       let isPartiallyCompleted = false;
       
-      if (isYesterday || (isPast && !isToday)) {
-        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
-        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
-        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
-        
-        if (allActivitiesChecked) {
-          isCompleted = true;
-          // Marquer toutes les activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = true;
-          });
-        } else if (someActivitiesChecked) {
-          isPartiallyCompleted = true;
-          // Marquer certaines activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = Math.random() > 0.5;
-          });
-        }
-      }
+      // Les jours ne sont complétés que si l'utilisateur a réellement coché les activités
+      // Par défaut, tous les jours sont non complétés sauf aujourd'hui qui est en bleu
       
       program.push({
         day: i + 1,

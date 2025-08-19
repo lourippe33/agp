@@ -141,45 +141,13 @@ export default function ProgrammeScreen() {
       // Générer les activités du jour
       const activities = generateDayActivities(i + 1);
       
-      // Pour hier, déterminer si toutes les activités ont été cochées
+      // Initialiser les états de completion
       let isCompleted = false;
       let isPartiallyCompleted = false;
       
-      if (isYesterday) {
-        // Simuler que certaines activités ont été cochées (en production, cela viendrait des données utilisateur)
-        const allActivitiesChecked = Math.random() > 0.3; // Simulation: 70% de chance que tout soit coché
-        const someActivitiesChecked = Math.random() > 0.5; // Simulation: 50% de chance que certaines soient cochées
-        
-        if (allActivitiesChecked) {
-          isCompleted = true;
-          // Marquer toutes les activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = true;
-          });
-        } else if (someActivitiesChecked) {
-          isPartiallyCompleted = true;
-          // Marquer certaines activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = Math.random() > 0.5;
-          });
-        }
-      } else if (isPast && !isYesterday) {
-        // Pour les jours plus anciens, simuler une progression aléatoire
-        isCompleted = Math.random() > 0.3;
-        isPartiallyCompleted = !isCompleted && Math.random() > 0.5;
-        
-        if (isCompleted) {
-          // Marquer toutes les activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = true;
-          });
-        } else if (isPartiallyCompleted) {
-          // Marquer certaines activités comme complétées
-          Object.keys(activities).forEach(key => {
-            activities[key].completed = Math.random() > 0.5;
-          });
-        }
-      }
+      // Les jours ne sont complétés que si l'utilisateur a réellement coché les activités
+      // Par défaut, tous les jours sont non complétés (rouge) sauf aujourd'hui (bleu)
+      // La completion sera gérée par les interactions utilisateur réelles
       
       program.push({
         day: i + 1,
