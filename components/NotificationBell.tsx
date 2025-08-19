@@ -26,8 +26,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedNotifications, setSelectedNotifications] = useState<string[]>([]);
-  const [selectionMode, setSelectionMode] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -68,183 +66,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
       loadNotifications();
     } catch (error) {
       console.error('Erreur lors de la vérification des notifications:', error);
-    }
-  };
-
-  const handleOpenNotifications = () => {
-    console.log('Ouverture des notifications');
-    setModalVisible(true);
-  };
-
-  const handleCloseNotifications = () => {
-    console.log('Fermeture des notifications');
-    setModalVisible(false);
-  };
-
-  const handleMarkAsRead = async (notificationId: string) => {
-    if (!user) return;
-    
-    try {
-      console.log('Marquage notification comme lue:', notificationId);
-      await NotificationService.markNotificationAsRead(user.id, notificationId);
-      
-      // Mettre à jour l'état local
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === notificationId 
-            ? { ...notification, read: true } 
-            : notification
-        )
-      );
-      
-      // Mettre à jour le compteur
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Erreur lors du marquage de la notification:', error);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    if (!user) return;
-    
-    try {
-      console.log('Marquage de toutes les notifications comme lues');
-      await NotificationService.markAllNotificationsAsRead(user.id);
-      
-      // Mettre à jour l'état local
-      setNotifications(prev => 
-        prev.map(notification => ({ ...notification, read: true }))
-      );
-      
-      // Mettre à jour le compteur
-      setUnreadCount(0);
-    } catch (error) {
-      console.error('Erreur lors du marquage de toutes les notifications:', error);
-    }
-  };
-
-  const handleClearAll = async () => {
-    if (!user) return;
-    
-    Alert.alert(
-      'Supprimer toutes les notifications',
-      'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { 
-          text: 'Supprimer', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // Utiliser le service de notification pour la suppression
-              const success = await NotificationService.clearAllNotifications(user.id);
-              
-              if (success) {
-                // Mettre à jour l'état local
-                setNotifications([]);
-                setUnreadCount(0);
-                setSelectionMode(false);
-                setSelectedNotifications([]);
-                
-                Alert.alert(
-                  '✅ Suppression réussie',
-                  'Toutes vos notifications ont été supprimées.',
-                  [{ text: 'OK', style: 'default' }]
-                );
-              } else {
-                throw new Error('Échec de la suppression via le service');
-              }
-            } catch (error) {
-              console.error('❌ Erreur suppression:', error);
-              Alert.alert(
-                'Erreur',
-                'Impossible de supprimer les notifications. Veuillez réessayer.',
-                [{ text: 'OK', style: 'default' }]
-              );
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const handleDeleteSelected = async () => {
-    if (!user || selectedNotifications.length === 0) return;
-    
-    Alert.alert(
-      'Supprimer les notifications sélectionnées',
-      `Êtes-vous sûr de vouloir supprimer ${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's' : ''} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { 
-          text: 'Supprimer', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // Filtrer les notifications pour supprimer celles sélectionnées
-              const updatedNotifications = notifications.filter(
-                notification => !selectedNotifications.includes(notification.id)
-              );
-              
-              // Sauvegarder directement
-              const notificationKey = `@agp_notifications_${user.id}`;
-              
-              if (updatedNotifications.length === 0) {
-                await AsyncStorage.removeItem(notificationKey);
-              } else {
-                await AsyncStorage.setItem(notificationKey, JSON.stringify(updatedNotifications));
-              }
-              
-              // Mettre à jour l'état local
-              setNotifications(updatedNotifications);
-              const unread = updatedNotifications.filter(n => !n.read).length;
-              setUnreadCount(unread);
-              setSelectionMode(false);
-              setSelectedNotifications([]);
-              
-              Alert.alert(
-                '✅ Suppression réussie',
-                `${selectedNotifications.length} notification${selectedNotifications.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`,
-                [{ text: 'OK', style: 'default' }]
-              );
-            } catch (error) {
-              console.error('❌ Erreur suppression sélective:', error);
-              Alert.alert(
-                'Erreur',
-                'Impossible de supprimer les notifications sélectionnées.',
-                [{ text: 'OK', style: 'default' }]
-              );
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const toggleNotificationSelection = (notificationId: string) => {
-    setSelectedNotifications(prev => 
-      prev.includes(notificationId)
-        ? prev.filter(id => id !== notificationId)
-        : [...prev, notificationId]
-    );
-  };
-
-  const toggleSelectionMode = () => {
-    setSelectionMode(!selectionMode);
-    setSelectedNotifications([]);
-  };
-
-  const selectAllNotifications = () => {
-    if (selectedNotifications.length === notifications.length) {
-      setSelectedNotifications([]);
-    } else {
-      setSelectedNotifications(notifications.map(n => n.id));
-    }
-  };
-
   const renderNotificationItem = ({ item }: { item: Notification }) => {
-    const isSelected = selectedNotifications.includes(item.id);
-    
     const getNotificationIcon = (type: string) => {
       switch (type) {
         case 'meal':
@@ -282,38 +104,16 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     return (
       <TouchableOpacity 
         style={[
-        styles.notificationItem,
-        !item.read && styles.notificationItemUnread,
-        isSelected && styles.notificationItemSelected
-      ]}
+          styles.notificationItem,
+          !item.read && styles.notificationItemUnread
+        ]}
         onPress={() => {
-          if (selectionMode) {
-            toggleNotificationSelection(item.id);
-          } else if (!item.read) {
+          if (!item.read) {
             handleMarkAsRead(item.id);
-          }
-        }}
-        onLongPress={() => {
-          if (!selectionMode) {
-            setSelectionMode(true);
-            setSelectedNotifications([item.id]);
           }
         }}
         activeOpacity={0.7}
       >
-        {selectionMode && (
-          <TouchableOpacity
-            style={styles.selectionCheckbox}
-            onPress={() => toggleNotificationSelection(item.id)}
-          >
-            {isSelected ? (
-              <CheckSquare size={20} color={Colors.agpBlue} />
-            ) : (
-              <Square size={20} color={Colors.textSecondary} />
-            )}
-          </TouchableOpacity>
-        )}
-        
         <View style={styles.notificationContent}>
           <View style={styles.notificationHeader}>
             <Text style={styles.notificationIcon}>
@@ -327,7 +127,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           <Text style={styles.notificationMessage}>{item.message}</Text>
         </View>
         
-        {!item.read && !selectionMode && (
+        {!item.read && (
           <TouchableOpacity
             style={styles.markReadButton}
             onPress={() => handleMarkAsRead(item.id)}
@@ -377,11 +177,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
               Alert.alert('Erreur', `Test échoué: ${error.message}`);
             }
           }
-        }
-      ]
-    );
-  };
-
   return (
     <>
       <TouchableOpacity
@@ -416,85 +211,14 @@ export default function NotificationBell({ style }: NotificationBellProps) {
             </View>
 
             <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={testAsyncStorage}
-              >
-                <Text style={[styles.actionButtonText, { color: Colors.morning }]}>
-                  Test Storage
-                </Text>
-              </TouchableOpacity>
-              
               {notifications.length > 0 && (
-                <>
-                  {selectionMode ? (
-                    <>
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={selectAllNotifications}
-                      >
-                        <CheckSquare size={16} color={Colors.agpBlue} />
-                        <Text style={[styles.actionButtonText, { color: Colors.agpBlue }]}>
-                          {selectedNotifications.length === notifications.length ? 'Tout désélectionner' : 'Tout sélectionner'}
-                        </Text>
-                      </TouchableOpacity>
-                      
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={handleDeleteSelected}
-                        disabled={selectedNotifications.length === 0}
-                      >
-                        <Trash2 size={16} color={selectedNotifications.length > 0 ? Colors.relaxation : Colors.textSecondary} />
-                        <Text style={[
-                          styles.actionButtonText, 
-                          { color: selectedNotifications.length > 0 ? Colors.relaxation : Colors.textSecondary }
-                        ]}>
-                          Supprimer ({selectedNotifications.length})
-                        </Text>
-                      </TouchableOpacity>
-                      
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={toggleSelectionMode}
-                      >
-                        <X size={16} color={Colors.textSecondary} />
-                        <Text style={[styles.actionButtonText, { color: Colors.textSecondary }]}>
-                          Annuler
-                        </Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <>
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={handleMarkAllAsRead}
-                      >
-                        <Check size={16} color={Colors.agpGreen} />
-                        <Text style={styles.actionButtonText}>Tout marquer comme lu</Text>
-                      </TouchableOpacity>
-                      
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={toggleSelectionMode}
-                      >
-                        <CheckSquare size={16} color={Colors.agpBlue} />
-                        <Text style={[styles.actionButtonText, { color: Colors.agpBlue }]}>
-                          Sélectionner
-                        </Text>
-                      </TouchableOpacity>
-                      
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={handleClearAll}
-                      >
-                        <Trash2 size={16} color={Colors.relaxation} />
-                        <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
-                          Tout effacer
-                        </Text>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                </>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={handleMarkAllAsRead}
+                >
+                  <Check size={16} color={Colors.agpGreen} />
+                  <Text style={styles.actionButtonText}>Tout marquer comme lu</Text>
+                </TouchableOpacity>
               )}
             </View>
 
@@ -511,7 +235,8 @@ export default function NotificationBell({ style }: NotificationBellProps) {
                 <Bell size={48} color={Colors.textSecondary} />
                 <Text style={styles.emptyStateTitle}>Aucune notification</Text>
                 <Text style={styles.emptyStateText}>
-                  Vous recevrez des notifications pour vos repas, hydratation et messages motivants.
+                  Vous recevrez des notifications pour vos repas, hydratation et messages motivants. 
+                  Les notifications sont automatiquement effacées chaque soir à 23h59.
                 </Text>
               </View>
             )}
@@ -614,15 +339,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.agpLightBlue,
     borderLeftWidth: 3,
     borderLeftColor: Colors.agpBlue,
-  },
-  notificationItemSelected: {
-    backgroundColor: Colors.agpLightGreen,
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.agpGreen,
-  },
-  selectionCheckbox: {
-    padding: 8,
-    marginRight: 8,
   },
   notificationContent: {
     flex: 1,

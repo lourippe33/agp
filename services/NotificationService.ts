@@ -376,8 +376,8 @@ export class NotificationService {
       return;
     }
     
-    // Vérifier si c'est minuit pour nettoyer les anciennes notifications
-    await this.cleanupOldNotifications(userId);
+    // Vérifier si c'est 23h59 pour nettoyer les notifications du jour
+    await this.cleanupDailyNotifications(userId);
     
     const now = new Date();
     const currentHour = now.getHours();
@@ -421,71 +421,27 @@ export class NotificationService {
     }
   }
 
-  // Nettoyer les notifications anciennes (plus de 7 jours)
-  static async cleanupOldNotifications(userId: string): Promise<void> {
+  // Nettoyer toutes les notifications du jour à 23h59
+  static async cleanupDailyNotifications(userId: string): Promise<void> {
     try {
       const now = new Date();
-      const isNearMidnight = now.getHours() === 0 && now.getMinutes() <= 5; // Entre 00:00 et 00:05
+      const isCleanupTime = now.getHours() === 23 && now.getMinutes() === 59; // Exactement 23h59
       
-      if (!isNearMidnight) {
-        return; // Ne nettoyer qu'autour de minuit
+      if (!isCleanupTime) {
+        return; // Ne nettoyer qu'à 23h59
       }
       
-      console.log('🧹 Nettoyage automatique des notifications anciennes...');
+      console.log('🧹 Nettoyage automatique des notifications du jour à 23h59...');
       
-      const notifications = await this.getNotifications(userId);
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      // Garder seulement les notifications des 7 derniers jours
-      const recentNotifications = notifications.filter(notification => {
-        const notificationDate = new Date(notification.timestamp);
-        return notificationDate > sevenDaysAgo;
-      });
-      
-      // Si des notifications ont été supprimées, sauvegarder
-      if (recentNotifications.length < notifications.length) {
-        const deletedCount = notifications.length - recentNotifications.length;
-        console.log(`🗑️ Suppression automatique de ${deletedCount} notifications anciennes`);
-        
-        if (recentNotifications.length === 0) {
-          // Supprimer complètement la clé si plus de notifications
-          await LocalStorageService.removeItem(`@agp_notifications_${userId}`);
-        } else {
-          // Sauvegarder les notifications récentes
-          await LocalStorageService.setItem(
-            `@agp_notifications_${userId}`,
-            JSON.stringify(recentNotifications)
-          );
-        }
-        
-        console.log(`✅ Nettoyage terminé: ${recentNotifications.length} notifications conservées`);
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors du nettoyage automatique:', error);
-    }
-  }
-
-  // Nettoyer toutes les notifications d'un utilisateur (pour la suppression manuelle)
-  static async clearAllNotifications(userId: string): Promise<boolean> {
-    try {
-      console.log(`🗑️ [Service] Suppression manuelle de toutes les notifications pour ${userId}`);
-      
-      const storageKey = `@agp_notifications_${userId}`;
+      // Supprimer toutes les notifications du jour
+      const storageKey = `${STORAGE_KEYS.NOTIFICATIONS}_${userId}`;
       await LocalStorageService.removeItem(storageKey);
       
-      // Vérifier la suppression
-      const afterClear = await LocalStorageService.getItem(storageKey);
+      console.log('✅ Toutes les notifications du jour ont été effacées à 23h59');
       
-      if (afterClear === null) {
-        console.log('✅ [Service] Suppression manuelle réussie');
-        return true;
-      } else {
-        throw new Error('Échec de la suppression manuelle');
-      }
+      // Le lendemain, l'utilisateur aura une interface vierge
     } catch (error) {
-      console.error('❌ [Service] Erreur suppression manuelle:', error);
-      throw error;
+      console.error('❌ Erreur lors du nettoyage quotidien:', error);
     }
   }
 
