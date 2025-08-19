@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Sun, Utensils, Coffee, Moon, ArrowLeft, Search } from 'lucide-react-native';
@@ -63,7 +63,8 @@ export default function RecettesIndexScreen() {
     <View style={styles.container}>
       <ScrollView 
         ref={scrollViewRef}
-        showsVerticalScrollIndicator={false} 
+        showsVerticalScrollIndicator={true}
+        style={Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined}
         contentContainerStyle={styles.scrollContent}
       >
         {/* Header */}

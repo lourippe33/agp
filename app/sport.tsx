@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import { Dumbbell, ArrowLeft } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';
@@ -63,7 +63,16 @@ export default function SportScreen() {
       </View>
       
       <View style={styles.content}>
-        <SportMenuGrid onExerciseSelect={handleExerciseSelect} />
+        <ScrollView 
+          style={[
+            styles.scrollContainer,
+            Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+          ]}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <SportMenuGrid onExerciseSelect={handleExerciseSelect} />
+        </ScrollView>
       </View>
 
       <ExerciseModal
@@ -97,5 +106,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingBottom: 70, // Espace pour la tab bar
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
 });
