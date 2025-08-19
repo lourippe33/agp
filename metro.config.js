@@ -11,9 +11,11 @@ config.resolver.alias = {
   '@': path.resolve(__dirname, './'),
 };
 
-// Fix SVG constructor error on web by using web-specific build
-config.resolver.extraNodeModules = {
-  'react-native-svg': path.resolve(__dirname, 'node_modules/react-native-svg/lib/module/ReactNativeSVG.web.js'),
+// Improve SVG compatibility on web
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
+config.resolver.alias = {
+  ...config.resolver.alias,
+  'react-native-svg': 'react-native-svg/lib/module/ReactNativeSVG.web.js',
 };
 
 // Reset cache on start
