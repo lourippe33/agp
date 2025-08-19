@@ -197,33 +197,33 @@
       "frequence": "2-3 fois par semaine, 25 minutes"
     },
     {
-      "id": 8,
-      "titre": "Pilates Minceur",
-      "type": "pilates",
-      "niveau": "debutant",
-      "image": "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg",
-      "duree": 28,
-      "difficulte": "Facile",
-      "calories": 90,
-      "tags": ["pilates", "core", "posture"],
-      "description": "Renforcez votre centre et affinez votre silhouette avec ces exercices de Pilates spécialement conçus pour la perte de poids.",
-      "etapes": [
-        "Échauffement : respiration et mobilisation 3 minutes",
-        "Série abdominaux : hundred, roll up, single leg stretch",
-        "Travail des jambes : leg circles, scissors",
-        "Renforcement du dos : swimming, single leg kick",
-        "Étirements finaux : 5 minutes"
-      ],
-      "benefices": [
-        "Renforce les muscles profonds",
-        "Améliore la posture",
-        "Affine la taille et les hanches",
-        "Développe la concentration",
-        "Prévient les douleurs de dos"
-      ],
-      "momentIdeal": ["Matin", "Soir"],
-      "frequence": "4-5 fois par semaine, 28 minutes"
-    },
+  "id": 8,
+  "titre": "Pilates Minceur",
+  "type": "pilates",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg",
+  "duree": 15,
+  "difficulte": "Facile",
+  "calories": 90,
+  "tags": ["pilates", "core", "posture"],
+  "description": "Un enchaînement facile pour tonifier le ventre, les jambes et le dos, tout en améliorant la posture. Accessible aux débutants.",
+  "etapes": [
+    "1) Échauffement (3 min) : Inspire par le nez, expire par la bouche (3x). Tourne doucement la tête gauche/droite. Hausse puis relâche les épaules (5x). Fais 5 cercles d’épaules vers l’avant puis 5 vers l’arrière.",
+    "2) Abdos faciles (3 min) : Allongé sur le dos, genoux pliés, mains derrière la tête. Monte la tête et les épaules pour regarder le ventre, puis redescends. 10 répétitions. Ensuite, tends une jambe en l’air, refais 10 répétitions et change de jambe.",
+    "3) Jambes actives (3 min) : Dos au sol, lève une jambe tendue vers le plafond. Dessine 5 petits cercles dans l’air, puis 5 dans l’autre sens. Change de jambe. Fais 2 séries par côté.",
+    "4) Dos renforcé (3 min) : Allongé sur le ventre, bras tendus devant. Monte bras et jambes, maintiens 1 seconde, redescends. 8–10 répétitions. Variante : alterne bras droit + jambe gauche, puis bras gauche + jambe droite (comme si tu nageais).",
+    "5) Étirements finaux (3 min) : Assis, jambes tendues, penche doucement le buste vers l’avant 20 s. À quatre pattes, enchaîne 5 fois dos rond (chat) puis dos creux."
+  ],
+  "benefices": [
+    "Renforce les muscles profonds",
+    "Améliore la posture",
+    "Affinage de la taille et des hanches",
+    "Développe la concentration",
+    "Détend le corps"
+  ],
+  "momentIdeal": ["Matin", "Soir"],
+  "frequence": "3–5 fois par semaine, 15 minutes"
+},
     {
       "id": 9,
       "titre": "Course Fractionné",
