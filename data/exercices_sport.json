@@ -624,6 +624,148 @@
   ],
   "momentIdeal": ["Matin", "Soir"],
   "frequence": "3–5 fois par semaine, 20 minutes"
+},
+    {
+  "id": 24,
+  "titre": "Chaise Brûle-Graisse",
+  "type": "cardio",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+  "duree": 12,
+  "difficulte": "Facile",
+  "calories": 80,
+  "tags": ["cardio", "débutant", "sans-matériel", "chaise"],
+  "description": "Petit circuit autour d’une chaise, accessible à tous, pour activer le cardio et brûler des calories sans impact.",
+  "etapes": [
+    "1) Échauffement (1 min) : Marche sur place en s’aidant du dossier (rythme léger).",
+    "2) Assis→Debout (2 min) : Assieds-toi puis relève-toi sans t’aider des mains, rythme régulier.",
+    "3) Montées de genoux avec appui (2 min) : Touche le dossier d’une main, lève les genoux tour à tour à hauteur de hanches.",
+    "4) Fentes appuyées (2 min) : Une main sur le dossier, fais des fentes alternées en contrôle.",
+    "5) Pompes inclinées (2 min) : Mains sur l’assise, corps gainé, fléchis les coudes puis repousse.",
+    "6) Circuit final (2 min) : 30 s assis→debout + 30 s montées de genoux + 30 s pompes inclinées + 30 s marche.",
+    "7) Retour au calme (1 min) : Étire quadriceps et épaules en douceur."
+  ],
+  "benefices": [
+    "Brûle des calories sans sauts",
+    "Sécurisant grâce au point d’appui",
+    "Renforce jambes et haut du corps",
+    "Idéal pour une reprise en douceur"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3 à 5 fois par semaine, 12 minutes"
+},
+{
+  "id": 25,
+  "titre": "Marche + Bras Actifs",
+  "type": "cardio",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+  "duree": 10,
+  "difficulte": "Très facile",
+  "calories": 60,
+  "tags": ["marche", "cardio", "sans-impact"],
+  "description": "Marche rapide sur place avec mouvements de bras pour augmenter la dépense sans forcer.",
+  "etapes": [
+    "1) Échauffement (1 min) : Marche lente, épaules relâchées.",
+    "2) Marche rapide (2 min) : Allonge la foulée, souffle régulier.",
+    "3) Marche bras levés (2 min) : Lève et baisse les bras au-dessus de la tête en marchant.",
+    "4) Rotations de bras (2 min) : Cercles de bras alternés tout en marchant.",
+    "5) Montées de genoux légères (2 min) : Genoux à mi-hauteur, rythme confortable.",
+    "6) Retour au calme (1 min) : Marche lente + grandes respirations."
+  ],
+  "benefices": [
+    "Active le haut et le bas du corps",
+    "Brûle des calories sans impact",
+    "Améliore la coordination et le souffle",
+    "Faisable partout, zéro matériel"
+  ],
+  "momentIdeal": ["Matin", "Début de soirée"],
+  "frequence": "Quotidien, 10 minutes"
+},
+{
+  "id": 26,
+  "titre": "Cardio Fun Sans Saut",
+  "type": "cardio",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg",
+  "duree": 12,
+  "difficulte": "Facile",
+  "calories": 85,
+  "tags": ["cardio", "sans-impact", "débutant"],
+  "description": "Enchaînement dynamique sans saut pour protéger les articulations tout en brûlant des calories.",
+  "etapes": [
+    "1) Pas de côté + bras (2 min) : Grand pas à droite/gauche, bras qui montent et descendent.",
+    "2) Talons-fesses sans saut (2 min) : Talon vers fesse en alternant, bras toniques.",
+    "3) Torsions de buste (2 min) : Pieds ancrés, fais des rotations lentes du buste avec bras ouverts.",
+    "4) Montées de genoux contrôlées (2 min) : Genoux à hauteur de hanches, rythme soutenu.",
+    "5) Combo final (3 min) : 30 s de chaque : pas de côté → talons-fesses → torsions → montées de genoux → pas de côté → talons-fesses.",
+    "6) Retour au calme (1 min) : Marche lente + étirement des épaules."
+  ],
+  "benefices": [
+    "Brûle des calories sans impact",
+    "Protège genoux et chevilles",
+    "Améliore le souffle et la posture",
+    "Accessible même en surpoids"
+  ],
+  "momentIdeal": ["Après-midi", "Soir"],
+  "frequence": "3 à 5 fois par semaine, 12 minutes"
+},
+{
+  "id": 27,
+  "titre": "Yoga Brûle-Calm (Flow 15’)",
+  "type": "yoga",
+  "niveau": "debutant",
+  "image": "https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg",
+  "duree": 15,
+  "difficulte": "Facile",
+  "calories": 80,
+  "tags": ["yoga", "flow", "perte-de-poids"],
+  "description": "Petit flow de yoga fluide pour activer en douceur, transpirer un peu et finir apaisé.",
+  "etapes": [
+    "1) 2 Salutations au soleil (3 min) : Debout → flexion avant → planche → cobra → chien tête en bas → revient debout.",
+    "2) Flow guerrier (4 min) : Guerrier 1 → Guerrier 2 → Triangle. 30 s par posture, chaque côté.",
+    "3) Planche douce (2 min) : 2×30 s planche bras tendus, 30 s de repos entre les deux.",
+    "4) Chien tête en bas (2 min) : Tenues de 20 s × 3 avec respiration calme.",
+    "5) Assis respiration 4-6 (2 min) : Inspire 4 s, expire 6 s.",
+    "6) Relaxation courte (2 min) : Allongé, relâche tout le corps."
+  ],
+  "benefices": [
+    "Active la dépense douce",
+    "Améliore la souplesse et l’équilibre",
+    "Apaise le système nerveux",
+    "Idéal fin de journée"
+  ],
+  "momentIdeal": ["Fin d'après-midi", "Soir"],
+  "frequence": "3–4 fois par semaine, 15 minutes"
+},
+{
+  "id": 28,
+  "titre": "Abdos + Cardio Express",
+  "type": "cardio",
+  "niveau": "debutant-intermediaire",
+  "image": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+  "duree": 12,
+  "difficulte": "Moyen",
+  "calories": 90,
+  "tags": ["cardio", "abdos", "brule-graisse"],
+  "description": "Mélange rapide de cardio et de gainage pour activer le métabolisme et tonifier la sangle abdominale.",
+  "etapes": [
+    "1) Jumping jacks (30 s) → repos (15 s).",
+    "2) Crunchs au sol (30 s) → repos (15 s).",
+    "3) Montées de genoux (30 s) → repos (15 s).",
+    "4) Gainage avant-bras (30 s) → repos (30 s).",
+    "5) Répète la séquence 3 fois (≈ 10 min).",
+    "6) Retour au calme (2 min) : Étire abdos (cobra doux) et jambes."
+  ],
+  "benefices": [
+    "Augmente la dépense énergétique",
+    "Renforce la ceinture abdominale",
+    "Améliore le souffle",
+    "Se fait sans matériel"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3 à 4 fois par semaine, 12 minutes"
 }
+
   ]
 }
