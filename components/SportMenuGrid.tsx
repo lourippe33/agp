@@ -493,6 +493,33 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           )}
         </View>
       </Modal>
+
+      {/* Modal Timer Yoga spécialisé */}
+      <Modal
+        visible={yogaTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Yoga Dynamique'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <YogaTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
     </>
   );
 }
