@@ -29,33 +29,36 @@
       "frequence": "5 fois par semaine, 15 minutes"
     },
     {
-      "id": 2,
-      "titre": "Circuit Training Maison",
-      "type": "renforcement",
-      "niveau": "intermediaire",
-      "image": "https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg",
-      "duree": 20,
-      "difficulte": "Moyen",
-      "calories": 150,
-      "tags": ["circuit", "maison", "renforcement"],
-      "description": "Un circuit complet qui combine cardio et renforcement musculaire. Parfait pour brûler des calories et tonifier votre corps depuis chez vous !",
-      "etapes": [
-        "Échauffement : 3 minutes de marche sur place",
-        "Circuit (répéter 3 fois) : 30 sec d'exercice, 15 sec de repos",
-        "Squats - Pompes (genoux au sol si besoin) - Mountain climbers",
-        "Fentes - Planche - Jumping jacks",
-        "Retour au calme : 2 minutes d'étirements"
-      ],
-      "benefices": [
-        "Brûle beaucoup de calories en peu de temps",
-        "Renforce tous les groupes musculaires",
-        "Améliore l'endurance cardiovasculaire",
-        "Booste le métabolisme pendant des heures",
-        "Aucun équipement nécessaire"
-      ],
-      "momentIdeal": ["Matin", "Fin d'après-midi"],
-      "frequence": "3-4 fois par semaine, 20 minutes"
-    },
+  "id": 2,
+  "titre": "Cardio Brûle-Graisse",
+  "type": "cardio",
+  "niveau": "debutant-intermediaire",
+  "image": "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg",
+  "duree": 20,
+  "difficulte": "Moyen",
+  "calories": 180,
+  "tags": ["cardio", "perte-de-poids", "brule-graisse"],
+  "description": "Séance dynamique sans matériel pour activer le métabolisme, brûler des graisses et améliorer l’endurance. Parfaite pour la perte de poids.",
+  "etapes": [
+    "1) Échauffement (3 min) : marche rapide sur place, montées de genoux légères, cercles de bras.",
+    "2) Jumping jacks (2 min) : ouvre et ferme les jambes en sautant, bras qui montent et descendent.",
+    "3) Squats dynamiques (2 min) : plie les genoux comme pour t’asseoir, puis remonte en rythme.",
+    "4) Montées de genoux (2 min) : cours sur place en montant les genoux à hauteur de hanches.",
+    "5) Fentes alternées (2 min) : avance un pied, plie les genoux à 90°, puis change de jambe.",
+    "6) Pompes simplifiées (2 min) : au sol, mains sous les épaules, sur genoux si besoin.",
+    "7) Circuit final (5 min) : enchaîne jumping jacks, squats et montées de genoux, 30 sec chaque exercice, sans pause.",
+    "8) Retour au calme (2 min) : marche lente sur place + étirements jambes et bras."
+  ],
+  "benefices": [
+    "Active le métabolisme",
+    "Favorise la perte de poids",
+    "Améliore l’endurance",
+    "Renforce les jambes et les bras",
+    "Ne nécessite aucun matériel"
+  ],
+  "momentIdeal": ["Matin", "Après-midi"],
+  "frequence": "3 à 4 fois par semaine, 20 minutes"
+},
     {
       "id": 3,
       "titre": "Danse Fitness Fun",
