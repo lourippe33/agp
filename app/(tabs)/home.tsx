@@ -232,6 +232,9 @@ export default function HomeScreen() {
     yesterday.setDate(today.getDate() - 1);
     const yesterdayStr = yesterday.toDateString();
     const todayStr = today.toDateString();
+    const currentHour = today.getHours();
+    const currentMinutes = today.getMinutes();
+    const isAfter2359 = currentHour === 23 && currentMinutes >= 59;
 
     const program: DayProgram[] = [];
 
@@ -243,6 +246,7 @@ export default function HomeScreen() {
       const isToday = currentDate.toDateString() === todayStr;
       const isYesterday = currentDate.toDateString() === yesterdayStr;
       const isPast = isPastDay(currentDate);
+      const isFuture = currentDate.getTime() > today.getTime();
       
       // Générer les activités du jour
       const activities = generateDayActivities(i + 1);
@@ -250,6 +254,20 @@ export default function HomeScreen() {
       // Initialiser les états de completion
       let isCompleted = false;
       let isPartiallyCompleted = false;
+      let isBlocked = false;
+      
+      // Logique de blocage des jours futurs
+      if (isFuture) {
+        // Vérifier si le jour précédent est complété ou si on est après 23h59 aujourd'hui
+        const previousDayIndex = i - 1;
+        if (previousDayIndex >= 0) {
+          const previousDay = program[previousDayIndex];
+          // Bloquer si le jour précédent n'est pas complété ET qu'on n'est pas après 23h59
+          if (previousDay && !previousDay.isCompleted && !isAfter2359) {
+            isBlocked = true;
+          }
+        }
+      }
       
       // Les jours ne sont complétés que si l'utilisateur a réellement coché les activités
       // Par défaut, tous les jours sont non complétés sauf aujourd'hui qui est en bleu
@@ -260,6 +278,7 @@ export default function HomeScreen() {
         isCompleted,
         isPartiallyCompleted,
         isToday,
+        isBlocked,
         activities,
         totalDuration: calculateDayTotalDuration(activities),
         badges: i === 6 ? ['🌱'] : i === 13 ? ['🌿'] : i === 20 ? ['🌳'] : i === 27 ? ['🏆'] : undefined
@@ -371,6 +390,16 @@ export default function HomeScreen() {
   };
 
   const handleDayPress = (day: DayProgram) => {
+    // Empêcher l'ouverture des jours bloqués
+    if (day.isBlocked) {
+      Alert.alert(
+        "Jour bloqué",
+        "Vous devez d'abord terminer le jour précédent ou attendre 23h59 pour accéder à ce jour.",
+        [{ text: "OK", style: "default" }]
+      );
+      return;
+    }
+    
     // Navigate to the program screen with the selected day
     router.push({
       pathname: '/(tabs)/programme',

@@ -10,6 +10,7 @@ interface DayProgram {
   isCompleted: boolean;
   isToday: boolean;
   isPartiallyCompleted?: boolean;
+  isBlocked?: boolean;
   activities: {
     breakfast: { name: string; completed: boolean };
     sport: { name: string; completed: boolean };
@@ -34,10 +35,12 @@ export default function DayProgramCard({ day, onPress }: DayCardProps) {
         styles.dayCard,
         day.isCompleted && styles.dayCardCompleted, // Vert pour les jours complétés
         day.isPartiallyCompleted && styles.dayCardPartiallyCompleted, // Rouge pour les jours partiellement complétés
-        day.isToday && styles.dayCardToday // Bleu pour le jour actuel
+        day.isToday && styles.dayCardToday, // Bleu pour le jour actuel
+        day.isBlocked && styles.dayCardBlocked // Gris pour les jours bloqués
       ]}
       onPress={() => onPress(day)}
-      activeOpacity={0.8}
+      activeOpacity={day.isBlocked ? 1 : 0.8}
+      disabled={day.isBlocked}
     >
       <View style={styles.dayHeader}>
         <Text style={[
@@ -54,7 +57,10 @@ export default function DayProgramCard({ day, onPress }: DayCardProps) {
         {day.isPartiallyCompleted && (
           <Flame size={16} color={Colors.relaxation} strokeWidth={2} />
         )}
-        {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && (
+        {day.isBlocked && (
+          <Lock size={14} color={Colors.textSecondary} strokeWidth={2} />
+        )}
+        {isPastDay(day.date) && !day.isCompleted && !day.isPartiallyCompleted && !day.isToday && !day.isBlocked && (
           <Lock size={14} color={Colors.textSecondary} strokeWidth={2} />
         )}
         {day.badges && (
@@ -109,6 +115,11 @@ const styles = StyleSheet.create({
   dayCardToday: {
     borderColor: Colors.agpBlue,
     backgroundColor: Colors.agpLightBlue,
+  },
+  dayCardBlocked: {
+    borderColor: Colors.border,
+    backgroundColor: Colors.background,
+    opacity: 0.6,
   },
   dayHeader: {
     flexDirection: 'row',
