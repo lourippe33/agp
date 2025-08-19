@@ -130,6 +130,16 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     console.log('🔍 [DEBUG] User ID:', user.id);
     console.log('🔍 [DEBUG] Notifications actuelles:', notifications.length);
     
+    // Test simple d'abord
+    try {
+      const testResult = await AsyncStorage.getItem(`@agp_notifications_${user.id}`);
+      console.log('🔍 [DEBUG] Test lecture clé notifications:', testResult ? 'Données trouvées' : 'Aucune donnée');
+    } catch (error) {
+      console.error('❌ [DEBUG] Erreur test lecture:', error);
+      Alert.alert('Erreur', 'Problème d\'accès au stockage local');
+      return;
+    }
+    
     Alert.alert(
       'Supprimer toutes les notifications',
       'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
@@ -396,6 +406,8 @@ export default function NotificationBell({ style }: NotificationBellProps) {
 
   // Fonction de test pour diagnostiquer le problème
   const testAsyncStorage = async () => {
+    console.log('🧪 [TEST] Fonction testAsyncStorage appelée');
+    
     if (!user) return;
     
     try {
@@ -461,16 +473,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
             <View style={styles.modalActions}>
               {notifications.length > 0 && (
                 <>
-                  {/* Bouton de test pour diagnostiquer */}
-                  <TouchableOpacity
-                    style={styles.actionButton}
-                    onPress={testAsyncStorage}
-                  >
-                    <Text style={[styles.actionButtonText, { color: Colors.morning }]}>
-                      Test Storage
-                    </Text>
-                  </TouchableOpacity>
-                  
                   {selectionMode ? (
                     <>
                       <TouchableOpacity
@@ -540,6 +542,16 @@ export default function NotificationBell({ style }: NotificationBellProps) {
                   )}
                 </>
               )}
+              
+              {/* Bouton de test toujours visible */}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={testAsyncStorage}
+              >
+                <Text style={[styles.actionButtonText, { color: Colors.morning }]}>
+                  Test Storage
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {notifications.length > 0 ? (
