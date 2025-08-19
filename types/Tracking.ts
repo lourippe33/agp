@@ -5,6 +5,9 @@ export interface UserProfile {
   height: number; // en cm
   startDate: string;
   waistMeasurement?: number;
+  hipsMeasurement?: number;
+  armsMeasurement?: number;
+  thighsMeasurement?: number;
 }
 
 export interface DailyMeal {

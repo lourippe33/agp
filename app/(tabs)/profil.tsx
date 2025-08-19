@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
-import { Scale, Ruler, Target, TrendingUp } from 'lucide-react-native';
+import { Scale, Ruler, Target, TrendingUp, Save } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import MeasurementCharts from '@/components/MeasurementCharts';
+import { TrackingService } from '@/services/TrackingService';
+import { UserProfile } from '@/types/Tracking';
 
 interface ChoiceButtonProps {
   label: string;
@@ -37,8 +39,123 @@ export default function SuiviScreen() {
   const [hips, setHips] = useState(95);
   const [arms, setArms] = useState(30);
   const [thighs, setThighs] = useState(55);
+  const [targetWeight, setTargetWeight] = useState(65);
   const [progress, setProgress] = useState('');
   const [shape, setShape] = useState('');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [measurementData, setMeasurementData] = useState<any[]>([]);
+
+  // Charger les données au montage du composant
+  useEffect(() => {
+    if (user) {
+      loadUserProfile();
+      loadMeasurementHistory();
+    }
+  }, [user]);
+
+  const loadUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const profile = await TrackingService.getUserProfile(user.id);
+      if (profile) {
+        setHeight(profile.height || 170);
+        setWeight(profile.currentWeight || 70);
+        setTargetWeight(profile.targetWeight || 65);
+        setWaist(profile.waistMeasurement || 85);
+        // Charger d'autres mensurations si disponibles
+      }
+    } catch (error) {
+      console.error('Erreur chargement profil:', error);
+    }
+  };
+
+  const loadMeasurementHistory = async () => {
+    if (!user) return;
+    
+    try {
+      // Charger l'historique des 30 derniers jours
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 29);
+      const startDateStr = startDate.toISOString().split('T')[0];
+      
+      const trackings = await TrackingService.getWeeklyTracking(user.id, startDateStr, endDate);
+      
+      // Convertir en format pour les graphiques
+      const chartData = trackings.map(tracking => ({
+        date: tracking.date,
+        weight: tracking.weight || weight,
+        waist: waist, // À implémenter dans le tracking
+        hips: hips,
+        arms: arms,
+      }));
+      
+      setMeasurementData(chartData);
+    } catch (error) {
+      console.error('Erreur chargement historique:', error);
+    }
+  };
+
+  const saveMeasurements = async () => {
+    if (!user) return;
+    
+    try {
+      // Sauvegarder le profil utilisateur
+      const profile: UserProfile = {
+        id: user.id,
+        currentWeight: weight,
+        targetWeight: targetWeight,
+        height: height,
+        waistMeasurement: waist,
+        startDate: new Date().toISOString().split('T')[0],
+      };
+      
+      await TrackingService.saveUserProfile(user.id, profile);
+      
+      // Sauvegarder l'entrée du jour
+      const today = new Date().toISOString().split('T')[0];
+      const existingTracking = await TrackingService.getDailyTracking(user.id, today);
+      
+      const dailyTracking = existingTracking || {
+        id: TrackingService.generateId(),
+        date: today,
+        meals: [
+          { id: '1', moment: 'matin', respected: false, hungerBefore: 3, hungerAfter: 3, satiety: 3 },
+          { id: '2', moment: 'midi', respected: false, hungerBefore: 3, hungerAfter: 3, satiety: 3 },
+          { id: '3', moment: 'gouter', respected: false, hungerBefore: 3, hungerAfter: 3, satiety: 3 },
+          { id: '4', moment: 'soir', respected: false, hungerBefore: 3, hungerAfter: 3, satiety: 3 },
+        ],
+        waterIntake: 0,
+        waterIntakeObjective: 8,
+        stressLevel: 3,
+        energyLevel: 3,
+        sleepQuality: 3,
+        snackingTemptation: false,
+        emotion: '',
+      };
+      
+      // Mettre à jour le poids du jour
+      dailyTracking.weight = weight;
+      
+      await TrackingService.saveDailyTracking(user.id, dailyTracking);
+      
+      // Recharger les données
+      await loadMeasurementHistory();
+      
+      setHasUnsavedChanges(false);
+      Alert.alert('✅ Sauvegardé', 'Vos mensurations ont été enregistrées !');
+    } catch (error) {
+      console.error('Erreur sauvegarde:', error);
+      Alert.alert('❌ Erreur', 'Impossible de sauvegarder vos données');
+    }
+  };
+
+  // Marquer les changements non sauvegardés
+  const handleMeasurementChange = (setter: (value: number) => void, value: number) => {
+    setter(value);
+    setHasUnsavedChanges(true);
+  };
 
   // Calcul de l'IMC
   const calculateBMI = () => {
@@ -153,7 +270,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={height}
-                  onValueChange={v => setHeight(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setHeight, Math.round(v))}
                   minimumValue={140}
                   maximumValue={200}
                   step={1}
@@ -173,7 +290,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={weight}
-                  onValueChange={v => setWeight(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setWeight, Math.round(v))}
                   minimumValue={40}
                   maximumValue={150}
                   step={1}
@@ -193,7 +310,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={waist}
-                  onValueChange={v => setWaist(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setWaist, Math.round(v))}
                   minimumValue={60}
                   maximumValue={140}
                   step={1}
@@ -213,7 +330,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={hips}
-                  onValueChange={v => setHips(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setHips, Math.round(v))}
                   minimumValue={70}
                   maximumValue={150}
                   step={1}
@@ -233,7 +350,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={arms}
-                  onValueChange={v => setArms(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setArms, Math.round(v))}
                   minimumValue={20}
                   maximumValue={50}
                   step={1}
@@ -253,7 +370,7 @@ export default function SuiviScreen() {
                 </View>
                 <Slider
                   value={thighs}
-                  onValueChange={v => setThighs(Math.round(v))}
+                  onValueChange={v => handleMeasurementChange(setThighs, Math.round(v))}
                   minimumValue={40}
                   maximumValue={80}
                   step={1}
@@ -264,6 +381,40 @@ export default function SuiviScreen() {
                 />
                 <Text style={styles.valueText}>{thighs} cm</Text>
               </View>
+
+              {/* Poids objectif */}
+              <View style={styles.measurementContainer}>
+                <View style={styles.measurementHeader}>
+                  <Target size={20} color={Colors.agpBlue} />
+                  <Text style={styles.label}>Poids objectif</Text>
+                </View>
+                <Slider
+                  value={targetWeight}
+                  onValueChange={v => handleMeasurementChange(setTargetWeight, Math.round(v))}
+                  minimumValue={40}
+                  maximumValue={120}
+                  step={1}
+                  style={styles.slider}
+                  minimumTrackTintColor={Colors.agpBlue}
+                  maximumTrackTintColor={Colors.border}
+                  thumbStyle={styles.sliderThumb}
+                />
+                <Text style={styles.valueText}>{targetWeight} kg</Text>
+              </View>
+
+              {/* Bouton de sauvegarde */}
+              {hasUnsavedChanges && (
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={saveMeasurements}
+                  activeOpacity={0.8}
+                >
+                  <Save size={20} color={Colors.textLight} />
+                  <Text style={styles.saveButtonText}>
+                    Sauvegarder les modifications
+                  </Text>
+                </TouchableOpacity>
+              )}
 
               {/* Calcul IMC */}
               <View style={styles.bmiContainer}>
@@ -368,7 +519,16 @@ export default function SuiviScreen() {
           </>
         ) : (
           /* Onglet Courbes d'évolution */
-          <MeasurementCharts />
+          <MeasurementCharts 
+            currentMeasurements={{
+              weight,
+              waist,
+              hips,
+              arms,
+              targetWeight
+            }}
+            measurementData={measurementData}
+          />
         )}
       </ScrollView>
     </View>
@@ -606,6 +766,27 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
+  },
+  saveButton: {
+    backgroundColor: Colors.agpGreen,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    gap: 8,
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   tabsContainer: {
     flexDirection: 'row',

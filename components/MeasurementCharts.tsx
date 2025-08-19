@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,14 @@ interface MeasurementData {
 
 interface MeasurementChartsProps {
   period?: '7d' | '30d' | '90d';
+  currentMeasurements?: {
+    weight: number;
+    waist: number;
+    hips: number;
+    arms: number;
+    targetWeight: number;
+  };
+  measurementData?: MeasurementData[];
 }
 
 const { width } = Dimensions.get('window');
@@ -193,17 +201,68 @@ const SimpleLineChart = ({
   );
 };
 
-export default function MeasurementCharts({ period = '30d' }: MeasurementChartsProps) {
+export default function MeasurementCharts({ 
+  period = '30d',
+  currentMeasurements,
+  measurementData: externalData
+}: MeasurementChartsProps) {
   const { user } = useAuth();
   const [selectedMetric, setSelectedMetric] = useState<'weight' | 'waist' | 'hips' | 'arms'>('weight');
-  const [measurementData, setMeasurementData] = useState<MeasurementData[]>([]);
+  const [internalData, setInternalData] = useState<MeasurementData[]>([]);
+
+  // Utiliser les données externes si disponibles, sinon les données internes
+  const measurementData = externalData || internalData;
 
   useEffect(() => {
-    // Pour l'instant, utiliser des données simulées
-    // Dans une vraie app, charger depuis le stockage local
-    const mockData = generateMockData();
-    setMeasurementData(mockData);
-  }, [period]);
+    if (!externalData) {
+      // Générer des données simulées seulement si pas de données externes
+      const mockData = generateMockData(currentMeasurements);
+      setInternalData(mockData);
+    }
+  }, [period, externalData, currentMeasurements]);
+
+  // Générer des données simulées basées sur les mensurations actuelles
+  const generateMockData = (current?: any): MeasurementData[] => {
+    const data: MeasurementData[] = [];
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 29);
+    
+    // Utiliser les valeurs actuelles ou des valeurs par défaut
+    const currentWeight = current?.weight || 75;
+    const currentWaist = current?.waist || 85;
+    const currentHips = current?.hips || 95;
+    const currentArms = current?.arms || 30;
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      
+      // Progression vers les valeurs actuelles
+      const progress = i / 29; // 0 à 1
+      
+      // Valeurs de départ (il y a 30 jours)
+      const startWeight = currentWeight + 2; // 2kg de plus il y a 30 jours
+      const startWaist = currentWaist + 3; // 3cm de plus
+      const startHips = currentHips + 2; // 2cm de plus
+      const startArms = currentArms - 0.5; // 0.5cm de moins (muscle développé)
+      
+      // Interpolation avec fluctuations
+      const weightFluctuation = (Math.random() - 0.5) * 0.4;
+      const waistFluctuation = (Math.random() - 0.5) * 0.3;
+      const hipsFluctuation = (Math.random() - 0.5) * 0.2;
+      const armsFluctuation = (Math.random() - 0.5) * 0.1;
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        weight: Math.round((startWeight + (currentWeight - startWeight) * progress + weightFluctuation) * 10) / 10,
+        waist: Math.round((startWaist + (currentWaist - startWaist) * progress + waistFluctuation) * 10) / 10,
+        hips: Math.round((startHips + (currentHips - startHips) * progress + hipsFluctuation) * 10) / 10,
+        arms: Math.round((startArms + (currentArms - startArms) * progress + armsFluctuation) * 10) / 10,
+      });
+    }
+    
+    return data;
+  };
 
   const getMetricData = (metric: keyof MeasurementData) => {
     if (metric === 'date') return [];
@@ -218,7 +277,7 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
           unit: 'kg',
           color: Colors.agpBlue,
           icon: Scale,
-          target: 72.0,
+          target: currentMeasurements?.targetWeight || 72.0,
           gradient: [Colors.agpBlue, Colors.agpLightBlue],
         };
       case 'waist':
@@ -227,7 +286,7 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
           unit: 'cm',
           color: Colors.agpGreen,
           icon: Target,
-          target: 80.0,
+          target: (currentMeasurements?.waist || 85) - 5, // Objectif : -5cm
           gradient: [Colors.agpGreen, Colors.agpLightGreen],
         };
       case 'hips':
@@ -236,7 +295,7 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
           unit: 'cm',
           color: Colors.relaxation,
           icon: Target,
-          target: 90.0,
+          target: (currentMeasurements?.hips || 95) - 3, // Objectif : -3cm
           gradient: [Colors.relaxation, '#FFE0E6'],
         };
       case 'arms':
@@ -245,7 +304,7 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
           unit: 'cm',
           color: Colors.morning,
           icon: Ruler,
-          target: 31.0,
+          target: (currentMeasurements?.arms || 30) + 1, // Objectif : +1cm (muscle)
           gradient: [Colors.morning, '#FFF3C4'],
         };
     }
@@ -340,8 +399,8 @@ export default function MeasurementCharts({ period = '30d' }: MeasurementChartsP
       <View style={styles.introCard}>
         <Text style={styles.introTitle}>📈 Vos Courbes d'Évolution</Text>
         <Text style={styles.introText}>
-          Suivez vos progrès sur 30 jours avec des données simulées réalistes. 
-          Cliquez sur les boutons ci-dessous pour changer de métrique.
+          Suivez vos progrès sur 30 jours. Les données sont générées à partir de vos mensurations actuelles.
+          Modifiez vos mensurations dans l'onglet précédent pour voir l'évolution !
         </Text>
       </View>
 
