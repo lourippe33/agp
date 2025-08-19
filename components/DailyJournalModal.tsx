@@ -233,7 +233,7 @@ export default function DailyJournalModal({
             styles.content,
             Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
           ]}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         >
           {/* Section Repas */}
           <View style={styles.section}>

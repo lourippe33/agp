@@ -312,7 +312,7 @@ export default function JournalScreen() {
           styles.content,
           Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         ]}
-      >
+        showsVerticalScrollIndicator={true}
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
             <AGPLogo size={50} />

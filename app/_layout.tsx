@@ -24,48 +24,92 @@ import OfflineBanner from '@/components/OfflineBanner';
 
 // Styles CSS globaux pour les barres de défilement sur PC
 const globalScrollStyles = `
-  /* Barres de défilement visibles et stylisées */
-  * {
+  /* Forcer les barres de défilement sur TOUS les éléments */
+  *, *::before, *::after {
     scrollbar-width: thin;
     scrollbar-color: #4A90E2 #f1f1f1;
   }
   
-  *::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+  *::-webkit-scrollbar, 
+  div::-webkit-scrollbar,
+  .scroll-container::-webkit-scrollbar,
+  .scroll-visible::-webkit-scrollbar {
+    width: 14px !important;
+    height: 14px !important;
+    display: block !important;
   }
   
-  *::-webkit-scrollbar-track {
+  *::-webkit-scrollbar-track,
+  div::-webkit-scrollbar-track,
+  .scroll-container::-webkit-scrollbar-track,
+  .scroll-visible::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 6px;
   }
   
-  *::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-thumb,
+  div::-webkit-scrollbar-thumb,
+  .scroll-container::-webkit-scrollbar-thumb,
+  .scroll-visible::-webkit-scrollbar-thumb {
     background: #4A90E2;
     border-radius: 6px;
     border: 2px solid #f1f1f1;
   }
   
-  *::-webkit-scrollbar-thumb:hover {
+  *::-webkit-scrollbar-thumb:hover,
+  div::-webkit-scrollbar-thumb:hover,
+  .scroll-container::-webkit-scrollbar-thumb:hover,
+  .scroll-visible::-webkit-scrollbar-thumb:hover {
     background: #357ABD;
   }
   
-  *::-webkit-scrollbar-corner {
+  *::-webkit-scrollbar-corner,
+  div::-webkit-scrollbar-corner,
+  .scroll-container::-webkit-scrollbar-corner,
+  .scroll-visible::-webkit-scrollbar-corner {
     background: #f1f1f1;
   }
   
-  /* Forcer l'affichage des barres de défilement */
-  .scroll-visible {
+  /* Classes spécifiques pour forcer le défilement */
+  .scroll-visible,
+  .scroll-container,
+  [data-scroll="true"] {
     overflow-y: scroll !important;
-    scrollbar-width: auto !important;
+    scrollbar-width: thin !important;
+    overflow-x: hidden !important;
   }
   
-  .scroll-visible::-webkit-scrollbar {
-    width: 12px !important;
+  /* Forcer sur les conteneurs React Native Web */
+  div[style*="overflow"] {
+    overflow-y: scroll !important;
+    scrollbar-width: thin !important;
+  }
+  
+  /* Spécifique aux ScrollView React Native */
+  div[data-focusable="true"],
+  div[role="scrollbar"] {
+    overflow-y: scroll !important;
+    scrollbar-width: thin !important;
+  }
+  
+  /* Forcer sur tous les conteneurs avec scroll */
+  div[style*="flex: 1"] {
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+  }
+  
+  /* Améliorer la visibilité sur tous les éléments scrollables */
+  div {
+    scrollbar-width: thin;
+    scrollbar-color: #4A90E2 #f1f1f1;
+  }
+  
+  div::-webkit-scrollbar {
+    width: 14px !important;
     display: block !important;
   }
   
-  /* Navigation au clavier améliorée */
+  /* Navigation au clavier sur TOUS les éléments */
   button, [role="button"], input, textarea, select {
     outline: 2px solid transparent;
     outline-offset: 2px;
@@ -76,10 +120,23 @@ const globalScrollStyles = `
     outline-offset: 2px;
   }
   
-  /* Améliorer la visibilité des éléments focusables */
+  /* Focus visible sur TOUS les éléments */
   *:focus {
     outline: 2px solid #4A90E2 !important;
     outline-offset: 2px !important;
+  }
+  
+  /* Forcer le défilement sur le body et html */
+  html, body {
+    overflow-y: scroll !important;
+    scrollbar-width: thin !important;
+  }
+  
+  /* Spécifique aux modales et overlays */
+  div[style*="position: absolute"],
+  div[style*="position: fixed"] {
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
   }
 `;
 

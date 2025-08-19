@@ -197,7 +197,7 @@ export default function CommunauteScreen() {
         styles.container,
         Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
       ]} 
-      showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={true}
     >
       {/* Header */}
       <LinearGradient

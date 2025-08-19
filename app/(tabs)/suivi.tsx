@@ -275,15 +275,17 @@ export default function ProfilScreen() {
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={[
+        styles.container,
+        Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+      ]} 
+      showsVerticalScrollIndicator={true}
+    >
       {/* Header */}
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
-        style={[
-          styles.content,
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
-        ]}
       >
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>

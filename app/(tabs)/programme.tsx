@@ -934,7 +934,7 @@ export default function ProgrammeScreen() {
           styles.content,
           Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         ]}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       >
         <View style={{ width: '100%' }}>
           {/* Header */}

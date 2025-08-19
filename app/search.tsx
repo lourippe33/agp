@@ -96,7 +96,7 @@ export default function SearchScreen() {
       {/* Résultats */}
       <ScrollView 
         style={styles.content}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.scrollContent}
         style={[
           styles.content,
