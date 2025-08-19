@@ -134,6 +134,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setCardioTimerVisible(false);
     setHiitTimerVisible(false);
     setPilatesTimerVisible(false);
+    setYogaDouxTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -142,6 +143,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
     setCardioTimerVisible(false);
     setHiitTimerVisible(false);
     setPilatesTimerVisible(false);
+    setYogaDouxTimerVisible(false);
     setSelectedExercise(null);
   };
 
@@ -549,6 +551,33 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
           
           {selectedExercise && (
             <TabataTimer
+              exercise={selectedExercise}
+              onComplete={handleTimerComplete}
+              onClose={handleTimerClose}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* Modal Timer Yoga Doux spécialisé */}
+      <Modal
+        visible={yogaDouxTimerVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleTimerClose}
+      >
+        <View style={styles.timerModalContainer}>
+          <View style={styles.timerModalHeader}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleTimerClose}>
+              <X size={24} color={Colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.timerModalTitle}>
+              {selectedExercise?.titre || 'Yoga Doux'}
+            </Text>
+          </View>
+          
+          {selectedExercise && (
+            <YogaDouxTimer
               exercise={selectedExercise}
               onComplete={handleTimerComplete}
               onClose={handleTimerClose}
