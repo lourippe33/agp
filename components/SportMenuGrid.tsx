@@ -305,11 +305,6 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
             resizeMode="cover"
           />
           <View style={styles.imageOverlay} />
-          
-          {/* Icône en overlay */}
-          <View style={[styles.iconOverlay, { backgroundColor: item.color }]}>
-            <IconComponent size={20} color={Colors.textLight} strokeWidth={2} />
-          </View>
         </View>
         
         <View style={styles.cardContent}>
