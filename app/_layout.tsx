@@ -24,100 +24,48 @@ import OfflineBanner from '@/components/OfflineBanner';
 
 // Styles CSS globaux pour les barres de défilement sur PC
 const globalScrollStyles = `
-  /* Forcer les barres de défilement sur TOUS les éléments */
-  *, *::before, *::after {
-    scrollbar-width: none;
+  /* Barres de défilement visibles et stylisées */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4A90E2 #f1f1f1;
   }
   
-  *::-webkit-scrollbar, 
-  div::-webkit-scrollbar,
-  .scroll-container::-webkit-scrollbar,
-  .scroll-visible::-webkit-scrollbar {
-    width: 8px !important;
-    height: 8px !important;
-    display: block !important;
+  *::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
   }
   
-  *::-webkit-scrollbar-track,
-  div::-webkit-scrollbar-track,
-  .scroll-container::-webkit-scrollbar-track,
-  .scroll-visible::-webkit-scrollbar-track {
-    background: transparent !important;
-    border-radius: 0 !important;
+  *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
   }
   
-  *::-webkit-scrollbar-thumb,
-  div::-webkit-scrollbar-thumb,
-  .scroll-container::-webkit-scrollbar-thumb,
-  .scroll-visible::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-thumb {
     background: #4A90E2;
-    border-radius: 4px;
-    border: none !important;
+    border-radius: 6px;
+    border: 2px solid #f1f1f1;
   }
   
-  *::-webkit-scrollbar-thumb:hover,
-  div::-webkit-scrollbar-thumb:hover,
-  .scroll-container::-webkit-scrollbar-thumb:hover,
-  .scroll-visible::-webkit-scrollbar-thumb:hover {
+  *::-webkit-scrollbar-thumb:hover {
     background: #357ABD;
   }
   
-  *::-webkit-scrollbar-corner,
-  div::-webkit-scrollbar-corner,
-  .scroll-container::-webkit-scrollbar-corner,
-  .scroll-visible::-webkit-scrollbar-corner {
-    background: transparent !important;
+  *::-webkit-scrollbar-corner {
+    background: #f1f1f1;
   }
   
   /* Classes spécifiques pour forcer le défilement */
-  .scroll-visible,
-  .scroll-container,
-  [data-scroll="true"] {
-    overflow-y: scroll !important;
-    scrollbar-width: none !important;
-    overflow-x: hidden !important;
-  }
-  
-  /* Forcer sur les conteneurs React Native Web */
-  div[style*="overflow"] {
-    overflow-y: scroll !important;
-    scrollbar-width: none !important;
-  }
-  
-  /* Spécifique aux ScrollView React Native */
-  div[data-focusable="true"],
-  div[role="scrollbar"] {
-    overflow-y: scroll !important;
-    scrollbar-width: none !important;
-  }
-  
-  /* Forcer sur tous les conteneurs avec scroll */
-  div[style*="flex: 1"] {
+  .scroll-visible {
     overflow-y: auto !important;
-    scrollbar-width: none !important;
+    scrollbar-width: thin !important;
   }
   
-  /* Améliorer la visibilité sur tous les éléments scrollables */
-  div {
-    scrollbar-width: none;
-  }
-  
-  div::-webkit-scrollbar {
-    width: 8px !important;
+  .scroll-visible::-webkit-scrollbar {
+    width: 12px !important;
     display: block !important;
   }
   
-  div::-webkit-scrollbar-track {
-    background: transparent !important;
-  }
-  
-  div::-webkit-scrollbar-thumb {
-    background: #4A90E2 !important;
-    border-radius: 4px !important;
-    border: none !important;
-  }
-  
-  /* Navigation au clavier sur TOUS les éléments */
+  /* Navigation au clavier */
   button, [role="button"], input, textarea, select {
     outline: 2px solid transparent;
     outline-offset: 2px;
@@ -126,25 +74,6 @@ const globalScrollStyles = `
   button:focus, [role="button"]:focus, input:focus, textarea:focus, select:focus {
     outline: 2px solid #4A90E2;
     outline-offset: 2px;
-  }
-  
-  /* Focus visible sur TOUS les éléments */
-  *:focus {
-    outline: 2px solid #4A90E2 !important;
-    outline-offset: 2px !important;
-  }
-  
-  /* Forcer le défilement sur le body et html */
-  html, body {
-    overflow-y: scroll !important;
-    scrollbar-width: none !important;
-  }
-  
-  /* Spécifique aux modales et overlays */
-  div[style*="position: absolute"],
-  div[style*="position: fixed"] {
-    overflow-y: auto !important;
-    scrollbar-width: none !important;
   }
 `;
 
