@@ -10,6 +10,7 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Bell, X, Check, Trash2 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -124,7 +125,6 @@ export default function NotificationBell({ style }: NotificationBellProps) {
   const handleClearAll = async () => {
     if (!user) return;
     
-    console.log('🔄 Tentative de suppression de toutes les notifications', user.id);
     Alert.alert(
       'Supprimer toutes les notifications',
       'Êtes-vous sûr de vouloir supprimer toutes vos notifications ?',
@@ -135,33 +135,28 @@ export default function NotificationBell({ style }: NotificationBellProps) {
           style: 'destructive',
           onPress: async () => {
             try {
-               console.log('✅ Confirmation de suppression reçue pour user:', user.id);
+               console.log('🔄 Suppression de toutes les notifications pour:', user.id);
                
-               // Approche directe avec AsyncStorage
-               const key = `@agp_notifications_${user.id}`;
-               console.log('🔑 Suppression directe avec la clé:', key);
-               
-               // Supprimer directement avec AsyncStorage
-               await AsyncStorage.removeItem(key);
-               console.log('✅ AsyncStorage.removeItem exécuté');
-               
-               // Vérifier que la suppression a fonctionné
-               const check = await AsyncStorage.getItem(key);
-               console.log('🔍 Vérification après suppression:', check);
+               // Utiliser AsyncStorage directement pour garantir la suppression
+               const notificationKey = `@agp_notifications_${user.id}`;
+               await AsyncStorage.removeItem(notificationKey);
                
                // Mettre à jour l'état local
                setNotifications([]);
                setUnreadCount(0);
                
-               // Fermer la modal
-               setModalVisible(false);
+               console.log('✅ Toutes les notifications supprimées');
                
-               console.log('✅ Processus de suppression terminé avec succès');
+               Alert.alert(
+                 '✅ Suppression réussie',
+                 'Toutes vos notifications ont été supprimées.',
+                 [{ text: 'OK', style: 'default' }]
+               );
             } catch (error) {
               console.error('❌ Erreur lors de la suppression des notifications:', error);
               Alert.alert(
                 'Erreur',
-                'Impossible de supprimer les notifications. Veuillez réessayer.',
+                'Une erreur est survenue lors de la suppression. Veuillez réessayer.',
                 [{ text: 'OK', style: 'default' }]
               );
             }
