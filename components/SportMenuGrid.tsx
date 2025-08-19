@@ -37,6 +37,10 @@ import { Exercise } from '@/types/Exercise';
 import SportExerciseTimer from './SportExerciseTimer';
 import sportsData from '@/data/exercices_sport.json';
 
+// Debug: Vérifier le chargement des données
+console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
+console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
+
 interface SportMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
 }
