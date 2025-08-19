@@ -233,7 +233,7 @@ export default function ExerciseModal({ exercise, visible, onClose }: ExerciseMo
                 {/* Étapes */}
                 <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Comment pratiquer</Text>
-                  {exercise.etapes.map((etape, index) => (
+                  {(exercise.etapes || []).map((etape, index) => (
                     <View key={index} style={styles.stepItem}>
                       <View style={[styles.stepNumber, { backgroundColor: typeColor }]}>
                         <Text style={styles.stepNumberText}>{index + 1}</Text>
