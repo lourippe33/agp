@@ -38,8 +38,10 @@ export default function RecipeModal({ recipe, visible, onClose }: RecipeModalPro
     >
       <View style={styles.container}>
         <ScrollView 
-          showsVerticalScrollIndicator={false}
-          style={Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined}
+          showsVerticalScrollIndicator={true}
+          style={[
+            Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+          ]}
         >
           {/* Header Image */}
           <View style={styles.headerContainer}>

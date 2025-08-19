@@ -174,7 +174,7 @@ export default function FilterModal({
             styles.content,
             Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
           ]}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         >
           {/* Moments */}
           <FilterSection
