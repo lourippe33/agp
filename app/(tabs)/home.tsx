@@ -1083,6 +1083,8 @@ export default function ProgrammeScreen() {
             </Text>
           </View>
         </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* Modal détail du jour */}
@@ -1350,9 +1352,48 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
+  todayProgramSection: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  todayProgramHeader: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  todayProgramTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  todayProgramDate: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textTransform: 'capitalize',
+  },
+  todayBadge: {
+    backgroundColor: Colors.agpGreen,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  todayBadgeText: {
+    color: Colors.textLight,
+    fontSize: 12,
+    fontFamily: 'Poppins-SemiBold',
+  },
   motivationCard: {
     flexDirection: 'row',
-    marginHorizontal: 20,
     alignItems: 'center',
     backgroundColor: Colors.surface,
     borderRadius: 16,
@@ -1384,7 +1425,6 @@ const styles = StyleSheet.create({
   },
   tipsCard: {
     backgroundColor: Colors.agpLightBlue,
-    marginHorizontal: 20,
     borderRadius: 16,
     padding: 16,
     borderLeftWidth: 4,
@@ -1406,7 +1446,6 @@ const styles = StyleSheet.create({
   customizationInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 20,
     backgroundColor: Colors.agpLightGreen,
     borderRadius: 16,
     padding: 16,
@@ -1572,10 +1611,5 @@ const styles = StyleSheet.create({
   checkboxWrapper: {
     padding: 8, // Agrandit la zone tactile
     marginLeft: 8,
-  },
-  checkboxContainerLocked: {
-    backgroundColor: Colors.border,
-    borderColor: Colors.textSecondary,
-    opacity: 0.7,
   },
 });
