@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Play, Pause, Square, RotateCcw, CircleCheck as CheckCircle } from 'lucide-react-native';
+import { Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { Exercise } from '@/types/Exercise';
 import { useAuth } from '@/contexts/AuthContext';
@@ -137,7 +138,11 @@ export default function ExerciseTimer({ exercise, onComplete, onClose }: Exercis
       <ScrollView 
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
+        style={[
+          styles.scrollContainer,
+          Platform.OS === 'web' ? { className: 'scroll-container' } : undefined
+        ]}
       >
         {/* Progress Circle */}
         <View style={styles.timerContainer}>

@@ -17,6 +17,40 @@ import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
+// Styles CSS pour forcer l'affichage des barres de défilement sur PC
+const webScrollStyles = `
+  .scroll-container {
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: #4A90E2 #f1f1f1;
+  }
+  
+  .scroll-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-thumb {
+    background: #4A90E2;
+    border-radius: 4px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #357ABD;
+  }
+`;
+
+// Injecter les styles CSS pour le web
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = webScrollStyles;
+  document.head.appendChild(styleElement);
+}
+
 export default function LoginScreen() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail] = useState('');
@@ -102,8 +136,9 @@ export default function LoginScreen() {
     >
       <ScrollView 
         contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         keyboardShouldPersistTaps="handled"
+        style={Platform.OS === 'web' ? { className: 'scroll-container' } : undefined}
       >
         {/* Header */}
         <LinearGradient

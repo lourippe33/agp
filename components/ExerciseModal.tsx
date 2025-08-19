@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { X, Clock, Heart, Brain, Zap, Target, Calendar, Play, Video } from 'lucide-react-native';
+import { Platform } from 'react-native';
 import { Exercise } from '@/types/Exercise';
 import { Colors } from '@/constants/Colors';
 import AGPLogo from './AGPLogo';
@@ -111,6 +112,10 @@ export default function ExerciseModal({ exercise, visible, onClose }: ExerciseMo
           ) : (
             // Mode Information
             <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              showsVerticalScrollIndicator={true}
+              style={Platform.OS === 'web' ? { className: 'scroll-container' } : undefined}
+            >
               {/* Header Image */}
               <View style={styles.headerContainer}>
                 <Image source={{ uri: exercise.image }} style={styles.headerImage} />

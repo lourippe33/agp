@@ -5,6 +5,71 @@ import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
+// Styles CSS globaux pour les barres de défilement sur PC
+const globalScrollStyles = `
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4A90E2 #f1f1f1;
+  }
+  
+  *::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: #4A90E2;
+    border-radius: 6px;
+    border: 2px solid #f1f1f1;
+  }
+  
+  *::-webkit-scrollbar-thumb:hover {
+    background: #357ABD;
+  }
+  
+  *::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+  }
+  
+  /* Améliorer la navigation au clavier */
+  button, [role="button"], input, textarea, select {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  
+  button:focus, [role="button"]:focus, input:focus, textarea:focus, select:focus {
+    outline: 2px solid #4A90E2;
+    outline-offset: 2px;
+  }
+  
+  /* Forcer l'affichage des barres de défilement */
+  .scroll-visible {
+    overflow-y: scroll !important;
+    scrollbar-width: auto !important;
+  }
+  
+  .scroll-visible::-webkit-scrollbar {
+    width: 12px !important;
+    display: block !important;
+  }
+`;
+
+// Injecter les styles CSS globaux pour le web
+if (typeof document !== 'undefined') {
+  const existingStyle = document.getElementById('agp-scroll-styles');
+  if (!existingStyle) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'agp-scroll-styles';
+    styleElement.textContent = globalScrollStyles;
+    document.head.appendChild(styleElement);
+  }
+}
+
 export default function Index() {
   const { isAuthenticated, loading } = useAuth();
 

@@ -29,6 +29,7 @@ import {
 } from 'lucide-react-native';
 
 import { router, useRouter } from 'expo-router';
+import { Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import { isPastDay } from '@/utils/dateUtils';
@@ -418,9 +419,13 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <ScrollView
         style={styles.content}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-container' } : undefined
+        ]}
       >
         {/* Header */}
         <LinearGradient
