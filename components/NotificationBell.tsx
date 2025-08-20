@@ -85,7 +85,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     if (!user) return;
     
     try {
-      await NotificationService.markAsRead(user.id, notificationId);
+      await NotificationService.markNotificationAsRead(user.id, notificationId);
       loadNotifications();
     } catch (error) {
       console.error('Erreur lors du marquage comme lu:', error);
@@ -96,7 +96,7 @@ export default function NotificationBell({ style }: NotificationBellProps) {
     if (!user) return;
     
     try {
-      await NotificationService.markAllAsRead(user.id);
+      await NotificationService.markAllNotificationsAsRead(user.id);
       loadNotifications();
     } catch (error) {
       console.error('Erreur lors du marquage de toutes les notifications comme lues:', error);

@@ -11,13 +11,14 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function SoirScreen() {
   const params = useLocalSearchParams();
+  const soirRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'soir');
+  
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecipes, setFilteredRecipes] = useState(soirRecipes);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const soirRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'soir');
 
   // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
   useEffect(() => {

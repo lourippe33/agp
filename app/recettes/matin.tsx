@@ -11,13 +11,14 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function MatinScreen() {
   const params = useLocalSearchParams();
+  const matinRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'matin');
+  
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecipes, setFilteredRecipes] = useState(matinRecipes);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const matinRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'matin');
 
   // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
   useEffect(() => {

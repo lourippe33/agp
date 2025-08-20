@@ -11,13 +11,14 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function GouterScreen() {
   const params = useLocalSearchParams();
+  const gouterRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'gouter');
+  
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecipes, setFilteredRecipes] = useState(gouterRecipes);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const gouterRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'gouter');
 
   // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
   useEffect(() => {

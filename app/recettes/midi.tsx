@@ -11,13 +11,14 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function MidiScreen() {
   const params = useLocalSearchParams();
+  const midiRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'midi');
+  
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecipes, setFilteredRecipes] = useState(midiRecipes);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const midiRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'midi');
 
   // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
   useEffect(() => {
