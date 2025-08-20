@@ -9,6 +9,7 @@ import {
   Modal,
   Image,
   Platform,
+  Animated,
 } from 'react-native';
 import { 
   Heart, 
@@ -187,14 +188,49 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
 
   const renderMenuItem = (item: typeof menuItems[0]) => {
     const IconComponent = item.icon;
+    const [cardAnimation] = useState(new Animated.Value(0));
+    
+    // Effet de clic avec animation
+    const animateCardClick = () => {
+      // Animation : 0 → 1 → 0 en 500ms
+      Animated.sequence([
+        Animated.timing(cardAnimation, {
+          toValue: 1,
+          duration: 50,
+          useNativeDriver: false,
+        }),
+        Animated.timing(cardAnimation, {
+          toValue: 0,
+          duration: 450,
+          useNativeDriver: false,
+        })
+      ]).start();
+    };
+
+    const handlePress = () => {
+      animateCardClick();
+      handleExercisePress(item.id);
+    };
+
+    // Interpolation de couleur pour l'effet de clic
+    const animatedBackgroundColor = cardAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [Colors.surface, '#F5F5F5'] // Blanc → Gris clair
+    });
     
     return (
-      <TouchableOpacity
+      <Animated.View
         key={item.id}
-        style={styles.menuCard}
-        onPress={() => handleExercisePress(item.id)}
-        activeOpacity={0.8}
+        style={[
+          styles.menuCard,
+          { backgroundColor: animatedBackgroundColor }
+        ]}
       >
+        <TouchableOpacity
+          style={styles.cardTouchable}
+          onPress={handlePress}
+          activeOpacity={0.9}
+        >
         <View style={styles.imageContainer}>
           <Image 
             source={{ uri: item.image }} 
@@ -225,7 +261,8 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
         >
           <Play size={16} color={Colors.textLight} fill={Colors.textLight} />
         </TouchableOpacity>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -376,9 +413,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
     marginBottom: 12,
-    backgroundColor: Colors.surface,
     position: 'relative',
     overflow: 'hidden',
+  },
+  cardTouchable: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
   },
   imageContainer: {
     height: cardSize * 0.6,

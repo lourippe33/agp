@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Clock, ChefHat, Star } from 'lucide-react-native';
@@ -28,15 +29,44 @@ export default function RecipeCard({ recipe, onPress }: RecipeCardProps) {
   const momentGradient = getMomentGradient(recipe.moment);
   
   const [showNutrition, setShowNutrition] = useState(false);
+  const [cardAnimation] = useState(new Animated.Value(0));
   
   const toggleNutrition = (e: any) => {
     e.stopPropagation();
     setShowNutrition(!showNutrition);
   };
 
+  // Effet de clic avec animation
+  const animateCardClick = () => {
+    // Animation : 0 → 1 → 0 en 500ms
+    Animated.sequence([
+      Animated.timing(cardAnimation, {
+        toValue: 1,
+        duration: 50,
+        useNativeDriver: false,
+      }),
+      Animated.timing(cardAnimation, {
+        toValue: 0,
+        duration: 450,
+        useNativeDriver: false,
+      })
+    ]).start();
+  };
+
+  const handlePress = () => {
+    animateCardClick();
+    onPress();
+  };
+
+  // Interpolation de couleur pour l'effet de clic
+  const animatedBackgroundColor = cardAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [Colors.surface, '#F5F5F5'] // Blanc → Gris clair
+  });
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.card}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
+      <Animated.View style={[styles.card, { backgroundColor: animatedBackgroundColor }]}>
         <View style={styles.imageContainer}>
           <Image source={{ uri: recipe.image }} style={styles.image} />
           <LinearGradient
@@ -120,7 +150,7 @@ export default function RecipeCard({ recipe, onPress }: RecipeCardProps) {
             </View>
           </View>
         )}
-      </View>
+      </Animated.View>
     </TouchableOpacity>
   );
 }
