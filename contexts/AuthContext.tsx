@@ -116,6 +116,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Vérifier si l'utilisateur est connecté
       if (!authState.isAuthenticated || !authState.user) {
         console.log('⚠️ Aucun utilisateur connecté à déconnecter');
+        setAuthState({
+          isAuthenticated: false,
+          user: null,
+          loading: false,
+        });
         return;
       }
       
