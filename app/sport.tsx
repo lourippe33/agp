@@ -62,6 +62,19 @@ export default function SportScreen() {
         />
       </View>
       
+      {/* Bouton de démarrage d'exercice */}
+      <View style={styles.startButtonContainer}>
+        <TouchableOpacity
+          style={styles.startExerciseButton}
+          onPress={() => {
+            handleExerciseSelect(1);
+          }}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.startExerciseButtonText}>▶️ Démarrer un exercice</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
         <ScrollView 
           style={[
@@ -81,23 +94,8 @@ export default function SportScreen() {
         onClose={handleCloseModal}
       />
 
-      {/* Bouton de démarrage d'exercice */}
-      <View style={styles.startButtonContainer}>
-        <TouchableOpacity
-          style={styles.startExerciseButton}
-          onPress={() => {
-            // Pour l'instant, on peut ouvrir le premier exercice ou une sélection
-            handleExerciseSelect(1); // Démarre le premier exercice par défaut
-          }}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.startExerciseButtonText}>▶️ Démarrer un exercice</Text>
-        </TouchableOpacity>
-      </View>
-
       <PersistentTabBar />
     </View>
-
   );
 }
 
@@ -121,6 +119,31 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingBottom: 70, // Espace pour la tab bar
+  },
+  startButtonContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  startExerciseButton: {
+    backgroundColor: Colors.agpGreen,
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    alignItems: 'center',
+  },
+  startExerciseButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    textAlign: 'center',
   },
   startButtonContainer: {
     paddingHorizontal: 20,
