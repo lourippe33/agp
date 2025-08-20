@@ -9,6 +9,7 @@ import {
   Modal,
   Image,
   Platform,
+  Animated,
 } from 'react-native';
 import { 
   Dumbbell, 
@@ -87,6 +88,7 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
+  const [cardAnimations, setCardAnimations] = useState<{[key: number]: Animated.Value}>({});
   const [cardioTimerVisible, setCardioTimerVisible] = useState(false);
   const [hiitTimerVisible, setHiitTimerVisible] = useState(false);
   const [pilatesTimerVisible, setPilatesTimerVisible] = useState(false);
@@ -104,7 +106,41 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
   console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
 
+  // Initialiser les animations pour chaque exercice
+  const getCardAnimation = (exerciseId: number) => {
+    if (!cardAnimations[exerciseId]) {
+      setCardAnimations(prev => ({
+        ...prev,
+        [exerciseId]: new Animated.Value(0)
+      }));
+      return new Animated.Value(0);
+    }
+    return cardAnimations[exerciseId];
+  };
+
+  // Effet de clic avec animation
+  const animateCardClick = (exerciseId: number) => {
+    const animation = getCardAnimation(exerciseId);
+    
+    // Animation : 0 → 1 → 0 en 500ms
+    Animated.sequence([
+      Animated.timing(animation, {
+        toValue: 1,
+        duration: 50,
+        useNativeDriver: false,
+      }),
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 450,
+        useNativeDriver: false,
+      })
+    ]).start();
+  };
+
   const handleExercisePress = (exerciseId: number) => {
+    // Déclencher l'animation de feedback
+    animateCardClick(exerciseId);
+    
     // Trouver l'exercice dans les données JSON
     const exercise = sportsData.exercices.find(ex => ex.id === exerciseId);
     console.log(`🎯 Exercice sélectionné ID ${exerciseId}:`, exercise);
@@ -201,45 +237,59 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const renderMenuItem = (exercise: any) => {
     const IconComponent = getExerciseIcon(exercise);
     const color = getExerciseColor(exercise);
+    const cardAnimation = getCardAnimation(exercise.id);
+    
+    // Interpolation de couleur pour l'effet de clic
+    const animatedBackgroundColor = cardAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [Colors.surface, '#F5F5F5'] // Blanc → Gris clair
+    });
     
     return (
-      <TouchableOpacity
+      <Animated.View
         key={exercise.id}
-        style={styles.menuCard}
-        onPress={() => handleExercisePress(exercise.id)}
-        activeOpacity={0.8}
+        style={[
+          styles.menuCard,
+          { backgroundColor: animatedBackgroundColor }
+        ]}
       >
-        <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: exercise.image }} 
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
-          <View style={styles.imageOverlay} />
-        </View>
-        
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle} numberOfLines={2}>
-            {exercise.titre}
-          </Text>
-          
-          <Text style={[styles.cardSubtitle, { color: color }]}>
-            {exercise.duree} min • {exercise.calories || 'N/A'} cal
-          </Text>
-        </View>
-
-        {/* Bouton de démarrage rapide */}
-        <TouchableOpacity 
-          style={[styles.quickStartButton, { backgroundColor: color }]}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleExercisePress(exercise.id);
-          }}
-          activeOpacity={0.8}
+        <TouchableOpacity
+          style={styles.cardTouchable}
+          onPress={() => handleExercisePress(exercise.id)}
+          activeOpacity={0.9}
         >
-          <Play size={18} color={Colors.textLight} fill={Colors.textLight} />
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: exercise.image }} 
+              style={styles.cardImage}
+              resizeMode="cover"
+            />
+            <View style={styles.imageOverlay} />
+          </View>
+          
+          <View style={styles.cardContent}>
+            <Text style={styles.cardTitle} numberOfLines={2}>
+              {exercise.titre}
+            </Text>
+            
+            <Text style={[styles.cardSubtitle, { color: color }]}>
+              {exercise.duree} min • {exercise.calories || 'N/A'} cal
+            </Text>
+          </View>
+
+          {/* Bouton de démarrage rapide */}
+          <TouchableOpacity 
+            style={[styles.quickStartButton, { backgroundColor: color }]}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleExercisePress(exercise.id);
+            }}
+            activeOpacity={0.8}
+          >
+            <Play size={18} color={Colors.textLight} fill={Colors.textLight} />
+          </TouchableOpacity>
         </TouchableOpacity>
-      </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -891,9 +941,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
     marginBottom: 20,
-    backgroundColor: Colors.surface,
     position: 'relative',
     overflow: 'hidden',
+  },
+  cardTouchable: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
   },
   imageContainer: {
     height: cardSize * 0.6,
