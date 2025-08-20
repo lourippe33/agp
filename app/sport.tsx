@@ -81,8 +81,6 @@ export default function SportScreen() {
         onClose={handleCloseModal}
       />
 
-      <PersistentTabBar />
-    </View>
       {/* Bouton de démarrage d'exercice */}
       <View style={styles.startButtonContainer}>
         <TouchableOpacity
@@ -96,6 +94,9 @@ export default function SportScreen() {
           <Text style={styles.startExerciseButtonText}>▶️ Démarrer un exercice</Text>
         </TouchableOpacity>
       </View>
+
+      <PersistentTabBar />
+    </View>
 
   );
 }
