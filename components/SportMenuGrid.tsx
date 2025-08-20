@@ -47,6 +47,7 @@ import sportsData from '@/data/exercices_sport.json';
 interface SportMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
   filteredExercises?: any[];
+  filteredExercises?: any[];
 }
 
 const { width } = Dimensions.get('window');
@@ -84,8 +85,6 @@ const getExerciseColor = (exercise: any) => {
     default: return '#4CAF50';
   }
 };
-
-export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) {
 export default function SportMenuGrid({ onExerciseSelect, filteredExercises }: SportMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
