@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity, Platform, TextInput, Text } from 'react-native';
 import { Coffee, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,7 +11,10 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function GouterScreen() {
   const params = useLocalSearchParams();
-  const gouterRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'gouter');
+  const gouterRecipes = useMemo(
+    () => recipesData.recettes.filter(recipe => recipe.moment === 'gouter'),
+    []
+  );
   
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,27 +37,25 @@ export default function GouterScreen() {
         setModalVisible(true);
       }
     }
-  }, [params.recipeId, params.openModal]);
+  }, [params.recipeId, params.openModal, gouterRecipes]);
 
   // Effet pour filtrer les recettes
   useEffect(() => {
-    let filtered = [...gouterRecipes];
-    let showResults = false;
+    let filtered = gouterRecipes;
+    let show = false;
 
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(recipe =>
-        recipe.titre.toLowerCase().includes(query) ||
-        recipe.tags.some(tag => tag.toLowerCase().includes(query)) ||
-        recipe.ingredients.some(ing => ing.nom.toLowerCase().includes(query))
+      const q = searchQuery.toLowerCase().trim();
+      filtered = gouterRecipes.filter(r =>
+        r.titre.toLowerCase().includes(q) ||
+        r.tags.some(t => t.toLowerCase().includes(q)) ||
+        r.ingredients.some(i => i.nom.toLowerCase().includes(q))
       );
-      showResults = true;
-    } else {
-      showResults = false;
+      show = true;
     }
 
     setFilteredRecipes(filtered);
-    setShowSearchResults(showResults);
+    setShowSearchResults(show);
   }, [searchQuery, gouterRecipes]);
 
   const handleRecipePress = (recipe: Recipe) => {
