@@ -7,6 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { Recipe } from '@/types/Recipe';
