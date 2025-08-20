@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity, Platform, TextInput, Text } from 'react-native';
 import { Utensils, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,50 +11,48 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function MidiScreen() {
   const params = useLocalSearchParams();
-  const midiRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'midi');
-  
+
+  // Liste MIDI stable entre les rendus
+  const midiRecipes = useMemo(
+    () => recipesData.recettes.filter((recipe) => recipe.moment === 'midi'),
+    []
+  );
+
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecipes, setFilteredRecipes] = useState(midiRecipes);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-
-  // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
+  // Ouvrir la modal si des paramètres sont fournis (dépend seulement des params)
   useEffect(() => {
     if (params.recipeId && params.openModal === 'true') {
-      const recipeId = parseInt(params.recipeId as string);
-      const recipe = midiRecipes.find(r => r.id === recipeId);
-      
-      console.log(`🎯 Recherche recette midi ID: ${recipeId}`);
-      console.log(`📋 Recette trouvée:`, recipe?.titre);
-      
+      const recipeId = parseInt(params.recipeId as string, 10);
+      const recipe = midiRecipes.find((r) => r.id === recipeId);
+
       if (recipe) {
         setSelectedRecipe(recipe);
         setModalVisible(true);
       }
     }
-  }, [params.recipeId, params.openModal]);
+  }, [params.recipeId, params.openModal]); // midiRecipes est memo, on peut l'utiliser sans l'ajouter ici
 
-  // Effet pour filtrer les recettes
+  // Filtrer les recettes (ne dépend que de la recherche et de la liste mémoïsé)
   useEffect(() => {
-    let filtered = [...midiRecipes];
-    let showResults = false;
-
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(recipe =>
-        recipe.titre.toLowerCase().includes(query) ||
-        recipe.tags.some(tag => tag.toLowerCase().includes(query)) ||
-        recipe.ingredients.some(ing => ing.nom.toLowerCase().includes(query))
+      const q = searchQuery.toLowerCase().trim();
+      const filtered = midiRecipes.filter(
+        (r) =>
+          r.titre.toLowerCase().includes(q) ||
+          r.tags.some((t) => t.toLowerCase().includes(q)) ||
+          r.ingredients.some((ing) => ing.nom.toLowerCase().includes(q))
       );
-      showResults = true;
+      setFilteredRecipes(filtered);
+      setShowSearchResults(true);
     } else {
-      showResults = false;
+      setFilteredRecipes(midiRecipes);
+      setShowSearchResults(false);
     }
-
-    setFilteredRecipes(filtered);
-    setShowSearchResults(showResults);
   }, [searchQuery, midiRecipes]);
 
   const handleRecipePress = (recipe: Recipe) => {
@@ -67,9 +65,7 @@ export default function MidiScreen() {
     setSelectedRecipe(null);
   };
 
-  const goBack = () => {
-    router.back();
-  };
+  const goBack = () => router.back();
 
   const clearSearch = () => {
     setSearchQuery('');
@@ -93,39 +89,6 @@ export default function MidiScreen() {
           icon={<Utensils size={32} color={Colors.textLight} />}
         />
       </View>
-      
-      {/* Barre de recherche */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <Search size={20} color={Colors.textSecondary} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Rechercher un déjeuner..."
-            placeholderTextColor={Colors.textSecondary}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
-              <X size={18} color={Colors.textSecondary} />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* Résultats - seulement si recherche active */}
-      {showSearchResults && (
-        <View style={styles.resultsInfo}>
-          <Text style={styles.resultsText}>
-            {filteredRecipes.length} recette{filteredRecipes.length > 1 ? 's' : ''} trouvée{filteredRecipes.length > 1 ? 's' : ''}
-          </Text>
-          <TouchableOpacity onPress={clearSearch} style={styles.clearAllButton}>
-            <Text style={styles.clearAllText}>Effacer</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       {/* Barre de recherche */}
       <View style={styles.searchContainer}>
@@ -173,23 +136,14 @@ export default function MidiScreen() {
         />
       </View>
 
-      <RecipeModal
-        recipe={selectedRecipe}
-        visible={modalVisible}
-        onClose={handleCloseModal}
-      />
+      <RecipeModal recipe={selectedRecipe} visible={modalVisible} onClose={handleCloseModal} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  headerContainer: {
-    position: 'relative',
-  },
+  container: { flex: 1, backgroundColor: Colors.background },
+  headerContainer: { position: 'relative' },
   backButton: {
     position: 'absolute',
     top: 60,
@@ -199,17 +153,10 @@ const styles = StyleSheet.create({
     padding: 8,
     zIndex: 10,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  listContainer: {
-    paddingTop: 16,
-    paddingBottom: 170,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
+  content: { flex: 1, paddingHorizontal: 16 },
+  listContainer: { paddingTop: 16, paddingBottom: 170 },
+  row: { justifyContent: 'space-between' },
+
   searchContainer: {
     backgroundColor: Colors.surface,
     paddingHorizontal: 16,
@@ -227,9 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 48,
   },
-  searchIcon: {
-    marginRight: 8,
-  },
+  searchIcon: { marginRight: 8 },
   searchInput: {
     flex: 1,
     fontSize: 16,
@@ -237,9 +182,8 @@ const styles = StyleSheet.create({
     color: Colors.text,
     height: '100%',
   },
-  clearButton: {
-    padding: 4,
-  },
+  clearButton: { padding: 4 },
+
   resultsInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -250,76 +194,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  resultsText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  },
-  clearAllButton: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  clearAllText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-  },
-  searchContainer: {
-    backgroundColor: Colors.surface,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    height: 48,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-    height: '100%',
-  },
-  clearButton: {
-    padding: 4,
-  },
-  resultsInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  resultsText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-  },
-  clearAllButton: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  clearAllText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.agpBlue,
-  },
+  resultsText: { fontSize: 14, fontFamily: 'Inter-Medium', color: Colors.textSecondary },
+  clearAllButton: { backgroundColor: Colors.agpLightBlue, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
+  clearAllText: { fontSize: 12, fontFamily: 'Poppins-Medium', color: Colors.agpBlue },
 });
