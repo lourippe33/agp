@@ -195,17 +195,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 70, // Espace pour la tab bar
   },
-  searchContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  searchBar: {
-    borderRadius: 12,
-    backgroundColor: Colors.background,
-  },
   quickNavContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -64,9 +64,42 @@ export default function MidiScreen() {
         />
       </View>
       
+      {/* Barre de recherche */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchInputContainer}>
+          <Search size={20} color={Colors.textSecondary} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Rechercher un déjeuner..."
+            placeholderTextColor={Colors.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+              <X size={18} color={Colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      {/* Résultats - seulement si recherche active */}
+      {showSearchResults && (
+        <View style={styles.resultsInfo}>
+          <Text style={styles.resultsText}>
+            {filteredRecipes.length} recette{filteredRecipes.length > 1 ? 's' : ''} trouvée{filteredRecipes.length > 1 ? 's' : ''}
+          </Text>
+          <TouchableOpacity onPress={clearSearch} style={styles.clearAllButton}>
+            <Text style={styles.clearAllText}>Effacer</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View style={styles.content}>
         <FlatList
-          data={midiRecipes}
+          data={showSearchResults ? filteredRecipes : midiRecipes}
           renderItem={renderRecipe}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
@@ -113,5 +146,61 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: 'space-between',
+  },
+  searchContainer: {
+    backgroundColor: Colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 12,
+    height: 48,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    height: '100%',
+  },
+  clearButton: {
+    padding: 4,
+  },
+  resultsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  resultsText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  clearAllButton: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  clearAllText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: Colors.agpBlue,
   },
 });
