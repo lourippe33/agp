@@ -16,6 +16,7 @@ export default function SportScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredExercises, setFilteredExercises] = useState(sportsData.exercices);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   // Effet pour ouvrir automatiquement la modal si des paramètres sont fournis
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function SportScreen() {
   // Effet pour filtrer les exercices
   useEffect(() => {
     let filtered = [...sportsData.exercices];
+    let showResults = false;
 
     // Filtrage par recherche textuelle
     if (searchQuery.trim()) {
@@ -46,9 +48,13 @@ export default function SportScreen() {
         exercise.description.toLowerCase().includes(query) ||
         exercise.type.toLowerCase().includes(query)
       );
+      showResults = true;
+    } else {
+      showResults = false;
     }
 
     setFilteredExercises(filtered);
+    setShowSearchResults(showResults);
   }, [searchQuery]);
 
   const handleExerciseSelect = (exerciseId: number) => {
@@ -70,6 +76,7 @@ export default function SportScreen() {
 
   const clearSearch = () => {
     setSearchQuery('');
+    setShowSearchResults(false);
   };
 
   return (
@@ -107,17 +114,17 @@ export default function SportScreen() {
         </View>
       </View>
 
-      {/* Résultats */}
-      <View style={styles.resultsInfo}>
-        <Text style={styles.resultsText}>
-          {filteredExercises.length} exercice{filteredExercises.length > 1 ? 's' : ''} trouvé{filteredExercises.length > 1 ? 's' : ''}
-        </Text>
-        {searchQuery && (
+      {/* Résultats - seulement si recherche active */}
+      {showSearchResults && (
+        <View style={styles.resultsInfo}>
+          <Text style={styles.resultsText}>
+            {filteredExercises.length} exercice{filteredExercises.length > 1 ? 's' : ''} trouvé{filteredExercises.length > 1 ? 's' : ''}
+          </Text>
           <TouchableOpacity onPress={clearSearch} style={styles.clearAllButton}>
             <Text style={styles.clearAllText}>Effacer</Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
 
       <View style={styles.content}>
         <ScrollView 
@@ -130,7 +137,7 @@ export default function SportScreen() {
         >
           <SportMenuGrid 
             onExerciseSelect={handleExerciseSelect} 
-            filteredExercises={filteredExercises}
+            filteredExercises={showSearchResults ? filteredExercises : undefined}
           />
         </ScrollView>
       </View>

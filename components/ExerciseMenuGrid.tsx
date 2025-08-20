@@ -35,6 +35,7 @@ import exercisesData from '@/data/exercices_detente.json';
 
 interface ExerciseMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
+  filteredExercises?: any[];
 }
 
 const { width } = Dimensions.get('window');
@@ -151,10 +152,13 @@ const menuItems = [
   }
 ];
 
-export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridProps) {
+export default function ExerciseMenuGrid({ onExerciseSelect, filteredExercises }: ExerciseMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [breathingTimerVisible, setBreathingTimerVisible] = useState(false);
+
+  // Utiliser les exercices filtrés ou tous les exercices par défaut
+  const exercisesToShow = filteredExercises || exercisesData.exercices;
 
   const handleExercisePress = (exerciseId: number) => {
     // Trouver l'exercice dans les données
@@ -282,10 +286,38 @@ export default function ExerciseMenuGrid({ onExerciseSelect }: ExerciseMenuGridP
           </Text>
         </View>
         
-        <View style={styles.grid}>
-          {menuItems.map(renderMenuItem)}
-        </View>
+        {filteredExercises ? (
+          // Mode recherche : afficher les résultats filtrés
+          <View style={styles.searchResultsGrid}>
+            {exercisesToShow.map((exercise) => (
+              <TouchableOpacity
+                key={exercise.id}
+                style={styles.searchResultCard}
+                onPress={() => handleExercisePress(exercise.id)}
+                activeOpacity={0.9}
+              >
+                <Text style={styles.searchResultTitle}>{exercise.titre}</Text>
+                <Text style={styles.searchResultDuration}>{exercise.duree} min</Text>
+                <Text style={styles.searchResultType}>{exercise.type}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          // Mode normal : afficher le menu par défaut
+          <View style={styles.grid}>
+            {menuItems.map(renderMenuItem)}
+          </View>
+        )}
         
+        {filteredExercises && exercisesToShow.length === 0 && (
+          <View style={styles.emptySearchState}>
+            <Text style={styles.emptySearchTitle}>Aucun exercice trouvé</Text>
+            <Text style={styles.emptySearchText}>
+              Essayez avec d'autres mots-clés
+            </Text>
+          </View>
+        )}
+
         <View style={styles.footer}>
           <View style={styles.tipCard}>
             <Heart size={20} color={Colors.relaxation} />
@@ -570,6 +602,57 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
+  },
+  searchResultsGrid: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  searchResultCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  searchResultTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  searchResultDuration: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.agpBlue,
+    marginBottom: 2,
+  },
+  searchResultType: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+  },
+  emptySearchState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  emptySearchTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+  emptySearchText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
   },
   timerModalContainer: {
     flex: 1,

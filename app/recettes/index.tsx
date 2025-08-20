@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { Sun, Utensils, Coffee, Moon, ArrowLeft, Search } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import AGPLogo from '@/components/AGPLogo';
-import QuickSearchButton from '@/components/QuickSearchButton';
+import RecipeSearchBar from '@/components/RecipeSearchBar';
 
 export default function RecettesIndexScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -91,10 +91,7 @@ export default function RecettesIndexScreen() {
 
         {/* Barre de recherche */}
         <View style={styles.searchContainer}>
-          <QuickSearchButton 
-            placeholder="Rechercher une recette..." 
-            style={styles.searchBar}
-          />
+          <RecipeSearchBar />
         </View>
         
         {/* Navigation rapide */}
