@@ -94,18 +94,6 @@ export default function SportScreen() {
       />
 
       <PersistentTabBar />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  headerContainer: {
-    position: 'relative',
-  },
   backButton: {
     position: 'absolute',
     top: 60,
@@ -114,32 +102,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 8,
     zIndex: 10,
-  },
-  startButtonContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    alignItems: 'center',
-  },
-  startExerciseButton: {
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    elevation: 4,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    minWidth: 250,
-  },
-  startExerciseButtonText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    textAlign: 'center',
   },
   content: {
     flex: 1,
