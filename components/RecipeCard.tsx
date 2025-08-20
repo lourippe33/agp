@@ -109,7 +109,7 @@ export default function RecipeCard({ recipe, onPress }: RecipeCardProps) {
 
           <View style={styles.tagsContainer}>
             {recipe.tags.slice(0, 2).map((tag, index) => (
-              <View key={index} style={[styles.tag, { borderColor: momentColor }]}>
+              <View key={`${recipe.id}-${tag}-${index}`} style={[styles.tag, { borderColor: momentColor }]}>
                 <Text style={[styles.tagText, { color: momentColor }]}>
                   {tag}
                 </Text>

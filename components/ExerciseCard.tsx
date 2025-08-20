@@ -157,7 +157,7 @@ export default function ExerciseCard({ exercise, onPress, onQuickStart, onVideoP
 
           <View style={styles.tagsContainer}>
             {exercise.tags.slice(0, 2).map((tag, index) => (
-              <View key={index} style={[styles.tag, { borderColor: typeColor }]}>
+              <View key={`${exercise.id}-${tag}-${index}`} style={[styles.tag, { borderColor: typeColor }]}>
                 <Text style={[styles.tagText, { color: typeColor }]}>
                   {tag}
                 </Text>

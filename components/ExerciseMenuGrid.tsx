@@ -33,6 +33,91 @@ import ExerciseTimer from './ExerciseTimer';
 import BreathingTimer from './BreathingTimer';
 import exercisesData from '@/data/exercices_detente.json';
 
+// Composant séparé pour chaque élément du menu
+interface ExerciseMenuItemProps {
+  item: typeof menuItems[0];
+  onPress: (exerciseId: number) => void;
+}
+
+function ExerciseMenuItem({ item, onPress }: ExerciseMenuItemProps) {
+  const IconComponent = item.icon;
+  const [cardAnimation] = useState(new Animated.Value(0));
+  
+  // Effet de clic avec animation
+  const animateCardClick = () => {
+    // Animation : 0 → 1 → 0 en 500ms
+    Animated.sequence([
+      Animated.timing(cardAnimation, {
+        toValue: 1,
+        duration: 50,
+        useNativeDriver: false,
+      }),
+      Animated.timing(cardAnimation, {
+        toValue: 0,
+        duration: 450,
+        useNativeDriver: false,
+      })
+    ]).start();
+  };
+
+  const handlePress = () => {
+    animateCardClick();
+    onPress(item.id);
+  };
+
+  // Interpolation de couleur pour l'effet de clic
+  const animatedBackgroundColor = cardAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [Colors.surface, '#F5F5F5'] // Blanc → Gris clair
+  });
+  
+  return (
+    <Animated.View
+      style={[
+        styles.menuCard,
+        { backgroundColor: animatedBackgroundColor }
+      ]}
+    >
+      <TouchableOpacity
+        style={styles.cardTouchable}
+        onPress={handlePress}
+        activeOpacity={0.9}
+      >
+      <View style={styles.imageContainer}>
+        <Image 
+          source={{ uri: item.image }} 
+          style={styles.cardImage}
+          resizeMode="cover"
+        />
+        <View style={styles.imageOverlay} />
+      </View>
+      
+      <View style={styles.cardContent}>
+        <Text style={styles.cardTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+        
+        <Text style={[styles.cardSubtitle, { color: item.color }]}>
+          {item.subtitle}
+        </Text>
+      </View>
+
+      {/* Bouton de démarrage rapide */}
+      <TouchableOpacity 
+        style={[styles.quickStartButton, { backgroundColor: item.color }]}
+        onPress={(e) => {
+          e.stopPropagation();
+          onPress(item.id);
+        }}
+        activeOpacity={0.8}
+      >
+        <Play size={16} color={Colors.textLight} fill={Colors.textLight} />
+      </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
 interface ExerciseMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
   filteredExercises?: any[];
@@ -190,86 +275,6 @@ export default function ExerciseMenuGrid({ onExerciseSelect, filteredExercises }
     setSelectedExercise(null);
   };
 
-  const renderMenuItem = (item: typeof menuItems[0]) => {
-    const IconComponent = item.icon;
-    const [cardAnimation] = useState(new Animated.Value(0));
-    
-    // Effet de clic avec animation
-    const animateCardClick = () => {
-      // Animation : 0 → 1 → 0 en 500ms
-      Animated.sequence([
-        Animated.timing(cardAnimation, {
-          toValue: 1,
-          duration: 50,
-          useNativeDriver: false,
-        }),
-        Animated.timing(cardAnimation, {
-          toValue: 0,
-          duration: 450,
-          useNativeDriver: false,
-        })
-      ]).start();
-    };
-
-    const handlePress = () => {
-      animateCardClick();
-      handleExercisePress(item.id);
-    };
-
-    // Interpolation de couleur pour l'effet de clic
-    const animatedBackgroundColor = cardAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [Colors.surface, '#F5F5F5'] // Blanc → Gris clair
-    });
-    
-    return (
-      <Animated.View
-        key={item.id}
-        style={[
-          styles.menuCard,
-          { backgroundColor: animatedBackgroundColor }
-        ]}
-      >
-        <TouchableOpacity
-          style={styles.cardTouchable}
-          onPress={handlePress}
-          activeOpacity={0.9}
-        >
-        <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: item.image }} 
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
-          <View style={styles.imageOverlay} />
-        </View>
-        
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle} numberOfLines={2}>
-            {item.title}
-          </Text>
-          
-          <Text style={[styles.cardSubtitle, { color: item.color }]}>
-            {item.subtitle}
-          </Text>
-        </View>
-
-        {/* Bouton de démarrage rapide */}
-        <TouchableOpacity 
-          style={[styles.quickStartButton, { backgroundColor: item.color }]}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleExercisePress(item.id);
-          }}
-          activeOpacity={0.8}
-        >
-          <Play size={16} color={Colors.textLight} fill={Colors.textLight} />
-        </TouchableOpacity>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
-
   return (
     <>
       <ScrollView 
@@ -305,7 +310,13 @@ export default function ExerciseMenuGrid({ onExerciseSelect, filteredExercises }
         ) : (
           // Mode normal : afficher le menu par défaut
           <View style={styles.grid}>
-            {menuItems.map(renderMenuItem)}
+            {menuItems.map((item) => (
+              <ExerciseMenuItem
+                key={item.id}
+                item={item}
+                onPress={handleExercisePress}
+              />
+            ))}
           </View>
         )}
         
