@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity, Platform, TextInput, Text } from 'react-native';
 import { Moon, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,7 +11,10 @@ import recipesData from '@/data/recettes_agp.json';
 
 export default function SoirScreen() {
   const params = useLocalSearchParams();
-  const soirRecipes = recipesData.recettes.filter(recipe => recipe.moment === 'soir');
+  const soirRecipes = useMemo(
+    () => recipesData.recettes.filter(recipe => recipe.moment === 'soir'),
+    []
+  );
   
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -55,7 +58,7 @@ export default function SoirScreen() {
 
     setFilteredRecipes(filtered);
     setShowSearchResults(showResults);
-  }, [searchQuery, soirRecipes]);
+  }, [searchQuery]);
 
   const handleRecipePress = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
