@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Platform, ScrollView, Text } from 'react-native';
 import { Dumbbell, ArrowLeft } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';
@@ -61,20 +61,19 @@ export default function SportScreen() {
           icon={<Dumbbell size={32} color={Colors.textLight} />}
         />
       </View>
-      
-      {/* Bouton de démarrage d'exercice */}
+
       <View style={styles.startButtonContainer}>
         <TouchableOpacity
           style={styles.startExerciseButton}
-          onPress={() => {
-            handleExerciseSelect(1);
-          }}
+          onPress={() => handleExerciseSelect(1)}
           activeOpacity={0.8}
         >
-          <Text style={styles.startExerciseButtonText}>▶️ Démarrer un exercice</Text>
+          <Text style={styles.startExerciseButtonText}>
+            ▶️ Démarrer un exercice
+          </Text>
         </TouchableOpacity>
       </View>
-
+      
       <View style={styles.content}>
         <ScrollView 
           style={[
@@ -116,38 +115,12 @@ const styles = StyleSheet.create({
     padding: 8,
     zIndex: 10,
   },
-  content: {
-    flex: 1,
-    paddingBottom: 70, // Espace pour la tab bar
-  },
   startButtonContainer: {
     paddingHorizontal: 20,
     paddingVertical: 16,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-  },
-  startExerciseButton: {
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    elevation: 4,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    alignItems: 'center',
-  },
-  startExerciseButtonText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    textAlign: 'center',
-  },
-  startButtonContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
     alignItems: 'center',
   },
   startExerciseButton: {
@@ -167,6 +140,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
     textAlign: 'center',
+  },
+  content: {
+    flex: 1,
+    paddingBottom: 70, // Espace pour la tab bar
   },
   scrollContainer: {
     flex: 1,
