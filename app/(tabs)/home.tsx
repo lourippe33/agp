@@ -91,16 +91,6 @@ interface DayProgram {
   badges?: string[];
 }
 
-const HeaderTitle = ({ name }: { name: string }) => (
-  <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
-    <View style={{ alignItems: 'center', marginBottom: 6 }}>
-      <Text style={{ fontSize: 24, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
-      Bienvenue sur AGP, {name} 👋
-      </Text>
-    </View>
-  </View>
-);
-
 export default function HomeScreen() {
   const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -324,7 +314,6 @@ export default function HomeScreen() {
       </Text>
     </View>
   );
-
 
   const getGreeting = () => {
     const hour = currentTime.getHours();

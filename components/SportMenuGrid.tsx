@@ -86,6 +86,7 @@ const getExerciseColor = (exercise: any) => {
 };
 
 export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) {
+export default function SportMenuGrid({ onExerciseSelect, filteredExercises }: SportMenuGridProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [exerciseDetailsModalVisible, setExerciseDetailsModalVisible] = useState(false);
