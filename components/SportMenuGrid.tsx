@@ -46,6 +46,7 @@ import sportsData from '@/data/exercices_sport.json';
 
 interface SportMenuGridProps {
   onExerciseSelect: (exerciseId: number) => void;
+  filteredExercises?: any[];
 }
 
 const { width } = Dimensions.get('window');
@@ -103,8 +104,10 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
   const [chaiseTimerVisible, setChaiseTimerVisible] = useState(false);
   const [marcheBrasTimerVisible, setMarcheBrasTimerVisible] = useState(false);
 
-  console.log('🔍 Données exercices sport chargées:', sportsData.exercices.length, 'exercices');
-  console.log('🎯 Exercice ID 14:', sportsData.exercices.find(ex => ex.id === 14));
+  // Utiliser les exercices filtrés ou tous les exercices par défaut
+  const exercisesToShow = filteredExercises || sportsData.exercices;
+
+  console.log('🔍 Données exercices sport chargées:', exercisesToShow.length, 'exercices');
 
   // Initialiser les animations pour chaque exercice
   const getCardAnimation = (exerciseId: number) => {
@@ -321,9 +324,19 @@ export default function SportMenuGrid({ onExerciseSelect }: SportMenuGridProps) 
         </View>
         
         <View style={styles.grid}>
-          {sportsData.exercices.map(renderMenuItem)}
+          {exercisesToShow.map(renderMenuItem)}
         </View>
         
+        {exercisesToShow.length === 0 && (
+          <View style={styles.emptyState}>
+            <Dumbbell size={48} color={Colors.textSecondary} />
+            <Text style={styles.emptyStateTitle}>Aucun exercice trouvé</Text>
+            <Text style={styles.emptyStateText}>
+              Essayez de modifier vos critères de recherche ou vos filtres
+            </Text>
+          </View>
+        )}
+
         <View style={styles.footer}>
           <View style={styles.tipCard}>
             <Flame size={20} color={Colors.agpBlue} />
@@ -1309,5 +1322,25 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
     flex: 1,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
