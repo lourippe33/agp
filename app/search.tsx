@@ -25,6 +25,9 @@ import exercisesData from '@/data/exercices_detente.json';
 import sportsData from '@/data/exercices_sport.json';
 
 export default function SearchScreen() {
+  const params = useLocalSearchParams();
+  const initialQuery = (params.q as string) || '';
+  
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -57,6 +60,13 @@ export default function SearchScreen() {
     recipes: recipesData.recettes,
     exercises: allExercises,
   });
+
+  // Définir la requête initiale si elle vient des paramètres
+  React.useEffect(() => {
+    if (initialQuery && initialQuery !== searchQuery) {
+      setSearchQuery(initialQuery);
+    }
+  }, [initialQuery]);
 
   const handleRecipePress = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
