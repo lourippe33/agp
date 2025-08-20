@@ -16,7 +16,6 @@ config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
 config.resolver.alias = {
   ...config.resolver.alias,
   'react-native-svg': 'react-native-svg/lib/module/ReactNativeSVG.web.js',
-  'react-native/Libraries/Components/Text/Text': 'react-native-web/dist/exports/Text',
 };
 
 // Reset cache on start

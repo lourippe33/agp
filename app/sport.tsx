@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import { Dumbbell, ArrowLeft } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';
@@ -61,18 +61,6 @@ export default function SportScreen() {
           icon={<Dumbbell size={32} color={Colors.textLight} />}
         />
       </View>
-
-      <View style={styles.startButtonContainer}>
-        <TouchableOpacity
-          style={styles.startExerciseButton}
-          onPress={() => handleExerciseSelect(1)}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.startExerciseButtonText}>
-            ▶️ Démarrer un exercice
-          </Text>
-        </TouchableOpacity>
-      </View>
       
       <View style={styles.content}>
         <ScrollView 
@@ -95,6 +83,20 @@ export default function SportScreen() {
 
       <PersistentTabBar />
     </View>
+      {/* Bouton de démarrage d'exercice */}
+      <View style={styles.startButtonContainer}>
+        <TouchableOpacity
+          style={styles.startExerciseButton}
+          onPress={() => {
+            // Pour l'instant, on peut ouvrir le premier exercice ou une sélection
+            handleExerciseSelect(1); // Démarre le premier exercice par défaut
+          }}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.startExerciseButtonText}>▶️ Démarrer un exercice</Text>
+        </TouchableOpacity>
+      </View>
+
   );
 }
 
@@ -105,30 +107,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     position: 'relative',
-  },
-  startButtonContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  startExerciseButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  startExerciseButtonText: {
-    color: Colors.textLight,
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   backButton: {
     position: 'absolute',
@@ -142,6 +120,29 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingBottom: 70, // Espace pour la tab bar
+  },
+  startButtonContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  startExerciseButton: {
+    backgroundColor: Colors.agpGreen,
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    minWidth: 250,
+  },
+  startExerciseButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    textAlign: 'center',
   },
   scrollContainer: {
     flex: 1,
