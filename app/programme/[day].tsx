@@ -1,6 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
@@ -13,7 +17,37 @@ interface ProgramProgress {
   startDate: string;
 }
 
+interface ProgramProgress {
+  completedDays: number[];
+  currentDay: number;
+  startDate: string;
+}
+
+interface ProgramProgress {
+  completedDays: number[];
+  currentDay: number;
+  startDate: string;
+}
+
 export default function HomeScreen() {
+  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
+
+  useEffect(() => {
+    loadProgramProgress();
+  }, []);
+
+  const loadProgramProgress = async () => {
+    try {
+      const savedProgress = await AsyncStorage.getItem('programProgress');
+      if (savedProgress) {
+        const progress: ProgramProgress = JSON.parse(savedProgress);
+        setCurrentProgramDay(Math.min(28, progress.currentDay));
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement de la progression:', error);
+    }
+  };
+
   const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
 
   useEffect(() => {
@@ -84,8 +118,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header avec gradient */}
+      <ScrollView style={styles.content}>
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
