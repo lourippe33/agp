@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Chrome as Home, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
