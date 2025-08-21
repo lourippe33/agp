@@ -58,7 +58,14 @@ export default function HomeScreen() {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
       if (savedProgress) {
+        const progress: ProgramProgress = JSON.parse(savedProgress);
+        setCurrentProgramDay(Math.min(28, progress.currentDay));
+      }
+    } catch (error) {
       console.error('Erreur lors du chargement de la progression:', error);
+    }
+  };
+
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
@@ -109,6 +116,9 @@ export default function HomeScreen() {
     }
   };
 
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.content}>
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
