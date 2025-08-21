@@ -464,7 +464,6 @@ export default function AdaptiveTimer({
     
     // Pour les autres exercices de détente, PAS DE TIMER
     // Car ils sont basés sur des actions libres, pas du temps
-    return [];
   };
 
   // Gestion du timer
@@ -476,17 +475,8 @@ export default function AdaptiveTimer({
     setPhases(analyzedPhases);
     if (analyzedPhases.length > 0) {
       setTimeRemaining(analyzedPhases[0].duration);
-      setIsInitialized(true);
-    } else {
-      // Pas de timer pour cet exercice
-      setIsInitialized(false);
     }
   }, [exerciseSteps, totalDuration, exerciseTitle, exerciseType]);
-
-  // Ne pas afficher le timer si pas de phases
-  if (!isInitialized || phases.length === 0) {
-    return null; // Pas de timer pour cet exercice
-  }
 
   useEffect(() => {
     if (isRunning) {
@@ -523,6 +513,11 @@ export default function AdaptiveTimer({
       }
     };
   }, [isRunning, timeRemaining, currentPhaseIndex, phases, onComplete]);
+
+  // Ne pas afficher le timer si pas de phases
+  if (phases.length === 0) {
+    return null; // Pas de timer pour cet exercice
+  }
 
   const toggleTimer = () => {
     setIsRunning(!isRunning);
