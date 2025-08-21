@@ -1,60 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
-}
-
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
-}
-
 export default function HomeScreen() {
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
+  const handleNavigation = (route: string) => {
     try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
+      router.push(route as any);
     } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
+      Alert.alert('Navigation', `Redirection vers ${route}`);
     }
   };
 
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
-    try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
-    }
+  const getCurrentMoment = () => {
+    const hour = new Date().getHours();
+    if (hour < 10) return 'matin';
+    if (hour < 14) return 'midi';
+    if (hour < 18) return 'gouter';
+    return 'soir';
   };
 
   const getMomentText = () => {
@@ -64,52 +29,75 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
-  const getDailyMotivation = (day: number) => {
-    const motivations = [
-      "🌟 Premier jour ! Vous commencez une belle aventure !",
-      "💪 Deuxième jour ! Vous prenez de l'élan !",
-      "🔥 Trois jours ! L'habitude se forme !",
-      "⭐ Quatre jours de suite, vous êtes formidable !",
-      "🚀 Une semaine presque complète, bravo !",
-      "🎯 Six jours ! Vous tenez le bon rythme !",
-      "🏆 Une semaine complète ! Félicitations !",
-      "🌈 Semaine 2 commence, vous progressez !",
-      "💎 Neuf jours ! Vous brillez de détermination !",
-      "🔋 Dix jours ! Votre énergie est contagieuse !",
-      "⚡ Onze jours ! Vous êtes électrisant !",
-      "🌟 Douze jours ! Vous illuminez votre parcours !",
-      "🎊 Treize jours ! Porte-bonheur de la motivation !",
-      "🎉 Deux semaines ! Vous êtes à mi-chemin !",
-      "🚀 Quinze jours ! Vous volez vers vos objectifs !",
-      "💪 Seize jours ! Votre force grandit chaque jour !",
-      "🔥 Dix-sept jours ! Vous êtes en feu !",
-      "⭐ Dix-huit jours ! Vous brillez de mille feux !",
-      "🌈 Dix-neuf jours ! Vous colorez votre transformation !",
-      "🎯 Vingt jours ! Vous visez juste !",
-      "🏆 Trois semaines ! Vous êtes un champion !",
-      "💎 Vingt-deux jours ! Vous êtes précieux !",
-      "🔋 Vingt-trois jours ! Votre énergie est inépuisable !",
-      "⚡ Vingt-quatre jours ! Vous électrisez votre réussite !",
-      "🌟 Vingt-cinq jours ! Vous êtes une étoile !",
-      "🚀 Vingt-six jours ! Vous volez vers la victoire !",
-      "🏆 Avant-dernier jour ! Vous êtes presque au sommet !",
-      "🎉 JOUR 28 ! FÉLICITATIONS ! Transformation accomplie !"
-    ];
-    
-    return motivations[Math.min(day - 1, motivations.length - 1)];
-  };
+  const getMomentData = () => {
+    const hour = new Date().getHours();
+    const phrases = {
+      matin: [
+        "Réveillez votre métabolisme → Petit-déjeuner protéiné, hydratation et mouvement doux pour bien commencer.",
+        "Votre corps se réveille → C'est le moment idéal pour les protéines et une activité physique douce.",
+        "Énergie matinale → Profitez de ce pic naturel pour vous hydrater et nourrir vos muscles.",
+        "Cortisol au top → Votre hormone de l'éveil est à son maximum, parfait pour démarrer activement."
+      ],
+      midi: [
+        "Pic de performance → Votre corps est au maximum de ses capacités, c'est l'heure du repas principal !",
+        "Métabolisme optimal → Midi est le moment parfait pour votre repas le plus consistant de la journée.",
+        "Force et énergie → Profitez de ce pic naturel pour un déjeuner équilibré et une activité intense.",
+        "Digestion efficace → Votre système digestif fonctionne à plein régime, mangez copieusement !"
+      ],
+      gouter: [
+        "Recharge-toi sans culpabiliser → Étirements, respiration, ou collation saine - tout compte.",
+        "Baisse naturelle d'énergie → C'est normal ! Une pause active ou une collation vous redonnera du tonus.",
+        "Moment de transition → Votre corps se prépare à la soirée, accordez-vous une pause bien méritée.",
+        "Récupération active → Quelques étirements ou une collation légère pour tenir jusqu'au dîner."
+      ],
+      soir: [
+        "Préparation au repos → Dîner léger, détente et rituels apaisants pour un sommeil réparateur.",
+        "Votre corps ralentit → C'est le signal pour des activités calmes et une alimentation légère.",
+        "Transition vers la nuit → Favorisez la relaxation et évitez les stimulants pour bien dormir.",
+        "Régénération nocturne → Préparez votre corps au repos avec douceur et bienveillance."
+      ]
+    };
 
-  const handleNavigation = (route: string) => {
-    try {
-      router.push(route as any);
-    } catch (error) {
-      Alert.alert('Erreur', 'Impossible de naviguer vers cette page');
-    }
+    const moment = getCurrentMoment();
+    const momentPhrases = phrases[moment];
+    const randomPhrase = momentPhrases[Math.floor(Math.random() * momentPhrases.length)];
+
+    const icons = {
+      matin: Sun,
+      midi: Utensils,
+      gouter: Coffee,
+      soir: Moon
+    };
+
+    const titles = {
+      matin: 'Moment matinal',
+      midi: 'Moment déjeuner', 
+      gouter: 'Moment goûter',
+      soir: 'Moment soirée'
+    };
+
+    const colors = {
+      matin: ['#FFD54F', '#FFF3C4'],
+      midi: ['#7CB342', '#C8E6C9'],
+      gouter: ['#FF9800', '#FFE0B2'],
+      soir: ['#4A90E2', '#E3F2FD']
+    };
+
+    return {
+      moment,
+      phrase: randomPhrase,
+      icon: icons[moment],
+      title: titles[moment],
+      colors: colors[moment]
+    };
   };
+  const currentMoment = getCurrentMoment();
+  const momentData = getMomentData();
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Header personnalisé */}
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
@@ -127,19 +115,32 @@ export default function HomeScreen() {
         {/* Bienvenue */}
         <View style={styles.welcomeSection}>
           <Text style={styles.welcomeTitle}>Bienvenue sur AGP, Eric 👋</Text>
-          <Text style={styles.programDayText}>
-            Aujourd'hui est votre {currentProgramDay}{currentProgramDay === 1 ? 'er' : 'e'} jour du programme
-          </Text>
-          <Text style={styles.motivationText}>
-            {getDailyMotivation(currentProgramDay)}
-          </Text>
-          <TouchableOpacity 
-            style={styles.programButton}
-            onPress={() => handleNavigation('/(tabs)/programme')}
-          >
-            <Calendar size={20} color={Colors.textLight} />
-            <Text style={styles.programButtonText}>Voir mon programme</Text>
-          </TouchableOpacity>
+        </View>
+
+        {/* Programme 28 Jours */}
+        <View style={styles.programmeSection}>
+          <Text style={styles.sectionTitle}>Programme 28 Jours</Text>
+          
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScroll}>
+            <View style={styles.daysContainer}>
+              {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                <View key={day} style={styles.dayCircle}>
+                  <Text style={styles.dayNumber}>{day}</Text>
+                  <Text style={styles.dayLabel}>
+                    {day === 1 ? 'lun.' : day === 2 ? 'mar.' : day === 3 ? 'mer.' : 
+                     day === 4 ? 'jeu.' : day === 5 ? 'ven.' : day === 6 ? 'sam.' : 'dim.'}
+                  </Text>
+                  <Text style={styles.dayTime}>
+                    {day <= 3 ? '20 min' : day <= 5 ? '25 min' : '30 min'}
+                  </Text>
+                  <View style={[styles.statusDot, { backgroundColor: day === 1 ? '#FF6B6B' : day <= 3 ? '#4A90E2' : '#E0E0E0' }]} />
+                </View>
+              ))}
+              <TouchableOpacity style={styles.moreButton}>
+                <ChevronRight size={20} color={Colors.agpBlue} />
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
 
         {/* Actions rapides */}
@@ -191,6 +192,30 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
+        </View>
+
+        {/* Moment actuel */}
+        <View style={styles.momentSection}>
+          <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+          
+          <LinearGradient
+            colors={momentData.colors}
+            style={styles.momentCard}
+          >
+            <View style={styles.momentHeader}>
+              <momentData.icon size={24} color={Colors.textLight} />
+              <Text style={styles.momentTitle}>{momentData.title}</Text>
+            </View>
+            <Text style={styles.momentText}>
+              {momentData.phrase}
+            </Text>
+            <TouchableOpacity 
+              style={styles.momentButton}
+              onPress={() => handleNavigation('/(tabs)/programme')}
+            >
+              <Text style={styles.momentButtonText}>Voir le programme</Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
 
         {/* Conseil du jour */}
@@ -253,49 +278,66 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
     textAlign: 'center',
-    marginBottom: 8,
   },
-  programDayText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.agpBlue,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  motivationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 20,
+  programmeSection: {
     paddingHorizontal: 20,
-  },
-  programButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    gap: 8,
-    elevation: 3,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-  },
-  programButtonText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
     marginBottom: 16,
+  },
+  daysScroll: {
+    marginHorizontal: -20,
+  },
+  daysContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    gap: 16,
+    alignItems: 'center',
+  },
+  dayCircle: {
+    alignItems: 'center',
+    width: 60,
+  },
+  dayNumber: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.agpBlue,
+    backgroundColor: Colors.surface,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    textAlign: 'center',
+    lineHeight: 40,
+    marginBottom: 4,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  dayLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginBottom: 2,
+  },
+  dayTime: {
+    fontSize: 9,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    marginBottom: 4,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  moreButton: {
+    padding: 8,
   },
   quickActions: {
     paddingHorizontal: 20,
@@ -372,6 +414,50 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     lineHeight: 16,
+  },
+  momentSection: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  momentCard: {
+    borderRadius: 16,
+    padding: 20,
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  momentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  momentTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+  },
+  momentText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+    lineHeight: 18,
+    marginBottom: 16,
+  },
+  momentButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignSelf: 'flex-start',
+  },
+  momentButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   conseilSection: {
     paddingHorizontal: 20,
