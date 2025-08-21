@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Bell, Clock, Droplets, Utensils, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/src/context/AuthContext';
 import { NotificationService, NotificationSettings } from '@/services/NotificationService';
 
 interface NotificationSettingsProps {
