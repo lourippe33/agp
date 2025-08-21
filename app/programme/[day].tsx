@@ -2,15 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
+import { Utensils, Dumbbell, Heart, Calendar } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
-}
 
 interface ProgramProgress {
   completedDays: number[];
@@ -27,28 +21,10 @@ export default function HomeScreen() {
 
   const loadProgramProgress = async () => {
     try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
-    }
-  };
-
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
-    try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
+      const saved = await AsyncStorage.getItem('programProgress');
+      if (saved) {
+        const progress: ProgramProgress = JSON.parse(saved);
+        setCurrentProgramDay(Math.min(28, progress.currentDay || 1));
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la progression:', error);
@@ -64,37 +40,36 @@ export default function HomeScreen() {
 
   const getDailyMotivation = (day: number) => {
     const motivations = [
-      "🌟 Premier jour ! Vous commencez une belle aventure !",
-      "💪 Deuxième jour ! Vous prenez de l'élan !",
-      "🔥 Trois jours ! L'habitude se forme !",
-      "⭐ Quatre jours de suite, vous êtes formidable !",
-      "🚀 Une semaine presque complète, bravo !",
-      "🎯 Six jours ! Vous tenez le bon rythme !",
-      "🏆 Une semaine complète ! Félicitations !",
-      "🌈 Semaine 2 commence, vous progressez !",
-      "💎 Neuf jours ! Vous brillez de détermination !",
-      "🔋 Dix jours ! Votre énergie est contagieuse !",
-      "⚡ Onze jours ! Vous êtes électrisant !",
-      "🌟 Douze jours ! Vous illuminez votre parcours !",
-      "🎊 Treize jours ! Porte-bonheur de la motivation !",
-      "🎉 Deux semaines ! Vous êtes à mi-chemin !",
-      "🚀 Quinze jours ! Vous volez vers vos objectifs !",
-      "💪 Seize jours ! Votre force grandit chaque jour !",
-      "🔥 Dix-sept jours ! Vous êtes en feu !",
-      "⭐ Dix-huit jours ! Vous brillez de mille feux !",
-      "🌈 Dix-neuf jours ! Vous colorez votre transformation !",
-      "🎯 Vingt jours ! Vous visez juste !",
-      "🏆 Trois semaines ! Vous êtes un champion !",
-      "💎 Vingt-deux jours ! Vous êtes précieux !",
-      "🔋 Vingt-trois jours ! Votre énergie est inépuisable !",
-      "⚡ Vingt-quatre jours ! Vous électrisez votre réussite !",
-      "🌟 Vingt-cinq jours ! Vous êtes une étoile !",
-      "🚀 Vingt-six jours ! Vous volez vers la victoire !",
-      "🏆 Avant-dernier jour ! Vous êtes presque au sommet !",
-      "🎉 JOUR 28 ! FÉLICITATIONS ! Transformation accomplie !"
+      "Jour 1 : c’est parti ! Un pas après l’autre 💪",
+      "Jour 2 : la régularité, c’est la clé 🔑",
+      "Jour 3 : l’habitude se crée, continue ! 🔥",
+      "Jour 4 : tu tiens le cap, bravo ⭐",
+      "Jour 5 : presque une semaine, superbe 🚀",
+      "Jour 6 : le rythme s’installe 🎯",
+      "Jour 7 : une semaine complète, félicitations 🏆",
+      "Jour 8 : semaine 2, tu progresses 🌈",
+      "Jour 9 : ta détermination inspire 💎",
+      "Jour 10 : l’énergie monte 🔋",
+      "Jour 11 : constance = résultats ⚡",
+      "Jour 12 : tu éclaires ton parcours 🌟",
+      "Jour 13 : porte-bonheur de la motivation 🎊",
+      "Jour 14 : deux semaines, cap passé 🎉",
+      "Jour 15 : tu voles vers l’objectif 🚀",
+      "Jour 16 : plus fort chaque jour 💪",
+      "Jour 17 : tu es en feu 🔥",
+      "Jour 18 : tu brilles de mille feux ⭐",
+      "Jour 19 : tu colories ta transformation 🌈",
+      "Jour 20 : tu vises juste 🎯",
+      "Jour 21 : trois semaines, champion 🏆",
+      "Jour 22 : persévérance précieuse 💎",
+      "Jour 23 : énergie inépuisable 🔋",
+      "Jour 24 : tu électrises ta réussite ⚡",
+      "Jour 25 : tu es une étoile 🌟",
+      "Jour 26 : la victoire approche 🚀",
+      "Jour 27 : avant-dernier jour, presque au sommet 🏆",
+      "Jour 28 : FÉLICITATIONS ! Transformation accomplie 🎉"
     ];
-    
-    return motivations[Math.min(day - 1, motivations.length - 1)];
+    return motivations[Math.min(Math.max(day, 1) - 1, motivations.length - 1)];
   };
 
   const handleNavigation = (route: string) => {
@@ -108,17 +83,10 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.content}>
-        <LinearGradient
-          colors={[Colors.agpBlue, Colors.agpGreen]} 
-          style={styles.header}
-        >
+        <LinearGradient colors={[Colors.agpBlue, Colors.agpGreen]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Text style={styles.greeting}>
-              {getMomentText()}, Eric
-            </Text>
-            <Text style={styles.subtitle}>
-              Votre parcours chronobiologique vous attend
-            </Text>
+            <Text style={styles.greeting}>{getMomentText()}, Eric</Text>
+            <Text style={styles.subtitle}>Votre parcours chronobiologique vous attend</Text>
           </View>
         </LinearGradient>
 
@@ -128,10 +96,8 @@ export default function HomeScreen() {
           <Text style={styles.programDayText}>
             Aujourd'hui est votre {currentProgramDay}{currentProgramDay === 1 ? 'er' : 'e'} jour du programme
           </Text>
-          <Text style={styles.motivationText}>
-            {getDailyMotivation(currentProgramDay)}
-          </Text>
-          <TouchableOpacity 
+          <Text style={styles.motivationText}>{getDailyMotivation(currentProgramDay)}</Text>
+          <TouchableOpacity
             style={styles.programButton}
             onPress={() => handleNavigation('/(tabs)/programme')}
           >
@@ -143,9 +109,9 @@ export default function HomeScreen() {
         {/* Actions rapides */}
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Actions rapides</Text>
-          
+
           <View style={styles.actionsRow}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: '#FF5722' }]}
               onPress={() => handleNavigation('/sport')}
             >
@@ -153,8 +119,8 @@ export default function HomeScreen() {
               <Text style={styles.actionTitle}>Sport</Text>
               <Text style={styles.actionSubtitle}>activités</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.agpGreen }]}
               onPress={() => handleNavigation('/recettes')}
             >
@@ -164,7 +130,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionCard, styles.actionCardFull, { backgroundColor: Colors.relaxation }]}
             onPress={() => handleNavigation('/detente')}
           >
@@ -177,10 +143,11 @@ export default function HomeScreen() {
         {/* Vos Réussites */}
         <View style={styles.reussitesSection}>
           <Text style={styles.sectionTitle}>Vos Réussites</Text>
-          
+
           <View style={styles.reussiteCard}>
             <View style={styles.reussiteIcon}>
-              <Target size={20} color={Colors.warning} />
+              {/* tu peux changer l’icône/couleur si besoin */}
+              <Calendar size={20} color={Colors.warning} />
             </View>
             <View style={styles.reussiteContent}>
               <Text style={styles.reussiteTitle}>📌 Prêt à commencer votre transformation ?</Text>
@@ -194,7 +161,7 @@ export default function HomeScreen() {
         {/* Conseil du jour */}
         <View style={styles.conseilSection}>
           <Text style={styles.sectionTitle}>Conseil du jour</Text>
-          
+
           <View style={styles.conseilCard}>
             <View style={styles.conseilIcon}>
               <Heart size={20} color={Colors.info} />
@@ -212,6 +179,7 @@ export default function HomeScreen() {
   );
 }
 
+/* --- Styles --- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
