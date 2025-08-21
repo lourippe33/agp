@@ -9,6 +9,7 @@ import {
 import { X, MessageSquare } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationService } from '@/services/NotificationService';
 
 export default function MotivationalBanner() {
   const { user } = useAuth();

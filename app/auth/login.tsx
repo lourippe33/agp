@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
+import AGPLogo from '@/components/AGPLogo';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');

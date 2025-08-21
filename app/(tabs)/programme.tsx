@@ -18,6 +18,8 @@ import { Colors } from '@/constants/Colors';
 import DayProgramCard from '@/components/DayProgramCard';
 import { useAuth } from '@/contexts/AuthContext';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
+import AGPLogo from '@/components/AGPLogo';
+import { isPastDay } from '@/utils/dateUtils';
 import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 

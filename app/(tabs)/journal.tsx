@@ -15,6 +15,8 @@ import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import DailyJournalModal from '@/components/DailyJournalModal';
 import { JournalEntry } from '@/types/Journal';
+import { JournalService } from '@/services/JournalService';
+import AGPLogo from '@/components/AGPLogo';
 
 const { width } = Dimensions.get('window');
 
