@@ -120,7 +120,7 @@ export default function ProgrammeScreen(): JSX.Element {
       days: [
         { id: 8, dayOfWeek: getDayOfWeekName(8), date: getCalendarDate(8), status: getDayStatus(8), sportExercise: 'Cardio intermédiaire', relaxationExercise: 'Respiration rythmée' },
         { id: 9, dayOfWeek: getDayOfWeekName(9), date: getCalendarDate(9), status: getDayStatus(9), sportExercise: 'Renforcement core', relaxationExercise: 'Méditation body scan' },
-        { id: 10, dayOfWeek: getDayOfWeekName(10), date: getCalendarDate(10), status: getDayStatus(10), sportExercise: 'Circuit complet', relaxationExercise: 'Étirements profonds' },
+        { id: 10, dayOfWeek: getDayOfWeekName(10), date: getCalendarDate(10), status: getDayStatus(10), status: getDayStatus(10), sportExercise: 'Circuit complet', relaxationExercise: 'Étirements profonds' },
         { id: 11, dayOfWeek: getDayOfWeekName(11), date: getCalendarDate(11), status: getDayStatus(11), sportExercise: 'Cardio intense', relaxationExercise: 'Relaxation guidée' },
         { id: 12, dayOfWeek: getDayOfWeekName(12), date: getCalendarDate(12), status: getDayStatus(12), sportExercise: 'HIIT intermédiaire', relaxationExercise: 'Yoga flow' },
         { id: 13, dayOfWeek: getDayOfWeekName(13), date: getCalendarDate(13), status: getDayStatus(13), sportExercise: 'Training complet', relaxationExercise: 'Méditation zen' },
@@ -357,12 +357,12 @@ export default function ProgrammeScreen(): JSX.Element {
               style={styles.dayCard}
               onPress={() => handleDayPress(day)}
             >
-              <View style={[
-                styles.dayCircle,
-                { borderColor: getDayStatusBorderColor(day.status) }
+              <Text style={[
+                styles.dayDate,
+                { color: day.status === 'upcoming' ? '#999' : '#666' }
               ]}>
-                <Text style={[
-                  styles.dayNumber,
+                {day.date}
+              </Text>
                   { color: day.status === 'upcoming' ? '#999' : '#333' }
                 ]}>
                   {day.id}
@@ -583,10 +583,6 @@ const styles = StyleSheet.create({
   },
   dayOfWeek: {
     fontSize: 10,
-    fontFamily: 'Inter-Regular',
-  },
-  dayDate: {
-    fontSize: 9,
     fontFamily: 'Inter-Regular',
   },
   dayStatus: {
