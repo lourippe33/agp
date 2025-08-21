@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, CheckSquare, Square, Utensils, Dumbbell, Heart, Clock, Lock, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, SquareCheck as CheckSquare, Square, Utensils, Dumbbell, Heart, Clock, Lock, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
