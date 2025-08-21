@@ -1,21 +1,12 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
-}
 
 interface ProgramProgress {
   completedDays: number[];
@@ -43,29 +34,6 @@ export default function HomeScreen() {
         const progress: ProgramProgress = JSON.parse(savedProgress);
         setCurrentProgramDay(Math.min(28, progress.currentDay));
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
-    }
-  };
-
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
-    try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
-    }
-  };
-
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
