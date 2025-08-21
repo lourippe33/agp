@@ -184,21 +184,6 @@ export default function SuiviScreen() {
     }));
   };
 
-  // Préparer les données pour les graphiques
-  const getWeightChartData = () => {
-    return weightHistory.map(entry => ({
-      date: entry.date,
-      value: entry.weight
-    }));
-  };
-
-  const getMeasurementChartData = (type: 'waist' | 'hips' | 'arms' | 'thighs') => {
-    return measurementHistory.map(entry => ({
-      date: entry.date,
-      value: entry[type]
-    }));
-  };
-
   if (isLoading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
