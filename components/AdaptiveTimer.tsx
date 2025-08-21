@@ -462,8 +462,8 @@ export default function AdaptiveTimer({
       ];
     }
     
-    // Pour les autres exercices de détente, PAS DE TIMER
-    // Car ils sont basés sur des actions libres, pas du temps
+    // Pour les autres exercices de détente, retourner un tableau vide (pas de timer)
+    return [];
   };
 
   // Gestion du timer
