@@ -369,6 +369,54 @@ export default function AdaptiveTimer({
       return phases;
     }
     
+    if (title === "Marche active sur place") {
+      return [
+        { name: "Position", duration: 60, type: 'preparation', instruction: "Tiens-toi debout, pieds écartés à la largeur des hanches" },
+        { name: "Marche active", duration: 480, type: 'work', instruction: "Lève les genoux l'un après l'autre, balance les bras naturellement" },
+        { name: "Finalisation", duration: 60, type: 'rest', instruction: "Ralentis progressivement et respire calmement" }
+      ];
+    }
+    
+    if (title === "Renforcement bas du corps") {
+      return [
+        { name: "Squats - Série 1", duration: 90, type: 'work', instruction: "3 séries de 10 squats, contrôle les mouvements" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération active" },
+        { name: "Squats - Série 2", duration: 90, type: 'work', instruction: "3 séries de 10 squats, garde le dos droit" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération active" },
+        { name: "Squats - Série 3", duration: 90, type: 'work', instruction: "3 séries de 10 squats, contrôle la descente" },
+        { name: "Fentes - Série 1", duration: 90, type: 'work', instruction: "3 séries de 10 fentes alternées" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération active" },
+        { name: "Fentes - Série 2", duration: 90, type: 'work', instruction: "3 séries de 10 fentes alternées" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération active" },
+        { name: "Fentes - Série 3", duration: 90, type: 'work', instruction: "3 séries de 10 fentes alternées" },
+        { name: "Position chaise", duration: 90, type: 'work', instruction: "3 fois 30 secondes contre le mur" },
+        { name: "Étirements", duration: 120, type: 'rest', instruction: "2 minutes d'étirement doux des jambes" }
+      ];
+    }
+    
+    if (title === "Gainage facile") {
+      return [
+        { name: "Planche ventrale 1", duration: 30, type: 'work', instruction: "Planche sur avant-bras, corps droit" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale gauche 1", duration: 30, type: 'work', instruction: "Planche sur le côté gauche" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale droite 1", duration: 30, type: 'work', instruction: "Planche sur le côté droit" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération longue" },
+        { name: "Planche ventrale 2", duration: 30, type: 'work', instruction: "Planche sur avant-bras, abdos engagés" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale gauche 2", duration: 30, type: 'work', instruction: "Planche sur le côté gauche" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale droite 2", duration: 30, type: 'work', instruction: "Planche sur le côté droit" },
+        { name: "Repos", duration: 30, type: 'rest', instruction: "Récupération longue" },
+        { name: "Planche ventrale 3", duration: 30, type: 'work', instruction: "Planche finale, tiens bon !" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale gauche 3", duration: 30, type: 'work', instruction: "Dernière planche gauche" },
+        { name: "Repos", duration: 15, type: 'rest', instruction: "Récupération" },
+        { name: "Planche latérale droite 3", duration: 30, type: 'work', instruction: "Dernière planche droite" },
+        { name: "Étirements", duration: 60, type: 'rest', instruction: "Étire le dos et respire calmement" }
+      ];
+    }
+    
     // Pour les autres exercices, analyse générique basée sur les étapes
     return analyzeGenericExercise(steps, duration);
   };
