@@ -1,365 +1,190 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home, CircleCheck as CheckCircle } from 'lucide-react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import recettesData from '@/data/recettes_agp.json';
-import exercicesSportData from '@/data/exercices_sport.json';
-import exercicesDetenteData from '@/data/exercices_detente.json';
 
 interface ProgramProgress {
   completedDays: number[];
   currentDay: number;
   startDate: string;
 }
-interface DayProgram {
-  day: number;
-  recetteMatin: any;
-  recetteMidi: any;
-  recetteGouter: any;
-  recetteSoir: any;
-  exerciceSport: any;
-  exerciceDetente: any;
-}
 
-export default function DayProgramScreen() {
-  const { day } = useLocalSearchParams();
-  const dayNumber = parseInt(day as string);
-  
-  const [program, setProgram] = useState<DayProgram | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isCompleted, setIsCompleted] = useState(false);
+export default function HomeScreen() {
+  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
 
-  // Fonction pour obtenir une recette aléatoire par moment
-  const getRandomRecipe = (moment: string) => {
-    const recipes = recettesData.recettes.filter(r => r.moment === moment);
-    return recipes[Math.floor(Math.random() * recipes.length)];
-  };
+  useEffect(() => {
+    loadProgramProgress();
+  }, []);
 
-  // Fonction pour obtenir un exercice sport aléatoire
-  const getRandomSportExercise = () => {
-    const exercises = exercicesSportData.exercices;
-    return exercises[Math.floor(Math.random() * exercises.length)];
-  };
-
-  // Fonction pour obtenir un exercice détente aléatoire
-  const getRandomDetenteExercise = () => {
-    const exercises = exercicesDetenteData.exercices;
-    return exercises[Math.floor(Math.random() * exercises.length)];
-  };
-
-  // Générer le programme du jour
-  const generateDayProgram = () => {
-    const newProgram: DayProgram = {
-      day: dayNumber,
-      recetteMatin: getRandomRecipe('matin'),
-      recetteMidi: getRandomRecipe('midi'),
-      recetteGouter: getRandomRecipe('gouter'),
-      recetteSoir: getRandomRecipe('soir'),
-      exerciceSport: getRandomSportExercise(),
-      exerciceDetente: getRandomDetenteExercise()
-    };
-    setProgram(newProgram);
-    setIsLoading(false);
-  };
-
-  // Vérifier si le jour est déjà complété
-  const checkDayCompletion = async () => {
+  const loadProgramProgress = async () => {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
       if (savedProgress) {
         const progress: ProgramProgress = JSON.parse(savedProgress);
-        setIsCompleted(progress.completedDays.includes(dayNumber));
+        setCurrentProgramDay(Math.min(28, progress.currentDay));
       }
     } catch (error) {
-      console.error('Erreur lors de la vérification:', error);
+      console.error('Erreur lors du chargement de la progression:', error);
     }
   };
 
-  // Fonction pour obtenir la date du calendrier
-  const getCalendarDate = (day: number) => {
-    const startDate = new Date(2024, 7, 21); // 21 août 2024 (mois 7 = août)
-    const targetDate = new Date(startDate);
-    targetDate.setDate(startDate.getDate() + (day - 1));
+  const getMomentText = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bon matin';
+    if (hour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  };
+
+  const getDailyMotivation = (day: number): string => {
+    const motivations = [
+      "🌟 Chaque grand voyage commence par un premier pas !",
+      "💪 Jour 2 : Vous avez déjà commencé, continuez !",
+      "🔥 Trois jours ! L'habitude se forme !",
+      "⭐ Quatre jours de suite, vous êtes formidable !",
+      "🚀 Une semaine presque complète, bravo !",
+      "🎯 Six jours ! Vous tenez le bon rythme !",
+      "🏆 Une semaine complète ! Félicitations !",
+      "🌈 Semaine 2 commence, vous progressez !",
+      "💎 Neuf jours ! Vous brillez de détermination !",
+      "🔋 Dix jours ! Votre énergie est contagieuse !",
+      "⚡ Onze jours ! Vous êtes électrisant !",
+      "🌟 Douze jours ! Vous illuminez votre parcours !",
+      "🎊 Treize jours ! Porte-bonheur de la motivation !",
+      "🎉 Deux semaines ! Vous êtes à mi-chemin !",
+      "🚀 Quinze jours ! Vous volez vers vos objectifs !",
+      "💪 Seize jours ! Votre force grandit chaque jour !",
+      "🔥 Dix-sept jours ! Vous êtes en feu !",
+      "⭐ Dix-huit jours ! Vous brillez de mille feux !",
+      "🌈 Dix-neuf jours ! Vous colorez votre transformation !",
+      "🎯 Vingt jours ! Vous visez juste !",
+      "🏆 Trois semaines ! Vous êtes un champion !",
+      "💎 Vingt-deux jours ! Vous êtes précieux !",
+      "🔋 Vingt-trois jours ! Votre énergie est inépuisable !",
+      "⚡ Vingt-quatre jours ! Vous électrisez votre réussite !",
+      "🌟 Vingt-cinq jours ! Vous êtes une étoile !",
+      "🚀 Vingt-six jours ! Vous volez vers la victoire !",
+      "🏆 Avant-dernier jour ! Vous êtes presque au sommet !",
+      "🎉 JOUR 28 ! FÉLICITATIONS ! Transformation accomplie !"
+    ];
     
-    const dayOfMonth = targetDate.getDate();
-    const month = targetDate.getMonth() + 1;
-    return `${dayOfMonth} ${getMonthName(month)}`;
+    return motivations[Math.min(day - 1, motivations.length - 1)];
   };
 
-  // Fonction pour obtenir le nom du mois
-  const getMonthName = (month: number) => {
-    const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
-                   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-    return months[month - 1];
-  };
-
-  // Marquer le jour comme complété
-  const markDayAsCompleted = async () => {
+  const handleNavigation = (route: string) => {
     try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      const progress: ProgramProgress = savedProgress ? JSON.parse(savedProgress) : {
-        completedDays: [],
-        currentDay: 1,
-        startDate: new Date().toISOString()
-      };
-      
-      if (!progress.completedDays.includes(dayNumber)) {
-        progress.completedDays.push(dayNumber);
-        progress.currentDay = Math.min(28, Math.max(...progress.completedDays) + 1);
-        
-        await AsyncStorage.setItem('programProgress', JSON.stringify(progress));
-        setIsCompleted(true);
-        
-        Alert.alert(
-          'Félicitations ! 🎉', 
-          `Jour ${dayNumber} terminé ! Votre progression est sauvegardée.`,
-          [
-            { text: 'Continuer', onPress: () => router.back() }
-          ]
-        );
-      }
+      router.push(route as any);
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
-      Alert.alert('Erreur', 'Impossible de sauvegarder la progression');
+      Alert.alert('Erreur', 'Impossible de naviguer vers cette page');
     }
   };
-  // Changer une recette spécifique
-  const changeRecipe = (moment: string) => {
-    // Rediriger vers la page des recettes avec le moment sélectionné
-    router.push(`/recettes?moment=${moment}&returnTo=/programme/${dayNumber}` as any);
-  };
-
-  // Changer l'exercice sport
-  const changeSportExercise = () => {
-    // Rediriger vers la page des exercices sport
-    router.push(`/sport?returnTo=/programme/${dayNumber}` as any);
-  };
-
-  // Changer l'exercice détente
-  const changeDetenteExercise = () => {
-    // Rediriger vers la page des exercices détente
-    router.push(`/detente?returnTo=/programme/${dayNumber}` as any);
-  };
-
-  // Générer le programme au chargement
-  useEffect(() => {
-    generateDayProgram();
-    checkDayCompletion();
-  }, [dayNumber]);
-
-  const getDayName = (day: number) => {
-    const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-    return days[(day - 1) % 7];
-  };
-
-  if (isLoading || !program) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <Text style={styles.loadingText}>Génération de votre programme...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[Colors.agpBlue, Colors.agpGreen]}
-        style={styles.header}
-      >
-        <View style={styles.headerTop}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <ArrowLeft size={24} color={Colors.textLight} />
-          </TouchableOpacity>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>Jour {dayNumber}</Text>
-            <Text style={styles.headerSubtitle}>{getDayName(dayNumber)} {getCalendarDate(dayNumber)}</Text>
-          </View>
-          <TouchableOpacity 
-            style={styles.homeButton}
-            onPress={() => router.push('/(tabs)/home')}
-          >
-            <Text style={styles.homeButtonText}>Accueil</Text>
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Bouton régénérer tout */}
-        <TouchableOpacity style={styles.regenerateAllButton} onPress={generateDayProgram}>
-          <RefreshCw size={20} color={Colors.textLight} />
-          <Text style={styles.regenerateAllText}>Nouveau programme complet</Text>
-        </TouchableOpacity>
-
-        {/* Section Recettes */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🍽️ Vos recettes du jour</Text>
-          
-          {/* Matin */}
-          <View style={styles.mealCard}>
-            <View style={styles.mealHeader}>
-              <Text style={styles.mealTitle}>🌅 Petit-déjeuner</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={() => changeRecipe('matin')}
-              >
-                <RefreshCw size={16} color={Colors.morning} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.recipeItem}
-              onPress={() => router.push(`/recettes/${program.recetteMatin.id}`)}
-            >
-              <Image source={{ uri: program.recetteMatin.image }} style={styles.recipeImage} />
-              <View style={styles.recipeInfo}>
-                <Text style={styles.recipeName}>{program.recetteMatin.titre}</Text>
-                <Text style={styles.recipeTime}>{program.recetteMatin.tempsPreparation} min</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Midi */}
-          <View style={styles.mealCard}>
-            <View style={styles.mealHeader}>
-              <Text style={styles.mealTitle}>☀️ Déjeuner</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={() => changeRecipe('midi')}
-              >
-                <RefreshCw size={16} color={Colors.agpGreen} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.recipeItem}
-              onPress={() => router.push(`/recettes/${program.recetteMidi.id}`)}
-            >
-              <Image source={{ uri: program.recetteMidi.image }} style={styles.recipeImage} />
-              <View style={styles.recipeInfo}>
-                <Text style={styles.recipeName}>{program.recetteMidi.titre}</Text>
-                <Text style={styles.recipeTime}>{program.recetteMidi.tempsPreparation} min</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Goûter */}
-          <View style={styles.mealCard}>
-            <View style={styles.mealHeader}>
-              <Text style={styles.mealTitle}>🍪 Goûter</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={() => changeRecipe('gouter')}
-              >
-                <RefreshCw size={16} color={Colors.snack} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.recipeItem}
-              onPress={() => router.push(`/recettes/${program.recetteGouter.id}`)}
-            >
-              <Image source={{ uri: program.recetteGouter.image }} style={styles.recipeImage} />
-              <View style={styles.recipeInfo}>
-                <Text style={styles.recipeName}>{program.recetteGouter.titre}</Text>
-                <Text style={styles.recipeTime}>{program.recetteGouter.tempsPreparation} min</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Soir */}
-          <View style={styles.mealCard}>
-            <View style={styles.mealHeader}>
-              <Text style={styles.mealTitle}>🌙 Dîner</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={() => changeRecipe('soir')}
-              >
-                <RefreshCw size={16} color={Colors.agpBlue} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.recipeItem}
-              onPress={() => router.push(`/recettes/${program.recetteSoir.id}`)}
-            >
-              <Image source={{ uri: program.recetteSoir.image }} style={styles.recipeImage} />
-              <View style={styles.recipeInfo}>
-                <Text style={styles.recipeName}>{program.recetteSoir.titre}</Text>
-                <Text style={styles.recipeTime}>{program.recetteSoir.tempsPreparation} min</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Section Exercices */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>💪 Vos exercices du jour</Text>
-          
-          {/* Sport */}
-          <View style={styles.exerciseCard}>
-            <View style={styles.exerciseHeader}>
-              <Text style={styles.exerciseTitle}>🏃 Activité sportive</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={changeSportExercise}
-              >
-                <RefreshCw size={16} color={Colors.sport} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.exerciseItem}
-              onPress={() => router.push(`/sport/${program.exerciceSport.id}`)}
-            >
-              <Image source={{ uri: program.exerciceSport.image }} style={styles.exerciseImage} />
-              <View style={styles.exerciseInfo}>
-                <Text style={styles.exerciseName}>{program.exerciceSport.titre}</Text>
-                <View style={styles.exerciseDetails}>
-                  <Text style={styles.exerciseTime}>{program.exerciceSport.duree} min</Text>
-                  <Text style={styles.exerciseCalories}>{program.exerciceSport.calories} kcal</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Détente */}
-          <View style={styles.exerciseCard}>
-            <View style={styles.exerciseHeader}>
-              <Text style={styles.exerciseTitle}>🧘 Exercice de détente</Text>
-              <TouchableOpacity 
-                style={styles.changeButton}
-                onPress={changeDetenteExercise}
-              >
-                <RefreshCw size={16} color={Colors.relaxation} />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity 
-              style={styles.exerciseItem}
-              onPress={() => router.push(`/detente/${program.exerciceDetente.id}`)}
-            >
-              <Image source={{ uri: program.exerciceDetente.image }} style={styles.exerciseImage} />
-              <View style={styles.exerciseInfo}>
-                <Text style={styles.exerciseName}>{program.exerciceDetente.titre}</Text>
-                <Text style={styles.exerciseTime}>{program.exerciceDetente.duree} min</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Bouton de validation */}
-        <TouchableOpacity 
-          style={[
-            styles.validateButton,
-            isCompleted && styles.completedButton
-          ]}
-          onPress={isCompleted ? () => router.back() : markDayAsCompleted}
+        {/* Header avec gradient */}
+        <LinearGradient
+          colors={[Colors.agpBlue, Colors.agpGreen]} 
+          style={styles.header}
         >
-          {isCompleted ? <CheckCircle size={24} color={Colors.textLight} /> : <Play size={24} color={Colors.textLight} />}
-          <Text style={styles.validateButtonText}>
-            {isCompleted ? 'Jour terminé !' : 'Terminer ma journée'}
+          <View style={styles.headerContent}>
+            <Text style={styles.greeting}>
+              {getMomentText()}, Eric
+            </Text>
+            <Text style={styles.subtitle}>
+              Votre parcours chronobiologique vous attend
+            </Text>
+          </View>
+        </LinearGradient>
+
+        {/* Bienvenue */}
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeTitle}>Bienvenue sur AGP, Eric 👋</Text>
+          <Text style={styles.programDayText}>
+            Aujourd'hui est votre {currentProgramDay}{currentProgramDay === 1 ? 'er' : 'e'} jour du programme
           </Text>
-        </TouchableOpacity>
+          <Text style={styles.motivationText}>
+            {getDailyMotivation(currentProgramDay)}
+          </Text>
+          <TouchableOpacity 
+            style={styles.programButton}
+            onPress={() => handleNavigation('/(tabs)/programme')}
+          >
+            <Calendar size={20} color={Colors.textLight} />
+            <Text style={styles.programButtonText}>Voir mon programme</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Actions rapides */}
+        <View style={styles.quickActions}>
+          <Text style={styles.sectionTitle}>Actions rapides</Text>
+          
+          <View style={styles.actionsRow}>
+            <TouchableOpacity 
+              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: '#FF5722' }]}
+              onPress={() => handleNavigation('/sport')}
+            >
+              <Dumbbell size={32} color={Colors.textLight} />
+              <Text style={styles.actionTitle}>Sport</Text>
+              <Text style={styles.actionSubtitle}>activités</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.agpGreen }]}
+              onPress={() => handleNavigation('/recettes')}
+            >
+              <Utensils size={32} color={Colors.textLight} />
+              <Text style={styles.actionTitle}>Recettes</Text>
+              <Text style={styles.actionSubtitle}>adaptées</Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity 
+            style={[styles.actionCard, styles.actionCardFull, { backgroundColor: Colors.relaxation }]}
+            onPress={() => handleNavigation('/detente')}
+          >
+            <Heart size={32} color={Colors.textLight} />
+            <Text style={styles.actionTitle}>Détente</Text>
+            <Text style={styles.actionSubtitle}>& bien-être</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Vos Réussites */}
+        <View style={styles.reussitesSection}>
+          <Text style={styles.sectionTitle}>Vos Réussites</Text>
+          
+          <View style={styles.reussiteCard}>
+            <View style={styles.reussiteIcon}>
+              <Target size={20} color={Colors.warning} />
+            </View>
+            <View style={styles.reussiteContent}>
+              <Text style={styles.reussiteTitle}>📌 Prêt à commencer votre transformation ?</Text>
+              <Text style={styles.reussiteText}>
+                Les changements durables commencent par de petites actions quotidiennes. Lancez-vous dès aujourd'hui !
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Conseil du jour */}
+        <View style={styles.conseilSection}>
+          <Text style={styles.sectionTitle}>Conseil du jour</Text>
+          
+          <View style={styles.conseilCard}>
+            <View style={styles.conseilIcon}>
+              <Heart size={20} color={Colors.info} />
+            </View>
+            <View style={styles.conseilContent}>
+              <Text style={styles.conseilTitle}>🚶 Bouger un peu plus</Text>
+              <Text style={styles.conseilText}>
+                Un pas après l'autre : 15 min de marche quotidienne suffisent à améliorer votre bien-être.
+              </Text>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -370,204 +195,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
+  content: {
+    flex: 1,
   },
   header: {
-    paddingTop: 70,
+    paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
-  headerTop: {
-    flexDirection: 'row',
+  headerContent: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    flex: 1,
   },
-  backButton: {
-    padding: 8,
-    minWidth: 40,
-  },
-  headerCenter: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 20,
+  greeting: {
+    fontSize: 28,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
+    marginBottom: 8,
     textAlign: 'center',
   },
-  headerSubtitle: {
-    fontSize: 12,
+  subtitle: {
+    fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
     textAlign: 'center',
   },
-  homeButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    minWidth: 60,
-  },
-  homeButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
+  welcomeSection: {
     padding: 20,
+    alignItems: 'center',
   },
-  regenerateAllButton: {
+  welcomeTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  programDayText: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.agpBlue,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  motivationText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  programButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.agpBlue,
     borderRadius: 16,
     paddingVertical: 12,
-    marginBottom: 24,
-    gap: 8,
-  },
-  regenerateAllText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.text,
-    marginBottom: 16,
-  },
-  mealCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  mealHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  mealTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-  },
-  changeButton: {
-    padding: 8,
-    backgroundColor: Colors.background,
-    borderRadius: 20,
-  },
-  recipeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  recipeImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    backgroundColor: Colors.border,
-  },
-  recipeInfo: {
-    flex: 1,
-  },
-  recipeName: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  recipeTime: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-  },
-  exerciseCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  exerciseHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  exerciseTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-  },
-  exerciseItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  exerciseImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    backgroundColor: Colors.border,
-  },
-  exerciseInfo: {
-    flex: 1,
-  },
-  exerciseName: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  exerciseDetails: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  exerciseTime: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-  },
-  exerciseCalories: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-  },
-  validateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.agpGreen,
-    borderRadius: 16,
-    paddingVertical: 16,
-    marginBottom: 20,
+    paddingHorizontal: 24,
     gap: 8,
     elevation: 3,
     shadowColor: Colors.shadow,
@@ -575,12 +262,130 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  validateButtonText: {
-    fontSize: 16,
+  programButtonText: {
+    fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
-  completedButton: {
-    backgroundColor: Colors.success,
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  quickActions: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+  },
+  actionCard: {
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  actionCardLarge: {
+    flex: 1,
+  },
+  actionCardFull: {
+    width: '100%',
+  },
+  actionTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginTop: 12,
+  },
+  actionSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+  },
+  reussitesSection: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  reussiteCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  reussiteIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFF3CD',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  reussiteContent: {
+    flex: 1,
+  },
+  reussiteTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  reussiteText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 16,
+  },
+  conseilSection: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  conseilCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  conseilIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E3F2FD',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  conseilContent: {
+    flex: 1,
+  },
+  conseilTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  conseilText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 16,
   },
 });
