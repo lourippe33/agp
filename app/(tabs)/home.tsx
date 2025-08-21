@@ -29,7 +29,70 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
+  const getMomentData = () => {
+    const hour = new Date().getHours();
+    const phrases = {
+      matin: [
+        "Réveillez votre métabolisme → Petit-déjeuner protéiné, hydratation et mouvement doux pour bien commencer.",
+        "Votre corps se réveille → C'est le moment idéal pour les protéines et une activité physique douce.",
+        "Énergie matinale → Profitez de ce pic naturel pour vous hydrater et nourrir vos muscles.",
+        "Cortisol au top → Votre hormone de l'éveil est à son maximum, parfait pour démarrer activement."
+      ],
+      midi: [
+        "Pic de performance → Votre corps est au maximum de ses capacités, c'est l'heure du repas principal !",
+        "Métabolisme optimal → Midi est le moment parfait pour votre repas le plus consistant de la journée.",
+        "Force et énergie → Profitez de ce pic naturel pour un déjeuner équilibré et une activité intense.",
+        "Digestion efficace → Votre système digestif fonctionne à plein régime, mangez copieusement !"
+      ],
+      gouter: [
+        "Recharge-toi sans culpabiliser → Étirements, respiration, ou collation saine - tout compte.",
+        "Baisse naturelle d'énergie → C'est normal ! Une pause active ou une collation vous redonnera du tonus.",
+        "Moment de transition → Votre corps se prépare à la soirée, accordez-vous une pause bien méritée.",
+        "Récupération active → Quelques étirements ou une collation légère pour tenir jusqu'au dîner."
+      ],
+      soir: [
+        "Préparation au repos → Dîner léger, détente et rituels apaisants pour un sommeil réparateur.",
+        "Votre corps ralentit → C'est le signal pour des activités calmes et une alimentation légère.",
+        "Transition vers la nuit → Favorisez la relaxation et évitez les stimulants pour bien dormir.",
+        "Régénération nocturne → Préparez votre corps au repos avec douceur et bienveillance."
+      ]
+    };
+
+    const moment = getCurrentMoment();
+    const momentPhrases = phrases[moment];
+    const randomPhrase = momentPhrases[Math.floor(Math.random() * momentPhrases.length)];
+
+    const icons = {
+      matin: Sun,
+      midi: Utensils,
+      gouter: Coffee,
+      soir: Moon
+    };
+
+    const titles = {
+      matin: 'Moment matinal',
+      midi: 'Moment déjeuner', 
+      gouter: 'Moment goûter',
+      soir: 'Moment soirée'
+    };
+
+    const colors = {
+      matin: ['#FFD54F', '#FFF3C4'],
+      midi: ['#7CB342', '#C8E6C9'],
+      gouter: ['#FF9800', '#FFE0B2'],
+      soir: ['#4A90E2', '#E3F2FD']
+    };
+
+    return {
+      moment,
+      phrase: randomPhrase,
+      icon: icons[moment],
+      title: titles[moment],
+      colors: colors[moment]
+    };
+  };
   const currentMoment = getCurrentMoment();
+  const momentData = getMomentData();
 
   return (
     <View style={styles.container}>
@@ -136,17 +199,20 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Aujourd'hui</Text>
           
           <LinearGradient
-            colors={currentMoment === 'gouter' ? ['#FF9800', '#FFB74D'] : [Colors.agpBlue, Colors.agpGreen]}
+            colors={momentData.colors}
             style={styles.momentCard}
           >
             <View style={styles.momentHeader}>
-              <Coffee size={24} color={Colors.textLight} />
-              <Text style={styles.momentTitle}>Moment goûter</Text>
+              <momentData.icon size={24} color={Colors.textLight} />
+              <Text style={styles.momentTitle}>{momentData.title}</Text>
             </View>
             <Text style={styles.momentText}>
-              Recharge-toi sans culpabiliser → Étirements, respiration, ou collation malgré - tout compte.
+              {momentData.phrase}
             </Text>
-            <TouchableOpacity style={styles.momentButton}>
+            <TouchableOpacity 
+              style={styles.momentButton}
+              onPress={() => handleNavigation('/(tabs)/programme')}
+            >
               <Text style={styles.momentButtonText}>Voir le programme</Text>
             </TouchableOpacity>
           </LinearGradient>
