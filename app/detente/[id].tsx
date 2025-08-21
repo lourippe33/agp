@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Heart, Play, Users } from 'lucide-react-native';
+import { ArrowLeft, Clock, Heart, Play, Users, Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
@@ -51,6 +51,12 @@ export default function DetenteDetailScreen() {
             onPress={() => router.back()}
           >
             <ArrowLeft size={24} color={Colors.textLight} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={24} color={Colors.textLight} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{exercice.titre}</Text>
@@ -164,6 +170,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,
   },
+  homeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: 8,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 20,
   titleContainer: {
     position: 'absolute',
     bottom: 20,

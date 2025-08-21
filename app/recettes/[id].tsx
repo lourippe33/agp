@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Users, ChefHat } from 'lucide-react-native';
+import { ArrowLeft, Clock, Users, ChefHat, Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
@@ -33,6 +33,12 @@ export default function RecipeDetailScreen() {
             onPress={() => router.back()}
           >
             <ArrowLeft size={24} color={Colors.textLight} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={24} color={Colors.textLight} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{recette.titre}</Text>
@@ -133,6 +139,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     left: 20,
+    padding: 8,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 20,
+  },
+  homeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
     padding: 8,
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,

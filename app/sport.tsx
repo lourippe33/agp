@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Dumbbell, Clock, Zap, Filter } from 'lucide-react-native';
+import { ArrowLeft, Dumbbell, Clock, Zap, Filter, Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_sport.json';
@@ -38,7 +38,12 @@ export default function SportScreen() {
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Activités Sportives</Text>
-          <View style={styles.placeholder} />
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={24} color={Colors.textLight} />
+          </TouchableOpacity>
         </View>
         <Text style={styles.headerSubtitle}>
           Exercices adaptés à votre niveau
@@ -133,8 +138,8 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  placeholder: {
-    width: 40,
+  homeButton: {
+    padding: 8,
   },
   headerTitle: {
     fontSize: 20,

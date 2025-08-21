@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Heart, Clock, Filter } from 'lucide-react-native';
+import { ArrowLeft, Heart, Clock, Filter, Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
@@ -38,7 +38,12 @@ export default function DetenteScreen() {
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Exercices de Détente</Text>
-          <View style={styles.placeholder} />
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={24} color={Colors.textLight} />
+          </TouchableOpacity>
         </View>
         <Text style={styles.headerSubtitle}>
           Relaxation et gestion du stress
@@ -132,8 +137,8 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  placeholder: {
-    width: 40,
+  homeButton: {
+    padding: 8,
   },
   headerTitle: {
     fontSize: 20,

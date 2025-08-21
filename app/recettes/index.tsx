@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search } from 'lucide-react-native';
+import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
@@ -40,9 +40,9 @@ export default function RecettesScreen() {
           <Text style={styles.headerTitle}>Recettes AGP</Text>
           <TouchableOpacity 
             style={styles.searchButton}
-            onPress={() => router.push('/search')}
+            onPress={() => router.push('/(tabs)/home')}
           >
-            <Search size={24} color={Colors.textLight} />
+            <Home size={24} color={Colors.textLight} />
           </TouchableOpacity>
         </View>
         <Text style={styles.headerSubtitle}>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  searchButton: {
+  homeButton: {
     padding: 8,
   },
   headerTitle: {
