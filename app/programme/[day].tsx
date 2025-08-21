@@ -1,305 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, SquareCheck as CheckSquare, Square, Utensils, Dumbbell, Heart, Clock, Lock, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-
-interface DayTask {
-  id: string;
-  type: 'meal' | 'sport' | 'relaxation';
-  title: string;
-  description: string;
-  completed: boolean;
-}
-
-interface DayProgress {
-  dayId: number;
-  tasks: DayTask[];
-  isValidated: boolean;
-  validatedAt?: string;
-  completionPercentage: number;
-}
+import recettesData from '@/data/recettes_agp.json';
+import exercicesSportData from '@/data/exercices_sport.json';
+import exercicesDetenteData from '@/data/exercices_detente.json';
 
 interface ProgramProgress {
   completedDays: number[];
   currentDay: number;
   startDate: string;
-  dayProgresses: { [key: number]: DayProgress };
+}
+interface DayProgram {
+  day: number;
+  recetteMatin: any;
+  recetteMidi: any;
+  recetteGouter: any;
+  recetteSoir: any;
+  exerciceSport: any;
+  exerciceDetente: any;
 }
 
-export default function ProgramDayScreen() {
+export default function DayProgramScreen() {
   const { day } = useLocalSearchParams();
-  const dayId = parseInt(day as string);
+  const dayNumber = parseInt(day as string);
   
-  const [dayProgress, setDayProgress] = useState<DayProgress | null>(null);
-  const [isLocked, setIsLocked] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [program, setProgram] = useState<DayProgram | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  useEffect(() => {
-    if (dayId) {
-      loadDayProgress();
-    }
-  }, [dayId]);
+  // Fonction pour obtenir une recette aléatoire par moment
+  const getRandomRecipe = (moment: string) => {
+    const recipes = recettesData.recettes.filter(r => r.moment === moment);
+    return recipes[Math.floor(Math.random() * recipes.length)];
+  };
 
-  const loadDayProgress = async () => {
+  // Fonction pour obtenir un exercice sport aléatoire
+  const getRandomSportExercise = () => {
+    const exercises = exercicesSportData.exercices;
+    return exercises[Math.floor(Math.random() * exercises.length)];
+  };
+
+  // Fonction pour obtenir un exercice détente aléatoire
+  const getRandomDetenteExercise = () => {
+    const exercises = exercicesDetenteData.exercices;
+    return exercises[Math.floor(Math.random() * exercises.length)];
+  };
+
+  // Générer le programme du jour
+  const generateDayProgram = () => {
+    const newProgram: DayProgram = {
+      day: dayNumber,
+      recetteMatin: getRandomRecipe('matin'),
+      recetteMidi: getRandomRecipe('midi'),
+      recetteGouter: getRandomRecipe('gouter'),
+      recetteSoir: getRandomRecipe('soir'),
+      exerciceSport: getRandomSportExercise(),
+      exerciceDetente: getRandomDetenteExercise()
+    };
+    setProgram(newProgram);
+    setIsLoading(false);
+  };
+
+  // Vérifier si le jour est déjà complété
+  const checkDayCompletion = async () => {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
-      let programProgress: ProgramProgress;
-      
       if (savedProgress) {
-        programProgress = JSON.parse(savedProgress);
-      } else {
-        programProgress = {
-          completedDays: [],
-          currentDay: 1,
-          startDate: new Date().toISOString(),
-          dayProgresses: {}
-        };
+        const progress: ProgramProgress = JSON.parse(savedProgress);
+        setIsCompleted(progress.completedDays.includes(dayNumber));
       }
-
-      let dayProg = programProgress.dayProgresses[dayId];
-      
-      if (!dayProg) {
-        // Créer la progression du jour avec les tâches par défaut
-        dayProg = createDefaultDayProgress(dayId);
-        programProgress.dayProgresses[dayId] = dayProg;
-        await AsyncStorage.setItem('programProgress', JSON.stringify(programProgress));
-      }
-
-      setDayProgress(dayProg);
-      
-      // Vérifier si le jour est verrouillé (validé et après minuit)
-      if (dayProg.isValidated && dayProg.validatedAt) {
-        const validatedDate = new Date(dayProg.validatedAt);
-        const now = new Date();
-        const nextMidnight = new Date(validatedDate);
-        nextMidnight.setDate(validatedDate.getDate() + 1);
-        nextMidnight.setHours(0, 0, 0, 0);
-        
-        setIsLocked(now >= nextMidnight);
-      }
-      
-      setLoading(false);
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
-      setLoading(false);
+      console.error('Erreur lors de la vérification:', error);
     }
   };
 
-  const createDefaultDayProgress = (dayId: number): DayProgress => {
-    const tasks: DayTask[] = [
-      {
-        id: 'meal-matin',
-        type: 'meal',
-        title: 'Petit-déjeuner',
-        description: 'Recette chronobiologique du matin',
-        completed: false
-      },
-      {
-        id: 'meal-midi',
-        type: 'meal',
-        title: 'Déjeuner',
-        description: 'Recette équilibrée de midi',
-        completed: false
-      },
-      {
-        id: 'meal-gouter',
-        type: 'meal',
-        title: 'Goûter',
-        description: 'Collation saine de l\'après-midi',
-        completed: false
-      },
-      {
-        id: 'meal-soir',
-        type: 'meal',
-        title: 'Dîner',
-        description: 'Repas léger du soir',
-        completed: false
-      },
-      {
-        id: 'sport',
-        type: 'sport',
-        title: getDaySportExercise(dayId),
-        description: 'Activité physique adaptée',
-        completed: false
-      },
-      {
-        id: 'relaxation',
-        type: 'relaxation',
-        title: getDayRelaxationExercise(dayId),
-        description: 'Exercice de détente et bien-être',
-        completed: false
-      }
-    ];
-
-    return {
-      dayId,
-      tasks,
-      isValidated: false,
-      completionPercentage: 0
-    };
+  // Fonction pour obtenir la date du calendrier
+  const getCalendarDate = (day: number) => {
+    const startDate = new Date(2024, 7, 21); // 21 août 2024 (mois 7 = août)
+    const targetDate = new Date(startDate);
+    targetDate.setDate(startDate.getDate() + (day - 1));
+    
+    const dayOfMonth = targetDate.getDate();
+    const month = targetDate.getMonth() + 1;
+    return `${dayOfMonth} ${getMonthName(month)}`;
   };
 
-  const getDaySportExercise = (dayId: number): string => {
-    const exercises = [
-      'Échauffement général', 'Cardio léger', 'Renforcement', 'Cardio modéré',
-      'Circuit training', 'HIIT débutant', 'Récupération active', 'Cardio intermédiaire',
-      'Renforcement core', 'Circuit complet', 'Cardio intense', 'HIIT intermédiaire',
-      'Training complet', 'Récupération', 'Cardio avancé', 'Renforcement total',
-      'Circuit intensif', 'Cardio explosif', 'HIIT avancé', 'Challenge complet',
-      'Récupération active', 'Cardio expert', 'Renforcement expert', 'Circuit ultime',
-      'Cardio final', 'HIIT final', 'Défi final', 'Célébration'
-    ];
-    return exercises[Math.min(dayId - 1, exercises.length - 1)];
+  // Fonction pour obtenir le nom du mois
+  const getMonthName = (month: number) => {
+    const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
+                   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    return months[month - 1];
   };
 
-  const getDayRelaxationExercise = (dayId: number): string => {
-    const exercises = [
-      'Respiration profonde', 'Méditation guidée', 'Étirements', 'Relaxation progressive',
-      'Yoga doux', 'Méditation pleine conscience', 'Détente complète', 'Respiration rythmée',
-      'Méditation body scan', 'Étirements profonds', 'Relaxation guidée', 'Yoga flow',
-      'Méditation zen', 'Détente totale', 'Respiration énergisante', 'Méditation dynamique',
-      'Étirements actifs', 'Relaxation profonde', 'Yoga power', 'Méditation transcendante',
-      'Détente régénératrice', 'Respiration maîtrisée', 'Méditation avancée', 'Étirements experts',
-      'Relaxation ultime', 'Yoga maître', 'Méditation maîtresse', 'Détente victoire'
-    ];
-    return exercises[Math.min(dayId - 1, exercises.length - 1)];
-  };
-
-  const toggleTask = async (taskId: string) => {
-    if (isLocked || !dayProgress) return;
-
-    const updatedTasks = dayProgress.tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-
-    const completedCount = updatedTasks.filter(task => task.completed).length;
-    const completionPercentage = Math.round((completedCount / updatedTasks.length) * 100);
-
-    const updatedDayProgress: DayProgress = {
-      ...dayProgress,
-      tasks: updatedTasks,
-      completionPercentage
-    };
-
-    setDayProgress(updatedDayProgress);
-
-    // Sauvegarder
+  // Marquer le jour comme complété
+  const markDayAsCompleted = async () => {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
-      const programProgress: ProgramProgress = savedProgress ? JSON.parse(savedProgress) : {
+      const progress: ProgramProgress = savedProgress ? JSON.parse(savedProgress) : {
         completedDays: [],
         currentDay: 1,
-        startDate: new Date().toISOString(),
-        dayProgresses: {}
+        startDate: new Date().toISOString()
       };
-
-      programProgress.dayProgresses[dayId] = updatedDayProgress;
-      await AsyncStorage.setItem('programProgress', JSON.stringify(programProgress));
+      
+      if (!progress.completedDays.includes(dayNumber)) {
+        progress.completedDays.push(dayNumber);
+        progress.currentDay = Math.min(28, Math.max(...progress.completedDays) + 1);
+        
+        await AsyncStorage.setItem('programProgress', JSON.stringify(progress));
+        setIsCompleted(true);
+        
+        Alert.alert(
+          'Félicitations ! 🎉', 
+          `Jour ${dayNumber} terminé ! Votre progression est sauvegardée.`,
+          [
+            { text: 'Continuer', onPress: () => router.back() }
+          ]
+        );
+      }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
+      Alert.alert('Erreur', 'Impossible de sauvegarder la progression');
     }
   };
-
-  const validateDay = async () => {
-    if (!dayProgress || isLocked) return;
-
-    const completedCount = dayProgress.tasks.filter(task => task.completed).length;
-    
-    if (completedCount === 0) {
-      Alert.alert('Attention', 'Vous devez compléter au moins une tâche avant de valider la journée.');
-      return;
-    }
-
-    const updatedDayProgress: DayProgress = {
-      ...dayProgress,
-      isValidated: true,
-      validatedAt: new Date().toISOString()
-    };
-
-    setDayProgress(updatedDayProgress);
-
-    try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      const programProgress: ProgramProgress = savedProgress ? JSON.parse(savedProgress) : {
-        completedDays: [],
-        currentDay: 1,
-        startDate: new Date().toISOString(),
-        dayProgresses: {}
-      };
-
-      programProgress.dayProgresses[dayId] = updatedDayProgress;
-      
-      // Ajouter le jour aux jours complétés s'il n'y est pas déjà
-      if (!programProgress.completedDays.includes(dayId)) {
-        programProgress.completedDays.push(dayId);
-        programProgress.currentDay = Math.min(28, Math.max(...programProgress.completedDays) + 1);
-      }
-
-      await AsyncStorage.setItem('programProgress', JSON.stringify(programProgress));
-
-      const statusText = completedCount === dayProgress.tasks.length ? 'complète' : 'incomplète';
-      Alert.alert(
-        'Journée validée !', 
-        `Votre journée ${statusText} (${completedCount}/${dayProgress.tasks.length}) a été sauvegardée. Elle sera verrouillée après minuit.`,
-        [{ text: 'OK', onPress: () => router.back() }]
-      );
-    } catch (error) {
-      console.error('Erreur lors de la validation:', error);
-      Alert.alert('Erreur', 'Impossible de sauvegarder la journée.');
-    }
+  // Changer une recette spécifique
+  const changeRecipe = (moment: string) => {
+    // Rediriger vers la page des recettes avec le moment sélectionné
+    router.push(`/recettes?moment=${moment}&returnTo=/programme/${dayNumber}` as any);
   };
 
-  const getTaskIcon = (type: string) => {
-    switch (type) {
-      case 'meal': return Utensils;
-      case 'sport': return Dumbbell;
-      case 'relaxation': return Heart;
-      default: return Clock;
-    }
+  // Changer l'exercice sport
+  const changeSportExercise = () => {
+    // Rediriger vers la page des exercices sport
+    router.push(`/sport?returnTo=/programme/${dayNumber}` as any);
   };
 
-  const getTaskColor = (type: string) => {
-    switch (type) {
-      case 'meal': return Colors.agpGreen;
-      case 'sport': return Colors.sport;
-      case 'relaxation': return Colors.relaxation;
-      default: return Colors.agpBlue;
-    }
+  // Changer l'exercice détente
+  const changeDetenteExercise = () => {
+    // Rediriger vers la page des exercices détente
+    router.push(`/detente?returnTo=/programme/${dayNumber}` as any);
   };
 
-  const getDayStatusColor = () => {
-    if (!dayProgress) return Colors.border;
-    if (dayProgress.completionPercentage === 100) return Colors.success;
-    if (dayProgress.completionPercentage > 0) return Colors.warning;
-    return Colors.border;
+  // Générer le programme au chargement
+  useEffect(() => {
+    generateDayProgram();
+    checkDayCompletion();
+  }, [dayNumber]);
+
+  const getDayName = (day: number) => {
+    const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+    return days[(day - 1) % 7];
   };
 
-  const navigateToContent = (task: DayTask) => {
-    if (task.type === 'meal') {
-      const moment = task.id.split('-')[1]; // Extraire 'matin', 'midi', etc.
-      router.push(`/recettes?moment=${moment}&returnTo=/programme/${dayId}` as any);
-    } else if (task.type === 'sport') {
-      router.push(`/sport?returnTo=/programme/${dayId}` as any);
-    } else if (task.type === 'relaxation') {
-      router.push(`/detente?returnTo=/programme/${dayId}` as any);
-    }
-  };
-
-  if (loading) {
+  if (isLoading || !program) {
     return (
-      <View style={[styles.container, styles.centered]}>
-        <Text style={styles.loadingText}>Chargement...</Text>
-      </View>
-    );
-  }
-
-  if (!dayProgress) {
-    return (
-      <View style={[styles.container, styles.centered]}>
-        <Text style={styles.errorText}>Erreur lors du chargement du jour</Text>
+      <View style={[styles.container, styles.loadingContainer]}>
+        <Text style={styles.loadingText}>Génération de votre programme...</Text>
       </View>
     );
   }
@@ -317,99 +176,190 @@ export default function ProgramDayScreen() {
           >
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Jour {dayId}</Text>
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle}>Jour {dayNumber}</Text>
+            <Text style={styles.headerSubtitle}>{getDayName(dayNumber)} {getCalendarDate(dayNumber)}</Text>
+          </View>
           <TouchableOpacity 
             style={styles.homeButton}
             onPress={() => router.push('/(tabs)/home')}
           >
-            <Home size={20} color={Colors.textLight} />
+            <Text style={styles.homeButtonText}>Accueil</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.headerSubtitle}>
-          Programme 28 jours - Votre journée personnalisée
-        </Text>
       </LinearGradient>
 
-      <ScrollView style={styles.content}>
-        {/* Statut de la journée */}
-        <View style={[styles.statusCard, { borderLeftColor: getDayStatusColor() }]}>
-          <View style={styles.statusHeader}>
-            <Text style={styles.statusTitle}>
-              {dayProgress.isValidated ? 
-                (dayProgress.completionPercentage === 100 ? 'Journée complète' : 'Journée incomplète') :
-                'Journée en cours'
-              }
-            </Text>
-            {isLocked && <Lock size={16} color={Colors.textSecondary} />}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Bouton régénérer tout */}
+        <TouchableOpacity style={styles.regenerateAllButton} onPress={generateDayProgram}>
+          <RefreshCw size={20} color={Colors.textLight} />
+          <Text style={styles.regenerateAllText}>Nouveau programme complet</Text>
+        </TouchableOpacity>
+
+        {/* Section Recettes */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🍽️ Vos recettes du jour</Text>
+          
+          {/* Matin */}
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <Text style={styles.mealTitle}>🌅 Petit-déjeuner</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={() => changeRecipe('matin')}
+              >
+                <RefreshCw size={16} color={Colors.morning} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.recipeItem}
+              onPress={() => router.push(`/recettes/${program.recetteMatin.id}`)}
+            >
+              <Image source={{ uri: program.recetteMatin.image }} style={styles.recipeImage} />
+              <View style={styles.recipeInfo}>
+                <Text style={styles.recipeName}>{program.recetteMatin.titre}</Text>
+                <Text style={styles.recipeTime}>{program.recetteMatin.tempsPreparation} min</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.statusText}>
-            {dayProgress.tasks.filter(t => t.completed).length}/{dayProgress.tasks.length} tâches complétées ({dayProgress.completionPercentage}%)
-          </Text>
-          {isLocked && (
-            <Text style={styles.lockedText}>
-              🔒 Cette journée est verrouillée car elle a été validée après minuit
-            </Text>
-          )}
+
+          {/* Midi */}
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <Text style={styles.mealTitle}>☀️ Déjeuner</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={() => changeRecipe('midi')}
+              >
+                <RefreshCw size={16} color={Colors.agpGreen} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.recipeItem}
+              onPress={() => router.push(`/recettes/${program.recetteMidi.id}`)}
+            >
+              <Image source={{ uri: program.recetteMidi.image }} style={styles.recipeImage} />
+              <View style={styles.recipeInfo}>
+                <Text style={styles.recipeName}>{program.recetteMidi.titre}</Text>
+                <Text style={styles.recipeTime}>{program.recetteMidi.tempsPreparation} min</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Goûter */}
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <Text style={styles.mealTitle}>🍪 Goûter</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={() => changeRecipe('gouter')}
+              >
+                <RefreshCw size={16} color={Colors.snack} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.recipeItem}
+              onPress={() => router.push(`/recettes/${program.recetteGouter.id}`)}
+            >
+              <Image source={{ uri: program.recetteGouter.image }} style={styles.recipeImage} />
+              <View style={styles.recipeInfo}>
+                <Text style={styles.recipeName}>{program.recetteGouter.titre}</Text>
+                <Text style={styles.recipeTime}>{program.recetteGouter.tempsPreparation} min</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Soir */}
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <Text style={styles.mealTitle}>🌙 Dîner</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={() => changeRecipe('soir')}
+              >
+                <RefreshCw size={16} color={Colors.agpBlue} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.recipeItem}
+              onPress={() => router.push(`/recettes/${program.recetteSoir.id}`)}
+            >
+              <Image source={{ uri: program.recetteSoir.image }} style={styles.recipeImage} />
+              <View style={styles.recipeInfo}>
+                <Text style={styles.recipeName}>{program.recetteSoir.titre}</Text>
+                <Text style={styles.recipeTime}>{program.recetteSoir.tempsPreparation} min</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Liste des tâches */}
-        <View style={styles.tasksSection}>
-          <Text style={styles.sectionTitle}>Vos tâches du jour</Text>
+        {/* Section Exercices */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>💪 Vos exercices du jour</Text>
           
-          {dayProgress.tasks.map((task) => {
-            const IconComponent = getTaskIcon(task.type);
-            const taskColor = getTaskColor(task.type);
-            
-            return (
-              <View key={task.id} style={styles.taskCard}>
-                <TouchableOpacity
-                  style={styles.taskCheckbox}
-                  onPress={() => toggleTask(task.id)}
-                  disabled={isLocked}
-                >
-                  {task.completed ? (
-                    <CheckSquare size={24} color={Colors.success} />
-                  ) : (
-                    <Square size={24} color={isLocked ? Colors.border : Colors.textSecondary} />
-                  )}
-                </TouchableOpacity>
-                
-                <View style={[styles.taskIcon, { backgroundColor: taskColor }]}>
-                  <IconComponent size={20} color={Colors.textLight} />
+          {/* Sport */}
+          <View style={styles.exerciseCard}>
+            <View style={styles.exerciseHeader}>
+              <Text style={styles.exerciseTitle}>🏃 Activité sportive</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={changeSportExercise}
+              >
+                <RefreshCw size={16} color={Colors.sport} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.exerciseItem}
+              onPress={() => router.push(`/sport/${program.exerciceSport.id}`)}
+            >
+              <Image source={{ uri: program.exerciceSport.image }} style={styles.exerciseImage} />
+              <View style={styles.exerciseInfo}>
+                <Text style={styles.exerciseName}>{program.exerciceSport.titre}</Text>
+                <View style={styles.exerciseDetails}>
+                  <Text style={styles.exerciseTime}>{program.exerciceSport.duree} min</Text>
+                  <Text style={styles.exerciseCalories}>{program.exerciceSport.calories} kcal</Text>
                 </View>
-                
-                <View style={styles.taskContent}>
-                  <Text style={[styles.taskTitle, task.completed && styles.taskCompleted]}>
-                    {task.title}
-                  </Text>
-                  <Text style={styles.taskDescription}>{task.description}</Text>
-                </View>
-                
-                <TouchableOpacity
-                  style={styles.taskAction}
-                  onPress={() => navigateToContent(task)}
-                >
-                  <Text style={styles.taskActionText}>Voir</Text>
-                </TouchableOpacity>
               </View>
-            );
-          })}
+            </TouchableOpacity>
+          </View>
+
+          {/* Détente */}
+          <View style={styles.exerciseCard}>
+            <View style={styles.exerciseHeader}>
+              <Text style={styles.exerciseTitle}>🧘 Exercice de détente</Text>
+              <TouchableOpacity 
+                style={styles.changeButton}
+                onPress={changeDetenteExercise}
+              >
+                <RefreshCw size={16} color={Colors.relaxation} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity 
+              style={styles.exerciseItem}
+              onPress={() => router.push(`/detente/${program.exerciceDetente.id}`)}
+            >
+              <Image source={{ uri: program.exerciceDetente.image }} style={styles.exerciseImage} />
+              <View style={styles.exerciseInfo}>
+                <Text style={styles.exerciseName}>{program.exerciceDetente.titre}</Text>
+                <Text style={styles.exerciseTime}>{program.exerciceDetente.duree} min</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Bouton de validation */}
-        {!dayProgress.isValidated && !isLocked && (
-          <TouchableOpacity style={styles.validateButton} onPress={validateDay}>
-            <Text style={styles.validateButtonText}>Valider la journée</Text>
-          </TouchableOpacity>
-        )}
-
-        {dayProgress.isValidated && (
-          <View style={styles.validatedCard}>
-            <Text style={styles.validatedText}>
-              ✅ Journée validée le {new Date(dayProgress.validatedAt!).toLocaleDateString('fr-FR')}
-            </Text>
-          </View>
-        )}
+        <TouchableOpacity 
+          style={[
+            styles.validateButton,
+            isCompleted && styles.completedButton
+          ]}
+          onPress={isCompleted ? () => router.back() : markDayAsCompleted}
+        >
+          {isCompleted ? <CheckCircle size={24} color={Colors.textLight} /> : <Play size={24} color={Colors.textLight} />}
+          <Text style={styles.validateButtonText}>
+            {isCompleted ? 'Jour terminé !' : 'Terminer ma journée'}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -420,7 +370,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  centered: {
+  loadingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -429,13 +379,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
   },
-  errorText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.error,
-  },
   header: {
-    paddingTop: 60,
+    paddingTop: 70,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -443,140 +388,187 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    flex: 1,
   },
   backButton: {
     padding: 8,
     minWidth: 40,
   },
-  homeButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    padding: 8,
-    borderRadius: 16,
-    minWidth: 40,
+  headerCenter: {
     alignItems: 'center',
+    flex: 1,
   },
   headerTitle: {
     fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
-    flex: 1,
     textAlign: 'center',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
+    textAlign: 'center',
+  },
+  homeButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 16,
+    minWidth: 60,
+  },
+  homeButtonText: {
+    fontSize: 11,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
     textAlign: 'center',
   },
   content: {
     flex: 1,
     padding: 20,
   },
-  statusCard: {
+  regenerateAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 16,
+    paddingVertical: 12,
+    marginBottom: 24,
+    gap: 8,
+  },
+  regenerateAllText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  mealCard: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 16,
-    marginBottom: 24,
-    borderLeftWidth: 4,
+    marginBottom: 16,
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  statusHeader: {
+  mealHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  statusTitle: {
+  mealTitle: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
-  statusText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    marginBottom: 4,
+  changeButton: {
+    padding: 8,
+    backgroundColor: Colors.background,
+    borderRadius: 20,
   },
-  lockedText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.warning,
-    fontStyle: 'italic',
-  },
-  tasksSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 16,
-  },
-  taskCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  recipeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 1,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    gap: 12,
   },
-  taskCheckbox: {
-    marginRight: 12,
+  recipeImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: Colors.border,
   },
-  taskIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  taskContent: {
+  recipeInfo: {
     flex: 1,
   },
-  taskTitle: {
+  recipeName: {
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginBottom: 2,
+    marginBottom: 4,
   },
-  taskCompleted: {
-    textDecorationLine: 'line-through',
-    color: Colors.textSecondary,
-  },
-  taskDescription: {
+  recipeTime: {
     fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
   },
-  taskAction: {
-    backgroundColor: Colors.agpLightBlue,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+  exerciseCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  taskActionText: {
+  exerciseHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  exerciseTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  exerciseItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  exerciseImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: Colors.border,
+  },
+  exerciseInfo: {
+    flex: 1,
+  },
+  exerciseName: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  exerciseDetails: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  exerciseTime: {
     fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.agpBlue,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+  },
+  exerciseCalories: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
   },
   validateButton: {
-    backgroundColor: Colors.agpBlue,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.agpGreen,
     borderRadius: 16,
     paddingVertical: 16,
-    alignItems: 'center',
     marginBottom: 20,
+    gap: 8,
     elevation: 3,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
@@ -588,16 +580,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
-  validatedCard: {
-    backgroundColor: '#E8F5E8',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  validatedText: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2E7D32',
+  completedButton: {
+    backgroundColor: Colors.success,
   },
 });
