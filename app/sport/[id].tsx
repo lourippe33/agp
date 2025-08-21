@@ -482,6 +482,7 @@ export default function SuiviScreen() {
       />
     </View>
   )
+  )
   );
 }
 
