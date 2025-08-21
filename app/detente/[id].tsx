@@ -43,11 +43,6 @@ export default function SuiviScreen() {
   const [showHipsChart, setShowHipsChart] = useState(false);
   const [showArmsChart, setShowArmsChart] = useState(false);
   const [showThighsChart, setShowThighsChart] = useState(false);
-  const [showWeightChart, setShowWeightChart] = useState(false);
-  const [showWaistChart, setShowWaistChart] = useState(false);
-  const [showHipsChart, setShowHipsChart] = useState(false);
-  const [showArmsChart, setShowArmsChart] = useState(false);
-  const [showThighsChart, setShowThighsChart] = useState(false);
 
   // Charger les données au démarrage
   useEffect(() => {
@@ -173,21 +168,6 @@ export default function SuiviScreen() {
   };
 
   const stats = calculateStats();
-
-  // Préparer les données pour les graphiques
-  const getWeightChartData = () => {
-    return weightHistory.map(entry => ({
-      date: entry.date,
-      value: entry.weight
-    }));
-  };
-
-  const getMeasurementChartData = (type: 'waist' | 'hips' | 'arms' | 'thighs') => {
-    return measurementHistory.map(entry => ({
-      date: entry.date,
-      value: entry[type]
-    }));
-  };
 
   // Préparer les données pour les graphiques
   const getWeightChartData = () => {
@@ -434,29 +414,6 @@ export default function SuiviScreen() {
       <ChartModal
         visible={showHipsChart}
         onClose={() => setShowHipsChart(false)}
-
-      {/* Modals pour les courbes */}
-      <ChartModal
-        visible={showWeightChart}
-        onClose={() => setShowWeightChart(false)}
-        title="Évolution du poids"
-        data={getWeightChartData()}
-        unit="kg"
-        color="#4A90E2"
-      />
-
-      <ChartModal
-        visible={showWaistChart}
-        onClose={() => setShowWaistChart(false)}
-        title="Évolution tour de taille"
-        data={getMeasurementChartData('waist')}
-        unit="cm"
-        color="#FF9800"
-      />
-
-      <ChartModal
-        visible={showHipsChart}
-        onClose={() => setShowHipsChart(false)}
         title="Évolution tour de hanches"
         data={getMeasurementChartData('hips')}
         unit="cm"
@@ -481,7 +438,6 @@ export default function SuiviScreen() {
         color="#2196F3"
       />
     </View>
-  )
   );
 }
 
