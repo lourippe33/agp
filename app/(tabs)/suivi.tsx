@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity, ChartBar as BarChart3 } from 'lucide-react-native'Colors } from '@/constants/Colors';
+import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity, ChartBar as BarChart3 } from 'lucide-react-native';
+import { Colors } from '@/constants/Colors';
 
 interface WeightEntry {
   date: string;
