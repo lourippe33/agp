@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Scale, Ruler, TrendingUp, Calendar, Plus, Edit3, Target, Activity } from 'lucide-react-native';
+import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 export default function SuiviScreen() {
