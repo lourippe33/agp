@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Heart, Clock, Filter, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -32,7 +33,7 @@ export default function DetenteScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <LinearGradient
         colors={[Colors.relaxation, '#FFB3BA']}
         style={styles.header}
@@ -59,31 +60,33 @@ export default function DetenteScreen() {
 
       {/* Filtres par type */}
       <View style={styles.filtersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.filters}>
-            {types.map((type) => {
-              const isSelected = selectedType === type.id;
-              
-              return (
-                <TouchableOpacity
-                  key={type.id}
-                  style={[
-                    styles.filterButton,
-                    isSelected && { backgroundColor: Colors.relaxation }
-                  ]}
-                  onPress={() => setSelectedType(type.id)}
-                >
-                  <Filter size={16} color={isSelected ? Colors.textLight : Colors.relaxation} />
-                  <Text style={[
-                    styles.filterText,
-                    isSelected && { color: Colors.textLight }
-                  ]}>
-                    {type.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+        >
+          {types.map((type) => {
+            const isSelected = selectedType === type.id;
+            
+            return (
+              <TouchableOpacity
+                key={type.id}
+                style={[
+                  styles.filterButton,
+                  isSelected && { backgroundColor: Colors.relaxation }
+                ]}
+                onPress={() => setSelectedType(type.id)}
+              >
+                <Filter size={16} color={isSelected ? Colors.textLight : Colors.relaxation} />
+                <Text style={[
+                  styles.filterText,
+                  isSelected && { color: Colors.textLight }
+                ]}>
+                  {type.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -121,7 +124,7 @@ export default function DetenteScreen() {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -131,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 70,
+    paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -176,28 +179,31 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filters: {
-    flexDirection: 'row',
+  filtersContent: {
     paddingHorizontal: 20,
-    gap: 12,
+    alignItems: 'center',
   },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
+    marginRight: 8,
+    minWidth: 90,
+    justifyContent: 'center',
   },
   filterText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
+    textAlign: 'center',
   },
   content: {
     flex: 1,

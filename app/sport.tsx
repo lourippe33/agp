@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Dumbbell, Clock, Zap, Filter, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -32,7 +33,7 @@ export default function SportScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <LinearGradient
         colors={['#FF5722', '#FF8A65']}
         style={styles.header}
@@ -59,31 +60,33 @@ export default function SportScreen() {
 
       {/* Filtres par niveau */}
       <View style={styles.filtersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.filters}>
-            {niveaux.map((niveau) => {
-              const isSelected = selectedNiveau === niveau.id;
-              
-              return (
-                <TouchableOpacity
-                  key={niveau.id}
-                  style={[
-                    styles.filterButton,
-                    isSelected && { backgroundColor: Colors.sport }
-                  ]}
-                  onPress={() => setSelectedNiveau(niveau.id)}
-                >
-                  <Filter size={16} color={isSelected ? Colors.textLight : Colors.sport} />
-                  <Text style={[
-                    styles.filterText,
-                    isSelected && { color: Colors.textLight }
-                  ]}>
-                    {niveau.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+        >
+          {niveaux.map((niveau) => {
+            const isSelected = selectedNiveau === niveau.id;
+            
+            return (
+              <TouchableOpacity
+                key={niveau.id}
+                style={[
+                  styles.filterButton,
+                  isSelected && { backgroundColor: Colors.sport }
+                ]}
+                onPress={() => setSelectedNiveau(niveau.id)}
+              >
+                <Filter size={16} color={isSelected ? Colors.textLight : Colors.sport} />
+                <Text style={[
+                  styles.filterText,
+                  isSelected && { color: Colors.textLight }
+                ]}>
+                  {niveau.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -122,7 +125,7 @@ export default function SportScreen() {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 70,
+    paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -177,28 +180,31 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filters: {
-    flexDirection: 'row',
+  filtersContent: {
     paddingHorizontal: 20,
-    gap: 12,
+    alignItems: 'center',
   },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
+    marginRight: 8,
+    minWidth: 90,
+    justifyContent: 'center',
   },
   filterText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
+    textAlign: 'center',
   },
   content: {
     flex: 1,
