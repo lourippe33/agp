@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontFamily: 'Inter-Regular',
-    color: Colors.textLight,
+    color: Colors.text,
     paddingVertical: 4,
   },
   homeButton: {
