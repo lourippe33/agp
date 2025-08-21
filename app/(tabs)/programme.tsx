@@ -1,121 +1,132 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Calendar, Target, CircleCheck as CheckCircle } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { Calendar, Trophy, Flame, Target, ChevronRight, Star, Lightbulb, Zap } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
-export default function Programme28JoursScreen() {
+export default function ProgrammeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
       >
-        <View style={styles.headerTop}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <ArrowLeft size={24} color={Colors.textLight} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Programme 28 Jours</Text>
-          <View style={styles.placeholder} />
-        </View>
+        <Text style={styles.headerTitle}>Programme 28 Jours</Text>
         <Text style={styles.headerSubtitle}>
           Votre transformation AGP personnalisée
         </Text>
       </LinearGradient>
 
-      <ScrollView style={styles.content}>
-        {/* Vue d'ensemble */}
-        <View style={styles.overviewCard}>
-          <Calendar size={32} color={Colors.agpBlue} />
-          <Text style={styles.overviewTitle}>Votre Programme Personnalisé</Text>
-          <Text style={styles.overviewText}>
-            Un programme de 28 jours adapté à votre chronobiologie pour optimiser 
-            votre alimentation, votre activité physique et votre bien-être.
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Statistiques */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Trophy size={24} color={Colors.warning} />
+            <Text style={styles.statValue}>0%</Text>
+            <Text style={styles.statLabel}>Progression</Text>
+          </View>
+          
+          <View style={styles.statItem}>
+            <Flame size={24} color={Colors.error} />
+            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statLabel}>Jours consécutifs</Text>
+          </View>
+          
+          <View style={styles.statItem}>
+            <Target size={24} color={Colors.success} />
+            <Text style={styles.statValue}>28</Text>
+            <Text style={styles.statLabel}>Jours restants</Text>
+          </View>
+        </View>
+
+        {/* Message de progression */}
+        <View style={styles.progressMessage}>
+          <Text style={styles.progressText}>
+            🎯 Vous avez complété 0% du programme !
           </Text>
+          <TouchableOpacity style={styles.todayButton}>
+            <Text style={styles.todayButtonText}>📍 Aller à aujourd'hui</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Phases du programme */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Les 4 Phases</Text>
-          
-          <View style={styles.phaseCard}>
-            <View style={styles.phaseHeader}>
-              <Text style={styles.phaseNumber}>1</Text>
-              <Text style={styles.phaseTitle}>Adaptation (Jours 1-7)</Text>
-            </View>
-            <Text style={styles.phaseDescription}>
-              Découverte de votre rythme naturel et mise en place des bases
-            </Text>
-          </View>
-
-          <View style={styles.phaseCard}>
-            <View style={styles.phaseHeader}>
-              <Text style={styles.phaseNumber}>2</Text>
-              <Text style={styles.phaseTitle}>Optimisation (Jours 8-14)</Text>
-            </View>
-            <Text style={styles.phaseDescription}>
-              Ajustement des habitudes alimentaires selon votre chronobiologie
-            </Text>
-          </View>
-
-          <View style={styles.phaseCard}>
-            <View style={styles.phaseHeader}>
-              <Text style={styles.phaseNumber}>3</Text>
-              <Text style={styles.phaseTitle}>Intensification (Jours 15-21)</Text>
-            </View>
-            <Text style={styles.phaseDescription}>
-              Intégration des exercices et renforcement des acquis
-            </Text>
-          </View>
-
-          <View style={styles.phaseCard}>
-            <View style={styles.phaseHeader}>
-              <Text style={styles.phaseNumber}>4</Text>
-              <Text style={styles.phaseTitle}>Consolidation (Jours 22-28)</Text>
-            </View>
-            <Text style={styles.phaseDescription}>
-              Autonomie complète et préparation à la suite
-            </Text>
-          </View>
+        {/* Indicateur de semaine */}
+        <View style={styles.weekIndicator}>
+          <Text style={styles.weekText}>📅 Vous êtes dans la semaine 1 🏁</Text>
         </View>
 
-        {/* Objectifs */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Vos Objectifs</Text>
-          
-          <View style={styles.objectiveItem}>
-            <Target size={20} color={Colors.agpGreen} />
-            <Text style={styles.objectiveText}>Perte de poids durable</Text>
+        {/* Semaine 1 */}
+        <View style={styles.weekSection}>
+          <View style={styles.weekHeader}>
+            <Text style={styles.weekTitle}>Semaine 1</Text>
+            <Text style={styles.weekProgress}>0%</Text>
+            <ChevronRight size={20} color={Colors.agpBlue} />
           </View>
           
-          <View style={styles.objectiveItem}>
-            <Target size={20} color={Colors.agpGreen} />
-            <Text style={styles.objectiveText}>Amélioration de l'énergie</Text>
-          </View>
-          
-          <View style={styles.objectiveItem}>
-            <Target size={20} color={Colors.agpGreen} />
-            <Text style={styles.objectiveText}>Meilleure gestion du stress</Text>
-          </View>
-          
-          <View style={styles.objectiveItem}>
-            <Target size={20} color={Colors.agpGreen} />
-            <Text style={styles.objectiveText}>Habitudes alimentaires saines</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScroll}>
+            <View style={styles.daysContainer}>
+              {[1, 2, 3, 4, 5, 6].map((day) => (
+                <View key={day} style={styles.dayCircle}>
+                  <Text style={[styles.dayNumber, day === 1 && styles.dayNumberActive]}>
+                    {day}
+                  </Text>
+                  <Text style={styles.dayLabel}>
+                    {day === 1 ? 'lun.' : day === 2 ? 'mar.' : day === 3 ? 'mer.' : 
+                     day === 4 ? 'jeu.' : day === 5 ? 'ven.' : 'sam.'}
+                  </Text>
+                  <Text style={styles.dayTime}>
+                    {day <= 3 ? '20 min' : '25 min'}
+                  </Text>
+                  <View style={[
+                    styles.statusDot, 
+                    { backgroundColor: day === 1 ? '#FF6B6B' : day <= 3 ? '#4A90E2' : '#E0E0E0' }
+                  ]} />
+                </View>
+              ))}
+              <TouchableOpacity style={styles.moreButton}>
+                <ChevronRight size={20} color={Colors.agpBlue} />
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* Section motivation */}
+        <View style={styles.motivationSection}>
+          <View style={styles.motivationCard}>
+            <View style={styles.motivationIcon}>
+              <Star size={20} color={Colors.warning} />
+            </View>
+            <View style={styles.motivationContent}>
+              <Text style={styles.motivationTitle}>📌 Commencez votre transformation</Text>
+              <Text style={styles.motivationText}>
+                Chaque grand voyage commence par un premier pas.
+              </Text>
+            </View>
           </View>
         </View>
 
-        {/* Statut */}
-        <View style={styles.statusCard}>
-          <CheckCircle size={32} color={Colors.warning} />
-          <Text style={styles.statusTitle}>Programme en développement</Text>
-          <Text style={styles.statusText}>
-            Le programme 28 jours sera bientôt disponible avec un suivi quotidien 
-            personnalisé et des recommandations adaptées à votre profil.
-          </Text>
+        {/* Conseil de la semaine */}
+        <View style={styles.conseilSection}>
+          <Text style={styles.sectionTitle}>💡 Conseil de la semaine 1</Text>
+          <View style={styles.conseilCard}>
+            <Text style={styles.conseilText}>
+              Concentrez-vous sur la création d'habitudes. La régularité est plus importante que la perfection.
+            </Text>
+          </View>
+        </View>
+
+        {/* Navigation directe */}
+        <View style={styles.navigationSection}>
+          <View style={styles.navigationCard}>
+            <View style={styles.navigationIcon}>
+              <Zap size={20} color={Colors.info} />
+            </View>
+            <View style={styles.navigationContent}>
+              <Text style={styles.navigationTitle}>🚀 Navigation Directe ACTIVE !</Text>
+              <Text style={styles.navigationText}>
+                Cliquez sur une activité pour accéder directement à la recette ou l'exercice spécifique ! Plus besoin de chercher dans les listes.
+              </Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -128,29 +139,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 50,
+    paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
-  },
-  headerTop: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  backButton: {
-    padding: 8,
-  },
-  placeholder: {
-    width: 40,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
+    marginBottom: 8,
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
@@ -160,116 +161,251 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  overviewCard: {
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     backgroundColor: Colors.surface,
     borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    marginBottom: 24,
+    paddingVertical: 20,
+    marginBottom: 20,
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  overviewTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginTop: 12,
-    marginBottom: 8,
-    textAlign: 'center',
+  statItem: {
+    alignItems: 'center',
+    gap: 8,
   },
-  overviewText: {
-    fontSize: 14,
+  statValue: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+  },
+  statLabel: {
+    fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 20,
   },
-  section: {
-    marginBottom: 24,
+  progressMessage: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  sectionTitle: {
-    fontSize: 18,
+  progressText: {
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  todayButton: {
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  todayButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  weekIndicator: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  weekText: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.agpBlue,
+  },
+  weekSection: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  weekHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
-  phaseCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    elevation: 1,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  phaseHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  phaseNumber: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    backgroundColor: Colors.agpBlue,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    textAlign: 'center',
-    lineHeight: 28,
-    marginRight: 12,
-  },
-  phaseTitle: {
-    fontSize: 16,
+  weekTitle: {
+    fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
-  phaseDescription: {
+  weekProgress: {
     fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.success,
+  },
+  daysScroll: {
+    marginHorizontal: -20,
+  },
+  daysContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    gap: 16,
+    alignItems: 'center',
+  },
+  dayCircle: {
+    alignItems: 'center',
+    width: 60,
+  },
+  dayNumber: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textSecondary,
+    backgroundColor: Colors.background,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    textAlign: 'center',
+    lineHeight: 40,
+    marginBottom: 4,
+    borderWidth: 2,
+    borderColor: Colors.border,
+  },
+  dayNumberActive: {
+    color: Colors.textLight,
+    backgroundColor: Colors.agpBlue,
+    borderColor: Colors.agpBlue,
+  },
+  dayLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginBottom: 2,
+  },
+  dayTime: {
+    fontSize: 9,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    lineHeight: 18,
+    marginBottom: 4,
   },
-  objectiveItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 12,
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
-  objectiveText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.text,
+  moreButton: {
+    padding: 8,
   },
-  statusCard: {
+  motivationSection: {
+    marginBottom: 20,
+  },
+  motivationCard: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
+    padding: 16,
+    flexDirection: 'row',
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  statusTitle: {
+  motivationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFF3CD',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  motivationContent: {
+    flex: 1,
+  },
+  motivationTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  motivationText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    lineHeight: 16,
+  },
+  conseilSection: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginTop: 12,
-    marginBottom: 8,
-    textAlign: 'center',
+    marginBottom: 12,
   },
-  statusText: {
+  conseilCard: {
+    backgroundColor: '#F0F8FF',
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  conseilText: {
     fontSize: 14,
     fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    lineHeight: 18,
+  },
+  navigationSection: {
+    marginBottom: 20,
+  },
+  navigationCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  navigationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E3F2FD',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  navigationContent: {
+    flex: 1,
+  },
+  navigationTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  navigationText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 16,
   },
 });
