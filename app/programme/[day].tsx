@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
@@ -47,14 +49,6 @@ export default function HomeScreen() {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
       if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
-    }
-  };
-
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
@@ -62,10 +56,6 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
-  const getDailyMotivation = (day: number) => {
-    const motivations = [
-      "🌟 Premier jour ! Vous commencez une belle aventure !",
-      "💪 Deuxième jour ! Vous prenez de l'élan !",
       "🔥 Trois jours ! L'habitude se forme !",
       "⭐ Quatre jours de suite, vous êtes formidable !",
       "🚀 Une semaine presque complète, bravo !",
