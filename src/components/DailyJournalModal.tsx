@@ -175,7 +175,7 @@ export default function DailyJournalModal({
           <View style={styles.timeInput}>
             <Clock size={16} color={Colors.textSecondary} />
             <TextInput
-              title="🍪 Collation"
+              style={styles.timeTextInput}
               placeholder="Heure (ex: 12:30)"
               value={meal.time}
               onChangeText={(time) => updateMealTime(meal.id, time)}
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   },
   mealPhoto: {
     width: '100%',
-    height: 150,
+    height: 120,
     borderRadius: 8,
   },
   changePhotoButton: {
