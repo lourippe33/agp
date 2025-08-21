@@ -64,6 +64,7 @@ export default function SportScreen() {
           horizontal 
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersContent}
+          style={styles.filtersScroll}
         >
           {niveaux.map((niveau) => {
             const isSelected = selectedNiveau === niveau.id;
@@ -184,9 +185,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
+  filtersScroll: {
+    flexGrow: 0,
+  },
   filtersContent: {
-    paddingHorizontal: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
     alignItems: 'center',
+    minWidth: '100%',
   },
   filterButton: {
     flexDirection: 'row',
@@ -196,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
-    marginRight: 8,
+    marginRight: 12,
     minWidth: 90,
     justifyContent: 'center',
   },
