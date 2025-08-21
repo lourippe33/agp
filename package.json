@@ -7,7 +7,20 @@
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "start": "EXPO_NO_TELEMETRY=1 expo start --reset-cache",
     "build:web": "expo export --platform web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "doctor": "expo doctor",
+    "clean:metro": "expo start --clear --no-dev --web --minify=false",
+    "test:smoke:rn": "jest -c jest.config.js --runInBand --passWithNoTests",
+    "test:smoke:web": "playwright test --config=playwright.config.ts",
+    "preflight": "npm run typecheck && npm run lint && npm run doctor && npm run test:smoke:web"
+    "typecheck": "tsc --noEmit",
+    "lint:custom": "eslint --ext .ts,.tsx src app",
+    "doctor": "expo doctor",
+    "clean:metro": "expo start --clear --no-dev --web --minify=false",
+    "test:smoke:rn": "jest -c jest.config.js --runInBand --passWithNoTests",
+    "test:smoke:web": "playwright test --config=playwright.config.ts",
+    "preflight": "npm run typecheck && npm run lint:custom && npm run doctor && npm run test:smoke:web"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
