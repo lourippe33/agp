@@ -363,6 +363,12 @@ export default function ProgrammeScreen(): JSX.Element {
               ]}>
                 {day.date}
               </Text>
+              <View style={[
+                styles.dayCircle,
+                { borderColor: getDayStatusBorderColor(day.status) }
+              ]}>
+                <Text style={[
+                  styles.dayNumber,
                   { color: day.status === 'upcoming' ? '#999' : '#333' }
                 ]}>
                   {day.id}
@@ -372,12 +378,6 @@ export default function ProgrammeScreen(): JSX.Element {
                   { color: day.status === 'upcoming' ? '#999' : '#666' }
                 ]}>
                   {day.dayOfWeek}
-                </Text>
-                <Text style={[
-                  styles.dayDuration,
-                  { color: day.status === 'upcoming' ? '#999' : '#666' }
-                ]}>
-                  {day.duration}min
                 </Text>
               </View>
               <View style={[
