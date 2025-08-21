@@ -5,7 +5,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity, ChartBar as BarChart3 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import ChartModal from '@/components/ChartModal';
-import ChartModal from '@/components/ChartModal';
 
 interface WeightEntry {
   date: string;
@@ -39,11 +38,6 @@ export default function SuiviScreen() {
   const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([]);
   const [measurementHistory, setMeasurementHistory] = useState<MeasurementEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showWeightChart, setShowWeightChart] = useState(false);
-  const [showWaistChart, setShowWaistChart] = useState(false);
-  const [showHipsChart, setShowHipsChart] = useState(false);
-  const [showArmsChart, setShowArmsChart] = useState(false);
-  const [showThighsChart, setShowThighsChart] = useState(false);
   const [showWeightChart, setShowWeightChart] = useState(false);
   const [showWaistChart, setShowWaistChart] = useState(false);
   const [showHipsChart, setShowHipsChart] = useState(false);
@@ -190,21 +184,6 @@ export default function SuiviScreen() {
     }));
   };
 
-  // Préparer les données pour les graphiques
-  const getWeightChartData = () => {
-    return weightHistory.map(entry => ({
-      date: entry.date,
-      value: entry.weight
-    }));
-  };
-
-  const getMeasurementChartData = (type: 'waist' | 'hips' | 'arms' | 'thighs') => {
-    return measurementHistory.map(entry => ({
-      date: entry.date,
-      value: entry[type]
-    }));
-  };
-
   if (isLoading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -284,12 +263,10 @@ export default function SuiviScreen() {
 
         {/* Évolution du poids */}
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Évolution du poids</Text>
-            <View style={styles.sectionButtons}>
-              <TouchableOpacity style={styles.chartButton} onPress={() => setShowWeightChart(true)}>
-                <Text style={styles.chartButtonText}>📈 Courbe</Text>
-              </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Évolution du poids</Text>
+          <View style={styles.chartCard}>
+            <View style={styles.chartHeader}>
+              <Text style={styles.chartTitle}>Dernières pesées</Text>
               <View style={styles.chartButtons}>
                 <TouchableOpacity style={styles.chartButton} onPress={() => setShowWeightChart(true)}>
                   <Text style={styles.chartButtonText}>📈 Courbe</Text>
@@ -300,29 +277,29 @@ export default function SuiviScreen() {
                 </TouchableOpacity>
               </View>
             </View>
+            
+            <View style={styles.weightHistory}>
+              {weightHistory.length === 0 ? (
+                <Text style={styles.noDataText}>Aucune pesée enregistrée</Text>
+              ) : (
+                weightHistory.slice(-5).map((entry, index) => (
+                <View key={index} style={styles.weightEntry}>
+                  <Text style={styles.weightDate}>{entry.date}</Text>
+                  <Text style={styles.weightValue}>{entry.weight} kg</Text>
+                  <View style={[
+                    styles.weightTrend,
+                    { backgroundColor: index > 0 && entry.weight < weightHistory[index-1]?.weight ? Colors.success : Colors.border }
+                  ]} />
+                </View>
+                ))
+              )}
+            </View>
           </View>
         </View>
 
         {/* Mensurations */}
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Mensurations</Text>
-            <View style={styles.chartButtonsRow}>
-              <TouchableOpacity style={[styles.miniChartButton, { backgroundColor: '#FF9800' }]} onPress={() => setShowWaistChart(true)}>
-                <Text style={styles.miniChartText}>Taille</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.miniChartButton, { backgroundColor: '#4CAF50' }]} onPress={() => setShowHipsChart(true)}>
-                <Text style={styles.miniChartText}>Hanches</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.miniChartButton, { backgroundColor: '#F44336' }]} onPress={() => setShowArmsChart(true)}>
-                <Text style={styles.miniChartText}>Bras</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.miniChartButton, { backgroundColor: '#2196F3' }]} onPress={() => setShowThighsChart(true)}>
-                <Text style={styles.miniChartText}>Cuisses</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          
+          <Text style={styles.sectionTitle}>Mensurations</Text>
           <View style={styles.measurementsCard}>
             <View style={styles.measurementsHeader}>
               <Text style={styles.measurementsTitle}>Saisir mes mesures</Text>
@@ -390,6 +367,45 @@ export default function SuiviScreen() {
           </View>
         </View>
 
+        {/* Historique des mensurations */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Historique des mensurations</Text>
+          {measurementHistory.length === 0 ? (
+            <View style={styles.historyCard}>
+              <Text style={styles.noDataText}>Aucune mensuration enregistrée</Text>
+            </View>
+          ) : (
+            measurementHistory.slice(-3).map((measurement, index) => (
+              <View key={measurement.id} style={styles.historyCard}>
+                <View style={styles.historyHeader}>
+                  <Text style={styles.historyDate}>{measurement.date}</Text>
+                  <TouchableOpacity>
+                    <Edit3 size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.historyMeasurements}>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Taille</Text>
+                    <Text style={styles.historyValue}>{measurement.waist} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Hanches</Text>
+                    <Text style={styles.historyValue}>{measurement.hips} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Bras</Text>
+                    <Text style={styles.historyValue}>{measurement.arms} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Cuisse</Text>
+                    <Text style={styles.historyValue}>{measurement.thighs} cm</Text>
+                  </View>
+                </View>
+              </View>
+            ))
+          )}
+        </View>
+
         {/* Objectifs */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Mes objectifs</Text>
@@ -435,29 +451,6 @@ export default function SuiviScreen() {
       <ChartModal
         visible={showHipsChart}
         onClose={() => setShowHipsChart(false)}
-
-      {/* Modals pour les courbes */}
-      <ChartModal
-        visible={showWeightChart}
-        onClose={() => setShowWeightChart(false)}
-        title="Évolution du poids"
-        data={getWeightChartData()}
-        unit="kg"
-        color="#4A90E2"
-      />
-
-      <ChartModal
-        visible={showWaistChart}
-        onClose={() => setShowWaistChart(false)}
-        title="Évolution tour de taille"
-        data={getMeasurementChartData('waist')}
-        unit="cm"
-        color="#FF9800"
-      />
-
-      <ChartModal
-        visible={showHipsChart}
-        onClose={() => setShowHipsChart(false)}
         title="Évolution tour de hanches"
         data={getMeasurementChartData('hips')}
         unit="cm"
@@ -476,13 +469,12 @@ export default function SuiviScreen() {
       <ChartModal
         visible={showThighsChart}
         onClose={() => setShowThighsChart(false)}
-        title="Évolution tour de cuisses"
+        title="Évolution tour de cuisse"
         data={getMeasurementChartData('thighs')}
         unit="cm"
         color="#2196F3"
       />
     </View>
-  )
   );
 }
 
@@ -549,41 +541,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 16,
-  },
-  sectionButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  chartButton: {
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  chartButtonText: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.textLight,
-  },
-  chartButtonsRow: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  miniChartButton: {
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  miniChartText: {
-    fontSize: 10,
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.textLight,
   },
   weightCard: {
     backgroundColor: Colors.surface,
@@ -650,6 +608,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
+  chartButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  chartButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+  },
+  chartButtonText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.agpBlue,
+  },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -712,6 +685,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  measurementsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  measurementsTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  chartButtonsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  miniChartButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  miniChartButtonText: {
+    fontSize: 12,
+  },
   measurementRow: {
     flexDirection: 'row',
     gap: 16,
@@ -728,6 +726,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 12,
   },
   historyHeader: {
     flexDirection: 'row',
