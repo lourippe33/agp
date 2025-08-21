@@ -45,10 +45,6 @@ export default function RootLayout() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="recettes" options={{ headerShown: false }} />
-        <Stack.Screen name="sport" options={{ headerShown: false }} />
-        <Stack.Screen name="detente" options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

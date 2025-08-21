@@ -1,406 +1,40 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  Alert,
-  Switch,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets, Scale, Ruler } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { BarChart3 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
-export default function ProfilScreen() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    niveauSport: 'debutant',
-    preferencesAlimentaires: [],
-    objectifs: [],
-  });
-  const [notifications, setNotifications] = useState(true);
-  const [waterNotifications, setWaterNotifications] = useState(true);
-  const [waterObjective, setWaterObjective] = useState(8);
-
-  // Fonctions mémorisées pour éviter les re-renders
-  const updateFirstName = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, firstName: text }));
-  }, []);
-
-  const updateLastName = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, lastName: text }));
-  }, []);
-
-  const updateUsername = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, username: text }));
-  }, []);
-
-  const updateNiveauSport = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, niveauSport: value as any }));
-  }, []);
-
-
-  const handleSave = async () => {
-
-    try {
-      setIsEditing(false);
-      Alert.alert('Succès', 'Profil mis à jour avec succès !');
-    } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue');
-    }
-  };
-
-
-  const togglePreference = useCallback((preference: string) => {
-    setFormData(prev => ({
-      ...prev,
-      preferencesAlimentaires: prev.preferencesAlimentaires.includes(preference)
-        ? prev.preferencesAlimentaires.filter(p => p !== preference)
-        : [...prev.preferencesAlimentaires, preference]
-    }));
-  }, []);
-
-  const toggleObjectif = useCallback((objectif: string) => {
-    setFormData(prev => ({
-      ...prev,
-      objectifs: prev.objectifs.includes(objectif)
-        ? prev.objectifs.filter(o => o !== objectif)
-        : [...prev.objectifs, objectif]
-    }));
-  }, []);
-
-  const preferencesOptions = [
-    'Végétarien',
-    'Vegan',
-    'Sans gluten',
-    'Sans lactose',
-    'Paléo',
-    'Cétogène'
-  ];
-
-  const objectifsOptions = [
-    'Perte de poids',
-    'Prise de muscle',
-    'Améliorer l\'énergie',
-    'Réduire le stress',
-    'Mieux dormir',
-    'Améliorer la digestion'
-  ];
-
-  const niveauxSport = [
-    { value: 'debutant', label: 'Débutant' },
-    { value: 'intermediaire', label: 'Intermédiaire' },
-    { value: 'avance', label: 'Avancé' }
-  ];
-
-  const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {children}
-    </View>
-  );
-
-  const EditableField = ({ 
-    label, 
-    value, 
-    onChangeText, 
-    placeholder 
-  }: { 
-    label: string; 
-    value: string; 
-    onChangeText: (text: string) => void; 
-    placeholder?: string;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.textInput}
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={Colors.textSecondary}
-        />
-      ) : (
-        <Text style={styles.fieldValue}>{value || 'Non renseigné'}</Text>
-      )}
-    </View>
-  );
-
-  const SelectField = ({ 
-    label, 
-    value, 
-    options, 
-    onSelect 
-  }: { 
-    label: string; 
-    value: string; 
-    options: { value: string; label: string }[]; 
-    onSelect: (value: string) => void;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <View style={styles.selectContainer}>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option.value}
-              style={[
-                styles.selectOption,
-                value === option.value && styles.selectOptionSelected
-              ]}
-              onPress={() => onSelect(option.value)}
-            >
-              <Text style={[
-                styles.selectOptionText,
-                value === option.value && styles.selectOptionTextSelected
-              ]}>
-                {option.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text style={styles.fieldValue}>
-          {options.find(opt => opt.value === value)?.label || 'Non renseigné'}
-        </Text>
-      )}
-    </View>
-  );
-
-  const MultiSelectField = ({ 
-    label, 
-    values, 
-    options, 
-    onToggle 
-  }: { 
-    label: string; 
-    values: string[]; 
-    options: string[]; 
-    onToggle: (value: string) => void;
-  }) => (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      {isEditing ? (
-        <View style={styles.multiSelectContainer}>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={[
-                styles.multiSelectOption,
-                values.includes(option) && styles.multiSelectOptionSelected
-              ]}
-              onPress={() => onToggle(option)}
-            >
-              <Text style={[
-                styles.multiSelectOptionText,
-                values.includes(option) && styles.multiSelectOptionTextSelected
-              ]}>
-                {option}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text style={styles.fieldValue}>
-          {values.length > 0 ? values.join(', ') : 'Aucune préférence'}
-        </Text>
-      )}
-    </View>
-  );
-
+export default function SuiviScreen() {
   return (
-    <ScrollView 
-      style={[
-        styles.container,
-        Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
-      ]} 
-      showsVerticalScrollIndicator={true}
-    >
-      {/* Header */}
+    <View style={styles.container}>
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
       >
-        <View style={styles.headerContent}>
-          <View style={styles.logoContainer}>
-            <AGPLogo size={50} />
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Mon Profil</Text>
-            <Text style={styles.headerSubtitle}>
-              Personnalisez votre expérience AGP
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => {
-              if (isEditing) {
-                handleSave();
-              } else {
-                setIsEditing(true);
-              }
-            }}
-          >
-            {isEditing ? (
-              <Save size={24} color={Colors.textLight} />
-            ) : (
-              <Edit3 size={24} color={Colors.textLight} />
-            )}
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.headerTitle}>Mon Suivi</Text>
+        <Text style={styles.headerSubtitle}>
+          Visualisez vos progrès et mensurations
+        </Text>
       </LinearGradient>
 
-      <View style={styles.content}>
-        {/* Informations personnelles */}
-        <ProfileSection title="👤 Informations personnelles">
-          <EditableField
-            label="Prénom"
-            value={formData.firstName}
-            onChangeText={updateFirstName}
-            placeholder="Votre prénom"
-          />
-          
-          <EditableField
-            label="Nom"
-            value={formData.lastName}
-            onChangeText={updateLastName}
-            placeholder="Votre nom"
-          />
-          
-          <EditableField
-            label="Nom d'utilisateur"
-            value={formData.username}
-            onChangeText={updateUsername}
-            placeholder="Votre nom d'utilisateur"
-          />
-
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Email</Text>
-            <Text style={styles.fieldValue}>utilisateur@example.com</Text>
-          </View>
-        </ProfileSection>
-
-        {/* Préférences sportives */}
-        <ProfileSection title="💪 Préférences sportives">
-          <SelectField
-            label="Niveau sportif"
-            value={formData.niveauSport}
-            options={niveauxSport}
-            onSelect={updateNiveauSport}
-          />
-        </ProfileSection>
-
-        {/* Préférences alimentaires */}
-        <ProfileSection title="🍽️ Préférences alimentaires">
-          <MultiSelectField
-            label="Régimes alimentaires"
-            values={formData.preferencesAlimentaires}
-            options={preferencesOptions}
-            onToggle={togglePreference}
-          />
-        </ProfileSection>
-
-        {/* Objectifs */}
-        <ProfileSection title="🎯 Objectifs">
-          <MultiSelectField
-            label="Vos objectifs"
-            values={formData.objectifs}
-            options={objectifsOptions}
-            onToggle={toggleObjectif}
-          />
-        </ProfileSection>
-
-        {/* Paramètres */}
-        <ProfileSection title="⚙️ Paramètres">
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Bell size={20} color={Colors.agpBlue} />
-              <Text style={styles.settingLabel}>Notifications</Text>
-            </View>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
-              thumbColor={notifications ? Colors.agpBlue : Colors.textSecondary}
-            />
-          </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Droplets size={20} color={Colors.agpBlue} />
-              <Text style={styles.settingLabel}>Rappels d'hydratation</Text>
-            </View>
-            <Switch
-              value={waterNotifications}
-              onValueChange={setWaterNotifications}
-              trackColor={{ false: Colors.border, true: Colors.agpLightBlue }}
-              thumbColor={waterNotifications ? Colors.agpBlue : Colors.textSecondary}
-            />
-          </View>
-          
-          <NotificationSettings />
-
-          {waterNotifications && (
-            <View style={styles.waterObjectiveSetting}>
-              <Text style={styles.waterObjectiveLabel}>Objectif quotidien d'eau</Text>
-              <View style={styles.waterObjectiveControls}>
-                <TouchableOpacity
-                  style={styles.waterObjectiveButton}
-                  onPress={() => setWaterObjective(Math.max(1, waterObjective - 1))}
-                >
-                  <Text style={styles.waterObjectiveButtonText}>-</Text>
-                </TouchableOpacity>
-                <View style={styles.waterObjectiveValue}>
-                  <Text style={styles.waterObjectiveValueText}>{waterObjective}</Text>
-                  <Text style={styles.waterObjectiveUnit}>verres</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.waterObjectiveButton}
-                  onPress={() => setWaterObjective(waterObjective + 1)}
-                >
-                  <Text style={styles.waterObjectiveButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.waterObjectiveHelp}>
-                Recommandation : 8 verres (environ 2L) par jour
-              </Text>
-            </View>
-          )}
-        </ProfileSection>
-
-        {/* Actions */}
-
-        {/* Informations de compte */}
-        <View style={styles.accountInfo}>
-          <Text style={styles.accountInfoTitle}>Informations du compte</Text>
-          <Text style={styles.accountInfoText}>
-            Membre depuis : 18/06/2025
-          </Text>
-          <Text style={styles.accountInfoText}>
-            Dernière mise à jour : Aujourd'hui
+      <ScrollView 
+        style={[
+          styles.content,
+          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
+        ]}
+        showsVerticalScrollIndicator={true}
+      >
+        <View style={styles.comingSoonCard}>
+          <BarChart3 size={48} color={Colors.agpBlue} />
+          <Text style={styles.comingSoonTitle}>Suivi en cours de développement</Text>
+          <Text style={styles.comingSoonText}>
+            Bientôt vous pourrez suivre votre poids, vos mensurations et 
+            visualiser vos courbes d'évolution.
           </Text>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
-}
-
-// Fonction pour obtenir la catégorie d'IMC
-function getBMICategory(bmi: number): string {
-  if (bmi < 18.5) return 'Insuffisance pondérale';
-  if (bmi < 25) return 'Corpulence normale';
-  if (bmi < 30) return 'Surpoids';
-  if (bmi < 35) return 'Obésité modérée';
-  if (bmi < 40) return 'Obésité sévère';
-  return 'Obésité morbide';
 }
 
 const styles = StyleSheet.create({
@@ -412,168 +46,49 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
-  },
-  headerContent: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logoContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
-    padding: 8,
-  },
-  headerText: {
-    flex: 1,
-    marginLeft: 16,
   },
   headerTitle: {
     fontSize: 24,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
-    marginBottom: 4,
+    marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
-  },
-  editButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    padding: 12,
+    textAlign: 'center',
   },
   content: {
+    flex: 1,
     padding: 20,
   },
-  section: {
+  comingSoonCard: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
+    padding: 32,
+    alignItems: 'center',
     elevation: 2,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  sectionTitle: {
+  comingSoonTitle: {
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginBottom: 16,
+    marginTop: 16,
+    marginBottom: 12,
+    textAlign: 'center',
   },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  fieldLabel: {
+  comingSoonText: {
     fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  fieldValue: {
-    fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    paddingVertical: 8,
-  },
-  textInput: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.text,
-  },
-  selectContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  selectOption: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  selectOptionSelected: {
-    backgroundColor: Colors.agpBlue,
-    borderColor: Colors.agpBlue,
-  },
-  selectOptionText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-  },
-  selectOptionTextSelected: {
-    color: Colors.textLight,
-  },
-  multiSelectContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  multiSelectOption: {
-    backgroundColor: Colors.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  multiSelectOptionSelected: {
-    backgroundColor: Colors.agpGreen,
-    borderColor: Colors.agpGreen,
-  },
-  multiSelectOptionText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-  },
-  multiSelectOptionTextSelected: {
-    color: Colors.textLight,
-  },
-  // Styles pour les mensurations
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-  },
-  settingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Medium',
-    color: Colors.text,
-  },
-  accountInfo: {
-    backgroundColor: Colors.agpLightBlue,
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.agpBlue,
-  },
-  accountInfoTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 8,
-  },
-  accountInfoText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    marginBottom: 4,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
