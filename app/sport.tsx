@@ -60,27 +60,41 @@ export default function SportScreen() {
 
       {/* Filtres par niveau */}
       <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-          style={styles.filtersScroll}
-        >
-          {niveaux.map((niveau) => {
+        {/* Bouton Tous centré */}
+        <View style={styles.tousButtonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.tousButton,
+              selectedNiveau === 'tous' && { backgroundColor: Colors.sport }
+            ]}
+            onPress={() => setSelectedNiveau('tous')}
+          >
+            <Filter size={16} color={selectedNiveau === 'tous' ? Colors.textLight : Colors.sport} />
+            <Text style={[
+              styles.tousButtonText,
+              selectedNiveau === 'tous' && { color: Colors.textLight }
+            ]}>
+              Tous
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Niveaux en dessous */}
+        <View style={styles.niveauxContainer}>
+          {niveaux.filter(n => n.id !== 'tous').map((niveau) => {
             const isSelected = selectedNiveau === niveau.id;
             
             return (
               <TouchableOpacity
                 key={niveau.id}
                 style={[
-                  styles.filterButton,
+                  styles.niveauButton,
                   isSelected && { backgroundColor: Colors.sport }
                 ]}
                 onPress={() => setSelectedNiveau(niveau.id)}
               >
-                <Filter size={16} color={isSelected ? Colors.textLight : Colors.sport} />
                 <Text style={[
-                  styles.filterText,
+                  styles.niveauButtonText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {niveau.label}
@@ -88,7 +102,7 @@ export default function SportScreen() {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       </View>
 
       {/* Liste des exercices */}
@@ -181,32 +195,43 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filtersScroll: {
-    flexGrow: 0,
-  },
-  filtersContent: {
-    paddingLeft: 20,
-    paddingRight: 20,
+  tousButtonContainer: {
     alignItems: 'center',
-    minWidth: '100%',
+    marginBottom: 12,
   },
-  filterButton: {
+  tousButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
-    marginRight: 12,
-    minWidth: 90,
-    justifyContent: 'center',
   },
-  filterText: {
+  tousButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  niveauxContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+  },
+  niveauButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+    marginHorizontal: 4,
+  },
+  niveauButtonText: {
     fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
