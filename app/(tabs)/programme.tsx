@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
+import { Calendar, CheckCircle, Target, Circle, Lock, TrendingUp } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
+interface DayProgress {
+  dayId: number;
+  tasks: any[];
+  isValidated: boolean;
+  validatedAt?: string;
+  completionPercentage: number;
 }
 
 interface ProgramProgress {
   completedDays: number[];
   currentDay: number;
   startDate: string;
+  dayProgresses: { [key: number]: DayProgress };
 }
 
-export default function HomeScreen() {
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
+export default function ProgrammeScreen() {
+  const [programProgress, setProgramProgress] = useState<ProgramProgress | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadProgramProgress();
@@ -30,184 +32,201 @@ export default function HomeScreen() {
   const loadProgramProgress = async () => {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
+      let progress: ProgramProgress;
+      
       if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
+        progress = JSON.parse(savedProgress);
+      } else {
+        progress = {
+          completedDays: [],
+          currentDay: 1,
+          startDate: new Date().toISOString(),
+          dayProgresses: {}
+        };
+        await AsyncStorage.setItem('programProgress', JSON.stringify(progress));
       }
+      
+      setProgramProgress(progress);
+      setLoading(false);
     } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
+      console.error('Erreur lors du chargement:', error);
+      setLoading(false);
     }
   };
 
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
-    try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
+  const getCompletionStats = () => {
+    if (!programProgress || !programProgress.dayProgresses) {
+      return { totalCompleted: 0, totalStarted: 0, averageCompletion: 0 };
     }
+
+    const dayProgresses = Object.values(programProgress.dayProgresses);
+    const totalCompleted = dayProgresses.filter(day => day.completionPercentage === 100).length;
+    const totalStarted = dayProgresses.filter(day => day.completionPercentage > 0).length;
+    const averageCompletion = dayProgresses.length > 0 
+      ? Math.round(dayProgresses.reduce((sum, day) => sum + day.completionPercentage, 0) / dayProgresses.length)
+      : 0;
+
+    return { totalCompleted, totalStarted, averageCompletion };
   };
 
-  const getMomentText = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Bon matin';
-    if (hour < 18) return 'Bon après-midi';
-    return 'Bonsoir';
-  };
-
-  const getDailyMotivation = (day: number) => {
-    const motivations = [
-      "🌟 Premier jour ! Vous commencez une belle aventure !",
-      "💪 Deuxième jour ! Vous prenez de l'élan !",
-      "🔥 Trois jours ! L'habitude se forme !",
-      "⭐ Quatre jours de suite, vous êtes formidable !",
-      "🚀 Une semaine presque complète, bravo !",
-      "🎯 Six jours ! Vous tenez le bon rythme !",
-      "🏆 Une semaine complète ! Félicitations !",
-      "🌈 Semaine 2 commence, vous progressez !",
-      "💎 Neuf jours ! Vous brillez de détermination !",
-      "🔋 Dix jours ! Votre énergie est contagieuse !",
-      "⚡ Onze jours ! Vous êtes électrisant !",
-      "🌟 Douze jours ! Vous illuminez votre parcours !",
-      "🎊 Treize jours ! Porte-bonheur de la motivation !",
-      "🎉 Deux semaines ! Vous êtes à mi-chemin !",
-      "🚀 Quinze jours ! Vous volez vers vos objectifs !",
-      "💪 Seize jours ! Votre force grandit chaque jour !",
-      "🔥 Dix-sept jours ! Vous êtes en feu !",
-      "⭐ Dix-huit jours ! Vous brillez de mille feux !",
-      "🌈 Dix-neuf jours ! Vous colorez votre transformation !",
-      "🎯 Vingt jours ! Vous visez juste !",
-      "🏆 Trois semaines ! Vous êtes un champion !",
-      "💎 Vingt-deux jours ! Vous êtes précieux !",
-      "🔋 Vingt-trois jours ! Votre énergie est inépuisable !",
-      "⚡ Vingt-quatre jours ! Vous électrisez votre réussite !",
-      "🌟 Vingt-cinq jours ! Vous êtes une étoile !",
-      "🚀 Vingt-six jours ! Vous volez vers la victoire !",
-      "🏆 Avant-dernier jour ! Vous êtes presque au sommet !",
-      "🎉 JOUR 28 ! FÉLICITATIONS ! Transformation accomplie !"
-    ];
+  const getDayStatus = (dayId: number) => {
+    if (!programProgress) return 'locked';
     
-    return motivations[Math.min(day - 1, motivations.length - 1)];
+    const dayProgress = programProgress.dayProgresses[dayId];
+    
+    if (dayProgress?.completionPercentage === 100) return 'completed';
+    if (dayId === programProgress.currentDay) return 'current';
+    if (dayId <= programProgress.currentDay) return 'available';
+    return 'locked';
   };
 
-  const handleNavigation = (route: string) => {
-    try {
-      router.push(route as any);
-    } catch (error) {
-      Alert.alert('Erreur', 'Impossible de naviguer vers cette page');
+  const getDayColor = (status: string) => {
+    switch (status) {
+      case 'completed': return Colors.success;
+      case 'current': return Colors.agpBlue;
+      case 'available': return Colors.warning;
+      case 'locked': return Colors.border;
+      default: return Colors.border;
     }
   };
+
+  const getDayIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return CheckCircle;
+      case 'current': return Target;
+      case 'available': return Circle;
+      case 'locked': return Lock;
+      default: return Circle;
+    }
+  };
+
+  const handleDayPress = (dayId: number) => {
+    const status = getDayStatus(dayId);
+    
+    if (status === 'locked') {
+      Alert.alert(
+        'Jour verrouillé',
+        `Le jour ${dayId} n'est pas encore accessible. Complétez d'abord les jours précédents.`
+      );
+      return;
+    }
+    
+    router.push(`/programme/${dayId}` as any);
+  };
+
+  const renderWeek = (weekNumber: number, startDay: number) => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const dayId = startDay + i;
+      if (dayId > 28) break;
+      
+      const status = getDayStatus(dayId);
+      const color = getDayColor(status);
+      const IconComponent = getDayIcon(status);
+      const dayProgress = programProgress?.dayProgresses[dayId];
+      
+      days.push(
+        <TouchableOpacity
+          key={dayId}
+          style={[styles.dayCard, { borderColor: color }]}
+          onPress={() => handleDayPress(dayId)}
+        >
+          <View style={[styles.dayIcon, { backgroundColor: color }]}>
+            <IconComponent size={16} color={Colors.textLight} />
+          </View>
+          <Text style={styles.dayNumber}>{dayId}</Text>
+          {dayProgress && (
+            <Text style={styles.dayProgress}>
+              {dayProgress.completionPercentage}%
+            </Text>
+          )}
+        </TouchableOpacity>
+      );
+    }
+    
+    return (
+      <View key={weekNumber} style={styles.weekContainer}>
+        <Text style={styles.weekTitle}>Semaine {weekNumber}</Text>
+        <View style={styles.daysRow}>
+          {days}
+        </View>
+      </View>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Text style={styles.loadingText}>Chargement du programme...</Text>
+      </View>
+    );
+  }
+
+  const stats = getCompletionStats();
 
   return (
     <View style={styles.container}>
+      <LinearGradient
+        colors={[Colors.agpBlue, Colors.agpGreen]}
+        style={styles.header}
+      >
+        <Text style={styles.headerTitle}>Programme 28 Jours</Text>
+        <Text style={styles.headerSubtitle}>
+          Votre transformation chronobiologique
+        </Text>
+      </LinearGradient>
+
       <ScrollView style={styles.content}>
-        <LinearGradient
-          colors={[Colors.agpBlue, Colors.agpGreen]} 
-          style={styles.header}
-        >
-          <View style={styles.headerContent}>
-            <Text style={styles.greeting}>
-              {getMomentText()}, Eric
-            </Text>
-            <Text style={styles.subtitle}>
-              Votre parcours chronobiologique vous attend
-            </Text>
+        {/* Statistiques */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <CheckCircle size={24} color={Colors.success} />
+            <Text style={styles.statValue}>{stats.totalCompleted}</Text>
+            <Text style={styles.statLabel}>Jours complétés</Text>
           </View>
-        </LinearGradient>
-
-        {/* Bienvenue */}
-        <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle}>Bienvenue sur AGP, Eric 👋</Text>
-          <Text style={styles.programDayText}>
-            Aujourd'hui est votre {currentProgramDay}{currentProgramDay === 1 ? 'er' : 'e'} jour du programme
-          </Text>
-          <Text style={styles.motivationText}>
-            {getDailyMotivation(currentProgramDay)}
-          </Text>
-          <TouchableOpacity 
-            style={styles.programButton}
-            onPress={() => handleNavigation('/(tabs)/programme')}
-          >
-            <Calendar size={20} color={Colors.textLight} />
-            <Text style={styles.programButtonText}>Voir mon programme</Text>
-          </TouchableOpacity>
+          
+          <View style={styles.statItem}>
+            <TrendingUp size={24} color={Colors.agpBlue} />
+            <Text style={styles.statValue}>{stats.averageCompletion}%</Text>
+            <Text style={styles.statLabel}>Progression moyenne</Text>
+          </View>
+          
+          <View style={styles.statItem}>
+            <Target size={24} color={Colors.warning} />
+            <Text style={styles.statValue}>{programProgress?.currentDay || 1}</Text>
+            <Text style={styles.statLabel}>Jour actuel</Text>
+          </View>
         </View>
 
-        {/* Actions rapides */}
-        <View style={styles.quickActions}>
-          <Text style={styles.sectionTitle}>Actions rapides</Text>
-          
-          <View style={styles.actionsRow}>
-            <TouchableOpacity 
-              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: '#FF5722' }]}
-              onPress={() => handleNavigation('/sport')}
-            >
-              <Dumbbell size={32} color={Colors.textLight} />
-              <Text style={styles.actionTitle}>Sport</Text>
-              <Text style={styles.actionSubtitle}>activités</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.agpGreen }]}
-              onPress={() => handleNavigation('/recettes')}
-            >
-              <Utensils size={32} color={Colors.textLight} />
-              <Text style={styles.actionTitle}>Recettes</Text>
-              <Text style={styles.actionSubtitle}>adaptées</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.actionCard, styles.actionCardFull, { backgroundColor: Colors.relaxation }]}
-            onPress={() => handleNavigation('/detente')}
-          >
-            <Heart size={32} color={Colors.textLight} />
-            <Text style={styles.actionTitle}>Détente</Text>
-            <Text style={styles.actionSubtitle}>& bien-être</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Vos Réussites */}
-        <View style={styles.reussitesSection}>
-          <Text style={styles.sectionTitle}>Vos Réussites</Text>
-          
-          <View style={styles.reussiteCard}>
-            <View style={styles.reussiteIcon}>
-              <Target size={20} color={Colors.warning} />
+        {/* Légende */}
+        <View style={styles.legendContainer}>
+          <Text style={styles.legendTitle}>Légende</Text>
+          <View style={styles.legendItems}>
+            <View style={styles.legendItem}>
+              <CheckCircle size={16} color={Colors.success} />
+              <Text style={styles.legendText}>Complété</Text>
             </View>
-            <View style={styles.reussiteContent}>
-              <Text style={styles.reussiteTitle}>📌 Prêt à commencer votre transformation ?</Text>
-              <Text style={styles.reussiteText}>
-                Les changements durables commencent par de petites actions quotidiennes. Lancez-vous dès aujourd'hui !
-              </Text>
+            <View style={styles.legendItem}>
+              <Target size={16} color={Colors.agpBlue} />
+              <Text style={styles.legendText}>Actuel</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <Circle size={16} color={Colors.warning} />
+              <Text style={styles.legendText}>Disponible</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <Lock size={16} color={Colors.border} />
+              <Text style={styles.legendText}>Verrouillé</Text>
             </View>
           </View>
         </View>
 
-        {/* Conseil du jour */}
-        <View style={styles.conseilSection}>
-          <Text style={styles.sectionTitle}>Conseil du jour</Text>
-          
-          <View style={styles.conseilCard}>
-            <View style={styles.conseilIcon}>
-              <Heart size={20} color={Colors.info} />
-            </View>
-            <View style={styles.conseilContent}>
-              <Text style={styles.conseilTitle}>🚶 Bouger un peu plus</Text>
-              <Text style={styles.conseilText}>
-                Un pas après l'autre : 15 min de marche quotidienne suffisent à améliorer votre bien-être.
-              </Text>
-            </View>
-          </View>
+        {/* Calendrier des 28 jours */}
+        <View style={styles.calendarContainer}>
+          {renderWeek(1, 1)}
+          {renderWeek(2, 8)}
+          {renderWeek(3, 15)}
+          {renderWeek(4, 22)}
         </View>
       </ScrollView>
     </View>
@@ -219,197 +238,151 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
-    flex: 1,
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
   },
   header: {
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
-  },
-  headerContent: {
     alignItems: 'center',
   },
-  greeting: {
-    fontSize: 28,
+  headerTitle: {
+    fontSize: 24,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
     marginBottom: 8,
-    textAlign: 'center',
   },
-  subtitle: {
+  headerSubtitle: {
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
     textAlign: 'center',
   },
-  welcomeSection: {
+  content: {
+    flex: 1,
     padding: 20,
-    alignItems: 'center',
   },
-  welcomeTitle: {
-    fontSize: 20,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  programDayText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: Colors.agpBlue,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  motivationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  programButton: {
+  statsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.agpBlue,
+    justifyContent: 'space-around',
+    backgroundColor: Colors.surface,
     borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 20,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  statItem: {
+    alignItems: 'center',
     gap: 8,
-    elevation: 3,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
   },
-  programButtonText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-  },
-  sectionTitle: {
+  statValue: {
     fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+  },
+  statLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  legendContainer: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  legendTitle: {
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginBottom: 16,
-  },
-  quickActions: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    gap: 12,
     marginBottom: 12,
   },
-  actionCard: {
-    borderRadius: 16,
-    padding: 20,
+  legendItems: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  legendItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    elevation: 4,
+    gap: 6,
+  },
+  legendText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+  },
+  calendarContainer: {
+    gap: 24,
+  },
+  weekContainer: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    elevation: 2,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  actionCardLarge: {
-    flex: 1,
-  },
-  actionCardFull: {
-    width: '100%',
-  },
-  actionTitle: {
+  weekTitle: {
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  daysRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  dayCard: {
+    width: 45,
+    height: 60,
+    borderRadius: 12,
+    borderWidth: 2,
+    backgroundColor: Colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
+  },
+  dayIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  dayNumber: {
+    fontSize: 12,
     fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    marginTop: 12,
-  },
-  actionSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textLight,
-    opacity: 0.9,
-  },
-  reussitesSection: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  reussiteCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  reussiteIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFF3CD',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  reussiteContent: {
-    flex: 1,
-  },
-  reussiteTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginBottom: 4,
+    marginBottom: 2,
   },
-  reussiteText: {
-    fontSize: 12,
+  dayProgress: {
+    fontSize: 8,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    lineHeight: 16,
-  },
-  conseilSection: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  conseilCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  conseilIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E3F2FD',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  conseilContent: {
-    flex: 1,
-  },
-  conseilTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  conseilText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 16,
   },
 });
