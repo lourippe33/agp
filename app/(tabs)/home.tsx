@@ -31,8 +31,6 @@ import {
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import NotificationBell from '@/components/NotificationBell';
-import PersistentTabBar from '@/components/PersistentTabBar';
 import DayProgramCard from '@/components/DayProgramCard';
 import AGPLogo from '@/components/AGPLogo';
 import { isPastDay } from '@/utils/dateUtils';

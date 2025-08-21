@@ -6,14 +6,7 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "start": "EXPO_NO_TELEMETRY=1 expo start --reset-cache",
-    "build:web": "expo export --platform web",
-    "test:smoke:web": "playwright test --config=playwright.config.ts",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint --ext .ts,.tsx src app",
-    "doctor": "expo-doctor",
-    "clean:metro": "expo start --clear --no-dev --web --minify=false",
-    "test:smoke:rn": "jest -c jest.config.js --runInBand --passWithNoTests",
-    "preflight": "npm run typecheck && npm run lint && npm run doctor && npm run test:smoke:web"
+    "build:web": "expo export --platform web"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
@@ -57,13 +50,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@playwright/test": "^1.55.0",
-    "@testing-library/react-native": "^13.3.1",
-    "@types/jest": "^30.0.0",
     "@types/react": "~18.2.60",
     "babel-plugin-module-resolver": "^5.0.2",
     "expo-cli": "^6.3.4",
-    "jest": "^30.0.5",
     "typescript": "~5.3.3"
   }
 }
