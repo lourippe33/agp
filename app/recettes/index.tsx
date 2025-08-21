@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollContent: {
-    paddingBottom: 70, // Espace pour la tab bar
+    flexGrow: 1,
   },
   quickNavContainer: {
     flexDirection: 'row',
