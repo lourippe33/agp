@@ -72,11 +72,11 @@ export default function DetenteScreen() {
                     isSelected && { color: Colors.textLight }
                   ]}>
                     {type.label}
-        <TouchableOpacity 
-          style={styles.homeButton}
+                  </Text>
+                </TouchableOpacity>
               );
             })}
-          <Text style={styles.homeButtonText}>Accueil</Text>
+          </View>
         </ScrollView>
       </View>
 
