@@ -44,12 +44,17 @@ export default function AdaptiveTimer({
   const analyzeExercise = (steps: string[], duration: number, type: string): TimerPhase[] => {
     const totalSeconds = duration * 60;
     const phases: TimerPhase[] = [];
-
+    
     // Détection de patterns spécifiques
     const hasCircuit = steps.some(step => 
       step.toLowerCase().includes('circuit') || 
       step.toLowerCase().includes('répète') ||
       step.toLowerCase().includes('fois')
+    );
+
+    const hasTabata = steps.some(step => 
+      step.toLowerCase().includes('tabata') || 
+      step.toLowerCase().includes('20 sec') && step.toLowerCase().includes('10 sec')
     );
 
     const hasRounds = steps.some(step => 
@@ -59,10 +64,21 @@ export default function AdaptiveTimer({
     );
 
     const hasIntervals = steps.some(step => 
-      step.toLowerCase().includes('30 sec') || 
-      step.toLowerCase().includes('20 sec') ||
+      step.toLowerCase().includes(' sec') ||
       step.toLowerCase().includes('repos')
     );
+
+    const hasSimpleSteps = steps.some(step => 
+      step.toLowerCase().includes('échauffement') ||
+      step.toLowerCase().includes('étirement') ||
+      step.toLowerCase().includes('retour au calme')
+    );
+
+    const hasSpecificDurations = steps.some(step => 
+      /\d+\s*(min|sec)/.test(step.toLowerCase())
+    );
+
+    console.log('Analyse exercice:', { hasTabata, hasCircuit, hasRounds, hasIntervals, hasSimpleSteps, hasSpecificDurations, steps });
 
     if (type === 'sport') {
       if (hasIntervals) {
@@ -74,7 +90,7 @@ export default function AdaptiveTimer({
         const restTime = extractTimeFromSteps(steps, 'rest') || 15;
         const rounds = extractRoundsFromSteps(steps) || 8;
         
-        for (let i = 0; i < rounds; i++) {
+        for (let i = 0; i < Math.min(rounds, 12); i++) {
           phases.push({ 
             name: `Effort ${i + 1}/${rounds}`, 
             duration: workTime, 
@@ -90,6 +106,26 @@ export default function AdaptiveTimer({
         }
         
         phases.push({ name: 'Récupération', duration: 120, type: 'rest' });
+      } else if (hasTabata) {
+        // Tabata spécifique (20s effort, 10s repos)
+        phases.push({ name: 'Échauffement', duration: 60, type: 'preparation' });
+        
+        const rounds = 8; // Tabata classique
+        for (let i = 0; i < rounds; i++) {
+          phases.push({ 
+            name: `Tabata ${i + 1}/8`, 
+            duration: 20, 
+            type: 'work' 
+          });
+          if (i < rounds - 1) {
+            phases.push({ 
+              name: `Repos`, 
+              duration: 10, 
+              type: 'rest' 
+            });
+          }
+        }
+        phases.push({ name: 'Récupération', duration: 60, type: 'rest' });
       } else if (hasCircuit || hasRounds) {
         // Circuit training détecté
         phases.push({ name: 'Échauffement', duration: 180, type: 'preparation' });
@@ -114,13 +150,36 @@ export default function AdaptiveTimer({
         
         phases.push({ name: 'Retour au calme', duration: 120, type: 'rest' });
       } else {
-        // Exercice standard
-        const stepDuration = Math.floor(totalSeconds / steps.length);
+        // Exercice standard - analyser chaque étape
+        let remainingTime = totalSeconds;
+        
         steps.forEach((step, index) => {
+          // Extraire la durée spécifique de l'étape si mentionnée
+          const specificDuration = extractSpecificDuration(step);
+          let stepDuration;
+          
+          if (specificDuration > 0) {
+            stepDuration = specificDuration;
+          } else if (step.toLowerCase().includes('échauffement')) {
+            stepDuration = Math.min(180, Math.floor(totalSeconds * 0.15));
+          } else if (step.toLowerCase().includes('retour au calme') || step.toLowerCase().includes('récupération')) {
+            stepDuration = Math.min(120, Math.floor(totalSeconds * 0.1));
+          } else {
+            // Répartir le temps restant sur les étapes restantes
+            const remainingSteps = steps.length - index;
+            stepDuration = Math.floor(remainingTime / remainingSteps);
+          }
+          
+          remainingTime -= stepDuration;
+          
+          const stepType = step.toLowerCase().includes('échauffement') ? 'preparation' :
+                          step.toLowerCase().includes('retour au calme') || step.toLowerCase().includes('récupération') ? 'rest' :
+                          'work';
+          
           phases.push({
-            name: `Étape ${index + 1}: ${step.substring(0, 30)}...`,
+            name: step.length > 40 ? `${step.substring(0, 37)}...` : step,
             duration: stepDuration,
-            type: index === 0 ? 'preparation' : index === steps.length - 1 ? 'rest' : 'work'
+            type: stepType
           });
         });
       }
@@ -158,6 +217,17 @@ export default function AdaptiveTimer({
     return phases;
   };
 
+  const extractSpecificDuration = (step: string): number => {
+    // Chercher des patterns comme "3 min", "30 sec", "2 minutes"
+    const minMatch = step.match(/(\d+)\s*(min|minute)/i);
+    if (minMatch) return parseInt(minMatch[1]) * 60;
+    
+    const secMatch = step.match(/(\d+)\s*(sec|seconde)/i);
+    if (secMatch) return parseInt(secMatch[1]);
+    
+    return 0;
+  };
+
   const extractTimeFromSteps = (steps: string[], type: 'work' | 'rest'): number => {
     const pattern = type === 'work' 
       ? /(\d+)\s*sec.*effort|effort.*(\d+)\s*sec/i
@@ -173,8 +243,16 @@ export default function AdaptiveTimer({
   };
 
   const extractRoundsFromSteps = (steps: string[]): number => {
+    // Chercher dans le titre et les étapes
+    const allText = [exerciseTitle, ...steps].join(' ');
+    
+    // Patterns plus spécifiques
+    const roundMatch = allText.match(/(\d+)\s*(rounds?|séries?|fois|circuits?)/i);
+    if (roundMatch) return parseInt(roundMatch[1]);
+    
+    // Fallback sur l'ancienne méthode
     for (const step of steps) {
-      const match = step.match(/(\d+)\s*(fois|rounds?|séries?|x)/i);
+      const match = step.match(/(\d+)\s*(fois|rounds?|séries?|x|circuits?)/i);
       if (match) {
         return parseInt(match[1]);
       }
