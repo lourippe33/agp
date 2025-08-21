@@ -74,6 +74,14 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
+  const getDailyMotivation = (day: number) => {
+    const motivations = [
+      "🌟 Premier jour ! Vous commencez une aventure extraordinaire !",
+      "💪 Deuxième jour ! Votre détermination grandit !",
+      "🔥 Troisième jour ! Vous prenez de l'élan !",
+      "⚡ Quatrième jour ! Votre énergie rayonne !",
+      "🚀 Cinquième jour ! Vous volez vers vos objectifs !",
+      "🌈 Sixième jour ! Vous colorez votre transformation !",
       "🏆 Une semaine complète ! Félicitations !",
       "🌈 Semaine 2 commence, vous progressez !",
       "💎 Neuf jours ! Vous brillez de détermination !",
