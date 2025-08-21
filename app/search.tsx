@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -11,102 +12,22 @@ import { useLocalSearchParams } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { Colors } from '@/constants/Colors';
-import { Recipe } from '@/types/Recipe';
-import { Exercise } from '@/types/Exercise';
-import { useSearch } from '@/hooks/useSearch';
-import SearchBar from '@/components/SearchBar';
-import FilterModal, { FilterOptions } from '@/components/FilterModal';
-import SearchResults from '@/components/SearchResults';
-import RecipeModal from '@/components/RecipeModal';
-import ExerciseModal from '@/components/ExerciseModal';
-import PersistentTabBar from '@/components/PersistentTabBar';
 
-// Import des données
-import recipesData from '@/data/recettes_agp.json';
-import exercisesData from '@/data/exercices_detente.json';
-import sportsData from '@/data/exercices_sport.json';
 
 export default function SearchScreen() {
-  const params = useLocalSearchParams();
-  const initialQuery = (params.q as string) || '';
-  
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
-  const [recipeModalVisible, setRecipeModalVisible] = useState(false);
-  const [exerciseModalVisible, setExerciseModalVisible] = useState(false);
-
-  // Combiner tous les exercices avec des IDs uniques
-  const allExercises = [
-    ...exercisesData.exercices.map(exercise => ({
-      ...exercise,
-      id: `detente-${exercise.id}`,
-      originalId: exercise.id
-    })),
-    ...sportsData.exercices.map(exercise => ({
-      ...exercise,
-      id: `sport-${exercise.id}`,
-      originalId: exercise.id
-    })),
-  ];
-
-  const {
-    searchQuery,
-    setSearchQuery,
-    filters,
-    setFilters,
-    searchResults,
-    getActiveFiltersCount,
-    clearAll,
-  } = useSearch({
-    recipes: recipesData.recettes,
-    exercises: allExercises,
-  });
-
-  // Définir la requête initiale si elle vient des paramètres
-  React.useEffect(() => {
-    if (initialQuery && initialQuery !== searchQuery) {
-      setSearchQuery(initialQuery);
-    }
-  }, [initialQuery]);
-
-  const handleRecipePress = (recipe: Recipe) => {
-    setSelectedRecipe(recipe);
-    setRecipeModalVisible(true);
-  };
-
-  const handleExercisePress = (exercise: Exercise) => {
-    setSelectedExercise(exercise);
-    setExerciseModalVisible(true);
-  };
-
-  const handleApplyFilters = (newFilters: FilterOptions) => {
-    setFilters(newFilters);
-  };
-
   const goBack = () => {
     router.back();
   };
 
   return (
     <View style={styles.container}>
-      {/* Header avec recherche */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={goBack}>
           <ArrowLeft size={24} color={Colors.text} />
         </TouchableOpacity>
-        
-        <View style={styles.searchContainer}>
-          <SearchBar
-            onSearch={setSearchQuery}
-            onFilterPress={() => setFilterModalVisible(true)}
-            placeholder="Rechercher recettes et exercices..."
-            activeFiltersCount={getActiveFiltersCount()}
-          />
-        </View>
+        <Text style={styles.headerTitle}>Recherche</Text>
       </View>
 
-      {/* Résultats */}
       <ScrollView 
         style={styles.content}
         showsVerticalScrollIndicator={true}
@@ -116,46 +37,13 @@ export default function SearchScreen() {
           Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
         ]}
       >
-        <SearchResults
-          recipes={searchResults.recipes}
-          exercises={searchResults.exercises}
-          totalResults={searchResults.totalResults}
-          searchQuery={searchQuery}
-          onRecipePress={handleRecipePress}
-          onExercisePress={handleExercisePress}
-        />
+        <View style={styles.comingSoonCard}>
+          <Text style={styles.comingSoonTitle}>Recherche en développement</Text>
+          <Text style={styles.comingSoonText}>
+            La fonction de recherche sera bientôt disponible
+          </Text>
+        </View>
       </ScrollView>
-
-      {/* Modal de filtres */}
-      <FilterModal
-        visible={filterModalVisible}
-        onClose={() => setFilterModalVisible(false)}
-        filters={filters}
-        onApplyFilters={handleApplyFilters}
-        contentType="all"
-      />
-
-      {/* Modal de recette */}
-      <RecipeModal
-        recipe={selectedRecipe}
-        visible={recipeModalVisible}
-        onClose={() => {
-          setRecipeModalVisible(false);
-          setSelectedRecipe(null);
-        }}
-      />
-
-      {/* Modal d'exercice */}
-      <ExerciseModal
-        exercise={selectedExercise}
-        visible={exerciseModalVisible}
-        onClose={() => {
-          setExerciseModalVisible(false);
-          setSelectedExercise(null);
-        }}
-      />
-
-      <PersistentTabBar />
     </View>
   );
 }
@@ -166,26 +54,55 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingTop: 60,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-    gap: 12,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    textAlign: 'center',
   },
   backButton: {
+    position: 'absolute',
+    top: 70,
+    left: 20,
     padding: 8,
-  },
-  searchContainer: {
-    flex: 1,
   },
   content: {
     flex: 1,
+    padding: 20,
   },
   scrollContent: {
-    paddingBottom: 100, // Espace pour la tab bar
+    paddingBottom: 20,
+  },
+  comingSoonCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 32,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  comingSoonTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  comingSoonText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

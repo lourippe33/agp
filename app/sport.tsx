@@ -4,11 +4,6 @@ import { Dumbbell, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';
 import { Colors } from '@/constants/Colors';
-import { Colors } from '@/constants/Colors';
-import MomentHeader from '@/components/MomentHeader';
-import SportMenuGrid from '@/components/SportMenuGrid';
-import ExerciseModal from '@/components/ExerciseModal';
-import PersistentTabBar from '@/components/PersistentTabBar';
 import sportsData from '@/data/exercices_sport.json';
 
 export default function SportScreen() {
@@ -82,16 +77,11 @@ export default function SportScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <ArrowLeft size={24} color={Colors.textLight} />
+          <ArrowLeft size={24} color={Colors.text} />
         </TouchableOpacity>
-        <MomentHeader
-          moment="sport"
-          title="Activités Sportives"
-          subtitle="Bougez selon votre niveau pour perdre du poids"
-          icon={<Dumbbell size={32} color={Colors.textLight} />}
-        />
+        <Text style={styles.headerTitle}>Activités Sportives</Text>
       </View>
       
       {/* Barre de recherche */}
@@ -136,20 +126,12 @@ export default function SportScreen() {
           showsVerticalScrollIndicator={true}
           contentContainerStyle={styles.scrollContent}
         >
-          <SportMenuGrid 
-            onExerciseSelect={handleExerciseSelect} 
-            filteredExercises={showSearchResults ? filteredExercises : undefined}
-          />
+          <Text style={styles.placeholder}>
+            Liste des exercices sportifs sera affichée ici
+          </Text>
         </ScrollView>
       </View>
 
-      <ExerciseModal
-        exercise={selectedExercise}
-        visible={modalVisible}
-        onClose={handleCloseModal}
-      />
-
-      <PersistentTabBar />
     </View>
   );
 }
@@ -159,27 +141,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  headerContainer: {
-    position: 'relative',
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    textAlign: 'center',
   },
   backButton: {
     position: 'absolute',
-    top: 60,
+    top: 70,
     left: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.surface,
     borderRadius: 20,
     padding: 8,
-    zIndex: 10,
   },
   content: {
     flex: 1,
-    paddingBottom: 70, // Espace pour la tab bar
   },
   scrollContainer: {
     flex: 1,
   },
   scrollContent: {
     paddingBottom: 20,
+    padding: 20,
+  },
+  placeholder: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 50,
   },
   searchContainer: {
     backgroundColor: Colors.surface,

@@ -4,9 +4,6 @@ import { Sun, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Recipe } from '@/types/Recipe';
 import { Colors } from '@/constants/Colors';
-import MomentHeader from '@/components/MomentHeader';
-import RecipeCard from '@/components/RecipeCard';
-import RecipeModal from '@/components/RecipeModal';
 import recipesData from '@/data/recettes_agp.json';
 
 export default function MatinScreen() {
@@ -77,16 +74,11 @@ export default function MatinScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <ArrowLeft size={24} color={Colors.textLight} />
+          <ArrowLeft size={24} color={Colors.text} />
         </TouchableOpacity>
-        <MomentHeader
-          moment="matin"
-          title="Petit-déjeuner"
-          subtitle="Commencez votre journée avec énergie"
-          icon={<Sun size={32} color={Colors.textLight} />}
-        />
+        <Text style={styles.headerTitle}>Petit-déjeuner</Text>
       </View>
 
       {/* Barre de recherche */}
@@ -123,38 +115,52 @@ export default function MatinScreen() {
       )}
 
       <View style={styles.content}>
-        <FlatList
-          data={showSearchResults ? filteredRecipes : matinRecipes}
-          renderItem={renderRecipe}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={true}
-          style={Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined}
-        />
+        <Text style={styles.placeholder}>
+          Liste des recettes du matin sera affichée ici
+        </Text>
       </View>
-
-      <RecipeModal recipe={selectedRecipe} visible={modalVisible} onClose={handleCloseModal} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  headerContainer: { position: 'relative' },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    textAlign: 'center',
+  },
   backButton: {
     position: 'absolute',
-    top: 60,
+    top: 70,
     left: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.surface,
     borderRadius: 20,
     padding: 8,
-    zIndex: 10,
   },
-  content: { flex: 1, paddingHorizontal: 16 },
-  listContainer: { paddingTop: 16, paddingBottom: 170 },
-  row: { justifyContent: 'space-between' },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  placeholder: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 50,
+  },
 
   searchContainer: {
     backgroundColor: Colors.surface,
