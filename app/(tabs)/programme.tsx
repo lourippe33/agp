@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, CheckCircle, Circle, Lock, Target, TrendingUp, Award } from 'lucide-react-native';
+import { Calendar, CircleCheck as CheckCircle, Circle, Lock, Target, TrendingUp, Award } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
