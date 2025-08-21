@@ -160,7 +160,7 @@ export default function DayProgramScreen() {
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Jour {dayNumber}</Text>
-            <Text style={styles.headerSubtitle}>{getDayName(dayNumber)}</Text>
+            <Text style={styles.headerSubtitle}>{getDayName(dayNumber)} {getCalendarDate(dayNumber)}</Text>
           </View>
           <TouchableOpacity 
             style={styles.homeButton}

@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Inter-Regular',
   },
-  dayDuration: {
+  dayDate: {
     fontSize: 9,
     fontFamily: 'Inter-Regular',
   },
