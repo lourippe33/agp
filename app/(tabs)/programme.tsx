@@ -115,16 +115,8 @@ export default function ProgrammeScreen(): JSX.Element {
       return;
     }
     
-    // Navigation vers les exercices du jour
-    Alert.alert(
-      `Jour ${day.id}`,
-      `Sport: ${day.sportExercise}\nDétente: ${day.relaxationExercise}`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { text: 'Sport', onPress: () => router.push('/sport') },
-        { text: 'Détente', onPress: () => router.push('/detente') }
-      ]
-    );
+    // Navigation vers la page de détail du jour
+    router.push(`/programme/${day.id}` as any);
   };
 
   const getDayStatusColor = (status: string): string => {
