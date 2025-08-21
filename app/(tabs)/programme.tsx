@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
@@ -17,13 +17,7 @@ export default function ProgrammeScreen() {
         </Text>
       </LinearGradient>
 
-      <ScrollView 
-        style={[
-          styles.content,
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
-        ]}
-        showsVerticalScrollIndicator={true}
-      >
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
         <View style={styles.comingSoonCard}>
           <Calendar size={48} color={Colors.agpBlue} />
           <Text style={styles.comingSoonTitle}>Programme en cours de développement</Text>

@@ -1,56 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart } from 'lucide-react-native';
-import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
 export default function HomeScreen() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return 'Bonjour';
-    if (hour < 18) return 'Bon après-midi';
-    return 'Bonsoir';
-  };
-
-  const getCurrentMoment = () => {
-    const hour = currentTime.getHours();
-    if (hour >= 6 && hour < 12) return 'matin';
-    if (hour >= 12 && hour < 16) return 'midi';
-    if (hour >= 16 && hour < 20) return 'gouter';
-    return 'soir';
-  };
-
-  const getMomentIcon = () => {
-    const moment = getCurrentMoment();
-    switch (moment) {
-      case 'matin': return <Sun size={24} color={Colors.morning} />;
-      case 'midi': return <Utensils size={24} color={Colors.agpBlue} />;
-      case 'gouter': return <Coffee size={24} color={Colors.snack} />;
-      case 'soir': return <Moon size={24} color={Colors.evening} />;
-      default: return <Sun size={24} color={Colors.morning} />;
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <ScrollView 
-        style={[
-          styles.content,
-          Platform.OS === 'web' ? { className: 'scroll-visible' } : undefined
-        ]}
-        showsVerticalScrollIndicator={true}
-      >
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
         {/* Header */}
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
@@ -58,17 +15,11 @@ export default function HomeScreen() {
         >
           <View style={styles.headerContent}>
             <Text style={styles.greeting}>
-              {getGreeting()}, Utilisateur
+              Bonjour, Utilisateur
             </Text>
             <Text style={styles.subtitle}>
               Votre parcours chronobiologique vous attend
             </Text>
-            <View style={styles.momentIndicator}>
-              {getMomentIcon()}
-              <Text style={styles.momentText}>
-                {getCurrentMoment().charAt(0).toUpperCase() + getCurrentMoment().slice(1)}
-              </Text>
-            </View>
           </View>
         </LinearGradient>
 
@@ -78,8 +29,7 @@ export default function HomeScreen() {
           
           <View style={styles.actionsGrid}>
             <TouchableOpacity 
-              style={[styles.actionCard, { backgroundColor: '#FF5722' }]} 
-              onPress={() => router.push('/sport')}
+              style={[styles.actionCard, { backgroundColor: '#FF5722' }]}
             >
               <Dumbbell size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Sport</Text>
@@ -88,7 +38,6 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
-              onPress={() => router.push('/recettes')}
             >
               <Utensils size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Recettes</Text>
@@ -97,7 +46,6 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
-              onPress={() => router.push('/detente')}
             >
               <Heart size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Détente</Text>
@@ -151,20 +99,6 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     textAlign: 'center',
     marginBottom: 20,
-  },
-  momentIndicator: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  momentText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
   },
   quickActions: {
     padding: 20,
