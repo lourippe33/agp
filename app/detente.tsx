@@ -42,7 +42,7 @@ export default function DetenteScreen() {
             style={styles.homeButton}
             onPress={() => router.push('/(tabs)/home')}
           >
-            <Home size={24} color={Colors.textLight} />
+            <Text style={styles.homeButtonText}>Accueil</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.headerSubtitle}>
