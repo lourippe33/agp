@@ -59,7 +59,6 @@ export default function DetenteScreen() {
             Relaxation et gestion du stress
           </Text>
         </LinearGradient>
-      </SafeAreaView>
 
       {/* Filtres par type */}
       <View style={styles.filtersContainer}>
@@ -131,100 +130,8 @@ export default function DetenteScreen() {
           ))}
         </View>
       </ScrollView>
+      </SafeAreaView>
     </View>
-  );
-}
-      <LinearGradient
-        colors={[Colors.relaxation, '#FFB3BA']}
-        style={styles.header}
-      >
-        <View style={styles.headerTop}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
-          >
-            <ArrowLeft size={24} color={Colors.textLight} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Exercices de Détente</Text>
-          <TouchableOpacity 
-            style={styles.homeButton}
-            onPress={() => router.push('/(tabs)/home')}
-          >
-            <Text style={styles.homeButtonText}>Accueil</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.headerSubtitle}>
-          Relaxation et gestion du stress
-        </Text>
-      </LinearGradient>
-
-      {/* Filtres par type */}
-      <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        >
-          {types.map((type) => {
-            const isSelected = selectedType === type.id;
-            
-            return (
-              <TouchableOpacity
-                key={type.id}
-                style={[
-                  styles.filterButton,
-                  isSelected && { backgroundColor: Colors.relaxation }
-                ]}
-                onPress={() => setSelectedType(type.id)}
-              >
-                <Filter size={16} color={isSelected ? Colors.textLight : Colors.relaxation} />
-                <Text style={[
-                  styles.filterText,
-                  isSelected && { color: Colors.textLight }
-                ]}>
-                  {type.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-
-      {/* Liste des exercices */}
-      <ScrollView style={styles.content}>
-        <View style={styles.exercicesGrid}>
-          {filteredExercices.map((exercice) => (
-            <TouchableOpacity
-              key={exercice.id}
-              style={styles.exerciceCard}
-              onPress={() => handleExercisePress(exercice.id)}
-            >
-              <Image source={{ uri: exercice.image }} style={styles.exerciceImage} />
-              <View style={styles.exerciceContent}>
-                <Text style={styles.exerciceTitle}>{exercice.titre}</Text>
-                <View style={styles.exerciceInfo}>
-                  <View style={styles.infoItem}>
-                    <Clock size={14} color={Colors.textSecondary} />
-                    <Text style={styles.infoText}>{exercice.duree} min</Text>
-                  </View>
-                  <View style={styles.typeBadge}>
-                    <Text style={styles.typeText}>{exercice.type}</Text>
-                  </View>
-                </View>
-                <Text style={styles.description} numberOfLines={2}>
-                  {exercice.description}
-                </Text>
-                <View style={styles.tagsContainer}>
-                  {exercice.tags.slice(0, 2).map((tag, index) => (
-                    <Text key={index} style={styles.tag}>#{tag}</Text>
-                  ))}
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
   );
 }
 
