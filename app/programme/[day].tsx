@@ -34,8 +34,21 @@ export default function HomeScreen() {
         const progress: ProgramProgress = JSON.parse(savedProgress);
         setCurrentProgramDay(Math.min(28, progress.currentDay));
       }
+    } catch (error) {
+      console.error('Erreur lors du chargement de la progression:', error);
     }
-  }
+  };
+
+  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
+
+  useEffect(() => {
+    loadProgramProgress();
+  }, []);
+
+  const loadProgramProgress = async () => {
+    try {
+      const savedProgress = await AsyncStorage.getItem('programProgress');
+      if (savedProgress) {
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
@@ -43,10 +56,6 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
-  const getDailyMotivation = (day: number): string => {
-    const motivations = [
-      "🌟 Chaque grand voyage commence par un premier pas !",
-      "💪 Jour 2 : Vous avez déjà commencé, continuez !",
       "🔥 Trois jours ! L'habitude se forme !",
       "⭐ Quatre jours de suite, vous êtes formidable !",
       "🚀 Une semaine presque complète, bravo !",
