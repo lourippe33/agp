@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
 // Styles CSS globaux pour les barres de défilement sur PC
