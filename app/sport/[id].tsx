@@ -43,11 +43,6 @@ export default function SuiviScreen() {
   const [showHipsChart, setShowHipsChart] = useState(false);
   const [showArmsChart, setShowArmsChart] = useState(false);
   const [showThighsChart, setShowThighsChart] = useState(false);
-  const [showWeightChart, setShowWeightChart] = useState(false);
-  const [showWaistChart, setShowWaistChart] = useState(false);
-  const [showHipsChart, setShowHipsChart] = useState(false);
-  const [showArmsChart, setShowArmsChart] = useState(false);
-  const [showThighsChart, setShowThighsChart] = useState(false);
 
   // Charger les données au démarrage
   useEffect(() => {
