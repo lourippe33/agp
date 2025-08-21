@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart } from 'lucide-react-native';
+import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
@@ -37,6 +37,15 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Actions rapides</Text>
           
           <View style={styles.actionsGrid}>
+            <TouchableOpacity 
+              style={[styles.actionCard, { backgroundColor: Colors.agpBlue }]}
+              onPress={() => handleNavigation('/programme')}
+            >
+              <Calendar size={32} color={Colors.textLight} />
+              <Text style={styles.actionTitle}>Programme</Text>
+              <Text style={styles.actionSubtitle}>28 jours</Text>
+            </TouchableOpacity>
+            
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: '#FF5722' }]}
               onPress={() => handleNavigation('/sport')}
