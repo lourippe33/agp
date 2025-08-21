@@ -534,9 +534,7 @@ export default function AdaptiveTimer({
 
   // Gestion du timer
   useEffect(() => {
-    const analyzedPhases = exerciseType === 'sport' 
-      ? analyzeExerciseSpecs(exerciseSteps, totalDuration, exerciseTitle)
-      : analyzeDetenteSpecs(exerciseSteps, totalDuration, exerciseTitle);
+    if (isRunning && phases.length > 0) {
       intervalRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
