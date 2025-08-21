@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
