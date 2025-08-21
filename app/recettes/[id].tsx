@@ -38,7 +38,7 @@ export default function RecipeDetailScreen() {
             style={styles.homeButton}
             onPress={() => router.push('/(tabs)/home')}
           >
-            <Home size={24} color={Colors.textLight} />
+            <Text style={styles.homeButtonText}>Accueil</Text>
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{recette.titre}</Text>
@@ -147,9 +147,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     right: 20,
-    padding: 8,
     backgroundColor: 'rgba(0,0,0,0.3)',
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  homeButtonText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   titleContainer: {
     position: 'absolute',

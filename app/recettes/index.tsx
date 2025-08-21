@@ -76,11 +76,11 @@ export default function RecettesScreen() {
                     isSelected && { color: Colors.textLight }
                   ]}>
                     {moment.label}
-                  </Text>
-                </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.homeButton}
               );
             })}
-          </View>
+          <Text style={styles.homeButtonText}>Accueil</Text>
         </ScrollView>
       </View>
 
@@ -136,7 +136,15 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   homeButton: {
-    padding: 8,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  homeButtonText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   headerTitle: {
     fontSize: 20,
