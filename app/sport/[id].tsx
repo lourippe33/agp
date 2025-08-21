@@ -414,29 +414,6 @@ export default function SuiviScreen() {
       <ChartModal
         visible={showHipsChart}
         onClose={() => setShowHipsChart(false)}
-
-      {/* Modals pour les courbes */}
-      <ChartModal
-        visible={showWeightChart}
-        onClose={() => setShowWeightChart(false)}
-        title="Évolution du poids"
-        data={getWeightChartData()}
-        unit="kg"
-        color="#4A90E2"
-      />
-
-      <ChartModal
-        visible={showWaistChart}
-        onClose={() => setShowWaistChart(false)}
-        title="Évolution tour de taille"
-        data={getMeasurementChartData('waist')}
-        unit="cm"
-        color="#FF9800"
-      />
-
-      <ChartModal
-        visible={showHipsChart}
-        onClose={() => setShowHipsChart(false)}
         title="Évolution tour de hanches"
         data={getMeasurementChartData('hips')}
         unit="cm"
@@ -461,7 +438,6 @@ export default function SuiviScreen() {
         color="#2196F3"
       />
     </View>
-  )
   );
 }
 
