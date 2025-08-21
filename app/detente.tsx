@@ -4,7 +4,6 @@ import { Heart, ArrowLeft, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Exercise } from '@/types/Exercise';
 import { Colors } from '@/constants/Colors';
-import { Colors } from '@/constants/Colors';
 import MomentHeader from '@/components/MomentHeader';
 import ExerciseMenuGrid from '@/components/ExerciseMenuGrid';
 import ExerciseModal from '@/components/ExerciseModal';
