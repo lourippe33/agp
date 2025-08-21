@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Heart, Play, Users, Home } from 'lucide-react-native';
+import { ArrowLeft, Clock, Heart, Play, Users, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,
+  },
   titleContainer: {
     position: 'absolute',
     bottom: 20,
