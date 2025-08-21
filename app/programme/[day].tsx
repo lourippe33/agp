@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, RefreshCw, Play, Clock, Utensils, Dumbbell, Heart, Chrome as Home, CheckCircle } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
 import exercicesSportData from '@/data/exercices_sport.json';
 import exercicesDetenteData from '@/data/exercices_detente.json';
 
+interface ProgramProgress {
+  completedDays: number[];
+  currentDay: number;
+  startDate: string;
+}
 interface DayProgram {
   day: number;
   recetteMatin: any;
@@ -24,6 +30,7 @@ export default function DayProgramScreen() {
   
   const [program, setProgram] = useState<DayProgram | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   // Fonction pour obtenir une recette aléatoire par moment
   const getRandomRecipe = (moment: string) => {
@@ -58,6 +65,49 @@ export default function DayProgramScreen() {
     setIsLoading(false);
   };
 
+  // Vérifier si le jour est déjà complété
+  const checkDayCompletion = async () => {
+    try {
+      const savedProgress = await AsyncStorage.getItem('programProgress');
+      if (savedProgress) {
+        const progress: ProgramProgress = JSON.parse(savedProgress);
+        setIsCompleted(progress.completedDays.includes(dayNumber));
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification:', error);
+    }
+  };
+
+  // Marquer le jour comme complété
+  const markDayAsCompleted = async () => {
+    try {
+      const savedProgress = await AsyncStorage.getItem('programProgress');
+      const progress: ProgramProgress = savedProgress ? JSON.parse(savedProgress) : {
+        completedDays: [],
+        currentDay: 1,
+        startDate: new Date().toISOString()
+      };
+      
+      if (!progress.completedDays.includes(dayNumber)) {
+        progress.completedDays.push(dayNumber);
+        progress.currentDay = Math.min(28, Math.max(...progress.completedDays) + 1);
+        
+        await AsyncStorage.setItem('programProgress', JSON.stringify(progress));
+        setIsCompleted(true);
+        
+        Alert.alert(
+          'Félicitations ! 🎉', 
+          `Jour ${dayNumber} terminé ! Votre progression est sauvegardée.`,
+          [
+            { text: 'Continuer', onPress: () => router.back() }
+          ]
+        );
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      Alert.alert('Erreur', 'Impossible de sauvegarder la progression');
+    }
+  };
   // Changer une recette spécifique
   const changeRecipe = (moment: string) => {
     // Rediriger vers la page des recettes avec le moment sélectionné
@@ -79,6 +129,7 @@ export default function DayProgramScreen() {
   // Générer le programme au chargement
   useEffect(() => {
     generateDayProgram();
+    checkDayCompletion();
   }, [dayNumber]);
 
   const getDayName = (day: number) => {
@@ -279,9 +330,17 @@ export default function DayProgramScreen() {
         </View>
 
         {/* Bouton de validation */}
-        <TouchableOpacity style={styles.validateButton}>
-          <Play size={24} color={Colors.textLight} />
-          <Text style={styles.validateButtonText}>Commencer ma journée</Text>
+        <TouchableOpacity 
+          style={[
+            styles.validateButton,
+            isCompleted && styles.completedButton
+          ]}
+          onPress={isCompleted ? () => router.back() : markDayAsCompleted}
+        >
+          {isCompleted ? <CheckCircle size={24} color={Colors.textLight} /> : <Play size={24} color={Colors.textLight} />}
+          <Text style={styles.validateButtonText}>
+            {isCompleted ? 'Jour terminé !' : 'Terminer ma journée'}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -502,5 +561,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
+  },
+  completedButton: {
+    backgroundColor: Colors.success,
   },
 });
