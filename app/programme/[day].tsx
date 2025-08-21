@@ -78,6 +78,24 @@ export default function DayProgramScreen() {
     }
   };
 
+  // Fonction pour obtenir la date du calendrier
+  const getCalendarDate = (day: number) => {
+    const startDate = new Date(2024, 7, 21); // 21 août 2024 (mois 7 = août)
+    const targetDate = new Date(startDate);
+    targetDate.setDate(startDate.getDate() + (day - 1));
+    
+    const dayOfMonth = targetDate.getDate();
+    const month = targetDate.getMonth() + 1;
+    return `${dayOfMonth} ${getMonthName(month)}`;
+  };
+
+  // Fonction pour obtenir le nom du mois
+  const getMonthName = (month: number) => {
+    const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
+                   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    return months[month - 1];
+  };
+
   // Marquer le jour comme complété
   const markDayAsCompleted = async () => {
     try {
