@@ -10,7 +10,7 @@ export default function AGPLogo({ size = 40, style }: AGPLogoProps) {
   return (
     <View style={[styles.container, style]}>
       <Image 
-        source={require('../../assets/images/LOGO AGP.png')}
+        source={require('@/assets/images/LOGO AGP.png')}
         style={[styles.logo, { width: size, height: size }]}
         resizeMode="contain"
       />
