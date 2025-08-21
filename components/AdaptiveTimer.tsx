@@ -376,6 +376,15 @@ export default function AdaptiveTimer({
       ];
     }
     
+    if (title === "Marche Active Débutant") {
+      return [
+        { name: "Échauffement", duration: 120, type: 'preparation', instruction: "Échauffez-vous 2 minutes en marchant lentement" },
+        { name: "Accélération", duration: 120, type: 'work', instruction: "Accélérez le rythme : vous devez pouvoir parler mais être légèrement essoufflé" },
+        { name: "Marche soutenue", duration: 600, type: 'work', instruction: "Maintenez ce rythme pendant 10 minutes" },
+        { name: "Ralentissement", duration: 180, type: 'rest', instruction: "Ralentissez progressivement les 3 dernières minutes" }
+      ];
+    }
+    
     if (title === "Renforcement bas du corps") {
       return [
         { name: "Squats - Série 1", duration: 90, type: 'work', instruction: "3 séries de 10 squats, contrôle les mouvements" },
