@@ -1,19 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-
-interface ProgramProgress {
-  completedDays: number[];
-  currentDay: number;
-  startDate: string;
-}
 
 interface ProgramProgress {
   completedDays: number[];
@@ -40,21 +32,11 @@ export default function HomeScreen() {
     }
   };
 
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
-
-  useEffect(() => {
-    loadProgramProgress();
-  }, []);
-
-  const loadProgramProgress = async () => {
+  const handleNavigation = (route: string) => {
     try {
-      const savedProgress = await AsyncStorage.getItem('programProgress');
-      if (savedProgress) {
-        const progress: ProgramProgress = JSON.parse(savedProgress);
-        setCurrentProgramDay(Math.min(28, progress.currentDay));
-      }
+      router.push(route as any);
     } catch (error) {
-      console.error('Erreur lors du chargement de la progression:', error);
+      Alert.alert('Navigation', `Redirection vers ${route}`);
     }
   };
 
@@ -65,14 +47,10 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
-      "🚀 Vous volez vers vos objectifs !",
-      "🏆 Vous êtes presque au sommet !",
-      "🎊 Avant-dernier jour, vous êtes incroyable !",
-      "🎉 FÉLICITATIONS ! Vous avez terminé votre transformation !"
-    ];
-    
-    return motivations[Math.min(day - 1, motivations.length - 1)];
-  };
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Header personnalisé */}
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
@@ -93,16 +71,6 @@ export default function HomeScreen() {
           <Text style={styles.programDayText}>
             Aujourd'hui est votre {currentProgramDay}e jour du programme
           </Text>
-          <Text style={styles.motivationText}>
-            {getDailyMotivation(currentProgramDay)}
-          </Text>
-          <TouchableOpacity 
-            style={styles.programButton}
-            onPress={() => handleNavigation('/(tabs)/programme')}
-          >
-            <Calendar size={20} color={Colors.textLight} />
-            <Text style={styles.programButtonText}>Voir mon programme</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Actions rapides */}
@@ -223,36 +191,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.agpBlue,
     textAlign: 'center',
-    marginBottom: 12,
-  },
-  motivationText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  programButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.agpBlue,
-    borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    gap: 8,
-    elevation: 3,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-  },
-  programButtonText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
   },
   sectionTitle: {
     fontSize: 18,
