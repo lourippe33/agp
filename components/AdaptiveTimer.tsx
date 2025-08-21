@@ -44,61 +44,177 @@ export default function AdaptiveTimer({
 
   const analyzeExerciseSpecs = (steps: string[], duration: number, title: string): TimerPhase[] => {
     const phases: TimerPhase[] = [];
-    const totalSeconds = duration * 60;
     
-    console.log(`Analyse de "${title}" - Durée totale: ${duration} min`);
-    
-    // Analyser chaque étape pour extraire les durées exactes
-    steps.forEach((step, index) => {
-      console.log(`Étape ${index + 1}: ${step}`);
-      
-      // Nettoyer l'étape (enlever les numéros de début)
-      const cleanStep = step.replace(/^\d+\)\s*/, '').trim();
-      
-      // Extraire les durées spécifiées
-      const durations = extractAllDurations(cleanStep);
-      
-      if (durations.length > 0) {
-        // Si des durées sont spécifiées, les utiliser
-        durations.forEach((dur, durIndex) => {
-          const phaseName = durations.length > 1 
-            ? `${cleanStep.substring(0, 30)}... (${durIndex + 1})`
-            : cleanStep.length > 40 
-              ? `${cleanStep.substring(0, 37)}...`
-              : cleanStep;
-              
-          phases.push({
-            name: phaseName,
-            duration: dur,
-            type: getPhaseType(cleanStep),
-            instruction: cleanStep
-          });
-        });
-      } else {
-        // Pas de durée spécifiée, analyser le contenu
-        const estimatedDuration = estimateStepDuration(cleanStep, totalSeconds, steps.length, index);
-        
-        phases.push({
-          name: cleanStep.length > 40 ? `${cleanStep.substring(0, 37)}...` : cleanStep,
-          duration: estimatedDuration,
-          type: getPhaseType(cleanStep),
-          instruction: cleanStep
-        });
-      }
-    });
-    
-    // Vérifier que la durée totale correspond
-    const totalPhasesTime = phases.reduce((sum, phase) => sum + phase.duration, 0);
-    const targetTime = totalSeconds;
-    
-    console.log(`Durée calculée: ${totalPhasesTime}s, Durée cible: ${targetTime}s`);
-    
-    // Ajuster si nécessaire
-    if (Math.abs(totalPhasesTime - targetTime) > 60) {
-      return adjustPhasesTotalDuration(phases, targetTime);
+    // Analyser chaque étape selon les spécifications exactes du JSON
+    if (title === "Cardio Brûle-Graisse") {
+      return [
+        { name: "Échauffement", duration: 180, type: 'preparation', instruction: "Marche rapide sur place, montées de genoux légères, cercles de bras" },
+        { name: "Jumping jacks", duration: 120, type: 'work', instruction: "Ouvre et ferme les jambes en sautant, bras qui montent et descendent" },
+        { name: "Squats dynamiques", duration: 120, type: 'work', instruction: "Plie les genoux comme pour t'asseoir, puis remonte en rythme" },
+        { name: "Montées de genoux", duration: 120, type: 'work', instruction: "Cours sur place en montant les genoux à hauteur de hanches" },
+        { name: "Fentes alternées", duration: 120, type: 'work', instruction: "Avance un pied, plie les genoux à 90°, puis change de jambe" },
+        { name: "Pompes simplifiées", duration: 120, type: 'work', instruction: "Au sol, mains sous les épaules, sur genoux si besoin" },
+        { name: "Circuit final", duration: 300, type: 'work', instruction: "Enchaîne jumping jacks, squats et montées de genoux, 30 sec chaque exercice, sans pause" },
+        { name: "Retour au calme", duration: 120, type: 'rest', instruction: "Marche lente sur place + étirements jambes et bras" }
+      ];
     }
     
-    return phases.filter(phase => phase.duration > 0);
+    if (title === "HIIT Intensif") {
+      const phases: TimerPhase[] = [
+        { name: "Échauffement", duration: 180, type: 'preparation', instruction: "Marche rapide ou petits sauts sur place. Ajoute quelques rotations de bras et de hanches" }
+      ];
+      
+      // 8 rounds de 30s effort + 30s repos
+      for (let i = 1; i <= 8; i++) {
+        phases.push({
+          name: `HIIT Round ${i}`,
+          duration: 30,
+          type: 'work',
+          instruction: `Effort très intense : Burpees, Sprint sur place, Squat jumps ou Pompes`
+        });
+        if (i < 8) {
+          phases.push({
+            name: `Repos ${i}`,
+            duration: 30,
+            type: 'rest',
+            instruction: "Repos actif, bois de l'eau si nécessaire"
+          });
+        }
+      }
+      
+      phases.push(
+        { name: "Récupération active", duration: 120, type: 'rest', instruction: "Marche lente pour faire redescendre le rythme cardiaque" },
+        { name: "Étirements", duration: 180, type: 'rest', instruction: "Étire les cuisses, les bras, et respire profondément" }
+      );
+      
+      return phases;
+    }
+    
+    if (title === "Yoga Dynamique") {
+      return [
+        { name: "Salutations au soleil", duration: 300, type: 'preparation', instruction: "Commence debout, mains jointes. Inspire, lève les bras au ciel. Expire, penche-toi en avant..." },
+        { name: "Postures debout", duration: 480, type: 'work', instruction: "Passe en guerrier 1, puis guerrier 2. Ajoute la posture du triangle. Répète 2 fois par côté" },
+        { name: "Séquence d'équilibre", duration: 300, type: 'work', instruction: "Posture de l'arbre et du danseur. Tiens 15-20 secondes, chaque côté" },
+        { name: "Postures au sol", duration: 420, type: 'work', instruction: "Alterne cobra et chien tête en bas. Répète 3 fois cette alternance" },
+        { name: "Relaxation finale", duration: 300, type: 'rest', instruction: "Allonge-toi sur le dos en savasana. Relâche tout le corps pendant 5 minutes" }
+      ];
+    }
+    
+    if (title === "Pilates Minceur") {
+      return [
+        { name: "Échauffement", duration: 180, type: 'preparation', instruction: "Respiration + rotations d'épaules et de tête" },
+        { name: "Abdos faciles", duration: 180, type: 'work', instruction: "Allongé sur le dos, monte la tête et les épaules. 10 répétitions par jambe" },
+        { name: "Jambes actives", duration: 180, type: 'work', instruction: "Lève une jambe tendue, dessine 5 cercles dans chaque sens. Change de jambe" },
+        { name: "Dos renforcé", duration: 180, type: 'work', instruction: "Sur le ventre, monte bras et jambes alternés comme si tu nageais" },
+        { name: "Étirements finaux", duration: 180, type: 'rest', instruction: "Assis, penche le buste vers l'avant. Enchaîne dos rond et dos creux" }
+      ];
+    }
+    
+    if (title === "Stretching Actif") {
+      return [
+        { name: "Échauffement articulaire", duration: 180, type: 'preparation', instruction: "Cercles de tête, épaules et bassin. 5 fois dans chaque sens" },
+        { name: "Étirements des jambes", duration: 480, type: 'work', instruction: "Genoux à la poitrine, talon-fesse, étirements des ischio-jambiers. 20s par étirement" },
+        { name: "Mobilisation colonne", duration: 300, type: 'work', instruction: "Torsions du buste et flexion avant. Répète 3 fois" },
+        { name: "Étirements bras & épaules", duration: 180, type: 'work', instruction: "Étire chaque bras 20s, ouvre les coudes en arrière" },
+        { name: "Relaxation finale", duration: 60, type: 'rest', instruction: "Secoue bras et jambes, respire profondément 3 fois" }
+      ];
+    }
+    
+    if (title === "Circuit Training Maison") {
+      const phases: TimerPhase[] = [
+        { name: "Échauffement", duration: 180, type: 'preparation', instruction: "Marche rapide sur place en balançant les bras" }
+      ];
+      
+      // 3 circuits de 5 exercices
+      for (let circuit = 1; circuit <= 3; circuit++) {
+        phases.push(
+          { name: `Circuit ${circuit} - Squats`, duration: 30, type: 'work', instruction: "Plie les genoux comme si tu allais t'asseoir, garde le dos droit" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Circuit ${circuit} - Pompes`, duration: 30, type: 'work', instruction: "Au sol, mains sous les épaules. Si c'est difficile, fais-les à genoux" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Circuit ${circuit} - Mountain climbers`, duration: 30, type: 'work', instruction: "Position planche, ramène alternativement les genoux vers la poitrine rapidement" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Circuit ${circuit} - Fentes`, duration: 30, type: 'work', instruction: "Avance un pied, plie les genoux à 90°, puis change de jambe" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Circuit ${circuit} - Jumping jacks`, duration: 30, type: 'work', instruction: "Sauts écartés avec bras qui montent et descendent" }
+        );
+        if (circuit < 3) {
+          phases.push({ name: `Repos entre circuits`, duration: 60, type: 'rest', instruction: "Récupération active" });
+        }
+      }
+      
+      phases.push({ name: "Retour au calme", duration: 120, type: 'rest', instruction: "Étire doucement les jambes et les bras" });
+      return phases;
+    }
+    
+    if (title === "Mini Tabata") {
+      const phases: TimerPhase[] = [];
+      
+      // 3 séquences complètes
+      for (let sequence = 1; sequence <= 3; sequence++) {
+        phases.push(
+          { name: `Séq ${sequence} - Jumping jacks`, duration: 20, type: 'work', instruction: "Saute en ouvrant bras et jambes, rythme rapide mais contrôlé" },
+          { name: `Repos`, duration: 10, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${sequence} - Squats`, duration: 20, type: 'work', instruction: "Plie les genoux comme pour t'asseoir, dos droit" },
+          { name: `Repos`, duration: 10, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${sequence} - Pompes genoux`, duration: 20, type: 'work', instruction: "Mains sous les épaules, genoux posés, garde le dos droit" },
+          { name: `Repos`, duration: 10, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${sequence} - Planche`, duration: 20, type: 'work', instruction: "Position gainage, avant-bras au sol, corps droit, abdos serrés" },
+          { name: `Repos`, duration: 10, type: 'rest', instruction: "Repos actif" }
+        );
+        if (sequence < 3) {
+          phases.push({ name: `Pause longue`, duration: 30, type: 'rest', instruction: "Bois une gorgée d'eau, marche sur place" });
+        }
+      }
+      
+      return phases;
+    }
+    
+    if (title === "Yoga doux perte de poids") {
+      return [
+        { name: "Chat-vache", duration: 120, type: 'preparation', instruction: "À quatre pattes, creuse et arrondis le dos doucement. Répète 6 fois" },
+        { name: "Chien tête en bas", duration: 180, type: 'work', instruction: "Forme un V inversé, garde les talons vers le sol. 30s x 3 fois avec repos" },
+        { name: "Guerrier 1 et 2", duration: 360, type: 'work', instruction: "Guerrier 1 puis 2. Tiens 20s chaque posture, chaque côté, répète 2 fois" },
+        { name: "Planche + cobra", duration: 300, type: 'work', instruction: "Planche 10-20s puis cobra. Répète 3 fois" },
+        { name: "Respiration finale", duration: 240, type: 'rest', instruction: "Allongé sur le dos, mains sur le ventre, respire calmement 1-2 minutes" }
+      ];
+    }
+    
+    if (title === "Chaise Brûle-Graisse") {
+      return [
+        { name: "Échauffement", duration: 60, type: 'preparation', instruction: "Marche sur place en s'aidant du dossier (rythme léger)" },
+        { name: "Assis→Debout", duration: 120, type: 'work', instruction: "Assieds-toi puis relève-toi sans t'aider des mains, rythme régulier" },
+        { name: "Montées de genoux", duration: 120, type: 'work', instruction: "Touche le dossier d'une main, lève les genoux tour à tour à hauteur de hanches" },
+        { name: "Fentes appuyées", duration: 120, type: 'work', instruction: "Une main sur le dossier, fais des fentes alternées en contrôle" },
+        { name: "Pompes inclinées", duration: 120, type: 'work', instruction: "Mains sur l'assise, corps gainé, fléchis les coudes puis repousse" },
+        { name: "Circuit final", duration: 120, type: 'work', instruction: "30s assis→debout + 30s montées de genoux + 30s pompes inclinées + 30s marche" },
+        { name: "Retour au calme", duration: 60, type: 'rest', instruction: "Étire quadriceps et épaules en douceur" }
+      ];
+    }
+    
+    if (title === "Abdos + Cardio Express") {
+      const phases: TimerPhase[] = [];
+      
+      // 3 séquences de 4 exercices
+      for (let seq = 1; seq <= 3; seq++) {
+        phases.push(
+          { name: `Séq ${seq} - Jumping jacks`, duration: 30, type: 'work', instruction: "Sauts écartés avec bras" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${seq} - Crunchs`, duration: 30, type: 'work', instruction: "Crunchs au sol, contracte les abdos" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${seq} - Montées genoux`, duration: 30, type: 'work', instruction: "Cours sur place, genoux hauts" },
+          { name: `Repos`, duration: 15, type: 'rest', instruction: "Repos actif" },
+          { name: `Séq ${seq} - Gainage`, duration: 30, type: 'work', instruction: "Gainage avant-bras, corps droit" },
+          { name: `Repos`, duration: 30, type: 'rest', instruction: "Récupération active" }
+        );
+      }
+      
+      phases.push({ name: "Retour au calme", duration: 120, type: 'rest', instruction: "Étire abdos (cobra doux) et jambes" });
+      return phases;
+    }
+    
+    // Pour les autres exercices, analyse générique basée sur les étapes
+    return analyzeGenericExercise(steps, duration);
   };
 
   const extractAllDurations = (step: string): number[] => {
