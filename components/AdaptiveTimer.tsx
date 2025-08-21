@@ -685,17 +685,6 @@ export default function AdaptiveTimer({
         </View>
       )}
 
-      {/* Prochaines phases */}
-      <View style={styles.nextPhasesContainer}>
-        <Text style={styles.nextPhasesTitle}>Prochaines phases :</Text>
-        {phases.slice(currentPhaseIndex + 1, currentPhaseIndex + 4).map((phase, index) => (
-          <View key={index} style={styles.nextPhaseItem}>
-            <View style={[styles.nextPhaseIndicator, { backgroundColor: getPhaseColor(phase.type) }]} />
-            <Text style={styles.nextPhaseText}>{phase.name}</Text>
-            <Text style={styles.nextPhaseTime}>{formatTime(phase.duration)}</Text>
-          </View>
-        ))}
-      </View>
     </View>
   );
 }
@@ -818,33 +807,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     paddingTop: 16,
-  },
-  nextPhasesTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 12,
-  },
-  nextPhaseItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    gap: 12,
-  },
-  nextPhaseIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  nextPhaseText: {
-    flex: 1,
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-  },
-  nextPhaseTime: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    color: Colors.textSecondary,
   },
 });
