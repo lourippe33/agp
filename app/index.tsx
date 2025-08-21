@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/src/context/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
 // Styles CSS globaux pour les barres de défilement sur PC
@@ -81,7 +81,7 @@ export default function Index() {
           router.navigate('/(tabs)/home');
         } else {
           console.log('❌ Utilisateur non connecté - Redirection vers login');
-          router.navigate('/login');
+          router.navigate('/auth/login');
         }
       }, 1000);
 
