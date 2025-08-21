@@ -10,6 +10,7 @@ import { router } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { Colors } from '@/constants/Colors';
 import { Recipe } from '@/types/Recipe';
 import { Exercise } from '@/types/Exercise';
 import { useSearch } from '@/hooks/useSearch';

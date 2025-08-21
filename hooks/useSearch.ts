@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Recipe } from '@/types/Recipe';
 import { Exercise } from '@/types/Exercise';
+import { Colors } from '@/constants/Colors';
 import { FilterOptions } from '@/components/FilterModal';
 
 interface UseSearchProps {
