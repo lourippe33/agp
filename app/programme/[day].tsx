@@ -60,33 +60,20 @@ export default function DayProgramScreen() {
 
   // Changer une recette spécifique
   const changeRecipe = (moment: string) => {
-    if (!program) return;
-    
-    const newRecipe = getRandomRecipe(moment);
-    setProgram({
-      ...program,
-      [`recette${moment.charAt(0).toUpperCase() + moment.slice(1)}`]: newRecipe
-    });
+    // Rediriger vers la page des recettes avec le moment sélectionné
+    router.push(`/recettes?moment=${moment}&returnTo=/programme/${dayNumber}` as any);
   };
 
   // Changer l'exercice sport
   const changeSportExercise = () => {
-    if (!program) return;
-    
-    setProgram({
-      ...program,
-      exerciceSport: getRandomSportExercise()
-    });
+    // Rediriger vers la page des exercices sport
+    router.push(`/sport?returnTo=/programme/${dayNumber}` as any);
   };
 
   // Changer l'exercice détente
   const changeDetenteExercise = () => {
-    if (!program) return;
-    
-    setProgram({
-      ...program,
-      exerciceDetente: getRandomDetenteExercise()
-    });
+    // Rediriger vers la page des exercices détente
+    router.push(`/detente?returnTo=/programme/${dayNumber}` as any);
   };
 
   // Générer le programme au chargement

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Heart, Clock, Filter, Chrome as Home } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
 
@@ -15,13 +16,19 @@ const types = [
 
 export default function DetenteScreen() {
   const [selectedType, setSelectedType] = useState('tous');
+  const { returnTo } = useLocalSearchParams();
 
   const filteredExercices = selectedType === 'tous' 
     ? exercicesData.exercices
     : exercicesData.exercices.filter(ex => ex.type === selectedType);
 
   const handleExercisePress = (exerciseId: number) => {
-    router.push(`/detente/${exerciseId}` as any);
+    if (returnTo) {
+      // Si on vient du programme, retourner au programme après sélection
+      router.push(returnTo as string);
+    } else {
+      router.push(`/detente/${exerciseId}` as any);
+    }
   };
 
   return (
@@ -33,7 +40,7 @@ export default function DetenteScreen() {
         <View style={styles.headerTop}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
           >
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>

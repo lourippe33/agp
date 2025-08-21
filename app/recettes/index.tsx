@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Chrome as Home } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';
 
@@ -15,13 +16,27 @@ const moments = [
 
 export default function RecettesScreen() {
   const [selectedMoment, setSelectedMoment] = useState('matin');
+  const { moment, returnTo } = useLocalSearchParams();
+
+  // Si on arrive avec un moment spécifique, le sélectionner
+  useEffect(() => {
+    if (moment && typeof moment === 'string') {
+      setSelectedMoment(moment);
+    }
+  }, [moment]);
 
   const filteredRecettes = recettesData.recettes.filter(
     recette => recette.moment === selectedMoment
   );
 
   const handleRecipePress = (recipeId: number) => {
-    router.push(`/recettes/${recipeId}` as any);
+    if (returnTo) {
+      // Si on vient du programme, retourner au programme après sélection
+      // Ici on pourrait sauvegarder la sélection et retourner
+      router.push(returnTo as string);
+    } else {
+      router.push(`/recettes/${recipeId}` as any);
+    }
   };
 
   return (
@@ -33,7 +48,7 @@ export default function RecettesScreen() {
         <View style={styles.headerTop}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
           >
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>
