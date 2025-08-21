@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Dumbbell, Clock, Zap, Filter, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -33,7 +34,103 @@ export default function SportScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <LinearGradient
+          colors={['#FF5722', '#FF8A65']}
+          style={styles.header}
+        >
+          <View style={styles.headerTop}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
+            >
+              <ArrowLeft size={24} color={Colors.textLight} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Activités Sportives</Text>
+            <TouchableOpacity 
+              style={styles.homeButton}
+              onPress={() => router.push('/(tabs)/home')}
+            >
+              <Home size={20} color={Colors.textLight} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.headerSubtitle}>
+            Exercices adaptés à votre niveau
+          </Text>
+        </LinearGradient>
+      </SafeAreaView>
+
+      {/* Filtres par niveau */}
+      <View style={styles.filtersContainer}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+        >
+          {niveaux.map((niveau) => {
+            const isSelected = selectedNiveau === niveau.id;
+            
+            return (
+              <TouchableOpacity
+                key={niveau.id}
+                style={[
+                  styles.filterButton,
+                  isSelected && { backgroundColor: Colors.sport }
+                ]}
+                onPress={() => setSelectedNiveau(niveau.id)}
+              >
+                <Filter size={16} color={isSelected ? Colors.textLight : Colors.sport} />
+                <Text style={[
+                  styles.filterText,
+                  isSelected && { color: Colors.textLight }
+                ]}>
+                  {niveau.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Liste des exercices */}
+      <ScrollView style={styles.content}>
+        <View style={styles.exercicesGrid}>
+          {filteredExercices.map((exercice) => (
+            <TouchableOpacity
+              key={exercice.id}
+              style={styles.exerciceCard}
+              onPress={() => handleExercisePress(exercice.id)}
+            >
+              <Image source={{ uri: exercice.image }} style={styles.exerciceImage} />
+              <View style={styles.exerciceContent}>
+                <Text style={styles.exerciceTitle}>{exercice.titre}</Text>
+                <View style={styles.exerciceInfo}>
+                  <View style={styles.infoItem}>
+                    <Clock size={14} color={Colors.textSecondary} />
+                    <Text style={styles.infoText}>{exercice.duree} min</Text>
+                  </View>
+                  <View style={styles.infoItem}>
+                    <Zap size={14} color={Colors.textSecondary} />
+                    <Text style={styles.infoText}>{exercice.calories} kcal</Text>
+                  </View>
+                </View>
+                <View style={styles.difficultyBadge}>
+                  <Text style={styles.difficultyText}>{exercice.difficulte}</Text>
+                </View>
+                <View style={styles.tagsContainer}>
+                  {exercice.tags.slice(0, 2).map((tag, index) => (
+                    <Text key={index} style={styles.tag}>#{tag}</Text>
+                  ))}
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
       <LinearGradient
         colors={['#FF5722', '#FF8A65']}
         style={styles.header}
@@ -134,8 +231,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  safeArea: {
+    backgroundColor: 'transparent',
+  },
   header: {
-    paddingTop: 20,
+    paddingTop: 10,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
