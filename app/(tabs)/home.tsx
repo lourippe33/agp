@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart, Calendar, ChevronRight, Target, Zap } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+
+interface ProgramProgress {
+  completedDays: number[];
+  currentDay: number;
+  startDate: string;
+}
 
 interface ProgramProgress {
   completedDays: number[];
@@ -32,14 +39,16 @@ export default function HomeScreen() {
     }
   };
 
-  const handleNavigation = (route: string) => {
-    try {
-      router.push(route as any);
-    } catch (error) {
-      Alert.alert('Navigation', `Redirection vers ${route}`);
-    }
-  };
+  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
 
+  useEffect(() => {
+    loadProgramProgress();
+  }, []);
+
+  const loadProgramProgress = async () => {
+    try {
+      const savedProgress = await AsyncStorage.getItem('programProgress');
+      if (savedProgress) {
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
@@ -47,10 +56,48 @@ export default function HomeScreen() {
     return 'Bonsoir';
   };
 
+      "🔥 Trois jours ! L'habitude se forme !",
+      "⭐ Quatre jours de suite, vous êtes formidable !",
+      "🚀 Une semaine presque complète, bravo !",
+      "🎯 Six jours ! Vous tenez le bon rythme !",
+      "🏆 Une semaine complète ! Félicitations !",
+      "🌈 Semaine 2 commence, vous progressez !",
+      "💎 Neuf jours ! Vous brillez de détermination !",
+      "🔋 Dix jours ! Votre énergie est contagieuse !",
+      "⚡ Onze jours ! Vous êtes électrisant !",
+      "🌟 Douze jours ! Vous illuminez votre parcours !",
+      "🎊 Treize jours ! Porte-bonheur de la motivation !",
+      "🎉 Deux semaines ! Vous êtes à mi-chemin !",
+      "🚀 Quinze jours ! Vous volez vers vos objectifs !",
+      "💪 Seize jours ! Votre force grandit chaque jour !",
+      "🔥 Dix-sept jours ! Vous êtes en feu !",
+      "⭐ Dix-huit jours ! Vous brillez de mille feux !",
+      "🌈 Dix-neuf jours ! Vous colorez votre transformation !",
+      "🎯 Vingt jours ! Vous visez juste !",
+      "🏆 Trois semaines ! Vous êtes un champion !",
+      "💎 Vingt-deux jours ! Vous êtes précieux !",
+      "🔋 Vingt-trois jours ! Votre énergie est inépuisable !",
+      "⚡ Vingt-quatre jours ! Vous électrisez votre réussite !",
+      "🌟 Vingt-cinq jours ! Vous êtes une étoile !",
+      "🚀 Vingt-six jours ! Vous volez vers la victoire !",
+      "🏆 Avant-dernier jour ! Vous êtes presque au sommet !",
+      "🎉 JOUR 28 ! FÉLICITATIONS ! Transformation accomplie !"
+    ];
+    
+    return motivations[Math.min(day - 1, motivations.length - 1)];
+  };
+
+  const handleNavigation = (route: string) => {
+    try {
+      router.push(route as any);
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de naviguer vers cette page');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header personnalisé */}
+      <ScrollView style={styles.content}>
         <LinearGradient
           colors={[Colors.agpBlue, Colors.agpGreen]} 
           style={styles.header}
@@ -69,8 +116,18 @@ export default function HomeScreen() {
         <View style={styles.welcomeSection}>
           <Text style={styles.welcomeTitle}>Bienvenue sur AGP, Eric 👋</Text>
           <Text style={styles.programDayText}>
-            Aujourd'hui est votre {currentProgramDay}e jour du programme
+            Aujourd'hui est votre {currentProgramDay}{currentProgramDay === 1 ? 'er' : 'e'} jour du programme
           </Text>
+          <Text style={styles.motivationText}>
+            {getDailyMotivation(currentProgramDay)}
+          </Text>
+          <TouchableOpacity 
+            style={styles.programButton}
+            onPress={() => handleNavigation('/(tabs)/programme')}
+          >
+            <Calendar size={20} color={Colors.textLight} />
+            <Text style={styles.programButtonText}>Voir mon programme</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Actions rapides */}
@@ -191,6 +248,36 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.agpBlue,
     textAlign: 'center',
+    marginBottom: 12,
+  },
+  motivationText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  programButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.agpBlue,
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    gap: 8,
+    elevation: 3,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  programButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
   sectionTitle: {
     fontSize: 18,
