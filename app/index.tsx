@@ -79,10 +79,10 @@ export default function Index() {
       const timer = setTimeout(() => {
         if (isAuthenticated) {
           console.log('✅ Utilisateur connecté - Redirection vers home');
-          router.navigate('/(tabs)/home');
+          router.replace('/(tabs)/home');
         } else {
           console.log('❌ Utilisateur non connecté - Redirection vers login');
-          router.navigate('/auth/login');
+          router.replace('/auth/login');
         }
       }, 1000);
 

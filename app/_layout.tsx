@@ -17,6 +17,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { AuthProvider } from '@/contexts/AuthContext';
+import AuthGuard from '@/components/AuthGuard';
 import { NotificationService } from '@/services/NotificationService';
 import PWAInstallBanner from '@/components/PWAInstallBanner';
 import PWAUpdateBanner from '@/components/PWAUpdateBanner';
@@ -115,21 +116,23 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <OfflineBanner />
-      <PWAUpdateBanner />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/register" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/reset" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="recettes" options={{ headerShown: false }} />
-        <Stack.Screen name="sport" options={{ headerShown: false }} />
-        <Stack.Screen name="detente" options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <PWAInstallBanner />
+      <AuthGuard>
+        <OfflineBanner />
+        <PWAUpdateBanner />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/reset" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="recettes" options={{ headerShown: false }} />
+          <Stack.Screen name="sport" options={{ headerShown: false }} />
+          <Stack.Screen name="detente" options={{ headerShown: false }} />
+          <Stack.Screen name="search" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <PWAInstallBanner />
+      </AuthGuard>
       <StatusBar style="auto" />
     </AuthProvider>
   );

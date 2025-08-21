@@ -28,11 +28,12 @@ export default function LoginScreen() {
       return;
     }
 
-    clearError();
-    const success = await login(email.trim(), password);
+    const result = await login(email.trim(), password);
     
-    if (success) {
+    if (result.success) {
       router.replace('/(tabs)/home');
+    } else {
+      // L'erreur est déjà gérée dans le contexte
     }
   };
 

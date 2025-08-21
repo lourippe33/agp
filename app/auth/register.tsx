@@ -40,11 +40,14 @@ export default function RegisterScreen() {
       return;
     }
 
-    clearError();
-    const success = await register(email.trim(), password);
+    // Utiliser des valeurs par défaut pour username, firstName, lastName
+    const username = email.split('@')[0]; // Utiliser la partie avant @ comme username
+    const result = await register(email.trim(), password, username, 'Utilisateur', 'AGP');
     
-    if (success) {
+    if (result.success) {
       router.replace('/(tabs)/home');
+    } else {
+      // L'erreur est déjà gérée dans le contexte
     }
   };
 
