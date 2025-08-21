@@ -1,10 +1,19 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Dumbbell, Heart } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
 export default function HomeScreen() {
+  const handleNavigation = (route: string) => {
+    try {
+      router.push(route as any);
+    } catch (error) {
+      Alert.alert('Navigation', `Redirection vers ${route}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
@@ -30,6 +39,7 @@ export default function HomeScreen() {
           <View style={styles.actionsGrid}>
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: '#FF5722' }]}
+              onPress={() => handleNavigation('/sport')}
             >
               <Dumbbell size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Sport</Text>
@@ -38,6 +48,7 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: Colors.agpGreen }]}
+              onPress={() => handleNavigation('/recettes')}
             >
               <Utensils size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Recettes</Text>
@@ -46,6 +57,7 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={[styles.actionCard, { backgroundColor: Colors.relaxation }]}
+              onPress={() => handleNavigation('/detente')}
             >
               <Heart size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Détente</Text>
