@@ -42,7 +42,6 @@ export default function HomeScreen() {
     loadProgramProgress();
   }, []);
 
-  const loadProgramProgress = async () => {
     try {
       const savedProgress = await AsyncStorage.getItem('programProgress');
       if (savedProgress) {
