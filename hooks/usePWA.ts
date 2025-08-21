@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isBrowser } from '@/utils/env';
 
 interface PWAInstallPrompt {
   prompt: () => Promise<void>;
@@ -24,6 +25,8 @@ export function usePWA(): UsePWAReturn {
   useEffect(() => {
     // Vérifier si l'app est déjà installée
     const checkIfInstalled = () => {
+      if (!isBrowser) return;
+      
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       const isInWebAppiOS = (window.navigator as any).standalone === true;
       setIsInstalled(isStandalone || isInWebAppiOS);
@@ -49,6 +52,8 @@ export function usePWA(): UsePWAReturn {
 
     checkIfInstalled();
 
+    if (!isBrowser) return;
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
     window.addEventListener('online', handleOnline);
@@ -64,12 +69,16 @@ export function usePWA(): UsePWAReturn {
 
   useEffect(() => {
     // Vérifier si nous sommes dans un environnement qui supporte les Service Workers
-    const isStackBlitz = window.location.hostname.includes('stackblitz') || 
-                         window.location.hostname.includes('webcontainer') ||
-                         window.location.hostname === 'localhost';
+    if (!isBrowser) return;
+    
+    const isStackBlitz = isBrowser && (
+      window.location.hostname.includes('stackblitz') || 
+      window.location.hostname.includes('webcontainer') ||
+      window.location.hostname === 'localhost'
+    );
 
     // Enregistrer le Service Worker seulement si supporté
-    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator && !isStackBlitz) {
+    if (isBrowser && 'serviceWorker' in navigator && !isStackBlitz) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
           console.log('✅ Service Worker enregistré:', registration);
@@ -119,7 +128,7 @@ export function usePWA(): UsePWAReturn {
   };
 
   const updatePWA = (): void => {
-    if ('serviceWorker' in navigator) {
+    if (isBrowser && 'serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistration().then((registration) => {
         if (registration && registration.waiting) {
           registration.waiting.postMessage({ type: 'SKIP_WAITING' });

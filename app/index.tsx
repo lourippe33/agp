@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
+import { isBrowser } from '@/utils/env';
 
 // Styles CSS globaux pour les barres de défilement sur PC
 const globalScrollStyles = `
@@ -60,7 +61,7 @@ const globalScrollStyles = `
 `;
 
 // Injecter les styles CSS globaux pour le web
-if (typeof document !== 'undefined') {
+if (isBrowser) {
   const existingStyle = document.getElementById('agp-scroll-styles');
   if (!existingStyle) {
     const styleElement = document.createElement('style');

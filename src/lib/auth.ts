@@ -1,10 +1,22 @@
 import GoTrue from 'gotrue-js';
+import { isBrowser, getOrigin } from '@/utils/env';
 
-// Configuration du client GoTrue pour Netlify Identity
-const auth = new GoTrue({
-  APIUrl: `${window.location.origin}/.netlify/identity`,
-  setCookie: true,
-});
+// Configuration sécurisée du client GoTrue
+const DEFAULT_IDENTITY_URL = 'https://agp-app.netlify.app/.netlify/identity';
+const IDENTITY_URL = isBrowser ? `${getOrigin()}/.netlify/identity` : DEFAULT_IDENTITY_URL;
+
+// Initialisation paresseuse pour éviter les erreurs SSR/natif
+let authClient: GoTrue | null = null;
+
+function getAuthClient(): GoTrue {
+  if (!authClient && isBrowser) {
+    authClient = new GoTrue({
+      APIUrl: IDENTITY_URL,
+      setCookie: true,
+    });
+  }
+  return authClient!;
+}
 
 export interface User {
   id: string;
@@ -25,8 +37,12 @@ export interface AuthError {
 
 // Inscription
 export const signUp = async (email: string, password: string): Promise<{ user?: User; error?: AuthError }> => {
+  if (!isBrowser) {
+    return { error: { message: 'Authentification non disponible en mode natif' } };
+  }
+  
   try {
-    const user = await auth.signup(email, password);
+    const user = await getAuthClient().signup(email, password);
     return { user: user as User };
   } catch (error: any) {
     return { 
@@ -40,8 +56,12 @@ export const signUp = async (email: string, password: string): Promise<{ user?: 
 
 // Connexion
 export const signIn = async (email: string, password: string): Promise<{ user?: User; error?: AuthError }> => {
+  if (!isBrowser) {
+    return { error: { message: 'Authentification non disponible en mode natif' } };
+  }
+  
   try {
-    const user = await auth.login(email, password);
+    const user = await getAuthClient().login(email, password);
     return { user: user as User };
   } catch (error: any) {
     return { 
@@ -55,8 +75,12 @@ export const signIn = async (email: string, password: string): Promise<{ user?: 
 
 // Déconnexion
 export const signOut = async (): Promise<{ error?: AuthError }> => {
+  if (!isBrowser) {
+    return { error: { message: 'Authentification non disponible en mode natif' } };
+  }
+  
   try {
-    const user = auth.currentUser();
+    const user = getAuthClient().currentUser();
     if (user) {
       await user.logout();
     }
@@ -73,8 +97,12 @@ export const signOut = async (): Promise<{ error?: AuthError }> => {
 
 // Récupérer l'utilisateur actuel
 export const getCurrentUser = (): User | null => {
+  if (!isBrowser) {
+    return null;
+  }
+  
   try {
-    const user = auth.currentUser();
+    const user = getAuthClient().currentUser();
     return user as User | null;
   } catch (error) {
     console.error('Erreur récupération utilisateur:', error);
@@ -84,8 +112,12 @@ export const getCurrentUser = (): User | null => {
 
 // Réinitialisation mot de passe
 export const resetPassword = async (email: string): Promise<{ error?: AuthError }> => {
+  if (!isBrowser) {
+    return { error: { message: 'Réinitialisation non disponible en mode natif' } };
+  }
+  
   try {
-    await auth.requestPasswordRecovery(email);
+    await getAuthClient().requestPasswordRecovery(email);
     return {};
   } catch (error: any) {
     return { 
@@ -99,8 +131,15 @@ export const resetPassword = async (email: string): Promise<{ error?: AuthError 
 
 // Écouter les changements d'état d'authentification
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
+  if (!isBrowser) {
+    callback(null);
+    return () => {};
+  }
+  
   // Vérifier l'état initial
   callback(getCurrentUser());
+  
+  const auth = getAuthClient();
   
   // Écouter les changements
   auth.on('login', (user) => callback(user as User));
@@ -115,4 +154,4 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
   };
 };
 
-export default auth;
+export default isBrowser ? getAuthClient : () => null;

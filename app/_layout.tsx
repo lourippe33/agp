@@ -21,6 +21,7 @@ import { NotificationService } from '@/services/NotificationService';
 import PWAInstallBanner from '@/components/PWAInstallBanner';
 import PWAUpdateBanner from '@/components/PWAUpdateBanner';
 import OfflineBanner from '@/components/OfflineBanner';
+import { isBrowser } from '@/utils/env';
 
 // Styles CSS globaux pour les barres de défilement sur PC
 const globalScrollStyles = `
@@ -78,7 +79,7 @@ const globalScrollStyles = `
 `;
 
 // Injecter les styles CSS globaux pour le web
-if (typeof document !== 'undefined') {
+if (isBrowser) {
   const existingStyle = document.getElementById('agp-global-scroll-styles');
   if (!existingStyle) {
     const styleElement = document.createElement('style');
