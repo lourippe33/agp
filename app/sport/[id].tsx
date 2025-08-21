@@ -5,7 +5,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity, ChartBar as BarChart3 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import ChartModal from '@/components/ChartModal';
-import ChartModal from '@/components/ChartModal';
 
 interface WeightEntry {
   date: string;
