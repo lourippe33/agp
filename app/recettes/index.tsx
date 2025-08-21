@@ -17,6 +17,8 @@ const moments = [
 
 export default function RecettesScreen() {
   const [selectedMoment, setSelectedMoment] = useState('matin');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
   const { moment, returnTo } = useLocalSearchParams();
 
   // Si on arrive avec un moment spécifique, le sélectionner
@@ -27,7 +29,16 @@ export default function RecettesScreen() {
   }, [moment]);
 
   const filteredRecettes = recettesData.recettes.filter(
-    recette => recette.moment === selectedMoment
+    recette => {
+      const matchesMoment = recette.moment === selectedMoment;
+      const matchesSearch = searchQuery === '' || 
+        recette.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recette.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        recette.ingredients.some(ingredient => 
+          ingredient.nom.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      return matchesMoment && matchesSearch;
+    }
   );
 
   const handleRecipePress = (recipeId: number) => {
@@ -56,14 +67,36 @@ export default function RecettesScreen() {
           <Text style={styles.headerTitle}>Recettes AGP</Text>
           <TouchableOpacity 
             style={styles.searchButton}
-            onPress={() => router.push('/(tabs)/home')}
+            onPress={() => setShowSearch(!showSearch)}
           >
-            <Home size={24} color={Colors.textLight} />
+            <Search size={24} color={Colors.textLight} />
           </TouchableOpacity>
         </View>
         <Text style={styles.headerSubtitle}>
           Alimentation adaptée à votre chronobiologie
         </Text>
+        
+        {/* Barre de recherche */}
+        {showSearch && (
+          <View style={styles.searchContainer}>
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color={Colors.textSecondary} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Rechercher une recette, ingrédient..."
+                placeholderTextColor={Colors.textSecondary}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus={true}
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <X size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
       </LinearGradient>
 
       {/* Filtres par moment */}
@@ -104,6 +137,15 @@ export default function RecettesScreen() {
 
       {/* Liste des recettes */}
       <ScrollView style={styles.content}>
+        {/* Résultats de recherche */}
+        {searchQuery.length > 0 && (
+          <View style={styles.searchResults}>
+            <Text style={styles.searchResultsText}>
+              {filteredRecettes.length} résultat{filteredRecettes.length > 1 ? 's' : ''} pour "{searchQuery}"
+            </Text>
+          </View>
+        )}
+        
         <View style={styles.recipesGrid}>
           {filteredRecettes.map((recette) => (
             <TouchableOpacity
@@ -157,6 +199,26 @@ const styles = StyleSheet.create({
   searchButton: {
     padding: 8,
     minWidth: 40,
+  },
+  searchContainer: {
+    marginTop: 16,
+    paddingHorizontal: 0,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    paddingVertical: 4,
   },
   homeButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -218,6 +280,15 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+  },
+  searchResults: {
+    marginBottom: 16,
+    paddingHorizontal: 4,
+  },
+  searchResultsText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
   },
   recipesGrid: {
     gap: 16,
