@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 60,
+    top: 70,
     left: 20,
     padding: 8,
     backgroundColor: 'rgba(0,0,0,0.3)',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   homeButton: {
     position: 'absolute',
-    top: 60,
+    top: 70,
     right: 20,
     backgroundColor: 'rgba(0,0,0,0.3)',
     paddingHorizontal: 8,

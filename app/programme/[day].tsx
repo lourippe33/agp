@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   header: {
-    paddingTop: 60,
+    paddingTop: 70,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
