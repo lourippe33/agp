@@ -30,7 +30,7 @@ import {
 
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { isPastDay } from '@/utils/dateUtils';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';

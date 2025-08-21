@@ -17,7 +17,7 @@ import { Chrome as Home, ChartBar as BarChart3, Users, User } from 'lucide-react
 import { Colors } from '@/constants/Colors';
 import DayProgramCard from '@/components/DayProgramCard';
 import { isPastDay } from '@/utils/dateUtils';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
 import { useLocalSearchParams } from 'expo-router';

@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Eye, EyeOff, Mail, Lock, UserPlus } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
 export default function RegisterScreen() {

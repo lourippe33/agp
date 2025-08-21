@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, Alert, P
 import { LinearGradient } from 'expo-linear-gradient';
 import { MessageCircle, Users, ExternalLink, Heart, Star } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 
 export default function CommunauteScreen() {

@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Droplets, Utensils, Plus, ChevronLeft, ChevronRight, Check, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import DailyJournalModal from '@/components/DailyJournalModal';
 import { JournalEntry } from '@/types/Journal';
