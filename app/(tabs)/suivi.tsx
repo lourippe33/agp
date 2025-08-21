@@ -1,8 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Scale, Ruler, TrendingUp, Calendar, Plus, CreditCard as Edit3, Target, Activity } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+
+interface WeightEntry {
+  date: string;
+  weight: number;
+  id: string;
+}
+
+interface MeasurementEntry {
+  date: string;
+  waist: number;
+  hips: number;
+  arms: number;
+  thighs: number;
+  id: string;
+}
+
+interface UserData {
+  currentWeight: string;
+  targetWeight: string;
+  weightHistory: WeightEntry[];
+  measurementHistory: MeasurementEntry[];
+}
 
 export default function SuiviScreen() {
   const [currentWeight, setCurrentWeight] = useState('');
@@ -11,17 +34,142 @@ export default function SuiviScreen() {
   const [hips, setHips] = useState('');
   const [arms, setArms] = useState('');
   const [thighs, setThighs] = useState('');
+  const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([]);
+  const [measurementHistory, setMeasurementHistory] = useState<MeasurementEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSaveMeasurements = () => {
+  // Charger les données au démarrage
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem('userData');
+      if (savedData) {
+        const userData: UserData = JSON.parse(savedData);
+        setCurrentWeight(userData.currentWeight || '');
+        setTargetWeight(userData.targetWeight || '');
+        setWeightHistory(userData.weightHistory || []);
+        setMeasurementHistory(userData.measurementHistory || []);
+        
+        // Charger les dernières mensurations
+        if (userData.measurementHistory && userData.measurementHistory.length > 0) {
+          const lastMeasurement = userData.measurementHistory[userData.measurementHistory.length - 1];
+          setWaist(lastMeasurement.waist.toString());
+          setHips(lastMeasurement.hips.toString());
+          setArms(lastMeasurement.arms.toString());
+          setThighs(lastMeasurement.thighs.toString());
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveUserData = async (data: UserData) => {
+    try {
+      await AsyncStorage.setItem('userData', JSON.stringify(data));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      Alert.alert('Erreur', 'Impossible de sauvegarder les données');
+    }
+  };
+
+  const addWeightEntry = async () => {
+    if (!currentWeight || isNaN(parseFloat(currentWeight))) {
+      Alert.alert('Erreur', 'Veuillez entrer un poids valide');
+      return;
+    }
+
+    const newEntry: WeightEntry = {
+      id: Date.now().toString(),
+      date: new Date().toLocaleDateString('fr-FR'),
+      weight: parseFloat(currentWeight)
+    };
+
+    const updatedHistory = [...weightHistory, newEntry];
+    setWeightHistory(updatedHistory);
+
+    const userData: UserData = {
+      currentWeight,
+      targetWeight,
+      weightHistory: updatedHistory,
+      measurementHistory
+    };
+
+    await saveUserData(userData);
+    Alert.alert('Succès', 'Poids ajouté à l\'historique !');
+  };
+
+  const handleSaveMeasurements = async () => {
+    if (!waist || !hips || !arms || !thighs) {
+      Alert.alert('Erreur', 'Veuillez remplir toutes les mensurations');
+      return;
+    }
+
+    const newMeasurement: MeasurementEntry = {
+      id: Date.now().toString(),
+      date: new Date().toLocaleDateString('fr-FR'),
+      waist: parseFloat(waist),
+      hips: parseFloat(hips),
+      arms: parseFloat(arms),
+      thighs: parseFloat(thighs)
+    };
+
+    const updatedMeasurements = [...measurementHistory, newMeasurement];
+    setMeasurementHistory(updatedMeasurements);
+
+    const userData: UserData = {
+      currentWeight,
+      targetWeight,
+      weightHistory,
+      measurementHistory: updatedMeasurements
+    };
+
+    await saveUserData(userData);
     Alert.alert('Succès', 'Vos mensurations ont été sauvegardées !');
   };
 
-  const mockWeightData = [
-    { date: '01/01', weight: 75 },
-    { date: '08/01', weight: 74.5 },
-    { date: '15/01', weight: 74 },
-    { date: '22/01', weight: 73.8 },
-  ];
+  const saveWeightAndTarget = async () => {
+    const userData: UserData = {
+      currentWeight,
+      targetWeight,
+      weightHistory,
+      measurementHistory
+    };
+    await saveUserData(userData);
+    Alert.alert('Succès', 'Poids et objectif sauvegardés !');
+  };
+
+  const calculateStats = () => {
+    if (weightHistory.length === 0) {
+      return { totalLoss: 0, weeklyChange: 0, remaining: 0 };
+    }
+
+    const firstWeight = weightHistory[0].weight;
+    const currentWeightNum = parseFloat(currentWeight) || firstWeight;
+    const targetWeightNum = parseFloat(targetWeight) || currentWeightNum;
+    
+    const totalLoss = firstWeight - currentWeightNum;
+    const weeklyChange = weightHistory.length > 1 ? 
+      weightHistory[weightHistory.length - 2].weight - currentWeightNum : 0;
+    const remaining = currentWeightNum - targetWeightNum;
+
+    return { totalLoss, weeklyChange, remaining };
+  };
+
+  const stats = calculateStats();
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Chargement...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -40,19 +188,23 @@ export default function SuiviScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Scale size={24} color={Colors.agpBlue} />
-            <Text style={styles.statValue}>-1.2 kg</Text>
+            <Text style={styles.statValue}>
+              {stats.totalLoss > 0 ? `-${stats.totalLoss.toFixed(1)}` : stats.totalLoss.toFixed(1)} kg
+            </Text>
             <Text style={styles.statLabel}>Perte totale</Text>
           </View>
           
           <View style={styles.statItem}>
             <TrendingUp size={24} color={Colors.success} />
-            <Text style={styles.statValue}>-0.3 kg</Text>
+            <Text style={styles.statValue}>
+              {stats.weeklyChange > 0 ? `-${stats.weeklyChange.toFixed(1)}` : stats.weeklyChange.toFixed(1)} kg
+            </Text>
             <Text style={styles.statLabel}>Cette semaine</Text>
           </View>
           
           <View style={styles.statItem}>
             <Target size={24} color={Colors.warning} />
-            <Text style={styles.statValue}>3.8 kg</Text>
+            <Text style={styles.statValue}>{stats.remaining.toFixed(1)} kg</Text>
             <Text style={styles.statLabel}>Objectif restant</Text>
           </View>
         </View>
@@ -67,7 +219,7 @@ export default function SuiviScreen() {
                 style={styles.input}
                 value={currentWeight}
                 onChangeText={setCurrentWeight}
-                placeholder="73.8"
+                placeholder="Entrez votre poids"
                 keyboardType="numeric"
               />
             </View>
@@ -77,11 +229,15 @@ export default function SuiviScreen() {
                 style={styles.input}
                 value={targetWeight}
                 onChangeText={setTargetWeight}
-                placeholder="70.0"
+                placeholder="Votre objectif"
                 keyboardType="numeric"
               />
             </View>
           </View>
+          
+          <TouchableOpacity style={styles.saveWeightButton} onPress={saveWeightAndTarget}>
+            <Text style={styles.saveWeightButtonText}>Sauvegarder poids/objectif</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Évolution du poids */}
@@ -90,23 +246,27 @@ export default function SuiviScreen() {
           <View style={styles.chartCard}>
             <View style={styles.chartHeader}>
               <Text style={styles.chartTitle}>Dernières pesées</Text>
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity style={styles.addButton} onPress={addWeightEntry}>
                 <Plus size={16} color={Colors.agpBlue} />
                 <Text style={styles.addButtonText}>Ajouter</Text>
               </TouchableOpacity>
             </View>
             
             <View style={styles.weightHistory}>
-              {mockWeightData.map((entry, index) => (
+              {weightHistory.length === 0 ? (
+                <Text style={styles.noDataText}>Aucune pesée enregistrée</Text>
+              ) : (
+                weightHistory.slice(-5).map((entry, index) => (
                 <View key={index} style={styles.weightEntry}>
                   <Text style={styles.weightDate}>{entry.date}</Text>
                   <Text style={styles.weightValue}>{entry.weight} kg</Text>
                   <View style={[
                     styles.weightTrend,
-                    { backgroundColor: index > 0 && entry.weight < mockWeightData[index-1]?.weight ? Colors.success : Colors.border }
+                    { backgroundColor: index > 0 && entry.weight < weightHistory[index-1]?.weight ? Colors.success : Colors.border }
                   ]} />
                 </View>
-              ))}
+                ))
+              )}
             </View>
           </View>
         </View>
@@ -122,7 +282,7 @@ export default function SuiviScreen() {
                   style={styles.input}
                   value={waist}
                   onChangeText={setWaist}
-                  placeholder="85"
+                  placeholder="Tour de taille"
                   keyboardType="numeric"
                 />
               </View>
@@ -132,7 +292,7 @@ export default function SuiviScreen() {
                   style={styles.input}
                   value={hips}
                   onChangeText={setHips}
-                  placeholder="95"
+                  placeholder="Tour de hanches"
                   keyboardType="numeric"
                 />
               </View>
@@ -145,7 +305,7 @@ export default function SuiviScreen() {
                   style={styles.input}
                   value={arms}
                   onChangeText={setArms}
-                  placeholder="28"
+                  placeholder="Tour de bras"
                   keyboardType="numeric"
                 />
               </View>
@@ -155,7 +315,7 @@ export default function SuiviScreen() {
                   style={styles.input}
                   value={thighs}
                   onChangeText={setThighs}
-                  placeholder="55"
+                  placeholder="Tour de cuisse"
                   keyboardType="numeric"
                 />
               </View>
@@ -166,32 +326,40 @@ export default function SuiviScreen() {
         {/* Historique des mensurations */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Historique des mensurations</Text>
-          <View style={styles.historyCard}>
-            <View style={styles.historyHeader}>
-              <Text style={styles.historyDate}>15 Janvier 2024</Text>
-              <TouchableOpacity>
-                <Edit3 size={16} color={Colors.agpBlue} />
-              </TouchableOpacity>
+          {measurementHistory.length === 0 ? (
+            <View style={styles.historyCard}>
+              <Text style={styles.noDataText}>Aucune mensuration enregistrée</Text>
             </View>
-            <View style={styles.historyMeasurements}>
-              <View style={styles.historyItem}>
-                <Text style={styles.historyLabel}>Taille</Text>
-                <Text style={styles.historyValue}>85 cm</Text>
+          ) : (
+            measurementHistory.slice(-3).map((measurement, index) => (
+              <View key={measurement.id} style={styles.historyCard}>
+                <View style={styles.historyHeader}>
+                  <Text style={styles.historyDate}>{measurement.date}</Text>
+                  <TouchableOpacity>
+                    <Edit3 size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.historyMeasurements}>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Taille</Text>
+                    <Text style={styles.historyValue}>{measurement.waist} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Hanches</Text>
+                    <Text style={styles.historyValue}>{measurement.hips} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Bras</Text>
+                    <Text style={styles.historyValue}>{measurement.arms} cm</Text>
+                  </View>
+                  <View style={styles.historyItem}>
+                    <Text style={styles.historyLabel}>Cuisse</Text>
+                    <Text style={styles.historyValue}>{measurement.thighs} cm</Text>
+                  </View>
+                </View>
               </View>
-              <View style={styles.historyItem}>
-                <Text style={styles.historyLabel}>Hanches</Text>
-                <Text style={styles.historyValue}>95 cm</Text>
-              </View>
-              <View style={styles.historyItem}>
-                <Text style={styles.historyLabel}>Bras</Text>
-                <Text style={styles.historyValue}>28 cm</Text>
-              </View>
-              <View style={styles.historyItem}>
-                <Text style={styles.historyLabel}>Cuisse</Text>
-                <Text style={styles.historyValue}>55 cm</Text>
-              </View>
-            </View>
-          </View>
+            ))
+          )}
         </View>
 
         {/* Objectifs */}
@@ -300,6 +468,18 @@ const styles = StyleSheet.create({
   weightInput: {
     flex: 1,
   },
+  saveWeightButton: {
+    backgroundColor: Colors.agpGreen,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  saveWeightButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
   inputLabel: {
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
@@ -380,6 +560,14 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
+  },
+  noDataText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    paddingVertical: 20,
   },
   measurementsCard: {
     backgroundColor: Colors.surface,
