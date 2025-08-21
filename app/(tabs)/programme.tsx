@@ -103,13 +103,13 @@ export default function ProgrammeScreen(): JSX.Element {
       progress: Math.round((completedDays.filter(day => day <= 7).length / 7) * 100),
       advice: 'Commencez votre transformation\nChaque grand voyage commence par un premier pas.',
       days: [
-        { id: 1, dayOfWeek: 'lun', duration: 20, status: getDayStatus(1), sportExercise: 'Échauffement général', relaxationExercise: 'Respiration profonde' },
-        { id: 2, dayOfWeek: 'mar', duration: 25, status: getDayStatus(2), sportExercise: 'Cardio léger', relaxationExercise: 'Méditation guidée' },
-        { id: 3, dayOfWeek: 'mer', duration: 30, status: getDayStatus(3), sportExercise: 'Renforcement', relaxationExercise: 'Étirements' },
-        { id: 4, dayOfWeek: 'jeu', duration: 25, status: getDayStatus(4), sportExercise: 'Cardio modéré', relaxationExercise: 'Relaxation progressive' },
-        { id: 5, dayOfWeek: 'ven', duration: 30, status: getDayStatus(5), sportExercise: 'Circuit training', relaxationExercise: 'Yoga doux' },
-        { id: 6, dayOfWeek: 'sam', duration: 35, status: getDayStatus(6), sportExercise: 'HIIT débutant', relaxationExercise: 'Méditation pleine conscience' },
-        { id: 7, dayOfWeek: 'dim', duration: 20, status: getDayStatus(7), sportExercise: 'Récupération active', relaxationExercise: 'Détente complète' }
+        { id: 1, dayOfWeek: getDayOfWeekName(1), date: getCalendarDate(1), status: getDayStatus(1), sportExercise: 'Échauffement général', relaxationExercise: 'Respiration profonde' },
+        { id: 2, dayOfWeek: getDayOfWeekName(2), date: getCalendarDate(2), status: getDayStatus(2), sportExercise: 'Cardio léger', relaxationExercise: 'Méditation guidée' },
+        { id: 3, dayOfWeek: getDayOfWeekName(3), date: getCalendarDate(3), status: getDayStatus(3), sportExercise: 'Renforcement', relaxationExercise: 'Étirements' },
+        { id: 4, dayOfWeek: getDayOfWeekName(4), date: getCalendarDate(4), status: getDayStatus(4), sportExercise: 'Cardio modéré', relaxationExercise: 'Relaxation progressive' },
+        { id: 5, dayOfWeek: getDayOfWeekName(5), date: getCalendarDate(5), status: getDayStatus(5), sportExercise: 'Circuit training', relaxationExercise: 'Yoga doux' },
+        { id: 6, dayOfWeek: getDayOfWeekName(6), date: getCalendarDate(6), status: getDayStatus(6), sportExercise: 'HIIT débutant', relaxationExercise: 'Méditation pleine conscience' },
+        { id: 7, dayOfWeek: getDayOfWeekName(7), date: getCalendarDate(7), status: getDayStatus(7), sportExercise: 'Récupération active', relaxationExercise: 'Détente complète' }
       ]
     },
     {
@@ -118,13 +118,13 @@ export default function ProgrammeScreen(): JSX.Element {
       progress: Math.round((completedDays.filter(day => day >= 8 && day <= 14).length / 7) * 100),
       advice: 'Conseil de la semaine 2\nConcentrez-vous sur la création d\'habitudes. La régularité est plus importante que la perfection.',
       days: [
-        { id: 8, dayOfWeek: 'lun', duration: 25, status: getDayStatus(8), sportExercise: 'Cardio intermédiaire', relaxationExercise: 'Respiration rythmée' },
-        { id: 9, dayOfWeek: 'mar', duration: 30, status: getDayStatus(9), sportExercise: 'Renforcement core', relaxationExercise: 'Méditation body scan' },
-        { id: 10, dayOfWeek: 'mer', duration: 35, status: getDayStatus(10), sportExercise: 'Circuit complet', relaxationExercise: 'Étirements profonds' },
-        { id: 11, dayOfWeek: 'jeu', duration: 30, status: getDayStatus(11), sportExercise: 'Cardio intense', relaxationExercise: 'Relaxation guidée' },
-        { id: 12, dayOfWeek: 'ven', duration: 35, status: getDayStatus(12), sportExercise: 'HIIT intermédiaire', relaxationExercise: 'Yoga flow' },
-        { id: 13, dayOfWeek: 'sam', duration: 40, status: getDayStatus(13), sportExercise: 'Training complet', relaxationExercise: 'Méditation zen' },
-        { id: 14, dayOfWeek: 'dim', duration: 25, status: getDayStatus(14), sportExercise: 'Récupération', relaxationExercise: 'Détente totale' }
+        { id: 8, dayOfWeek: getDayOfWeekName(8), date: getCalendarDate(8), status: getDayStatus(8), sportExercise: 'Cardio intermédiaire', relaxationExercise: 'Respiration rythmée' },
+        { id: 9, dayOfWeek: getDayOfWeekName(9), date: getCalendarDate(9), status: getDayStatus(9), sportExercise: 'Renforcement core', relaxationExercise: 'Méditation body scan' },
+        { id: 10, dayOfWeek: getDayOfWeekName(10), date: getCalendarDate(10), status: getDayStatus(10), sportExercise: 'Circuit complet', relaxationExercise: 'Étirements profonds' },
+        { id: 11, dayOfWeek: getDayOfWeekName(11), date: getCalendarDate(11), status: getDayStatus(11), sportExercise: 'Cardio intense', relaxationExercise: 'Relaxation guidée' },
+        { id: 12, dayOfWeek: getDayOfWeekName(12), date: getCalendarDate(12), status: getDayStatus(12), sportExercise: 'HIIT intermédiaire', relaxationExercise: 'Yoga flow' },
+        { id: 13, dayOfWeek: getDayOfWeekName(13), date: getCalendarDate(13), status: getDayStatus(13), sportExercise: 'Training complet', relaxationExercise: 'Méditation zen' },
+        { id: 14, dayOfWeek: getDayOfWeekName(14), date: getCalendarDate(14), status: getDayStatus(14), sportExercise: 'Récupération', relaxationExercise: 'Détente totale' }
       ]
     },
     {
@@ -133,13 +133,13 @@ export default function ProgrammeScreen(): JSX.Element {
       progress: Math.round((completedDays.filter(day => day >= 15 && day <= 21).length / 7) * 100),
       advice: 'Conseil de la semaine 3\nVous êtes à mi-parcours ! Votre corps s\'adapte, continuez sur cette lancée.',
       days: [
-        { id: 15, dayOfWeek: 'lun', duration: 30, status: getDayStatus(15), sportExercise: 'Cardio avancé', relaxationExercise: 'Respiration énergisante' },
-        { id: 16, dayOfWeek: 'mar', duration: 35, status: getDayStatus(16), sportExercise: 'Renforcement total', relaxationExercise: 'Méditation dynamique' },
-        { id: 17, dayOfWeek: 'mer', duration: 40, status: getDayStatus(17), sportExercise: 'Circuit intensif', relaxationExercise: 'Étirements actifs' },
-        { id: 18, dayOfWeek: 'jeu', duration: 35, status: getDayStatus(18), sportExercise: 'Cardio explosif', relaxationExercise: 'Relaxation profonde' },
-        { id: 19, dayOfWeek: 'ven', duration: 40, status: getDayStatus(19), sportExercise: 'HIIT avancé', relaxationExercise: 'Yoga power' },
-        { id: 20, dayOfWeek: 'sam', duration: 45, status: getDayStatus(20), sportExercise: 'Challenge complet', relaxationExercise: 'Méditation transcendante' },
-        { id: 21, dayOfWeek: 'dim', duration: 30, status: getDayStatus(21), sportExercise: 'Récupération active', relaxationExercise: 'Détente régénératrice' }
+        { id: 15, dayOfWeek: getDayOfWeekName(15), date: getCalendarDate(15), status: getDayStatus(15), sportExercise: 'Cardio avancé', relaxationExercise: 'Respiration énergisante' },
+        { id: 16, dayOfWeek: getDayOfWeekName(16), date: getCalendarDate(16), status: getDayStatus(16), sportExercise: 'Renforcement total', relaxationExercise: 'Méditation dynamique' },
+        { id: 17, dayOfWeek: getDayOfWeekName(17), date: getCalendarDate(17), status: getDayStatus(17), sportExercise: 'Circuit intensif', relaxationExercise: 'Étirements actifs' },
+        { id: 18, dayOfWeek: getDayOfWeekName(18), date: getCalendarDate(18), status: getDayStatus(18), sportExercise: 'Cardio explosif', relaxationExercise: 'Relaxation profonde' },
+        { id: 19, dayOfWeek: getDayOfWeekName(19), date: getCalendarDate(19), status: getDayStatus(19), sportExercise: 'HIIT avancé', relaxationExercise: 'Yoga power' },
+        { id: 20, dayOfWeek: getDayOfWeekName(20), date: getCalendarDate(20), status: getDayStatus(20), sportExercise: 'Challenge complet', relaxationExercise: 'Méditation transcendante' },
+        { id: 21, dayOfWeek: getDayOfWeekName(21), date: getCalendarDate(21), status: getDayStatus(21), sportExercise: 'Récupération active', relaxationExercise: 'Détente régénératrice' }
       ]
     },
     {
@@ -148,13 +148,13 @@ export default function ProgrammeScreen(): JSX.Element {
       progress: Math.round((completedDays.filter(day => day >= 22 && day <= 28).length / 7) * 100),
       advice: 'Conseil de la semaine 4\nDernière ligne droite ! Donnez le meilleur de vous-même pour finir en beauté.',
       days: [
-        { id: 22, dayOfWeek: 'lun', duration: 35, status: getDayStatus(22), sportExercise: 'Cardio expert', relaxationExercise: 'Respiration maîtrisée' },
-        { id: 23, dayOfWeek: 'mar', duration: 40, status: getDayStatus(23), sportExercise: 'Renforcement expert', relaxationExercise: 'Méditation avancée' },
-        { id: 24, dayOfWeek: 'mer', duration: 45, status: getDayStatus(24), sportExercise: 'Circuit ultime', relaxationExercise: 'Étirements experts' },
-        { id: 25, dayOfWeek: 'jeu', duration: 40, status: getDayStatus(25), sportExercise: 'Cardio final', relaxationExercise: 'Relaxation ultime' },
-        { id: 26, dayOfWeek: 'ven', duration: 45, status: getDayStatus(26), sportExercise: 'HIIT final', relaxationExercise: 'Yoga maître' },
-        { id: 27, dayOfWeek: 'sam', duration: 50, status: getDayStatus(27), sportExercise: 'Défi final', relaxationExercise: 'Méditation maîtresse' },
-        { id: 28, dayOfWeek: 'dim', duration: 35, status: getDayStatus(28), sportExercise: 'Célébration', relaxationExercise: 'Détente victoire' }
+        { id: 22, dayOfWeek: getDayOfWeekName(22), date: getCalendarDate(22), status: getDayStatus(22), sportExercise: 'Cardio expert', relaxationExercise: 'Respiration maîtrisée' },
+        { id: 23, dayOfWeek: getDayOfWeekName(23), date: getCalendarDate(23), status: getDayStatus(23), sportExercise: 'Renforcement expert', relaxationExercise: 'Méditation avancée' },
+        { id: 24, dayOfWeek: getDayOfWeekName(24), date: getCalendarDate(24), status: getDayStatus(24), sportExercise: 'Circuit ultime', relaxationExercise: 'Étirements experts' },
+        { id: 25, dayOfWeek: getDayOfWeekName(25), date: getCalendarDate(25), status: getDayStatus(25), sportExercise: 'Cardio final', relaxationExercise: 'Relaxation ultime' },
+        { id: 26, dayOfWeek: getDayOfWeekName(26), date: getCalendarDate(26), status: getDayStatus(26), sportExercise: 'HIIT final', relaxationExercise: 'Yoga maître' },
+        { id: 27, dayOfWeek: getDayOfWeekName(27), date: getCalendarDate(27), status: getDayStatus(27), sportExercise: 'Défi final', relaxationExercise: 'Méditation maîtresse' },
+        { id: 28, dayOfWeek: getDayOfWeekName(28), date: getCalendarDate(28), status: getDayStatus(28), sportExercise: 'Célébration', relaxationExercise: 'Détente victoire' }
       ]
     }
   ];
@@ -171,6 +171,27 @@ export default function ProgrammeScreen(): JSX.Element {
 
   const getCurrentWeekFromDay = (day: number): number => {
     return Math.ceil(day / 7);
+  };
+
+  const getCalendarDate = (dayNumber: number): string => {
+    // Date de départ : 21 août 2024 (jeudi) = jour 1
+    const startDate = new Date(2024, 7, 21); // Mois 7 = août (0-indexé)
+    const targetDate = new Date(startDate);
+    targetDate.setDate(startDate.getDate() + (dayNumber - 1));
+    
+    const day = targetDate.getDate();
+    const month = targetDate.getMonth() + 1; // Convertir en 1-indexé
+    
+    return `${day}/${month}`;
+  };
+
+  const getDayOfWeekName = (dayNumber: number): string => {
+    const startDate = new Date(2024, 7, 21); // 21 août 2024 (jeudi)
+    const targetDate = new Date(startDate);
+    targetDate.setDate(startDate.getDate() + (dayNumber - 1));
+    
+    const daysOfWeek = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'];
+    return daysOfWeek[targetDate.getDay()];
   };
 
   const getConsecutiveDays = (): number => {
