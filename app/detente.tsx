@@ -33,8 +33,7 @@ export default function DetenteScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top']}>
         <LinearGradient
           colors={[Colors.relaxation, '#FFB3BA']}
           style={styles.header}
@@ -129,8 +128,7 @@ export default function DetenteScreen() {
           ))}
         </View>
       </ScrollView>
-      </SafeAreaView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -138,9 +136,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  safeArea: {
-    backgroundColor: 'transparent',
   },
   header: {
     paddingTop: 10,

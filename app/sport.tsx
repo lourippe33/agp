@@ -33,8 +33,7 @@ export default function SportScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top']}>
         <LinearGradient
           colors={['#FF5722', '#FF8A65']}
           style={styles.header}
@@ -126,8 +125,7 @@ export default function SportScreen() {
           ))}
         </View>
       </ScrollView>
-      </SafeAreaView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -135,9 +133,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  safeArea: {
-    backgroundColor: 'transparent',
   },
   header: {
     paddingTop: 10,
