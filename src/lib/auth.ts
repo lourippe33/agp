@@ -1,6 +1,6 @@
 import GoTrue from 'gotrue-js';
-import { isBrowser } from '@/utils/env';
 
+const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
 const DEFAULT_IDENTITY_URL = 'https://agp-app.netlify.app/.netlify/identity';
 
 export const IDENTITY_URL = isBrowser

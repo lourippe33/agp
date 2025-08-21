@@ -5,10 +5,7 @@ import Slider from '@react-native-community/slider';
 import { Scale, Ruler, Target, TrendingUp, Save } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import AGPLogo from '@/components/AGPLogo';
 import MeasurementCharts from '@/components/MeasurementCharts';
-import { TrackingService } from '@/services/TrackingService';
-import { UserProfile } from '@/types/Tracking';
 
 interface ChoiceButtonProps {
   label: string;

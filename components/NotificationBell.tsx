@@ -13,7 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Bell, X, Check, Trash2, Square, SquareCheck as CheckSquare } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationService, Notification } from '@/services/NotificationService';
 
 interface NotificationBellProps {
   style?: any;

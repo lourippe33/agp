@@ -16,9 +16,7 @@ import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Sta
 import { Chrome as Home, ChartBar as BarChart3, Users, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import DayProgramCard from '@/components/DayProgramCard';
-import { isPastDay } from '@/utils/dateUtils';
 import { useAuth } from '@/contexts/AuthContext';
-import AGPLogo from '@/components/AGPLogo';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
 import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';

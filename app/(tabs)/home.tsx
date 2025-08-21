@@ -31,11 +31,9 @@ import {
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import { isPastDay } from '@/utils/dateUtils';
 import NotificationBell from '@/components/NotificationBell';
 import PersistentTabBar from '@/components/PersistentTabBar';
 import DayProgramCard from '@/components/DayProgramCard';
-import { isBrowser } from '@/utils/env';
 
 const dailyTips = [
   {

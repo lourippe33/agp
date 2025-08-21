@@ -16,7 +16,6 @@ import { router } from 'expo-router';
 import { Mail, ArrowLeft, Send } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { resetPassword } from '@/lib/auth';
-import AGPLogo from '@/components/AGPLogo';
 
 export default function ResetPasswordScreen() {
   const [email, setEmail] = useState('');

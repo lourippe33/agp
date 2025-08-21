@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MessageCircle, Users, ExternalLink, Heart, Star } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import AGPLogo from '@/components/AGPLogo';
 
 export default function CommunauteScreen() {
   const { user } = useAuth();

@@ -16,8 +16,6 @@ import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart,
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import AGPLogo from '@/components/AGPLogo';
-import NotificationSettings from '@/components/NotificationSettings';
 
 export default function ProfilScreen() {
   const { user, logout, updateProfile } = useAuth();

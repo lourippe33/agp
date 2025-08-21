@@ -18,7 +18,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
-import { NotificationService } from '@/services/NotificationService';
 import PWAInstallBanner from '@/components/PWAInstallBanner';
 import PWAUpdateBanner from '@/components/PWAUpdateBanner';
 import OfflineBanner from '@/components/OfflineBanner';

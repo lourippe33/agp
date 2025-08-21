@@ -10,7 +10,6 @@ import {
 import { Bell, Droplets, Utensils, MessageSquare, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationService, Notification } from '@/services/NotificationService';
 
 export default function NotificationTester() {
   const { user } = useAuth();
