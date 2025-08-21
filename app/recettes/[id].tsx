@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Users, ChefHat, Home } from 'lucide-react-native';
+import { ArrowLeft, Clock, Users, ChefHat, Chrome as Home } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';

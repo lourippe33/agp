@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Home } from 'lucide-react-native';
+import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Chrome as Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors, getMomentColor } from '@/constants/Colors';
 import recettesData from '@/data/recettes_agp.json';

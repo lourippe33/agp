@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Heart, Clock, Filter, Home } from 'lucide-react-native';
+import { ArrowLeft, Heart, Clock, Filter, Chrome as Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
