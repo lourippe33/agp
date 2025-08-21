@@ -60,27 +60,41 @@ export default function DetenteScreen() {
 
       {/* Filtres par type */}
       <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-          style={styles.filtersScroll}
-        >
-          {types.map((type) => {
+        {/* Bouton Tous centré */}
+        <View style={styles.tousButtonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.tousButton,
+              selectedType === 'tous' && { backgroundColor: Colors.relaxation }
+            ]}
+            onPress={() => setSelectedType('tous')}
+          >
+            <Filter size={16} color={selectedType === 'tous' ? Colors.textLight : Colors.relaxation} />
+            <Text style={[
+              styles.tousButtonText,
+              selectedType === 'tous' && { color: Colors.textLight }
+            ]}>
+              Tous
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Types en dessous */}
+        <View style={styles.typesContainer}>
+          {types.filter(t => t.id !== 'tous').map((type) => {
             const isSelected = selectedType === type.id;
             
             return (
               <TouchableOpacity
                 key={type.id}
                 style={[
-                  styles.filterButton,
+                  styles.typeButton,
                   isSelected && { backgroundColor: Colors.relaxation }
                 ]}
                 onPress={() => setSelectedType(type.id)}
               >
-                <Filter size={16} color={isSelected ? Colors.textLight : Colors.relaxation} />
                 <Text style={[
-                  styles.filterText,
+                  styles.typeButtonText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {type.label}
@@ -88,7 +102,7 @@ export default function DetenteScreen() {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       </View>
 
       {/* Liste des exercices */}
@@ -184,32 +198,43 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filtersScroll: {
-    flexGrow: 0,
-  },
-  filtersContent: {
-    paddingLeft: 20,
-    paddingRight: 20,
+  tousButtonContainer: {
     alignItems: 'center',
-    minWidth: '100%',
+    marginBottom: 12,
   },
-  filterButton: {
+  tousButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
-    marginRight: 12,
-    minWidth: 90,
-    justifyContent: 'center',
   },
-  filterText: {
+  tousButtonText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  typesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+  },
+  typeButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+    marginHorizontal: 4,
+  },
+  typeButtonText: {
     fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
