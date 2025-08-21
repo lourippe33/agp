@@ -433,7 +433,7 @@ export default function AdaptiveTimer({
     if (title === "Cohérence Cardiaque Relax 4-6") {
       return [
         { name: "Installation", duration: 60, type: 'preparation', instruction: "Asseyez-vous confortablement, posez une main sur votre ventre" },
-        { name: "Respiration 4-6", duration: 240, type: 'work', instruction: "Inspirez 4 secondes, expirez 6 secondes, continuez ce rythme" }
+        { name: "Respiration 4-6", duration: 300, type: 'work', instruction: "Inspirez 4 secondes, expirez 6 secondes, continuez ce rythme pendant 5 minutes" }
       ];
     }
     
