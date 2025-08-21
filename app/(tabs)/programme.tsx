@@ -173,6 +173,25 @@ export default function ProgrammeScreen(): JSX.Element {
     return Math.ceil(day / 7);
   };
 
+  const getConsecutiveDays = (): number => {
+    if (completedDays.length === 0) return 0;
+    
+    const sortedDays = [...completedDays].sort((a, b) => a - b);
+    let consecutive = 1;
+    let maxConsecutive = 1;
+    
+    for (let i = 1; i < sortedDays.length; i++) {
+      if (sortedDays[i] === sortedDays[i - 1] + 1) {
+        consecutive++;
+        maxConsecutive = Math.max(maxConsecutive, consecutive);
+      } else {
+        consecutive = 1;
+      }
+    }
+    
+    return maxConsecutive;
+  };
+
   const goToToday = (): void => {
     const todayWeek = getCurrentWeekFromDay(currentDay);
     setCurrentWeek(todayWeek);
@@ -223,25 +242,6 @@ export default function ProgrammeScreen(): JSX.Element {
   const remainingDays = 28 - completedDays.length;
   const progressPercentage = Math.round((completedDays.length / 28) * 100);
   const consecutiveDays = getConsecutiveDays();
-
-  const getConsecutiveDays = (): number => {
-    if (completedDays.length === 0) return 0;
-    
-    const sortedDays = [...completedDays].sort((a, b) => a - b);
-    let consecutive = 1;
-    let maxConsecutive = 1;
-    
-    for (let i = 1; i < sortedDays.length; i++) {
-      if (sortedDays[i] === sortedDays[i - 1] + 1) {
-        consecutive++;
-        maxConsecutive = Math.max(maxConsecutive, consecutive);
-      } else {
-        consecutive = 1;
-      }
-    }
-    
-    return maxConsecutive;
-  };
 
   return (
     <View style={styles.container}>
