@@ -1,11 +1,29 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Heart } from 'lucide-react-native';
+import { ArrowLeft, Heart, Clock, Filter } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import exercicesData from '@/data/exercices_detente.json';
+
+const types = [
+  { id: 'tous', label: 'Tous' },
+  { id: 'respiration', label: 'Respiration' },
+  { id: 'meditation', label: 'Méditation' },
+  { id: 'relaxation', label: 'Relaxation' },
+];
 
 export default function DetenteScreen() {
+  const [selectedType, setSelectedType] = useState('tous');
+
+  const filteredExercices = selectedType === 'tous' 
+    ? exercicesData.exercices
+    : exercicesData.exercices.filter(ex => ex.type === selectedType);
+
+  const handleExercisePress = (exerciseId: number) => {
+    router.push(`/detente/${exerciseId}` as any);
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -27,14 +45,68 @@ export default function DetenteScreen() {
         </Text>
       </LinearGradient>
 
+      {/* Filtres par type */}
+      <View style={styles.filtersContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.filters}>
+            {types.map((type) => {
+              const isSelected = selectedType === type.id;
+              
+              return (
+                <TouchableOpacity
+                  key={type.id}
+                  style={[
+                    styles.filterButton,
+                    isSelected && { backgroundColor: Colors.relaxation }
+                  ]}
+                  onPress={() => setSelectedType(type.id)}
+                >
+                  <Filter size={16} color={isSelected ? Colors.textLight : Colors.relaxation} />
+                  <Text style={[
+                    styles.filterText,
+                    isSelected && { color: Colors.textLight }
+                  ]}>
+                    {type.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+      </View>
+
+      {/* Liste des exercices */}
       <ScrollView style={styles.content}>
-        <View style={styles.comingSoonCard}>
-          <Heart size={48} color={Colors.relaxation} />
-          <Text style={styles.comingSoonTitle}>Exercices de détente en préparation</Text>
-          <Text style={styles.comingSoonText}>
-            Les exercices de respiration, méditation et relaxation seront 
-            bientôt disponibles pour votre bien-être quotidien.
-          </Text>
+        <View style={styles.exercicesGrid}>
+          {filteredExercices.map((exercice) => (
+            <TouchableOpacity
+              key={exercice.id}
+              style={styles.exerciceCard}
+              onPress={() => handleExercisePress(exercice.id)}
+            >
+              <Image source={{ uri: exercice.image }} style={styles.exerciceImage} />
+              <View style={styles.exerciceContent}>
+                <Text style={styles.exerciceTitle}>{exercice.titre}</Text>
+                <View style={styles.exerciceInfo}>
+                  <View style={styles.infoItem}>
+                    <Clock size={14} color={Colors.textSecondary} />
+                    <Text style={styles.infoText}>{exercice.duree} min</Text>
+                  </View>
+                  <View style={styles.typeBadge}>
+                    <Text style={styles.typeText}>{exercice.type}</Text>
+                  </View>
+                </View>
+                <Text style={styles.description} numberOfLines={2}>
+                  {exercice.description}
+                </Text>
+                <View style={styles.tagsContainer}>
+                  {exercice.tags.slice(0, 2).map((tag, index) => (
+                    <Text key={index} style={styles.tag}>#{tag}</Text>
+                  ))}
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -75,34 +147,104 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     textAlign: 'center',
   },
+  filtersContainer: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  filters: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+    gap: 6,
+  },
+  filterText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
   content: {
     flex: 1,
     padding: 20,
   },
-  comingSoonCard: {
+  exercicesGrid: {
+    gap: 16,
+  },
+  exerciceCard: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
-    padding: 32,
-    alignItems: 'center',
-    elevation: 2,
+    overflow: 'hidden',
+    elevation: 3,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  comingSoonTitle: {
-    fontSize: 18,
+  exerciceImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: Colors.border,
+  },
+  exerciceContent: {
+    padding: 16,
+  },
+  exerciceTitle: {
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    marginTop: 16,
-    marginBottom: 12,
-    textAlign: 'center',
+    marginBottom: 8,
   },
-  comingSoonText: {
-    fontSize: 14,
+  exerciceInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  infoText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+  },
+  typeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: Colors.relaxation,
+  },
+  typeText: {
+    fontSize: 10,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.textLight,
+    textTransform: 'capitalize',
+  },
+  description: {
+    fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 16,
+    marginBottom: 8,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  tag: {
+    fontSize: 11,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
   },
 });
