@@ -31,6 +31,8 @@ import {
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/contexts/AuthContext';
+import NotificationBell from '@/components/NotificationBell';
+import PersistentTabBar from '@/components/PersistentTabBar';
 import DayProgramCard from '@/components/DayProgramCard';
 import AGPLogo from '@/components/AGPLogo';
 import { isPastDay } from '@/utils/dateUtils';
@@ -682,11 +684,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-end',
     gap: 12,
-  },
-  notificationBell: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
-    padding: 8,
   },
   greeting: {
     fontSize: 28,
