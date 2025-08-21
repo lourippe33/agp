@@ -15,24 +15,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { User, CreditCard as Edit3, Save, Camera, Bell, Target, Activity, Heart, Settings, ChevronRight, LogOut, Trash2, Droplets, Scale, Ruler } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfilScreen() {
-  const { user, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    username: user?.username || '',
-    niveauSport: user?.niveauSport || 'debutant',
-    preferencesAlimentaires: user?.preferencesAlimentaires || [],
-    objectifs: user?.objectifs || [],
+    firstName: '',
+    lastName: '',
+    username: '',
+    niveauSport: 'debutant',
+    preferencesAlimentaires: [],
+    objectifs: [],
   });
   const [notifications, setNotifications] = useState(true);
   const [waterNotifications, setWaterNotifications] = useState(true);
   const [waterObjective, setWaterObjective] = useState(8);
-  // État pour suivre le processus de déconnexion
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Fonctions mémorisées pour éviter les re-renders
   const updateFirstName = useCallback((text: string) => {
@@ -51,68 +47,17 @@ export default function ProfilScreen() {
     setFormData(prev => ({ ...prev, niveauSport: value as any }));
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        username: user.username || '',
-        niveauSport: user.niveauSport || 'debutant',
-        preferencesAlimentaires: user.preferencesAlimentaires || [],
-        objectifs: user.objectifs || [],
-      });
-    }
-  }, [user]);
 
   const handleSave = async () => {
-    if (!user) return;
 
     try {
-      // Sauvegarder les informations de base
-      const result = await updateProfile(user.id, formData);
-      
-      if (result.success) {
-        setIsEditing(false);
-        Alert.alert('Succès', 'Profil mis à jour avec succès !');
-      } else {
-        Alert.alert('Erreur', result.error || 'Erreur lors de la mise à jour');
-      }
+      setIsEditing(false);
+      Alert.alert('Succès', 'Profil mis à jour avec succès !');
     } catch (error) {
       Alert.alert('Erreur', 'Une erreur est survenue');
     }
   };
 
-  const handleLogout = () => {
-    console.log('Bouton de déconnexion cliqué');
-    Alert.alert(
-      'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Déconnexion',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsLoggingOut(true);
-              console.log('🔄 Déconnexion en cours...');
-              await logout();
-              console.log('✅ Déconnexion réussie');
-              // La redirection est gérée automatiquement par le contexte d'auth
-            } catch (error) {
-              setIsLoggingOut(false);
-              console.error('❌ Erreur lors de la déconnexion:', error);
-              Alert.alert(
-                'Erreur',
-                'Impossible de se déconnecter. Veuillez réessayer.',
-                [{ text: 'OK' }]
-              );
-            }
-          },
-        },
-      ]
-    );
-  };
 
   const togglePreference = useCallback((preference: string) => {
     setFormData(prev => ({
@@ -340,7 +285,7 @@ export default function ProfilScreen() {
 
           <View style={styles.fieldContainer}>
             <Text style={styles.fieldLabel}>Email</Text>
-            <Text style={styles.fieldValue}>{user?.email}</Text>
+            <Text style={styles.fieldValue}>utilisateur@example.com</Text>
           </View>
         </ProfileSection>
 
@@ -432,36 +377,15 @@ export default function ProfilScreen() {
         </ProfileSection>
 
         {/* Actions */}
-        <View style={styles.actionsSection}>
-          <TouchableOpacity 
-            style={[
-              styles.actionButton,
-              isLoggingOut && { opacity: 0.6 }
-            ]}
-            onPress={handleLogout}
-            disabled={isLoggingOut}
-            activeOpacity={0.7}
-          >
-            {isLoggingOut ? (
-              <ActivityIndicator size="small" color={Colors.relaxation} />
-            ) : (
-              <LogOut size={24} color={Colors.relaxation} />
-            )}
-            <Text style={[styles.actionButtonText, { color: Colors.relaxation }]}>
-              {isLoggingOut ? 'Déconnexion...' : 'Déconnexion'}
-            </Text>
-            <ChevronRight size={24} color={Colors.relaxation} />
-          </TouchableOpacity>
-        </View>
 
         {/* Informations de compte */}
         <View style={styles.accountInfo}>
           <Text style={styles.accountInfoTitle}>Informations du compte</Text>
           <Text style={styles.accountInfoText}>
-            Membre depuis : {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+            Membre depuis : 18/06/2025
           </Text>
           <Text style={styles.accountInfoText}>
-            Dernière mise à jour : {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('fr-FR') : 'Jamais'}
+            Dernière mise à jour : Aujourd'hui
           </Text>
         </View>
       </View>
@@ -632,32 +556,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
     color: Colors.text,
-  },
-  actionsSection: {
-    marginBottom: 20,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 24,
-    paddingHorizontal: 24,
-    gap: 16,
-    marginBottom: 12,
-    elevation: 8,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    borderWidth: 1,
-    borderColor: Colors.relaxation,
-  },
-  actionButtonText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    flex: 1,
   },
   accountInfo: {
     backgroundColor: Colors.agpLightBlue,

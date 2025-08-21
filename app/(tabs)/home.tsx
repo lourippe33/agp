@@ -30,9 +30,6 @@ import {
 
 import { router, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
-import NotificationBell from '@/components/NotificationBell';
-import PersistentTabBar from '@/components/PersistentTabBar';
 import DayProgramCard from '@/components/DayProgramCard';
 import AGPLogo from '@/components/AGPLogo';
 import { isPastDay } from '@/utils/dateUtils';
@@ -93,7 +90,6 @@ interface DayProgram {
 }
 
 export default function HomeScreen() {
-  const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [programData, setProgramData] = useState<DayProgram[]>([]);
   const [visibleDayIndex, setVisibleDayIndex] = useState(0);
@@ -449,7 +445,7 @@ export default function HomeScreen() {
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
               <Text style={styles.greeting}>
-                {getGreeting()}, {user?.firstName || 'Utilisateur'}
+                {getGreeting()}, Utilisateur
               </Text>
               <Text style={styles.subtitle}>
                 Votre parcours chronobiologique vous attend
@@ -457,8 +453,6 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.headerRight}>
-              <NotificationBell style={styles.notificationBell} />
-              
               <View style={styles.momentIndicator}>
                 {getMomentIcon()}
                 <Text style={styles.momentText}>
@@ -472,7 +466,7 @@ export default function HomeScreen() {
         {/* Welcome message */}
         <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, alignItems: 'center' }}>
           <Text style={{ fontSize: 20, fontFamily: 'Poppins-Bold', color: Colors.text, textAlign: 'center' }}>
-            Bienvenue sur AGP, {user?.firstName || 'Utilisateur'} 👋
+            Bienvenue sur AGP, Utilisateur 👋
           </Text>
         </View>
 

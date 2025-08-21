@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
 import { Scale, Ruler, Target, TrendingUp, Save } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
 import AGPLogo from '@/components/AGPLogo';
 import { TrackingService } from '@/services/TrackingService';
 import { UserProfile } from '@/types/Tracking';
@@ -32,7 +31,6 @@ const ChoiceButton = ({ label, selected, onPress }: ChoiceButtonProps) => (
 );
 
 export default function SuiviScreen() {
-  const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState<'measurements' | 'charts'>('measurements');
   const [height, setHeight] = useState(170);
   const [weight, setWeight] = useState(70);
@@ -48,17 +46,13 @@ export default function SuiviScreen() {
 
   // Charger les données au montage du composant
   useEffect(() => {
-    if (user) {
-      loadUserProfile();
-      loadMeasurementHistory();
-    }
-  }, [user]);
+    loadUserProfile();
+    loadMeasurementHistory();
+  }, []);
 
   const loadUserProfile = async () => {
-    if (!user) return;
-    
     try {
-      const profile = await TrackingService.getUserProfile(user.id);
+      const profile = await TrackingService.getUserProfile('demo-user');
       if (profile) {
         setHeight(profile.height || 170);
         setWeight(profile.currentWeight || 70);
@@ -72,8 +66,6 @@ export default function SuiviScreen() {
   };
 
   const loadMeasurementHistory = async () => {
-    if (!user) return;
-    
     try {
       // Charger l'historique des 30 derniers jours
       const endDate = new Date().toISOString().split('T')[0];
@@ -81,7 +73,7 @@ export default function SuiviScreen() {
       startDate.setDate(startDate.getDate() - 29);
       const startDateStr = startDate.toISOString().split('T')[0];
       
-      const trackings = await TrackingService.getWeeklyTracking(user.id, startDateStr, endDate);
+      const trackings = await TrackingService.getWeeklyTracking('demo-user', startDateStr, endDate);
       
       // Convertir en format pour les graphiques
       const chartData = trackings.map(tracking => ({
@@ -99,12 +91,10 @@ export default function SuiviScreen() {
   };
 
   const saveMeasurements = async () => {
-    if (!user) return;
-    
     try {
       // Sauvegarder le profil utilisateur
       const profile: UserProfile = {
-        id: user.id,
+        id: 'demo-user',
         currentWeight: weight,
         targetWeight: targetWeight,
         height: height,
@@ -112,11 +102,11 @@ export default function SuiviScreen() {
         startDate: new Date().toISOString().split('T')[0],
       };
       
-      await TrackingService.saveUserProfile(user.id, profile);
+      await TrackingService.saveUserProfile('demo-user', profile);
       
       // Sauvegarder l'entrée du jour
       const today = new Date().toISOString().split('T')[0];
-      const existingTracking = await TrackingService.getDailyTracking(user.id, today);
+      const existingTracking = await TrackingService.getDailyTracking('demo-user', today);
       
       const dailyTracking = existingTracking || {
         id: TrackingService.generateId(),
@@ -139,7 +129,7 @@ export default function SuiviScreen() {
       // Mettre à jour le poids du jour
       dailyTracking.weight = weight;
       
-      await TrackingService.saveDailyTracking(user.id, dailyTracking);
+      await TrackingService.saveDailyTracking('demo-user', dailyTracking);
       
       // Recharger les données
       await loadMeasurementHistory();
@@ -214,7 +204,7 @@ export default function SuiviScreen() {
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>Mon Suivi</Text>
             <Text style={styles.headerSubtitle}>
-              Suivez votre évolution corporelle
+              Bonjour Utilisateur ! 👋
             </Text>
           </View>
           <View style={styles.headerIcon}>

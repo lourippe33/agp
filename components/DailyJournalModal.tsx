@@ -14,7 +14,6 @@ import { X, Plus, Minus, Camera, Clock, Save } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { JournalEntry, Meal } from '@/types/Journal';
 import { JournalService } from '@/services/JournalService';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface DailyJournalModalProps {
   visible: boolean;
@@ -29,7 +28,6 @@ export default function DailyJournalModal({
   date,
   onSave,
 }: DailyJournalModalProps) {
-  const { user } = useAuth();
   const [waterIntake, setWaterIntake] = useState(0);
   const [waterObjective, setWaterObjective] = useState(8);
   const [meals, setMeals] = useState<Meal[]>([
@@ -42,16 +40,15 @@ export default function DailyJournalModal({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (visible && user) {
+    if (visible) {
       loadExistingEntry();
     }
-  }, [visible, date, user]);
+  }, [visible, date]);
 
   const loadExistingEntry = async () => {
-    if (!user) return;
 
     try {
-      const entries = await JournalService.getJournalEntries(user.id, date, date);
+      const entries = await JournalService.getJournalEntries('demo-user', date, date);
       const existingEntry = entries.find(e => e.date === date);
       
       if (existingEntry) {
@@ -66,13 +63,12 @@ export default function DailyJournalModal({
   };
 
   const handleSave = async () => {
-    if (!user) return;
 
     setLoading(true);
     try {
       const entry: JournalEntry = {
         id: Date.now().toString(),
-        userId: user.id,
+        userId: 'demo-user',
         date,
         waterIntake,
         waterIntakeObjective: waterObjective,

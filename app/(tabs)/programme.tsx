@@ -16,7 +16,6 @@ import { Calendar, Trophy, Target, CircleCheck as CheckCircle, Clock, Flame, Sta
 import { Chrome as Home, ChartBar as BarChart3, Users, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import DayProgramCard from '@/components/DayProgramCard';
-import { useAuth } from '@/contexts/AuthContext';
 import ProgramChoiceModal from '@/components/ProgramChoiceModal';
 import AGPLogo from '@/components/AGPLogo';
 import { isPastDay } from '@/utils/dateUtils';
@@ -50,7 +49,6 @@ interface DayProgram {
 }
 
 export default function ProgrammeScreen() {
-  const { user } = useAuth();
   const params = useLocalSearchParams();
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selectedDay, setSelectedDay] = useState<DayProgram | null>(null);
@@ -71,7 +69,7 @@ export default function ProgrammeScreen() {
   // Supprimer les références qui causent des problèmes
   useEffect(() => {
     generateProgramData();
-  }, [user]);
+  }, []);
   
   // Centrer le jour actuel au chargement initial
   useEffect(() => {

@@ -12,7 +12,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Droplets, Utensils, Plus, ChevronLeft, ChevronRight, Check, Clock } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useAuth } from '@/contexts/AuthContext';
 import DailyJournalModal from '@/components/DailyJournalModal';
 import { JournalEntry } from '@/types/Journal';
 import { JournalService } from '@/services/JournalService';
@@ -21,20 +20,16 @@ import AGPLogo from '@/components/AGPLogo';
 const { width } = Dimensions.get('window');
 
 export default function JournalScreen() {
-  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [journalModalVisible, setJournalModalVisible] = useState(false);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
   useEffect(() => {
-    if (user) {
-      loadJournalData();
-    }
-  }, [user, selectedDate]);
+    loadJournalData();
+  }, [selectedDate]);
 
   const loadJournalData = async () => {
-    if (!user) return;
 
     try {
       // Calculer les dates pour la semaine en cours
@@ -49,7 +44,7 @@ export default function JournalScreen() {
 
       // Récupérer les données de journal pour la semaine
       const entries = await JournalService.getJournalEntries(
-        user.id,
+        'demo-user',
         startDateStr,
         endDateStr
       );
@@ -317,7 +312,7 @@ export default function JournalScreen() {
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>Journal Quotidien</Text>
             <Text style={styles.headerSubtitle}>
-              Suivez vos repas et votre hydratation
+              Salut Utilisateur ! 👋
             </Text>
           </View>
           <View style={styles.headerIcon}>
