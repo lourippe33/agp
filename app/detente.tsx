@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Heart, Clock, Filter, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, Heart, Clock, Filter, Chrome as Home, Search, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import exercicesData from '@/data/exercices_detente.json';
@@ -17,11 +17,18 @@ const types = [
 
 export default function DetenteScreen() {
   const [selectedType, setSelectedType] = useState('tous');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
   const { returnTo } = useLocalSearchParams();
 
-  const filteredExercices = selectedType === 'tous' 
-    ? exercicesData.exercices
-    : exercicesData.exercices.filter(ex => ex.type === selectedType);
+  const filteredExercices = exercicesData.exercices.filter(exercice => {
+    const matchesType = selectedType === 'tous' || exercice.type === selectedType;
+    const matchesSearch = searchQuery === '' || 
+      exercice.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exercice.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      exercice.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesType && matchesSearch;
+  });
 
   const handleExercisePress = (exerciseId: number) => {
     if (returnTo) {
@@ -48,14 +55,36 @@ export default function DetenteScreen() {
             <Text style={styles.headerTitle}>Exercices de Détente</Text>
             <TouchableOpacity 
               style={styles.homeButton}
-              onPress={() => router.push('/(tabs)/home')}
+              onPress={() => setShowSearch(!showSearch)}
             >
-              <Text style={styles.homeButtonText}>Accueil</Text>
+              <Search size={20} color={Colors.textLight} />
             </TouchableOpacity>
           </View>
           <Text style={styles.headerSubtitle}>
             Relaxation et gestion du stress
           </Text>
+          
+          {/* Barre de recherche */}
+          {showSearch && (
+            <View style={styles.searchContainer}>
+              <View style={styles.searchInputContainer}>
+                <Search size={20} color={Colors.textSecondary} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Rechercher un exercice, type..."
+                  placeholderTextColor={Colors.textSecondary}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  autoFocus={true}
+                />
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <X size={20} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          )}
         </LinearGradient>
 
       {/* Filtres par type */}
@@ -107,6 +136,15 @@ export default function DetenteScreen() {
 
       {/* Liste des exercices */}
       <ScrollView style={styles.content}>
+        {/* Résultats de recherche */}
+        {searchQuery.length > 0 && (
+          <View style={styles.searchResults}>
+            <Text style={styles.searchResultsText}>
+              {filteredExercices.length} résultat{filteredExercices.length > 1 ? 's' : ''} pour "{searchQuery}"
+            </Text>
+          </View>
+        )}
+        
         <View style={styles.exercicesGrid}>
           {filteredExercices.map((exercice) => (
             <TouchableOpacity
@@ -239,6 +277,35 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
     textAlign: 'center',
+  },
+  searchContainer: {
+    marginTop: 16,
+    paddingHorizontal: 0,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    paddingVertical: 4,
+  },
+  searchResults: {
+    marginBottom: 16,
+    paddingHorizontal: 4,
+  },
+  searchResultsText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
   },
   content: {
     flex: 1,
