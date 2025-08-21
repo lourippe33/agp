@@ -482,7 +482,6 @@ export default function SuiviScreen() {
         color="#2196F3"
       />
     </View>
-  )
   );
 }
 
