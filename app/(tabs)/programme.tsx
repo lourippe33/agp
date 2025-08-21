@@ -37,7 +37,6 @@ export default function HomeScreen() {
     }
   };
 
-  const [currentProgramDay, setCurrentProgramDay] = useState<number>(1);
 
   useEffect(() => {
     loadProgramProgress();
