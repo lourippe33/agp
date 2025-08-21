@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BarChart3 } from 'lucide-react-native';
+import { ChartBar as BarChart3 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 export default function SuiviScreen() {
