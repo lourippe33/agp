@@ -34,6 +34,8 @@ export default function HomeScreen() {
         const progress: ProgramProgress = JSON.parse(savedProgress);
         setCurrentProgramDay(Math.min(28, progress.currentDay));
       }
+    }
+  }
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
