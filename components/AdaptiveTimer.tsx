@@ -371,9 +371,8 @@ export default function AdaptiveTimer({
     
     if (title === "Marche active sur place") {
       return [
-        { name: "Position", duration: 60, type: 'preparation', instruction: "Tiens-toi debout, pieds écartés à la largeur des hanches" },
-        { name: "Marche active", duration: 480, type: 'work', instruction: "Lève les genoux l'un après l'autre, balance les bras naturellement" },
-        { name: "Finalisation", duration: 60, type: 'rest', instruction: "Ralentis progressivement et respire calmement" }
+        { name: "Préparation", duration: 30, type: 'preparation', instruction: "Tiens-toi debout, pieds écartés à la largeur des hanches. Commence à lever les genoux l'un après l'autre." },
+        { name: "Marche active", duration: 600, type: 'work', instruction: "Continue ainsi pendant 10 minutes. Balance les bras naturellement comme si tu marchais vite. Garde un rythme soutenu sans t'essouffler." }
       ];
     }
     
