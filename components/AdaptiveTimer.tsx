@@ -196,7 +196,7 @@ export default function AdaptiveTimer({
       setTimeRemaining(analyzedPhases[0].duration);
       setIsInitialized(true);
     }
-  }, [exerciseSteps, totalDuration, exerciseTitle]);
+  }, [exerciseSteps, totalDuration, exerciseTitle, exerciseType]);
 
   const analyzeExerciseSpecs = (steps: string[], duration: number, title: string): TimerPhase[] => {
     const phases: TimerPhase[] = [];
@@ -429,9 +429,114 @@ export default function AdaptiveTimer({
     return analyzeGenericExercise(steps, duration);
   };
 
+  // Analyser les exercices de détente selon leurs spécifications exactes
+  const analyzeDetenteSpecs = (steps: string[], duration: number, title: string): TimerPhase[] => {
+    if (title === "Cohérence Cardiaque Relax 4-6") {
+      return [
+        { name: "Installation", duration: 30, type: 'preparation', instruction: "Asseyez-vous confortablement, les pieds bien au sol. Posez une main sur votre ventre." },
+        { name: "Respiration 4-6", duration: 270, type: 'work', instruction: "Inspirez par le nez en comptant jusqu'à 4, expirez par la bouche en comptant jusqu'à 6. Continuez ce rythme sans forcer." }
+      ];
+    }
+    
+    if (title === "Respiration du Sourire") {
+      return [
+        { name: "Respiration du Sourire", duration: 120, type: 'work', instruction: "Esquissez un léger sourire, inspirez lentement en gardant le sourire, expirez doucement en relâchant les tensions." }
+      ];
+    }
+    
+    if (title === "Étirements Doux Assis") {
+      return [
+        { name: "Position", duration: 15, type: 'preparation', instruction: "Asseyez-vous bien droit sur votre chaise" },
+        { name: "Épaules", duration: 60, type: 'work', instruction: "Roulez lentement les épaules vers l'arrière (5 fois)" },
+        { name: "Tête", duration: 45, type: 'work', instruction: "Tournez doucement la tête à droite puis à gauche (3 fois)" },
+        { name: "Bras", duration: 60, type: 'work', instruction: "Levez les bras vers le ciel et étirez-vous" },
+        { name: "Respiration", duration: 120, type: 'rest', instruction: "Terminez en respirant profondément" }
+      ];
+    }
+    
+    if (title === "Méditation des 5 Sens") {
+      return [
+        { name: "5 choses à voir", duration: 60, type: 'work', instruction: "Identifiez 5 choses que vous voyez autour de vous" },
+        { name: "4 sons à entendre", duration: 60, type: 'work', instruction: "Écoutez 4 sons différents dans votre environnement" },
+        { name: "3 textures à toucher", duration: 60, type: 'work', instruction: "Touchez 3 objets et ressentez leur texture" },
+        { name: "2 odeurs à sentir", duration: 60, type: 'work', instruction: "Sentez 2 odeurs (parfum, nourriture, air frais)" },
+        { name: "1 goût", duration: 60, type: 'work', instruction: "Goûtez 1 chose (salive, tisane, bonbon)" }
+      ];
+    }
+    
+    if (title === "Auto-massage des Mains") {
+      return [
+        { name: "Réchauffement", duration: 30, type: 'preparation', instruction: "Frottez vos paumes l'une contre l'autre pour les réchauffer" },
+        { name: "Massage des doigts", duration: 60, type: 'work', instruction: "Massez chaque doigt de la base vers l'extrémité" },
+        { name: "Points de pression", duration: 45, type: 'work', instruction: "Pressez doucement le point au centre de chaque paume" },
+        { name: "Dos des mains", duration: 60, type: 'work', instruction: "Faites des cercles avec vos pouces sur le dos des mains" },
+        { name: "Finalisation", duration: 15, type: 'rest', instruction: "Terminez en secouant doucement les mains" }
+      ];
+    }
+    
+    if (title === "Respiration du Ventre") {
+      return [
+        { name: "Position", duration: 15, type: 'preparation', instruction: "Posez une main sur votre ventre" },
+        { name: "Respiration abdominale", duration: 225, type: 'work', instruction: "Inspirez lentement en gonflant le ventre comme un ballon, expirez doucement en rentrant le ventre. Répétez 10 fois à votre rythme." }
+      ];
+    }
+    
+    if (title === "Visualisation du Lieu Paisible") {
+      return [
+        { name: "Préparation", duration: 30, type: 'preparation', instruction: "Fermez les yeux et respirez calmement" },
+        { name: "Visualisation", duration: 180, type: 'work', instruction: "Imaginez un lieu où vous vous sentez bien (plage, jardin, montagne). Visualisez les couleurs, entendez les sons." },
+        { name: "Immersion", duration: 150, type: 'work', instruction: "Ressentez la température, les odeurs. Restez dans ce lieu paisible." }
+      ];
+    }
+    
+    if (title === "Marche Consciente Intérieure") {
+      return [
+        { name: "Ancrage", duration: 30, type: 'preparation', instruction: "Debout, sentez vos pieds en contact avec le sol" },
+        { name: "3 pas conscients", duration: 90, type: 'work', instruction: "Faites 3 pas très lentement, concentrez-vous sur le mouvement de chaque pied" },
+        { name: "Transfert de poids", duration: 60, type: 'work', instruction: "Sentez le transfert du poids d'un pied à l'autre" },
+        { name: "Respiration finale", duration: 60, type: 'rest', instruction: "Arrêtez-vous et respirez profondément" }
+      ];
+    }
+    
+    if (title === "Gratitude Express") {
+      return [
+        { name: "Gratitude Express", duration: 120, type: 'work', instruction: "Pensez à une chose pour laquelle vous êtes reconnaissant aujourd'hui. Ressentez cette gratitude dans votre cœur, souriez intérieurement et remerciez mentalement votre corps." }
+      ];
+    }
+    
+    if (title === "Relaxation Express") {
+      return [
+        { name: "Épaules", duration: 30, type: 'work', instruction: "Haussez les épaules vers les oreilles, tenez 3 secondes, relâchez" },
+        { name: "Yeux", duration: 30, type: 'work', instruction: "Fermez fort les yeux, tenez 3 secondes, relâchez" },
+        { name: "Poings", duration: 30, type: 'work', instruction: "Serrez les poings, tenez 3 secondes, relâchez" },
+        { name: "Ventre", duration: 30, type: 'work', instruction: "Contractez les muscles du ventre, tenez 3 secondes, relâchez" },
+        { name: "Respiration finale", duration: 60, type: 'rest', instruction: "Respirez profondément et sentez la détente" }
+      ];
+    }
+    
+    if (title === "Respiration Apaisante 2-4") {
+      return [
+        { name: "Respiration 2-4", duration: 180, type: 'work', instruction: "Inspirez calmement en comptant jusqu'à 2, expirez lentement en comptant jusqu'à 4. Répétez ce rythme 2-4 sans forcer, concentrez-vous sur l'expiration plus longue." }
+      ];
+    }
+    
+    if (title === "Méditation du Thé/Tisane") {
+      return [
+        { name: "Préparation", duration: 60, type: 'preparation', instruction: "Préparez votre thé ou tisane avec attention. Observez la couleur, sentez l'arôme." },
+        { name: "Première gorgée", duration: 30, type: 'work', instruction: "Prenez la première gorgée lentement, ressentez la chaleur et le goût" },
+        { name: "Dégustation consciente", duration: 210, type: 'work', instruction: "Buvez en pleine conscience, gorgée par gorgée, savourez chaque instant" }
+      ];
+    }
+    
+    // Pour les autres exercices de détente, analyse générique
+    return analyzeGenericExercise(steps, duration);
+  };
+
   // Gestion du timer
   useEffect(() => {
-    if (isRunning && timeRemaining > 0) {
+    const analyzedPhases = exerciseType === 'sport' 
+      ? analyzeExerciseSpecs(exerciseSteps, totalDuration, exerciseTitle)
+      : analyzeDetenteSpecs(exerciseSteps, totalDuration, exerciseTitle);
       intervalRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
