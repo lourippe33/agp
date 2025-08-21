@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet, Animated, Platform } from 're
 import { router, usePathname } from 'expo-router';
 import { Chrome as Home } from 'lucide-react-native'; 
 import { Colors } from '@/constants/Colors';
+import { isBrowser } from '@/utils/env';
 
 export default function PersistentTabBar() {
   const pathname = usePathname();
@@ -10,7 +11,7 @@ export default function PersistentTabBar() {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isBrowser) {
       const handleScroll = () => {
         const currentScrollY = window.scrollY;
         
