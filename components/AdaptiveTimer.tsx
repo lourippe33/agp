@@ -45,40 +45,53 @@ export default function AdaptiveTimer({
     const totalSeconds = duration * 60;
     const phases: TimerPhase[] = [];
     
+    // Filtrer les étapes qui sont des instructions intégrées
+    const filteredSteps = steps.filter(step => {
+      const stepLower = step.toLowerCase();
+      // Exclure les étapes qui sont des instructions pour d'autres étapes
+      return !(
+        stepLower.includes('ralentissez progressivement') ||
+        stepLower.includes('accélérez progressivement') ||
+        stepLower.includes('les dernières minutes') ||
+        stepLower.includes('les 3 dernières') ||
+        stepLower.includes('pendant les') && stepLower.includes('dernières')
+      );
+    });
+    
     // Détection de patterns spécifiques
-    const hasCircuit = steps.some(step => 
+    const hasCircuit = filteredSteps.some(step => 
       step.toLowerCase().includes('circuit') || 
       step.toLowerCase().includes('répète') ||
       step.toLowerCase().includes('fois')
     );
 
-    const hasTabata = steps.some(step => 
+    const hasTabata = filteredSteps.some(step => 
       step.toLowerCase().includes('tabata') || 
       step.toLowerCase().includes('20 sec') && step.toLowerCase().includes('10 sec')
     );
 
-    const hasRounds = steps.some(step => 
+    const hasRounds = filteredSteps.some(step => 
       step.toLowerCase().includes('round') || 
       step.toLowerCase().includes('série') ||
       step.toLowerCase().includes('x ')
     );
 
-    const hasIntervals = steps.some(step => 
+    const hasIntervals = filteredSteps.some(step => 
       step.toLowerCase().includes(' sec') ||
       step.toLowerCase().includes('repos')
     );
 
-    const hasSimpleSteps = steps.some(step => 
+    const hasSimpleSteps = filteredSteps.some(step => 
       step.toLowerCase().includes('échauffement') ||
       step.toLowerCase().includes('étirement') ||
       step.toLowerCase().includes('retour au calme')
     );
 
-    const hasSpecificDurations = steps.some(step => 
+    const hasSpecificDurations = filteredSteps.some(step => 
       /\d+\s*(min|sec)/.test(step.toLowerCase())
     );
 
-    console.log('Analyse exercice:', { hasTabata, hasCircuit, hasRounds, hasIntervals, hasSimpleSteps, hasSpecificDurations, steps });
+    console.log('Analyse exercice:', { hasTabata, hasCircuit, hasRounds, hasIntervals, hasSimpleSteps, hasSpecificDurations, filteredSteps });
 
     if (type === 'sport') {
       if (hasIntervals) {
@@ -86,9 +99,9 @@ export default function AdaptiveTimer({
         phases.push({ name: 'Échauffement', duration: 60, type: 'preparation' });
         
         // Extraire les intervalles
-        const workTime = extractTimeFromSteps(steps, 'work') || 30;
-        const restTime = extractTimeFromSteps(steps, 'rest') || 15;
-        const rounds = extractRoundsFromSteps(steps) || 8;
+        const workTime = extractTimeFromSteps(filteredSteps, 'work') || 30;
+        const restTime = extractTimeFromSteps(filteredSteps, 'rest') || 15;
+        const rounds = extractRoundsFromSteps(filteredSteps) || 8;
         
         for (let i = 0; i < Math.min(rounds, 12); i++) {
           phases.push({ 
@@ -130,7 +143,7 @@ export default function AdaptiveTimer({
         // Circuit training détecté
         phases.push({ name: 'Échauffement', duration: 180, type: 'preparation' });
         
-        const rounds = extractRoundsFromSteps(steps) || 3;
+        const rounds = extractRoundsFromSteps(filteredSteps) || 3;
         const workDuration = Math.floor((totalSeconds - 300) / rounds); // -5min pour échauffement/récup
         
         for (let i = 0; i < rounds; i++) {
@@ -151,9 +164,9 @@ export default function AdaptiveTimer({
         phases.push({ name: 'Retour au calme', duration: 120, type: 'rest' });
       } else {
         // Exercice standard - analyser chaque étape
-        let remainingTime = totalSeconds;
+        let remainingTime = totalSeconds - 120; // Réserver du temps pour échauffement et récupération
         
-        steps.forEach((step, index) => {
+        filteredSteps.forEach((step, index) => {
           // Extraire la durée spécifique de l'étape si mentionnée
           const specificDuration = extractSpecificDuration(step);
           let stepDuration;
@@ -161,13 +174,13 @@ export default function AdaptiveTimer({
           if (specificDuration > 0) {
             stepDuration = specificDuration;
           } else if (step.toLowerCase().includes('échauffement')) {
-            stepDuration = Math.min(180, Math.floor(totalSeconds * 0.15));
+            stepDuration = 60; // Échauffement fixe
           } else if (step.toLowerCase().includes('retour au calme') || step.toLowerCase().includes('récupération')) {
-            stepDuration = Math.min(120, Math.floor(totalSeconds * 0.1));
+            stepDuration = 60; // Récupération fixe
           } else {
             // Répartir le temps restant sur les étapes restantes
-            const remainingSteps = steps.length - index;
-            stepDuration = Math.floor(remainingTime / remainingSteps);
+            const remainingSteps = filteredSteps.length - index;
+            stepDuration = Math.max(30, Math.floor(remainingTime / remainingSteps)); // Minimum 30 secondes
           }
           
           remainingTime -= stepDuration;
@@ -182,6 +195,11 @@ export default function AdaptiveTimer({
             type: stepType
           });
         });
+        
+        // Ajouter récupération finale si pas déjà présente
+        if (!filteredSteps.some(step => step.toLowerCase().includes('retour au calme'))) {
+          phases.push({ name: 'Retour au calme', duration: 60, type: 'rest' });
+        }
       }
     } else {
       // Exercices de détente
@@ -190,7 +208,7 @@ export default function AdaptiveTimer({
         const stepDuration = Math.floor(totalSeconds / steps.length);
         steps.forEach((step, index) => {
           phases.push({
-            name: `${step.substring(0, 40)}...`,
+            name: step.length > 40 ? `${step.substring(0, 37)}...` : step,
             duration: stepDuration,
             type: 'work'
           });
@@ -204,7 +222,7 @@ export default function AdaptiveTimer({
         
         steps.slice(1, -1).forEach((step, index) => {
           phases.push({
-            name: `${step.substring(0, 40)}...`,
+            name: step.length > 40 ? `${step.substring(0, 37)}...` : step,
             duration: stepDuration,
             type: 'work'
           });
@@ -213,6 +231,9 @@ export default function AdaptiveTimer({
         phases.push({ name: 'Relaxation finale', duration: 60, type: 'rest' });
       }
     }
+    
+    // S'assurer qu'aucune phase n'a une durée négative ou nulle
+    return phases.filter(phase => phase.duration > 0);
 
     return phases;
   };
