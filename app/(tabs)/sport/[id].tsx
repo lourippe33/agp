@@ -4,42 +4,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Clock, Zap, Play, Users } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import exercicesData from '@/data/exercices.json';
 
-// Données d'exemple pour l'exercice
-const exerciceData = {
-  id: 1,
-  titre: "Cardio Brûle-Graisse",
-  niveau: "intermediaire",
-  duree: 20,
-  calories: 180,
-  difficulte: "Moyen",
-  tags: ["cardio", "perte-de-poids", "brule-graisse"],
-  image: "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?w=800&q=80",
-  description: "Séance dynamique sans matériel pour activer le métabolisme, brûler des graisses et améliorer l'endurance. Parfaite pour la perte de poids.",
-  etapes: [
-    "Échauffement (3 min) : marche rapide sur place, montées de genoux légères, cercles de bras",
-    "Jumping jacks (2 min) : ouvre et ferme les jambes en sautant, bras qui montent et descendent",
-    "Squats dynamiques (2 min) : plie les genoux comme pour t'asseoir, puis remonte en rythme",
-    "Montées de genoux (2 min) : cours sur place en montant les genoux à hauteur de hanches",
-    "Fentes alternées (2 min) : avance un pied, plie les genoux à 90°, puis change de jambe",
-    "Pompes simplifiées (2 min) : au sol, mains sous les épaules, sur genoux si besoin",
-    "Circuit final (5 min) : enchaîne jumping jacks, squats et montées de genoux, 30 sec chaque exercice",
-    "Retour au calme (2 min) : marche lente sur place + étirements jambes et bras"
-  ],
-  benefices: [
-    "Active le métabolisme",
-    "Favorise la perte de poids",
-    "Améliore l'endurance",
-    "Renforce les jambes et les bras",
-    "Ne nécessite aucun matériel"
-  ]
-};
 
 export default function SportDetailScreen() {
   const { id } = useLocalSearchParams();
   const [showTimer, setShowTimer] = useState(false);
 
-  const exercice = exerciceData; // Pour l'exemple, on utilise toujours le même exercice
+  const exercice = exercicesData.exercices.find(e => e.id === parseInt(id as string));
+  
+  if (!exercice) {
+    return (
+      <View style={styles.container}>
+        <Text>Exercice non trouvé</Text>
+      </View>
+    );
+  }
 
   const getDifficultyColor = (difficulte: string) => {
     switch (difficulte.toLowerCase()) {

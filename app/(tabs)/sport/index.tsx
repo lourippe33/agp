@@ -1,49 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Dumbbell, Clock, Zap, Search, X } from 'lucide-react-native';
+import { Dumbbell, Clock, Zap, Search, X, Users, Heart, Target, Flame } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import exercicesData from '@/data/exercices.json';
 
-// Données d'exemple pour les exercices
-const exercicesData = [
-  {
-    id: 1,
-    titre: "Marche Active Débutant",
-    niveau: "debutant",
-    duree: 15,
-    calories: 80,
-    difficulte: "Très facile",
-    tags: ["marche", "cardio", "extérieur"],
-    image: "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg?w=800&q=80"
-  },
-  {
-    id: 2,
-    titre: "Cardio Brûle-Graisse",
-    niveau: "intermediaire",
-    duree: 20,
-    calories: 180,
-    difficulte: "Moyen",
-    tags: ["cardio", "perte-de-poids", "brule-graisse"],
-    image: "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?w=800&q=80"
-  },
-  {
-    id: 3,
-    titre: "Yoga Dynamique",
-    niveau: "intermediaire",
-    duree: 30,
-    calories: 100,
-    difficulte: "Moyen",
-    tags: ["yoga", "souplesse", "zen"],
-    image: "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?w=800&q=80"
-  }
-];
 
 const niveaux = [
-  { id: 'tous', label: 'Tous' },
-  { id: 'debutant', label: 'Débutant' },
-  { id: 'intermediaire', label: 'Intermédiaire' },
-  { id: 'avance', label: 'Avancé' },
+  { id: 'tous', label: 'Tous', icon: Dumbbell, color: Colors.sport },
+  { id: 'debutant', label: 'Débutant', icon: Users, color: '#4CAF50' },
+  { id: 'intermediaire', label: 'Intermédiaire', icon: Heart, color: '#FF9800' },
+  { id: 'avance', label: 'Avancé', icon: Flame, color: '#F44336' },
 ];
 
 export default function SportScreen() {
@@ -51,7 +19,7 @@ export default function SportScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  const filteredExercices = exercicesData.filter(exercice => {
+  const filteredExercices = exercicesData.exercices.filter(exercice => {
     const matchesNiveau = selectedNiveau === 'tous' || exercice.niveau === selectedNiveau;
     const matchesSearch = searchQuery === '' || 
       exercice.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -103,25 +71,49 @@ export default function SportScreen() {
 
       {/* Filtres par niveau */}
       <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        >
-          {niveaux.map((niveau) => {
+        {/* Bouton "Tous" centré */}
+        <View style={styles.allFilterContainer}>
+          <TouchableOpacity
+            style={[
+              styles.allFilterButton,
+              selectedNiveau === 'tous' && { backgroundColor: Colors.sport }
+            ]}
+            onPress={() => setSelectedNiveau('tous')}
+          >
+            <Dumbbell 
+              size={20} 
+              color={selectedNiveau === 'tous' ? Colors.textLight : Colors.sport} 
+            />
+            <Text style={[
+              styles.allFilterText,
+              selectedNiveau === 'tous' && { color: Colors.textLight }
+            ]}>
+              Tous
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Niveaux en ligne */}
+        <View style={styles.niveauxGrid}>
+          {niveaux.filter(n => n.id !== 'tous').map((niveau) => {
+            const IconComponent = niveau.icon;
             const isSelected = selectedNiveau === niveau.id;
             
             return (
               <TouchableOpacity
                 key={niveau.id}
                 style={[
-                  styles.filterButton,
-                  isSelected && { backgroundColor: Colors.sport }
+                  styles.niveauButton,
+                  isSelected && { backgroundColor: niveau.color }
                 ]}
                 onPress={() => setSelectedNiveau(niveau.id)}
               >
+                <IconComponent 
+                  size={16} 
+                  color={isSelected ? Colors.textLight : niveau.color} 
+                />
                 <Text style={[
-                  styles.filterText,
+                  styles.niveauText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {niveau.label}
@@ -129,7 +121,7 @@ export default function SportScreen() {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       </View>
 
       {/* Liste des exercices */}
@@ -231,23 +223,60 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filtersContent: {
-    paddingHorizontal: 20,
+  allFilterContainer: {
     alignItems: 'center',
+    marginBottom: 16,
   },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  allFilterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: Colors.background,
-    marginRight: 8,
+    gap: 6,
+    minWidth: 100,
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  filterText: {
+  allFilterText: {
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  niveauxGrid: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  niveauButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: Colors.background,
+    gap: 4,
+    flex: 1,
+    maxWidth: 80,
+    justifyContent: 'center',
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  niveauText: {
+    fontSize: 10,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
