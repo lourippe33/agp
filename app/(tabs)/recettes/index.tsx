@@ -72,12 +72,31 @@ export default function RecettesScreen() {
 
       {/* Filtres par moment */}
       <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        >
-          {moments.map((moment) => {
+        {/* Bouton "Tous" centré */}
+        <View style={styles.allFilterContainer}>
+          <TouchableOpacity
+            style={[
+              styles.allFilterButton,
+              selectedMoment === 'tous' && { backgroundColor: Colors.agpBlue }
+            ]}
+            onPress={() => setSelectedMoment('tous')}
+          >
+            <Utensils 
+              size={20} 
+              color={selectedMoment === 'tous' ? Colors.textLight : Colors.agpBlue} 
+            />
+            <Text style={[
+              styles.allFilterText,
+              selectedMoment === 'tous' && { color: Colors.textLight }
+            ]}>
+              Tous
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Moments de la journée en grille */}
+        <View style={styles.momentsGrid}>
+          {moments.filter(m => m.id !== 'tous').map((moment) => {
             const IconComponent = moment.icon;
             const isSelected = selectedMoment === moment.id;
             
@@ -85,17 +104,17 @@ export default function RecettesScreen() {
               <TouchableOpacity
                 key={moment.id}
                 style={[
-                  styles.filterButton,
+                  styles.momentButton,
                   isSelected && { backgroundColor: moment.color }
                 ]}
                 onPress={() => setSelectedMoment(moment.id)}
               >
                 <IconComponent 
-                  size={20} 
+                  size={18} 
                   color={isSelected ? Colors.textLight : moment.color} 
                 />
                 <Text style={[
-                  styles.filterText,
+                  styles.momentText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {moment.label}
@@ -103,7 +122,7 @@ export default function RecettesScreen() {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       </View>
 
       {/* Liste des recettes */}
@@ -198,28 +217,60 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filtersContent: {
-    paddingHorizontal: 20,
+  allFilterContainer: {
     alignItems: 'center',
+    marginBottom: 16,
   },
-  filterButton: {
+  allFilterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: Colors.background,
     gap: 6,
-    marginRight: 8,
-    minWidth: 80,
+    minWidth: 100,
     justifyContent: 'center',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  filterText: {
-    fontSize: 12,
+  allFilterText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  momentsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  momentButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: Colors.background,
+    gap: 6,
+    minWidth: '22%',
+    justifyContent: 'center',
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  momentText: {
+    fontSize: 11,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
