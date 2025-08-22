@@ -36,15 +36,22 @@ export default function ProgrammeScreen() {
     const days = [];
     const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     
+    // Date de début du programme (aujourd'hui)
+    const today = new Date();
+    const startDate = new Date(today);
+    
     for (let i = 0; i < 7; i++) {
       const programDay = startDay + i;
       if (programDay <= 28) {
-        // Simuler une date (on peut partir du 1er janvier par exemple)
-        const date = new Date(2024, 0, programDay);
+        // Calculer la vraie date basée sur aujourd'hui + (programDay - currentDay)
+        const actualDate = new Date(startDate);
+        actualDate.setDate(startDate.getDate() + (programDay - currentDay));
+        
         days.push({
           programDay,
-          dayName: dayNames[date.getDay()],
-          date: date.getDate(),
+          dayName: dayNames[actualDate.getDay()],
+          date: actualDate.getDate(),
+          month: actualDate.getMonth() + 1, // Pour affichage si nécessaire
         });
       }
     }
