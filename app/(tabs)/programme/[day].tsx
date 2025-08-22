@@ -14,6 +14,7 @@ export default function DayProgramScreen() {
   const dayNumber = parseInt(day as string);
   const [dailyRecommendations, setDailyRecommendations] = useState<any>({});
   const [completedActions, setCompletedActions] = useState<{[key: string]: boolean}>({});
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
     generateDayRecommendations();
