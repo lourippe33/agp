@@ -233,4 +233,92 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
+  weekCarousel: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  weekHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  weekArrow: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+  },
+  weekArrowDisabled: {
+    opacity: 0.3,
+  },
+  weekTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  daysContainer: {
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  dayItem: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: Colors.background,
+    minWidth: 70,
+    marginRight: 8,
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  currentDay: {
+    backgroundColor: Colors.agpBlue,
+  },
+  pastDay: {
+    backgroundColor: Colors.success,
+  },
+  selectedDay: {
+    backgroundColor: Colors.agpGreen,
+  },
+  dayText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: Colors.textSecondary,
+    marginBottom: 4,
+  },
+  currentDayText: {
+    color: Colors.textLight,
+  },
+  pastDayText: {
+    color: Colors.textLight,
+  },
+  selectedDayText: {
+    color: Colors.textLight,
+  },
+  dayNumber: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 2,
+  },
+  currentDayNumber: {
+    color: Colors.textLight,
+  },
+  pastDayNumber: {
+    color: Colors.textLight,
+  },
+  selectedDayNumber: {
+    color: Colors.textLight,
+  },
+  programDay: {
+    fontSize: 10,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.textSecondary,
+  },
 });
