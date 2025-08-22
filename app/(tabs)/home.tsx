@@ -139,23 +139,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Programme du jour */}
-        <View style={styles.programmeSection}>
-          <Text style={styles.sectionTitle}>Programme du jour</Text>
-          
-          <TouchableOpacity 
-            style={styles.programmeCard}
-            onPress={() => router.push('/(tabs)/programme')}
-          >
-            <Calendar size={24} color={Colors.agpBlue} />
-            <View style={styles.programmeContent}>
-              <Text style={styles.programmeTitle}>Jour 1 - Démarrage</Text>
-              <Text style={styles.programmeText}>
-                Commencez votre transformation avec des exercices adaptés
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </View>
   );
@@ -269,38 +252,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
-  },
-  programmeSection: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  programmeCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  programmeContent: {
-    flex: 1,
-  },
-  programmeTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  programmeText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textSecondary,
-    lineHeight: 16,
   },
   programDaySection: {
     paddingHorizontal: 20,
