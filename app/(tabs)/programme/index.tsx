@@ -92,10 +92,13 @@ export default function ProgrammeScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header avec progression */}
-      <View style={styles.header}>
+      {/* Header avec gradient */}
+      <LinearGradient
+        colors={[Colors.agpBlue, Colors.agpGreen]}
+        style={styles.header}
+      >
         <Text style={styles.title}>Programme AGP</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.headerSubtitle}>
           Jour {currentDay} / 28 - Semaine {Math.floor((currentDay - 1) / 7) + 1}
         </Text>
         
@@ -110,7 +113,7 @@ export default function ProgrammeScreen() {
           </View>
           <Text style={styles.progressText}>{Math.round((currentDay / 28) * 100)}%</Text>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* Instructions */}
       <View style={styles.instructionsContainer}>
@@ -243,21 +246,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    padding: 20,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: 60,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: Colors.text,
-    textAlign: 'center',
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginTop: 12,
     marginBottom: 8,
+    textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 16,
-    color: Colors.textSecondary,
+  headerSubtitle: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
     textAlign: 'center',
     marginBottom: 20,
   },
