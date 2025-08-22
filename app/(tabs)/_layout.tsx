@@ -55,9 +55,9 @@ export default function TabLayout() {
       />
 
       {/* Routes masquées du TabBar (restent navigables via router.push('/...')) */}
-      <Tabs.Screen name="recettes" options={{ href: null, tabBarButton: () => null }} />
-      <Tabs.Screen name="sport"    options={{ href: null, tabBarButton: () => null }} />
-      <Tabs.Screen name="detente"  options={{ href: null, tabBarButton: () => null }} />
+      <Tabs.Screen name="recettes" options={{ tabBarButton: () => null }} />
+      <Tabs.Screen name="sport"    options={{ tabBarButton: () => null }} />
+      <Tabs.Screen name="detente"  options={{ tabBarButton: () => null }} />
     </Tabs>
   );
 }
