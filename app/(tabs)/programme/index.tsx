@@ -48,19 +48,9 @@ export default function ProgrammeScreen() {
     
     for (let day = 1; day <= 28; day++) {
       try {
-        const saved = await AsyncStorage.getItem(`day_${day}_completed`);
+        const saved = await AsyncStorage.getItem(`day_${day}_validation`);
         if (saved) {
-          const completed = JSON.parse(saved);
-          const actions = ['matin', 'midi', 'gouter', 'soir', 'sport', 'detente'];
-          const completedCount = actions.filter(action => completed[action]).length;
-          
-          if (completedCount === actions.length) {
-            status[day] = 'complete';
-          } else if (completedCount > 0) {
-            status[day] = 'partial';
-          } else {
-            status[day] = 'none';
-          }
+          status[day] = saved as 'complete' | 'partial' | 'none';
         } else {
           status[day] = 'none';
         }

@@ -13,12 +13,11 @@ export default function DayProgramScreen() {
   const readOnly = useLocalSearchParams().readOnly === 'true';
   const dayNumber = parseInt(day as string);
   const [dailyRecommendations, setDailyRecommendations] = useState<any>({});
-  const [completedActions, setCompletedActions] = useState<{[key: string]: boolean}>({});
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [dayValidationStatus, setDayValidationStatus] = useState<'none' | 'partial' | 'complete'>('none');
 
   useEffect(() => {
     generateDayRecommendations();
-    loadCompletedActions();
+    loadDayValidationStatus();
   }, []);
 
   const generateDayRecommendations = () => {
@@ -70,37 +69,27 @@ export default function DayProgramScreen() {
     setDailyRecommendations(newRecommendations);
   };
 
-  const loadCompletedActions = async () => {
+  const loadDayValidationStatus = async () => {
     try {
-      const saved = await AsyncStorage.getItem(`day_${dayNumber}_completed`);
+      const saved = await AsyncStorage.getItem(`day_${dayNumber}_validation`);
       if (saved) {
-        setCompletedActions(JSON.parse(saved));
+        setDayValidationStatus(saved as 'none' | 'partial' | 'complete');
       }
     } catch (error) {
-      console.log('Erreur lors du chargement des actions:', error);
+      console.log('Erreur lors du chargement du statut:', error);
     }
   };
 
-  const toggleActionCompleted = async (actionKey: string) => {
+  const validateDay = async (status: 'partial' | 'complete') => {
     if (readOnly) return;
     
-    const newCompleted = {
-      ...completedActions,
-      [actionKey]: !completedActions[actionKey]
-    };
-    
-    setCompletedActions(newCompleted);
-    setHasUnsavedChanges(true);
+    setDayValidationStatus(status);
     
     try {
-      await AsyncStorage.setItem(`day_${dayNumber}_completed`, JSON.stringify(newCompleted));
+      await AsyncStorage.setItem(`day_${dayNumber}_validation`, status);
     } catch (error) {
       console.log('Erreur lors de la sauvegarde:', error);
     }
-  };
-
-  const handleSave = () => {
-    setHasUnsavedChanges(false);
   };
 
   return (
@@ -135,13 +124,6 @@ export default function DayProgramScreen() {
               {/* Petit-déjeuner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['matin'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('matin')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['matin'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Petit-déjeuner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -168,13 +150,6 @@ export default function DayProgramScreen() {
               {/* Déjeuner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['midi'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('midi')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['midi'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Déjeuner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -201,13 +176,6 @@ export default function DayProgramScreen() {
               {/* Goûter */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['gouter'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('gouter')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['gouter'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Goûter</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -234,13 +202,6 @@ export default function DayProgramScreen() {
               {/* Dîner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['soir'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('soir')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['soir'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Dîner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -272,13 +233,6 @@ export default function DayProgramScreen() {
               {/* Sport */}
               <View style={styles.activityCard}>
                 <View style={styles.activityHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['sport'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('sport')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['sport'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <Dumbbell size={20} color={Colors.sport} />
                   <Text style={styles.activityType}>Activité Sportive</Text>
                  {!readOnly && (
@@ -306,13 +260,6 @@ export default function DayProgramScreen() {
               {/* Détente */}
               <View style={styles.activityCard}>
                 <View style={styles.activityHeader}>
-                  <TouchableOpacity 
-                    style={[styles.checkbox, completedActions['detente'] && styles.checkboxChecked]}
-                    onPress={() => toggleActionCompleted('detente')}
-                    disabled={readOnly}
-                  >
-                    {completedActions['detente'] && <Check size={16} color={Colors.textLight} />}
-                  </TouchableOpacity>
                   <View style={styles.detenteIcon}>
                     <Text style={styles.detenteIconText}>🧘</Text>
                   </View>
@@ -364,16 +311,51 @@ export default function DayProgramScreen() {
            )}
           </View>
         )}
+        
+        {/* Boutons de validation */}
+        {!readOnly && (
+          <View style={styles.validationSection}>
+            <Text style={styles.validationTitle}>Validation de votre journée</Text>
+            <View style={styles.validationButtons}>
+              <TouchableOpacity 
+                style={[
+                  styles.validationButton, 
+                  styles.completeButton,
+                  dayValidationStatus === 'complete' && styles.validationButtonActive
+                ]}
+                onPress={() => validateDay('complete')}
+              >
+                <Check size={20} color={Colors.textLight} />
+                <Text style={styles.validationButtonText}>
+                  J'ai validé tout le programme de la journée
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[
+                  styles.validationButton, 
+                  styles.partialButton,
+                  dayValidationStatus === 'partial' && styles.validationButtonActive
+                ]}
+                onPress={() => validateDay('partial')}
+              >
+                <Text style={styles.validationButtonIcon}>⚠️</Text>
+                <Text style={styles.validationButtonText}>
+                  J'ai validé partiellement le programme de la journée
+                </Text>
+              </TouchableOpacity>
+            </View>
+            
+            {dayValidationStatus !== 'none' && (
+              <View style={styles.validationStatus}>
+                <Text style={styles.validationStatusText}>
+                  Statut : {dayValidationStatus === 'complete' ? '✅ Complètement validé' : '🟠 Partiellement validé'}
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
-      
-      {/* Bouton de sauvegarde flottant */}
-      {!readOnly && hasUnsavedChanges && (
-        <View style={styles.saveButtonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>💾 Sauvegarder les changements</Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </View>
     </>
   );
@@ -564,42 +546,64 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
-  saveButtonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    zIndex: 1000,
+  validationSection: {
+    marginTop: 30,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
   },
-  saveButton: {
-    backgroundColor: Colors.success,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
+  validationTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  validationButtons: {
+    gap: 12,
+  },
+  validationButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    elevation: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    gap: 12,
+    elevation: 2,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  saveButtonText: {
+  completeButton: {
+    backgroundColor: Colors.success,
+  },
+  partialButton: {
+    backgroundColor: '#FF9800',
+  },
+  validationButtonActive: {
+    elevation: 4,
+    shadowOpacity: 0.2,
+  },
+  validationButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
+    flex: 1,
+    textAlign: 'center',
   },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: Colors.agpBlue,
+  validationButtonIcon: {
+    fontSize: 20,
+  },
+  validationStatus: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.surface,
   },
-  checkboxChecked: {
-    backgroundColor: Colors.success,
-    borderColor: Colors.success,
+  validationStatusText: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.agpBlue,
   },
 });
