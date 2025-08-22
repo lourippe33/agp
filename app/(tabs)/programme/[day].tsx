@@ -564,6 +564,30 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
   },
+  saveButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    zIndex: 1000,
+  },
+  saveButton: {
+    backgroundColor: Colors.success,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
   checkbox: {
     width: 24,
     height: 24,
@@ -577,22 +601,5 @@ const styles = StyleSheet.create({
   checkboxChecked: {
     backgroundColor: Colors.success,
     borderColor: Colors.success,
-  },
-  saveButtonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-  },
-  saveButton: {
-    backgroundColor: Colors.agpBlue,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
   },
 });
