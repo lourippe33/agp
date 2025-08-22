@@ -89,6 +89,7 @@ export default function DayProgramScreen() {
     };
     
     setCompletedActions(newCompleted);
+    setHasUnsavedChanges(true);
     
     try {
       await AsyncStorage.setItem(`day_${dayNumber}_completed`, JSON.stringify(newCompleted));
