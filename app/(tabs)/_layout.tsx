@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Calendar, BookOpen, ChartBar as BarChart3, User } from 'lucide-react-native';
+import { Chrome as Home, Calendar, ChartBar as BarChart3, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 export default function TabLayout() {
@@ -39,15 +39,6 @@ export default function TabLayout() {
           title: 'Programme',
           tabBarIcon: ({ size, color }) => (
             <Calendar size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="journal"
-        options={{
-          title: 'Journal',
-          tabBarIcon: ({ size, color }) => (
-            <BookOpen size={size} color={color} />
           ),
         }}
       />
