@@ -41,7 +41,7 @@ export default function ProgrammeScreen() {
 
   useEffect(() => {
     loadCompletionStatus();
-  }, []);
+  }, [currentDay]); // Recharger quand le jour actuel change
 
   const loadCompletionStatus = async () => {
     const status: {[key: number]: 'complete' | 'partial' | 'none'} = {};
@@ -61,6 +61,20 @@ export default function ProgrammeScreen() {
     
     setDayCompletionStatus(status);
   };
+
+  // Fonction pour recharger le statut depuis l'écran de jour
+  const refreshCompletionStatus = () => {
+    loadCompletionStatus();
+  };
+
+  // Écouter les changements de focus pour recharger
+  useEffect(() => {
+    const unsubscribe = router.addListener?.('focus', () => {
+      loadCompletionStatus();
+    });
+    
+    return unsubscribe;
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -135,16 +149,16 @@ export default function ProgrammeScreen() {
             
             // Déterminer la couleur de fond selon le statut
             let dayBackgroundColor = Colors.background;
-            if (isPast) {
-              if (completionStatus === 'complete') {
-                dayBackgroundColor = Colors.success;
-              } else if (completionStatus === 'partial') {
-                dayBackgroundColor = '#FF9800'; // Orange
-              } else {
-                dayBackgroundColor = '#E0E0E0'; // Gris pour non fait
-              }
+            
+            // Logique de couleur basée sur le statut de validation
+            if (completionStatus === 'complete') {
+              dayBackgroundColor = Colors.success; // Vert
+            } else if (completionStatus === 'partial') {
+              dayBackgroundColor = '#FF9800'; // Orange
             } else if (isCurrent) {
-              dayBackgroundColor = Colors.primary;
+              dayBackgroundColor = Colors.agpBlue; // Bleu pour jour actuel
+            } else if (isPast) {
+              dayBackgroundColor = '#E0E0E0'; // Gris pour jours passés non validés
             }
             
             return (
@@ -153,9 +167,6 @@ export default function ProgrammeScreen() {
                 style={[
                   styles.dayItem,
                   { backgroundColor: dayBackgroundColor },
-                  isPast && styles.pastDay,
-                  isCurrent && styles.currentDay,
-                  (isFuture && !canAccessNextDay) && styles.futureDay,
                 ]}
                 onPress={() => {
                   if (!isFuture || canAccessNextDay) {
@@ -166,16 +177,14 @@ export default function ProgrammeScreen() {
               >
                 <Text style={[
                   styles.dayText,
-                  (isPast || isCurrent) && styles.pastDayText,
-                  isCurrent && styles.currentDayText,
+                  (completionStatus !== 'none' || isCurrent) && styles.pastDayText,
                   (isFuture && !canAccessNextDay) && styles.futureDayText,
                 ]}>
                   {dayInfo.dayName}
                 </Text>
                 <Text style={[
                   styles.dayNumber,
-                  (isPast || isCurrent) && styles.pastDayNumber,
-                  isCurrent && styles.currentDayNumber,
+                  (completionStatus !== 'none' || isCurrent) && styles.pastDayNumber,
                   (isFuture && !canAccessNextDay) && styles.futureDayNumber,
                 ]}>
                   {dayInfo.date}
