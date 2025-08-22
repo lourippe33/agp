@@ -107,11 +107,10 @@ export default function ProgrammeScreen() {
             <View 
               style={[
                 styles.progressFill, 
-                { width: `${(currentDay / 28) * 100}%`, backgroundColor: Colors.textLight }
+                { width: `${(currentDay / 28) * 100}%` }
               ]} 
             />
           </View>
-          <Text style={styles.progressText}>{Math.round((currentDay / 28) * 100)}%</Text>
         </View>
       </LinearGradient>
 
@@ -273,27 +272,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   progressContainer: {
-    flexDirection: 'row',
+    width: '100%',
     alignItems: 'center',
+    paddingHorizontal: 20,
     marginBottom: 20,
   },
   progressBar: {
-    flex: 1,
+    width: '100%',
     height: 8,
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 4,
-    marginRight: 12,
   },
   progressFill: {
     height: '100%',
     backgroundColor: Colors.textLight,
     borderRadius: 4,
-  },
-  progressText: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: Colors.textLight,
-    minWidth: 40,
   },
   weekCarousel: {
     backgroundColor: Colors.surface,
