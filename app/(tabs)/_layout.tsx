@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Calendar, ChartBar as BarChart3, User } from 'lucide-react-native';
+import { Home, Calendar, BarChart3, User } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 export default function TabLayout() {
@@ -11,6 +11,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors.textSecondary,
         tabBarShowLabel: true,
         tabBarLabelPosition: 'below-icon',
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
@@ -31,6 +32,7 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <Home size={size} color={color} />
           ),
+          href: '/home',
         }}
       />
       <Tabs.Screen
@@ -40,6 +42,7 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <Calendar size={size} color={color} />
           ),
+          href: '/programme',
         }}
       />
       <Tabs.Screen
@@ -49,6 +52,7 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <BarChart3 size={size} color={color} />
           ),
+          href: '/suivi',
         }}
       />
       <Tabs.Screen
@@ -58,6 +62,7 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <User size={size} color={color} />
           ),
+          href: '/profil',
         }}
       />
     </Tabs>
