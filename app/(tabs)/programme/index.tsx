@@ -89,7 +89,7 @@ export default function ProgrammeScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header avec progression */}
       <View style={styles.header}>
         <Text style={styles.title}>Programme AGP</Text>
@@ -228,7 +228,7 @@ export default function ProgrammeScreen() {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
