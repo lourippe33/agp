@@ -8,28 +8,6 @@ export default function ProgrammeScreen() {
   const [currentDay, setCurrentDay] = useState(1);
   const [currentWeek, setCurrentWeek] = useState(0);
 
-  const incrementDay = () => {
-    if (currentDay < 28) {
-      setCurrentDay(currentDay + 1);
-      // Mettre à jour la semaine si nécessaire
-      const newWeek = Math.floor((currentDay) / 7);
-      if (newWeek !== currentWeek && newWeek < 4) {
-        setCurrentWeek(newWeek);
-      }
-    }
-  };
-
-  const decrementDay = () => {
-    if (currentDay > 1) {
-      setCurrentDay(currentDay - 1);
-      // Mettre à jour la semaine si nécessaire
-      const newWeek = Math.floor((currentDay - 2) / 7);
-      if (newWeek !== currentWeek && newWeek >= 0) {
-        setCurrentWeek(newWeek);
-      }
-    }
-  };
-
   // Générer les jours de la semaine actuelle
   const getWeekDays = (weekIndex: number) => {
     const startDay = weekIndex * 7 + 1;
@@ -80,28 +58,6 @@ export default function ProgrammeScreen() {
           </View>
           <Text style={styles.progressText}>{Math.round((currentDay / 28) * 100)}%</Text>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={[styles.button, styles.buttonSecondary, currentDay === 1 && styles.buttonDisabled]}
-            onPress={decrementDay}
-            disabled={currentDay === 1}
-          >
-            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
-              Jour précédent
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.buttonPrimary, currentDay === 28 && styles.buttonDisabled]}
-            onPress={incrementDay}
-            disabled={currentDay === 28}
-          >
-            <Text style={[styles.buttonText, styles.buttonTextPrimary]}>
-              Jour suivant
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       {/* Carrousel des jours */}
@@ -136,7 +92,14 @@ export default function ProgrammeScreen() {
           {weekDays.map((dayInfo) => {
             const isPast = dayInfo.programDay < currentDay;
             const isCurrent = dayInfo.programDay === currentDay;
-           const isFuture = dayInfo.programDay > currentDay;
+            const isFuture = dayInfo.programDay > currentDay;
+            
+            // Vérifier si on peut accéder au jour suivant (après 23h59 du jour actuel)
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const isAfter2359 = currentHour === 23 && currentMinutes === 59;
+            const canAccessNextDay = dayInfo.programDay === currentDay + 1 && isAfter2359;
             
             return (
               <TouchableOpacity
@@ -145,20 +108,20 @@ export default function ProgrammeScreen() {
                   styles.dayItem,
                   isPast && styles.pastDay,
                   isCurrent && styles.currentDay,
-                 isFuture && styles.futureDay,
+                  (isFuture && !canAccessNextDay) && styles.futureDay,
                 ]}
-               onPress={() => {
-                 if (!isFuture) {
-                   router.push(`/(tabs)/programme/${dayInfo.programDay}?readOnly=${isPast}`);
-                 }
-               }}
-               disabled={isFuture}
+                onPress={() => {
+                  if (!isFuture || canAccessNextDay) {
+                    router.push(`/(tabs)/programme/${dayInfo.programDay}?readOnly=${isPast}`);
+                  }
+                }}
+                disabled={isFuture && !canAccessNextDay}
               >
                 <Text style={[
                   styles.dayText,
                   isPast && styles.pastDayText,
                   isCurrent && styles.currentDayText,
-                 isFuture && styles.futureDayText,
+                  (isFuture && !canAccessNextDay) && styles.futureDayText,
                 ]}>
                   {dayInfo.dayName}
                 </Text>
@@ -166,7 +129,7 @@ export default function ProgrammeScreen() {
                   styles.dayNumber,
                   isPast && styles.pastDayNumber,
                   isCurrent && styles.currentDayNumber,
-                 isFuture && styles.futureDayNumber,
+                  (isFuture && !canAccessNextDay) && styles.futureDayNumber,
                 ]}>
                   {dayInfo.date}
                 </Text>
@@ -181,7 +144,18 @@ export default function ProgrammeScreen() {
 
       {/* Bouton temporaire pour tester l'incrémentation */}
       <View style={styles.content}>
-        <TouchableOpacity style={styles.testButton} onPress={incrementDay}>
+        <TouchableOpacity 
+          style={styles.testButton} 
+          onPress={() => {
+            if (currentDay < 28) {
+              setCurrentDay(currentDay + 1);
+              const newWeek = Math.floor((currentDay) / 7);
+              if (newWeek !== currentWeek && newWeek < 4) {
+                setCurrentWeek(newWeek);
+              }
+            }
+          }}
+        >
           <Text style={styles.testButtonText}>
             Valider le jour {currentDay} (Test)
           </Text>
@@ -237,38 +211,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.primary,
     minWidth: 40,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonPrimary: {
-    backgroundColor: Colors.primary,
-  },
-  buttonSecondary: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.primary,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  buttonTextPrimary: {
-    color: 'white',
-  },
-  buttonTextSecondary: {
-    color: Colors.primary,
   },
   weekCarousel: {
     backgroundColor: Colors.surface,
