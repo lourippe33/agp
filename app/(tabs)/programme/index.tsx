@@ -210,6 +210,24 @@ export default function ProgrammeScreen() {
         </ScrollView>
       </View>
 
+      {/* Section d'encouragement et conseil */}
+      <View style={styles.encouragementSection}>
+        <View style={styles.encouragementCard}>
+          <Text style={styles.encouragementTitle}>💪 Votre parcours AGP</Text>
+          <Text style={styles.encouragementText}>
+            Chaque jour compte dans votre transformation ! Votre corps s'adapte progressivement 
+            à ce nouveau rythme de vie plus sain.
+          </Text>
+          
+          <View style={styles.tipCard}>
+            <Text style={styles.tipTitle}>🕐 Conseil Chronobiologie</Text>
+            <Text style={styles.tipText}>
+              Respectez vos heures de repas : petit-déjeuner avant 9h, déjeuner entre 12h-14h, 
+              dîner avant 20h. Votre métabolisme suit naturellement ces rythmes !
+            </Text>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -358,5 +376,53 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: Colors.textSecondary,
     fontWeight: '500',
+  },
+  encouragementSection: {
+    padding: 20,
+    backgroundColor: Colors.background,
+  },
+  encouragementCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  encouragementTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.agpBlue,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  encouragementText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    lineHeight: 20,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  tipCard: {
+    backgroundColor: Colors.agpLightBlue,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.agpBlue,
+  },
+  tipTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.agpBlue,
+    marginBottom: 8,
+  },
+  tipText: {
+    fontSize: 13,
+    fontFamily: 'Inter-Regular',
+    color: Colors.agpBlue,
+    lineHeight: 18,
   },
 });
