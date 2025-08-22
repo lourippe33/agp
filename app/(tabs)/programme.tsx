@@ -1,11 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, AsyncStorage } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, TrendingUp, Clock } from 'lucide-react-native';
+import { Calendar, TrendingUp, Clock, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { format, addDays, startOfWeek, getDay } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function ProgrammeScreen() {
   const [currentDay, setCurrentDay] = React.useState(1);
+  const [selectedDay, setSelectedDay] = React.useState(1);
+  const [currentWeek, setCurrentWeek] = React.useState(0);
   const totalDays = 28;
   const remainingDays = totalDays - currentDay;
   const progressPercentage = Math.round((currentDay / totalDays) * 100);
@@ -18,7 +22,12 @@ export default function ProgrammeScreen() {
     try {
       const savedDay = await AsyncStorage.getItem('programDay');
       if (savedDay) {
-        setCurrentDay(parseInt(savedDay));
+        const day = parseInt(savedDay);
+        setCurrentDay(day);
+        setSelectedDay(day);
+        // Calculer la semaine du jour actuel
+        const weekIndex = Math.floor((day - 1) / 7);
+        setCurrentWeek(weekIndex);
       }
     } catch (error) {
       console.log('Erreur lors du chargement du jour:', error);
@@ -34,6 +43,55 @@ export default function ProgrammeScreen() {
       } catch (error) {
         console.log('Erreur lors de la sauvegarde:', error);
       }
+    }
+  };
+
+  // Générer les jours de la semaine actuelle
+  const generateWeekDays = (weekIndex: number) => {
+    const startDay = weekIndex * 7 + 1;
+    const endDay = Math.min(startDay + 6, totalDays);
+    const days = [];
+    
+    // Date de début du programme (aujourd'hui - jour actuel + 1)
+    const programStartDate = addDays(new Date(), -(currentDay - 1));
+    
+    for (let day = startDay; day <= endDay; day++) {
+      const dayDate = addDays(programStartDate, day - 1);
+      const dayOfWeek = getDay(dayDate);
+      const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+      
+      days.push({
+        programDay: day,
+        date: format(dayDate, 'd', { locale: fr }),
+        dayName: dayNames[dayOfWeek],
+        fullDate: dayDate,
+        isPast: day < currentDay,
+        isCurrent: day === currentDay,
+        isFuture: day > currentDay
+      });
+    }
+    
+    return days;
+  };
+
+  const weekDays = generateWeekDays(currentWeek);
+  const totalWeeks = Math.ceil(totalDays / 7);
+
+  const goToPreviousWeek = () => {
+    if (currentWeek > 0) {
+      setCurrentWeek(currentWeek - 1);
+    }
+  };
+
+  const goToNextWeek = () => {
+    if (currentWeek < totalWeeks - 1) {
+      setCurrentWeek(currentWeek + 1);
+    }
+  };
+
+  const selectDay = (day: number) => {
+    if (day <= currentDay) {
+      setSelectedDay(day);
     }
   };
 
@@ -70,12 +128,85 @@ export default function ProgrammeScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Carrousel des semaines */}
+      <View style={styles.weekCarousel}>
+        <View style={styles.weekHeader}>
+          <TouchableOpacity 
+            style={[styles.weekArrow, currentWeek === 0 && styles.weekArrowDisabled]}
+            onPress={goToPreviousWeek}
+            disabled={currentWeek === 0}
+          >
+            <ChevronLeft size={20} color={currentWeek === 0 ? Colors.textSecondary : Colors.agpBlue} />
+          </TouchableOpacity>
+          
+          <Text style={styles.weekTitle}>
+            Semaine {currentWeek + 1} / {totalWeeks}
+          </Text>
+          
+          <TouchableOpacity 
+            style={[styles.weekArrow, currentWeek === totalWeeks - 1 && styles.weekArrowDisabled]}
+            onPress={goToNextWeek}
+            disabled={currentWeek === totalWeeks - 1}
+          >
+            <ChevronRight size={20} color={currentWeek === totalWeeks - 1 ? Colors.textSecondary : Colors.agpBlue} />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.daysContainer}
+        >
+          {weekDays.map((day) => (
+            <TouchableOpacity
+              key={day.programDay}
+              style={[
+                styles.dayItem,
+                day.isCurrent && styles.currentDay,
+                day.isPast && !day.isCurrent && styles.pastDay,
+                selectedDay === day.programDay && !day.isCurrent && styles.selectedDay
+              ]}
+              onPress={() => selectDay(day.programDay)}
+              disabled={day.isFuture}
+            >
+              <Text style={[
+                styles.dayText,
+                day.isCurrent && styles.currentDayText,
+                day.isPast && !day.isCurrent && styles.pastDayText,
+                selectedDay === day.programDay && !day.isCurrent && styles.selectedDayText
+              ]}>
+                {day.dayName}
+              </Text>
+              <Text style={[
+                styles.dayNumber,
+                day.isCurrent && styles.currentDayNumber,
+                day.isPast && !day.isCurrent && styles.pastDayNumber,
+                selectedDay === day.programDay && !day.isCurrent && styles.selectedDayNumber
+              ]}>
+                {day.date}
+              </Text>
+              <Text style={[
+                styles.programDay,
+                day.isCurrent && styles.currentDayText,
+                day.isPast && !day.isCurrent && styles.pastDayText,
+                selectedDay === day.programDay && !day.isCurrent && styles.selectedDayText
+              ]}>
+                J{day.programDay}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       <ScrollView style={styles.content}>
         <View style={styles.comingSoonCard}>
           <Calendar size={48} color={Colors.agpBlue} />
           <Text style={styles.comingSoonTitle}>Programme en développement</Text>
           <Text style={styles.comingSoonText}>
             Votre programme personnalisé de 28 jours sera bientôt disponible.
+          </Text>
+          <Text style={styles.selectedDayInfo}>
+            Jour sélectionné : J{selectedDay}
           </Text>
         </View>
 
@@ -220,6 +351,13 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
+    marginBottom: 16,
+  },
+  selectedDayInfo: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.agpBlue,
+    textAlign: 'center',
   },
   testButton: {
     backgroundColor: Colors.agpBlue,
