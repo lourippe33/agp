@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Calendar } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react-native';
 import { Colors } from '../../../constants/Colors';
 
 export default function ProgrammeScreen() {
