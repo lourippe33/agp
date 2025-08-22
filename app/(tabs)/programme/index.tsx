@@ -107,7 +107,7 @@ export default function ProgrammeScreen() {
             <View 
               style={[
                 styles.progressFill, 
-                { width: `${(currentDay / 28) * 100}%` }
+                { width: `${(currentDay / 28) * 100}%`, backgroundColor: Colors.textLight }
               ]} 
             />
           </View>
