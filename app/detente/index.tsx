@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Clock, Search, X, Wind, Sparkles, Brain, Home } from 'lucide-react-native';
+import { Heart, Clock, Search, X, Wind, Sparkles, Brain, Chrome as Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import detenteData from '@/data/detente.json';
