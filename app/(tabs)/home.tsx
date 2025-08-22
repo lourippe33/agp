@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar } from 'lucide-react-native';
+import { Dumbbell, Heart, Utensils, Calendar } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
@@ -40,12 +40,34 @@ export default function HomeScreen() {
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Actions rapides</Text>
           
-          <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>Votre parcours AGP</Text>
-            <Text style={styles.infoText}>
-              Utilisez les onglets ci-dessous pour naviguer dans votre programme personnalisé.
-            </Text>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity 
+              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.sport }]}
+              onPress={() => router.push('/sport')}
+            >
+              <Dumbbell size={32} color={Colors.textLight} />
+              <Text style={styles.actionTitle}>Sport</Text>
+              <Text style={styles.actionSubtitle}>activités</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.agpGreen }]}
+              onPress={() => router.push('/recettes')}
+            >
+              <Utensils size={32} color={Colors.textLight} />
+              <Text style={styles.actionTitle}>Recettes</Text>
+              <Text style={styles.actionSubtitle}>adaptées</Text>
+            </TouchableOpacity>
           </View>
+
+          <TouchableOpacity 
+            style={[styles.actionCard, styles.actionCardFull, { backgroundColor: Colors.relaxation }]}
+            onPress={() => router.push('/detente')}
+          >
+            <Heart size={32} color={Colors.textLight} />
+            <Text style={styles.actionTitle}>Détente</Text>
+            <Text style={styles.actionSubtitle}>& bien-être</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Programme du jour */}
