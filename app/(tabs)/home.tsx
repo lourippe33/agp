@@ -1,11 +1,28 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, AsyncStorage } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Dumbbell, Heart, Utensils, Calendar } from 'lucide-react-native';
+import { Dumbbell, Heart, Utensils, Calendar, Trophy } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
 export default function HomeScreen() {
+  const [currentDay, setCurrentDay] = React.useState(1);
+
+  React.useEffect(() => {
+    loadCurrentDay();
+  }, []);
+
+  const loadCurrentDay = async () => {
+    try {
+      const savedDay = await AsyncStorage.getItem('programDay');
+      if (savedDay) {
+        setCurrentDay(parseInt(savedDay));
+      }
+    } catch (error) {
+      console.log('Erreur lors du chargement du jour:', error);
+    }
+  };
+
   const getMomentText = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Bon matin';
@@ -34,6 +51,24 @@ export default function HomeScreen() {
         {/* Bienvenue */}
         <View style={styles.welcomeSection}>
           <Text style={styles.welcomeTitle}>Bienvenue sur AGP 👋</Text>
+        </View>
+
+        {/* Jour du programme */}
+        <View style={styles.programDaySection}>
+          <TouchableOpacity 
+            style={[styles.programDayCard, { backgroundColor: Colors.agpBlue }]}
+            onPress={() => router.push('/(tabs)/programme')}
+          >
+            <Trophy size={28} color={Colors.textLight} />
+            <View style={styles.programDayContent}>
+              <Text style={styles.programDayTitle}>
+                Bienvenue dans votre jour {currentDay}
+              </Text>
+              <Text style={styles.programDaySubtitle}>
+                du programme AGP
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Actions rapides */}
@@ -204,5 +239,36 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.textSecondary,
     lineHeight: 16,
+  },
+  programDaySection: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  programDayCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 16,
+    padding: 20,
+    elevation: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    gap: 16,
+  },
+  programDayContent: {
+    flex: 1,
+  },
+  programDayTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
+    marginBottom: 4,
+  },
+  programDaySubtitle: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
   },
 });
