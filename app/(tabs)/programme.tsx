@@ -72,6 +72,13 @@ export default function ProgrammeScreen() {
   };
 
   const regenerateRecommendation = (day: number, type: string) => {
+  };
+
+  const incrementDay = () => {
+  };
+
+  return (
+    <View style={styles.container}>
       {/* Bouton temporaire pour tester l'incrémentation */}
       <View style={styles.content}>
         <TouchableOpacity style={styles.testButton} onPress={incrementDay}>
@@ -198,9 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
-  },
-  content: {
-    padding: 20,
   },
   dayContent: {
     paddingBottom: 20,
@@ -338,18 +342,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   quickAccessText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-  },
-  testButton: {
-    backgroundColor: Colors.agpBlue,
-    marginTop: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  testButtonText: {
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
