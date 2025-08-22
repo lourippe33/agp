@@ -16,7 +16,6 @@ import {
 } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen'
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import './globals.css';
 
 SplashScreen.preventAutoHideAsync();
 
