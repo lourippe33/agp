@@ -143,8 +143,11 @@ export default function ProgrammeScreen() {
 
         <ScrollView 
           horizontal 
-          showsHorizontalScrollIndicator={false}
+          showsHorizontalScrollIndicator={true}
           contentContainerStyle={styles.daysContainer}
+          decelerationRate="fast"
+          snapToInterval={82}
+          snapToAlignment="start"
         >
           {weekDays.map((dayInfo) => {
             const isPast = dayInfo.programDay < currentDay;
