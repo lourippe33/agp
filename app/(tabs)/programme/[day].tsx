@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, RefreshCw, ArrowRight, Utensils, Dumbbell, Check } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -87,8 +88,9 @@ export default function DayProgramScreen() {
     
     try {
       await AsyncStorage.setItem(`day_${dayNumber}_validation`, status);
+      console.log(`Validation sauvegardée: jour ${dayNumber} = ${status}`);
     } catch (error) {
-      console.log('Erreur lors de la sauvegarde:', error);
+      console.error('Erreur lors de la sauvegarde:', error);
     }
   };
 

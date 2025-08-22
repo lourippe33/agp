@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { Colors } from '../../../constants/Colors';
@@ -55,10 +56,12 @@ export default function ProgrammeScreen() {
           status[day] = 'none';
         }
       } catch (error) {
+        console.error(`Erreur chargement jour ${day}:`, error);
         status[day] = 'none';
       }
     }
     
+    console.log('Statuts chargés:', status);
     setDayCompletionStatus(status);
   };
 
@@ -69,11 +72,20 @@ export default function ProgrammeScreen() {
 
   // Écouter les changements de focus pour recharger
   useEffect(() => {
-    const unsubscribe = router.addListener?.('focus', () => {
+    const unsubscribe = router.events?.on('routeChangeComplete', () => {
       loadCompletionStatus();
-    });
+    }) || (() => {});
     
     return unsubscribe;
+  }, []);
+
+  // Recharger quand on revient sur cette page
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadCompletionStatus();
+    }, 2000); // Recharge toutes les 2 secondes
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
