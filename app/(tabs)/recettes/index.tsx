@@ -4,39 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Sun, Utensils, Coffee, Moon, Search, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import recettesData from '@/data/recettes.json';
 
-// Données d'exemple pour les recettes
-const recettesData = [
-  {
-    id: 1,
-    titre: "Porridge aux fruits rouges",
-    moment: "matin",
-    tempsPreparation: 10,
-    difficulte: "Très facile",
-    tags: ["avoine", "fruits", "petit-déjeuner"],
-    image: "https://images.pexels.com/photos/1172019/pexels-photo-1172019.jpeg?w=800&q=80"
-  },
-  {
-    id: 2,
-    titre: "Poke bowl saumon-avocat",
-    moment: "midi",
-    tempsPreparation: 15,
-    difficulte: "Facile",
-    tags: ["poke", "saumon", "avocat"],
-    image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=800&q=80"
-  },
-  {
-    id: 3,
-    titre: "Energy balls dattes-amandes",
-    moment: "gouter",
-    tempsPreparation: 15,
-    difficulte: "Facile",
-    tags: ["energy-balls", "dattes", "amandes"],
-    image: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?w=800&q=80"
-  }
-];
 
 const moments = [
+  { id: 'tous', label: 'Tous', icon: Utensils, color: Colors.agpBlue },
   { id: 'matin', label: 'Matin', icon: Sun, color: Colors.morning },
   { id: 'midi', label: 'Midi', icon: Utensils, color: Colors.agpGreen },
   { id: 'gouter', label: 'Goûter', icon: Coffee, color: Colors.snack },
@@ -44,12 +16,12 @@ const moments = [
 ];
 
 export default function RecettesScreen() {
-  const [selectedMoment, setSelectedMoment] = useState('matin');
+  const [selectedMoment, setSelectedMoment] = useState('tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  const filteredRecettes = recettesData.filter(recette => {
-    const matchesMoment = recette.moment === selectedMoment;
+  const filteredRecettes = recettesData.recettes.filter(recette => {
+    const matchesMoment = selectedMoment === 'tous' || recette.moment === selectedMoment;
     const matchesSearch = searchQuery === '' || 
       recette.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
       recette.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));

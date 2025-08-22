@@ -4,40 +4,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Clock, Users, ChefHat } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import recettesData from '@/data/recettes.json';
 
-// Données d'exemple pour la recette
-const recetteData = {
-  id: 1,
-  titre: "Porridge aux fruits rouges",
-  moment: "matin",
-  tempsPreparation: 10,
-  tempsCuisson: 5,
-  difficulte: "Très facile",
-  tags: ["avoine", "fruits", "petit-déjeuner"],
-  image: "https://images.pexels.com/photos/1172019/pexels-photo-1172019.jpeg?w=800&q=80",
-  ingredients: [
-    { nom: "Flocons d'avoine", quantite: "50g" },
-    { nom: "Lait végétal", quantite: "200ml" },
-    { nom: "Fruits rouges", quantite: "100g" },
-    { nom: "Miel", quantite: "1 c.à.s" }
-  ],
-  etapes: [
-    "Faire chauffer le lait végétal dans une casserole",
-    "Ajouter les flocons d'avoine et cuire 5 minutes",
-    "Incorporer les fruits rouges et le miel",
-    "Servir chaud"
-  ],
-  nutritionPour100g: {
-    calories: 180,
-    proteines: 6,
-    glucides: 28,
-    lipides: 4
-  }
-};
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
-  const recette = recetteData; // Pour l'exemple
+  
+  const recette = recettesData.recettes.find(r => r.id === parseInt(id as string));
+  
+  if (!recette) {
+    return (
+      <View style={styles.container}>
+        <Text>Recette non trouvée</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
