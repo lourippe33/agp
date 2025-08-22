@@ -142,25 +142,6 @@ export default function ProgrammeScreen() {
         </ScrollView>
       </View>
 
-      {/* Bouton temporaire pour tester l'incrémentation */}
-      <View style={styles.content}>
-        <TouchableOpacity 
-          style={styles.testButton} 
-          onPress={() => {
-            if (currentDay < 28) {
-              setCurrentDay(currentDay + 1);
-              const newWeek = Math.floor((currentDay) / 7);
-              if (newWeek !== currentWeek && newWeek < 4) {
-                setCurrentWeek(newWeek);
-              }
-            }
-          }}
-        >
-          <Text style={styles.testButtonText}>
-            Valider le jour {currentDay} (Test)
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -298,22 +279,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: Colors.textSecondary,
     fontWeight: '500',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  testButton: {
-    backgroundColor: Colors.secondary,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-  },
-  testButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
