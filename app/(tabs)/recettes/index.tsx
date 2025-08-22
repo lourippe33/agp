@@ -249,7 +249,6 @@ const styles = StyleSheet.create({
   },
   momentsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'center',
     gap: 12,
   },
@@ -261,7 +260,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.background,
     gap: 6,
-    minWidth: '22%',
+    flex: 1,
+    maxWidth: 80,
     justifyContent: 'center',
     elevation: 1,
     shadowColor: Colors.shadow,
