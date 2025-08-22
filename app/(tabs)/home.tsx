@@ -38,8 +38,6 @@ export default function HomeScreen() {
 
         {/* Actions rapides */}
         <View style={styles.quickActions}>
-          <Text style={styles.sectionTitle}>Actions rapides</Text>
-          
           <View style={styles.actionsRow}>
             <TouchableOpacity 
               style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.sport }]}
