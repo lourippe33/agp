@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Calendar, ChartBar as BarChart3, User } from 'lucide-react-native';
+import { Chrome as Home, Calendar, ChartBar as BarChart3, User, Users } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 export default function TabLayout() {
@@ -51,6 +51,13 @@ export default function TabLayout() {
         options={{
           title: 'Profil',
           tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="communaute"
+        options={{
+          title: 'Communauté',
+          tabBarIcon: ({ size, color }) => <Users size={size} color={color} />,
         }}
       />
 
