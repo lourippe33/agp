@@ -269,19 +269,19 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.border,
+    backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 4,
     marginRight: 12,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.textLight,
     borderRadius: 4,
   },
   progressText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.primary,
+    fontFamily: 'Inter-SemiBold',
+    color: Colors.textLight,
     minWidth: 40,
   },
   weekCarousel: {
