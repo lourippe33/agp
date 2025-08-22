@@ -10,6 +10,7 @@ import detenteData from '@/data/detente.json';
 
 export default function DayProgramScreen() {
   const { day } = useLocalSearchParams();
+  const readOnly = useLocalSearchParams().readOnly === 'true';
   const dayNumber = parseInt(day as string);
   const [dailyRecommendations, setDailyRecommendations] = useState<any>({});
 
@@ -43,6 +44,8 @@ export default function DayProgramScreen() {
   };
 
   const regenerateRecommendation = (type: string) => {
+    if (readOnly) return; // Empêcher les modifications pour les jours passés
+    
     const newRecommendations = { ...dailyRecommendations };
     
     if (type === 'sport') {
@@ -96,12 +99,14 @@ export default function DayProgramScreen() {
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
                   <Text style={styles.mealTime}>Petit-déjeuner</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('matin')}
-                  >
-                    <RefreshCw size={16} color={Colors.agpBlue} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('matin')}
+                   >
+                     <RefreshCw size={16} color={Colors.agpBlue} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.recipeItem}
@@ -120,12 +125,14 @@ export default function DayProgramScreen() {
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
                   <Text style={styles.mealTime}>Déjeuner</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('midi')}
-                  >
-                    <RefreshCw size={16} color={Colors.agpBlue} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('midi')}
+                   >
+                     <RefreshCw size={16} color={Colors.agpBlue} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.recipeItem}
@@ -144,12 +151,14 @@ export default function DayProgramScreen() {
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
                   <Text style={styles.mealTime}>Goûter</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('gouter')}
-                  >
-                    <RefreshCw size={16} color={Colors.agpBlue} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('gouter')}
+                   >
+                     <RefreshCw size={16} color={Colors.agpBlue} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.recipeItem}
@@ -168,12 +177,14 @@ export default function DayProgramScreen() {
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
                   <Text style={styles.mealTime}>Dîner</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('soir')}
-                  >
-                    <RefreshCw size={16} color={Colors.agpBlue} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('soir')}
+                   >
+                     <RefreshCw size={16} color={Colors.agpBlue} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.recipeItem}
@@ -198,12 +209,14 @@ export default function DayProgramScreen() {
                 <View style={styles.activityHeader}>
                   <Dumbbell size={20} color={Colors.sport} />
                   <Text style={styles.activityType}>Activité Sportive</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('sport')}
-                  >
-                    <RefreshCw size={16} color={Colors.sport} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('sport')}
+                   >
+                     <RefreshCw size={16} color={Colors.sport} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.activityItem}
@@ -225,12 +238,14 @@ export default function DayProgramScreen() {
                     <Text style={styles.detenteIconText}>🧘</Text>
                   </View>
                   <Text style={styles.activityType}>Exercice de Détente</Text>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={() => regenerateRecommendation('detente')}
-                  >
-                    <RefreshCw size={16} color={Colors.relaxation} />
-                  </TouchableOpacity>
+                 {!readOnly && (
+                   <TouchableOpacity 
+                     style={styles.changeButton}
+                     onPress={() => regenerateRecommendation('detente')}
+                   >
+                     <RefreshCw size={16} color={Colors.relaxation} />
+                   </TouchableOpacity>
+                 )}
                 </View>
                 <TouchableOpacity 
                   style={styles.activityItem}
@@ -247,25 +262,27 @@ export default function DayProgramScreen() {
             </View>
 
             {/* Boutons d'accès rapide */}
-            <View style={styles.quickAccessSection}>
-              <Text style={styles.sectionTitle}>🔄 Envie de changer ?</Text>
-              <View style={styles.quickAccessButtons}>
-                <TouchableOpacity 
-                  style={[styles.quickAccessButton, { backgroundColor: Colors.agpGreen }]}
-                  onPress={() => router.push('/recettes')}
-                >
-                  <Utensils size={24} color={Colors.textLight} />
-                  <Text style={styles.quickAccessText}>Autres recettes</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.quickAccessButton, { backgroundColor: Colors.sport }]}
-                  onPress={() => router.push('/sport')}
-                >
-                  <Dumbbell size={24} color={Colors.textLight} />
-                  <Text style={styles.quickAccessText}>Autres activités</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+           {!readOnly && (
+             <View style={styles.quickAccessSection}>
+               <Text style={styles.sectionTitle}>🔄 Envie de changer ?</Text>
+               <View style={styles.quickAccessButtons}>
+                 <TouchableOpacity 
+                   style={[styles.quickAccessButton, { backgroundColor: Colors.agpGreen }]}
+                   onPress={() => router.push('/recettes')}
+                 >
+                   <Utensils size={24} color={Colors.textLight} />
+                   <Text style={styles.quickAccessText}>Autres recettes</Text>
+                 </TouchableOpacity>
+                 <TouchableOpacity 
+                   style={[styles.quickAccessButton, { backgroundColor: Colors.sport }]}
+                   onPress={() => router.push('/sport')}
+                 >
+                   <Dumbbell size={24} color={Colors.textLight} />
+                   <Text style={styles.quickAccessText}>Autres activités</Text>
+                 </TouchableOpacity>
+               </View>
+             </View>
+           )}
           </View>
         )}
       </ScrollView>

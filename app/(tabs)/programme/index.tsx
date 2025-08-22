@@ -136,6 +136,7 @@ export default function ProgrammeScreen() {
           {weekDays.map((dayInfo) => {
             const isPast = dayInfo.programDay < currentDay;
             const isCurrent = dayInfo.programDay === currentDay;
+           const isFuture = dayInfo.programDay > currentDay;
             
             return (
               <TouchableOpacity
@@ -144,13 +145,20 @@ export default function ProgrammeScreen() {
                   styles.dayItem,
                   isPast && styles.pastDay,
                   isCurrent && styles.currentDay,
+                 isFuture && styles.futureDay,
                 ]}
-                onPress={() => router.push(`/programme/${dayInfo.programDay}`)}
+               onPress={() => {
+                 if (!isFuture) {
+                   router.push(`/(tabs)/programme/${dayInfo.programDay}?readOnly=${isPast}`);
+                 }
+               }}
+               disabled={isFuture}
               >
                 <Text style={[
                   styles.dayText,
                   isPast && styles.pastDayText,
                   isCurrent && styles.currentDayText,
+                 isFuture && styles.futureDayText,
                 ]}>
                   {dayInfo.dayName}
                 </Text>
@@ -158,6 +166,7 @@ export default function ProgrammeScreen() {
                   styles.dayNumber,
                   isPast && styles.pastDayNumber,
                   isCurrent && styles.currentDayNumber,
+                 isFuture && styles.futureDayNumber,
                 ]}>
                   {dayInfo.date}
                 </Text>
@@ -308,6 +317,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
   },
+  futureDay: {
+    backgroundColor: Colors.border,
+    borderColor: Colors.border,
+    opacity: 0.5,
+  },
   dayText: {
     fontSize: 12,
     fontWeight: '500',
@@ -320,6 +334,9 @@ const styles = StyleSheet.create({
   currentDayText: {
     color: 'white',
   },
+  futureDayText: {
+    color: Colors.textSecondary,
+  },
   dayNumber: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -331,6 +348,9 @@ const styles = StyleSheet.create({
   },
   currentDayNumber: {
     color: 'white',
+  },
+  futureDayNumber: {
+    color: Colors.textSecondary,
   },
   programDay: {
     fontSize: 10,
