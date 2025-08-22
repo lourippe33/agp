@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Clock, Search, X, Wind, Sparkles, Brain } from 'lucide-react-native';
+import { Heart, Clock, Search, X, Wind, Sparkles, Brain, Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import detenteData from '@/data/detente.json';
@@ -34,6 +34,12 @@ export default function DetenteScreen() {
         style={styles.header}
       >
         <View style={styles.headerTop}>
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={20} color={Colors.textLight} />
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Exercices de Détente</Text>
           <TouchableOpacity 
             style={styles.searchButton}
@@ -181,13 +187,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
+  homeButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
   headerTitle: {
     fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: 8,
   },
   searchButton: {
     padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   headerSubtitle: {
     fontSize: 14,

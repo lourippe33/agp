@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Sun, Utensils, Coffee, Moon, Search, X } from 'lucide-react-native';
+import { Sun, Utensils, Coffee, Moon, Search, X, Home } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import recettesData from '@/data/recettes.json';
@@ -35,6 +35,12 @@ export default function RecettesScreen() {
         style={styles.header}
       >
         <View style={styles.headerTop}>
+          <TouchableOpacity 
+            style={styles.homeButton}
+            onPress={() => router.push('/(tabs)/home')}
+          >
+            <Home size={20} color={Colors.textLight} />
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Recettes AGP</Text>
           <TouchableOpacity 
             style={styles.searchButton}
@@ -181,13 +187,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
+  homeButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
   headerTitle: {
     fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: 8,
   },
   searchButton: {
     padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   headerSubtitle: {
     fontSize: 14,
