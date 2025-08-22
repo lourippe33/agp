@@ -84,6 +84,8 @@ export default function DayProgramScreen() {
   const toggleActionCompleted = async (actionKey: string) => {
     if (readOnly) return;
     
+    console.log('Toggle action:', actionKey, 'Current state:', completedActions[actionKey]);
+    
     const newCompleted = {
       ...completedActions,
       [actionKey]: !completedActions[actionKey]
@@ -91,6 +93,8 @@ export default function DayProgramScreen() {
     
     setCompletedActions(newCompleted);
     setHasUnsavedChanges(true);
+    
+    console.log('hasUnsavedChanges set to true');
     
     try {
       await AsyncStorage.setItem(`day_${dayNumber}_completed`, JSON.stringify(newCompleted));
@@ -361,6 +365,15 @@ export default function DayProgramScreen() {
         )}
       </ScrollView>
     </View>
+      {/* Debug info */}
+      {!readOnly && (
+        <View style={{ position: 'absolute', top: 100, right: 10, backgroundColor: 'red', padding: 5 }}>
+          <Text style={{ color: 'white', fontSize: 10 }}>
+            Debug: {hasUnsavedChanges ? 'TRUE' : 'FALSE'}
+          </Text>
+        </View>
+      )}
+
   );
 }
 
