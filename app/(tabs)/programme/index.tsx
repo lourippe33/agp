@@ -91,7 +91,7 @@ export default function ProgrammeScreen() {
   }, []);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       {/* Header avec gradient */}
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
@@ -115,128 +115,130 @@ export default function ProgrammeScreen() {
         </View>
       </LinearGradient>
 
-      {/* Instructions */}
-      <View style={styles.instructionsContainer}>
-        <Text style={styles.instructionsText}>
-          Cliquez sur la journée bleue pour voir votre programme
-        </Text>
-      </View>
-
-      {/* Carrousel des jours */}
-      <View style={styles.weekCarousel}>
-        <View style={styles.weekHeader}>
-          <TouchableOpacity 
-            style={[styles.weekArrow, currentWeek === 0 && styles.weekArrowDisabled]}
-            onPress={() => currentWeek > 0 && setCurrentWeek(currentWeek - 1)}
-            disabled={currentWeek === 0}
-          >
-            <ChevronLeft size={20} color={currentWeek === 0 ? Colors.textSecondary : Colors.text} />
-          </TouchableOpacity>
-          
-          <Text style={styles.weekTitle}>
-            Semaine {currentWeek + 1} / 4
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Instructions */}
+        <View style={styles.instructionsContainer}>
+          <Text style={styles.instructionsText}>
+            Cliquez sur la journée bleue pour voir votre programme
           </Text>
-          
-          <TouchableOpacity 
-            style={[styles.weekArrow, currentWeek === 3 && styles.weekArrowDisabled]}
-            onPress={() => currentWeek < 3 && setCurrentWeek(currentWeek + 1)}
-            disabled={currentWeek === 3}
-          >
-            <ChevronRight size={20} color={currentWeek === 3 ? Colors.textSecondary : Colors.text} />
-          </TouchableOpacity>
         </View>
 
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={true}
-          contentContainerStyle={styles.daysContainer}
-          decelerationRate="fast"
-          snapToInterval={82}
-          snapToAlignment="start"
-        >
-          {weekDays.map((dayInfo) => {
-            const isPast = dayInfo.programDay < currentDay;
-            const isCurrent = dayInfo.programDay === currentDay;
-            const isFuture = dayInfo.programDay > currentDay;
-            const completionStatus = dayCompletionStatus[dayInfo.programDay] || 'none';
+        {/* Carrousel des jours */}
+        <View style={styles.weekCarousel}>
+          <View style={styles.weekHeader}>
+            <TouchableOpacity 
+              style={[styles.weekArrow, currentWeek === 0 && styles.weekArrowDisabled]}
+              onPress={() => currentWeek > 0 && setCurrentWeek(currentWeek - 1)}
+              disabled={currentWeek === 0}
+            >
+              <ChevronLeft size={20} color={currentWeek === 0 ? Colors.textSecondary : Colors.text} />
+            </TouchableOpacity>
             
-            // Vérifier si on peut accéder au jour suivant (après 23h59 du jour actuel)
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinutes = now.getMinutes();
-            const isAfter2359 = currentHour === 23 && currentMinutes === 59;
-            const canAccessNextDay = dayInfo.programDay === currentDay + 1 && isAfter2359;
-            
-            // Déterminer la couleur de fond selon le statut
-            let dayBackgroundColor = Colors.background;
-            
-            // Logique de couleur basée sur le statut de validation
-            if (completionStatus === 'complete') {
-              dayBackgroundColor = Colors.success; // Vert
-            } else if (completionStatus === 'partial') {
-              dayBackgroundColor = '#FF9800'; // Orange
-            } else if (isCurrent) {
-              dayBackgroundColor = Colors.agpBlue; // Bleu pour jour actuel
-            } else if (isPast) {
-              dayBackgroundColor = '#E0E0E0'; // Gris pour jours passés non validés
-            }
-            
-            return (
-              <TouchableOpacity
-                key={dayInfo.programDay}
-                style={[
-                  styles.dayItem,
-                  { backgroundColor: dayBackgroundColor },
-                ]}
-                onPress={() => {
-                  if (!isFuture || canAccessNextDay) {
-                    router.push(`/(tabs)/programme/${dayInfo.programDay}?readOnly=${isPast}`);
-                  }
-                }}
-                disabled={isFuture && !canAccessNextDay}
-              >
-                <Text style={[
-                  styles.dayText,
-                  (completionStatus !== 'none' || isCurrent) && styles.pastDayText,
-                  (isFuture && !canAccessNextDay) && styles.futureDayText,
-                ]}>
-                  {dayInfo.dayName}
-                </Text>
-                <Text style={[
-                  styles.dayNumber,
-                  (completionStatus !== 'none' || isCurrent) && styles.pastDayNumber,
-                  (isFuture && !canAccessNextDay) && styles.futureDayNumber,
-                ]}>
-                  {dayInfo.date}
-                </Text>
-                <Text style={styles.programDay}>
-                  J{dayInfo.programDay}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-
-      {/* Section d'encouragement et conseil */}
-      <View style={styles.encouragementSection}>
-        <View style={styles.encouragementCard}>
-          <Text style={styles.encouragementTitle}>💪 Votre parcours AGP</Text>
-          <Text style={styles.encouragementText}>
-            Chaque jour compte dans votre transformation ! Votre corps s'adapte progressivement 
-            à ce nouveau rythme de vie plus sain.
-          </Text>
-          
-          <View style={styles.tipCard}>
-            <Text style={styles.tipTitle}>🕐 Conseil Chronobiologie</Text>
-            <Text style={styles.tipText}>
-              Respectez vos heures de repas : petit-déjeuner avant 9h, déjeuner entre 12h-14h, 
-              dîner avant 20h. Votre métabolisme suit naturellement ces rythmes !
+            <Text style={styles.weekTitle}>
+              Semaine {currentWeek + 1} / 4
             </Text>
+            
+            <TouchableOpacity 
+              style={[styles.weekArrow, currentWeek === 3 && styles.weekArrowDisabled]}
+              onPress={() => currentWeek < 3 && setCurrentWeek(currentWeek + 1)}
+              disabled={currentWeek === 3}
+            >
+              <ChevronRight size={20} color={currentWeek === 3 ? Colors.textSecondary : Colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={true}
+            contentContainerStyle={styles.daysContainer}
+            decelerationRate="fast"
+            snapToInterval={82}
+            snapToAlignment="start"
+          >
+            {weekDays.map((dayInfo) => {
+              const isPast = dayInfo.programDay < currentDay;
+              const isCurrent = dayInfo.programDay === currentDay;
+              const isFuture = dayInfo.programDay > currentDay;
+              const completionStatus = dayCompletionStatus[dayInfo.programDay] || 'none';
+              
+              // Vérifier si on peut accéder au jour suivant (après 23h59 du jour actuel)
+              const now = new Date();
+              const currentHour = now.getHours();
+              const currentMinutes = now.getMinutes();
+              const isAfter2359 = currentHour === 23 && currentMinutes === 59;
+              const canAccessNextDay = dayInfo.programDay === currentDay + 1 && isAfter2359;
+              
+              // Déterminer la couleur de fond selon le statut
+              let dayBackgroundColor = Colors.background;
+              
+              // Logique de couleur basée sur le statut de validation
+              if (completionStatus === 'complete') {
+                dayBackgroundColor = Colors.success; // Vert
+              } else if (completionStatus === 'partial') {
+                dayBackgroundColor = '#FF9800'; // Orange
+              } else if (isCurrent) {
+                dayBackgroundColor = Colors.agpBlue; // Bleu pour jour actuel
+              } else if (isPast) {
+                dayBackgroundColor = '#E0E0E0'; // Gris pour jours passés non validés
+              }
+              
+              return (
+                <TouchableOpacity
+                  key={dayInfo.programDay}
+                  style={[
+                    styles.dayItem,
+                    { backgroundColor: dayBackgroundColor },
+                  ]}
+                  onPress={() => {
+                    if (!isFuture || canAccessNextDay) {
+                      router.push(`/(tabs)/programme/${dayInfo.programDay}?readOnly=${isPast}`);
+                    }
+                  }}
+                  disabled={isFuture && !canAccessNextDay}
+                >
+                  <Text style={[
+                    styles.dayText,
+                    (completionStatus !== 'none' || isCurrent) && styles.pastDayText,
+                    (isFuture && !canAccessNextDay) && styles.futureDayText,
+                  ]}>
+                    {dayInfo.dayName}
+                  </Text>
+                  <Text style={[
+                    styles.dayNumber,
+                    (completionStatus !== 'none' || isCurrent) && styles.pastDayNumber,
+                    (isFuture && !canAccessNextDay) && styles.futureDayNumber,
+                  ]}>
+                    {dayInfo.date}
+                  </Text>
+                  <Text style={styles.programDay}>
+                    J{dayInfo.programDay}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Section d'encouragement et conseil */}
+        <View style={styles.encouragementSection}>
+          <View style={styles.encouragementCard}>
+            <Text style={styles.encouragementTitle}>💪 Votre parcours AGP</Text>
+            <Text style={styles.encouragementText}>
+              Chaque jour compte dans votre transformation ! Votre corps s'adapte progressivement 
+              à ce nouveau rythme de vie plus sain.
+            </Text>
+            
+            <View style={styles.tipCard}>
+              <Text style={styles.tipTitle}>🕐 Conseil Chronobiologie</Text>
+              <Text style={styles.tipText}>
+                Respectez vos heures de repas : petit-déjeuner avant 9h, déjeuner entre 12h-14h, 
+                dîner avant 20h. Votre métabolisme suit naturellement ces rythmes !
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -244,6 +246,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  scrollContent: {
+    flex: 1,
   },
   header: {
     paddingTop: 60,
