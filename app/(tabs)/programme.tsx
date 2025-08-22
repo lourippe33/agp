@@ -1,21 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, AsyncStorage, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, TrendingUp, Clock, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { Calendar, TrendingUp, Clock, ChevronLeft, ChevronRight, Utensils, Dumbbell, RefreshCw, ArrowRight } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { format, addDays, startOfWeek, getDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import recettesData from '@/data/recettes.json';
+import exercicesData from '@/data/exercices.json';
+import detenteData from '@/data/detente.json';
 
 export default function ProgrammeScreen() {
   const [currentDay, setCurrentDay] = React.useState(1);
   const [selectedDay, setSelectedDay] = React.useState(1);
   const [currentWeek, setCurrentWeek] = React.useState(0);
+  const [dailyRecommendations, setDailyRecommendations] = React.useState<{[key: number]: any}>({});
   const totalDays = 28;
   const remainingDays = totalDays - currentDay;
   const progressPercentage = Math.round((currentDay / totalDays) * 100);
 
   React.useEffect(() => {
     loadCurrentDay();
+    generateDailyRecommendations();
   }, []);
 
   const loadCurrentDay = async () => {
@@ -32,6 +38,59 @@ export default function ProgrammeScreen() {
     } catch (error) {
       console.log('Erreur lors du chargement du jour:', error);
     }
+  };
+
+  const generateDailyRecommendations = () => {
+    const recommendations: {[key: number]: any} = {};
+    
+    for (let day = 1; day <= totalDays; day++) {
+      // Logique de perte de poids : équilibrer les moments de la journée
+      const matinRecettes = recettesData.recettes.filter(r => r.moment === 'matin');
+      const midiRecettes = recettesData.recettes.filter(r => r.moment === 'midi');
+      const gouterRecettes = recettesData.recettes.filter(r => r.moment === 'gouter');
+      const soirRecettes = recettesData.recettes.filter(r => r.moment === 'soir');
+      
+      // Activités : alterner cardio et détente pour optimiser la perte de poids
+      const cardioExercices = exercicesData.exercices.filter(e => 
+        e.type === 'cardio' || e.tags.includes('cardio') || e.tags.includes('brule-graisse')
+      );
+      const detenteExercices = detenteData.exercices.filter(e => 
+        e.type === 'respiration' || e.type === 'meditation' || e.type === 'relaxation'
+      );
+      
+      recommendations[day] = {
+        matin: matinRecettes[Math.floor(Math.random() * matinRecettes.length)],
+        midi: midiRecettes[Math.floor(Math.random() * midiRecettes.length)],
+        gouter: gouterRecettes[Math.floor(Math.random() * gouterRecettes.length)],
+        soir: soirRecettes[Math.floor(Math.random() * soirRecettes.length)],
+        sport: cardioExercices[Math.floor(Math.random() * cardioExercices.length)],
+        detente: detenteExercices[Math.floor(Math.random() * detenteExercices.length)]
+      };
+    }
+    
+    setDailyRecommendations(recommendations);
+  };
+
+  const regenerateRecommendation = (day: number, type: string) => {
+    const newRecommendations = { ...dailyRecommendations };
+    
+    if (type === 'sport') {
+      const cardioExercices = exercicesData.exercices.filter(e => 
+        e.type === 'cardio' || e.tags.includes('cardio') || e.tags.includes('brule-graisse')
+      );
+      newRecommendations[day].sport = cardioExercices[Math.floor(Math.random() * cardioExercices.length)];
+    } else if (type === 'detente') {
+      const detenteExercices = detenteData.exercices.filter(e => 
+        e.type === 'respiration' || e.type === 'meditation' || e.type === 'relaxation'
+      );
+      newRecommendations[day].detente = detenteExercices[Math.floor(Math.random() * detenteExercices.length)];
+    } else {
+      // Recettes par moment
+      const recettesByMoment = recettesData.recettes.filter(r => r.moment === type);
+      newRecommendations[day][type] = recettesByMoment[Math.floor(Math.random() * recettesByMoment.length)];
+    }
+    
+    setDailyRecommendations(newRecommendations);
   };
 
   const incrementDay = async () => {
@@ -199,16 +258,188 @@ export default function ProgrammeScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.comingSoonCard}>
-          <Calendar size={48} color={Colors.agpBlue} />
-          <Text style={styles.comingSoonTitle}>Programme en développement</Text>
-          <Text style={styles.comingSoonText}>
-            Votre programme personnalisé de 28 jours sera bientôt disponible.
-          </Text>
-          <Text style={styles.selectedDayInfo}>
-            Jour sélectionné : J{selectedDay}
-          </Text>
-        </View>
+        {dailyRecommendations[selectedDay] && (
+          <View style={styles.dayContent}>
+            <Text style={styles.dayTitle}>Programme du Jour {selectedDay}</Text>
+            
+            {/* Recettes du jour */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>🍽️ Vos repas du jour</Text>
+              
+              {/* Petit-déjeuner */}
+              <View style={styles.mealCard}>
+                <View style={styles.mealHeader}>
+                  <Text style={styles.mealTime}>Petit-déjeuner</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'matin')}
+                  >
+                    <RefreshCw size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.recipeItem}
+                  onPress={() => router.push(`/recettes/${dailyRecommendations[selectedDay].matin.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].matin.image }} style={styles.recipeImage} />
+                  <View style={styles.recipeInfo}>
+                    <Text style={styles.recipeTitle}>{dailyRecommendations[selectedDay].matin.titre}</Text>
+                    <Text style={styles.recipeTime}>{dailyRecommendations[selectedDay].matin.tempsPreparation} min</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Déjeuner */}
+              <View style={styles.mealCard}>
+                <View style={styles.mealHeader}>
+                  <Text style={styles.mealTime}>Déjeuner</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'midi')}
+                  >
+                    <RefreshCw size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.recipeItem}
+                  onPress={() => router.push(`/recettes/${dailyRecommendations[selectedDay].midi.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].midi.image }} style={styles.recipeImage} />
+                  <View style={styles.recipeInfo}>
+                    <Text style={styles.recipeTitle}>{dailyRecommendations[selectedDay].midi.titre}</Text>
+                    <Text style={styles.recipeTime}>{dailyRecommendations[selectedDay].midi.tempsPreparation} min</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Goûter */}
+              <View style={styles.mealCard}>
+                <View style={styles.mealHeader}>
+                  <Text style={styles.mealTime}>Goûter</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'gouter')}
+                  >
+                    <RefreshCw size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.recipeItem}
+                  onPress={() => router.push(`/recettes/${dailyRecommendations[selectedDay].gouter.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].gouter.image }} style={styles.recipeImage} />
+                  <View style={styles.recipeInfo}>
+                    <Text style={styles.recipeTitle}>{dailyRecommendations[selectedDay].gouter.titre}</Text>
+                    <Text style={styles.recipeTime}>{dailyRecommendations[selectedDay].gouter.tempsPreparation} min</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Dîner */}
+              <View style={styles.mealCard}>
+                <View style={styles.mealHeader}>
+                  <Text style={styles.mealTime}>Dîner</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'soir')}
+                  >
+                    <RefreshCw size={16} color={Colors.agpBlue} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.recipeItem}
+                  onPress={() => router.push(`/recettes/${dailyRecommendations[selectedDay].soir.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].soir.image }} style={styles.recipeImage} />
+                  <View style={styles.recipeInfo}>
+                    <Text style={styles.recipeTitle}>{dailyRecommendations[selectedDay].soir.titre}</Text>
+                    <Text style={styles.recipeTime}>{dailyRecommendations[selectedDay].soir.tempsPreparation} min</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Activités du jour */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>💪 Vos activités du jour</Text>
+              
+              {/* Sport */}
+              <View style={styles.activityCard}>
+                <View style={styles.activityHeader}>
+                  <Dumbbell size={20} color={Colors.sport} />
+                  <Text style={styles.activityType}>Activité Sportive</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'sport')}
+                  >
+                    <RefreshCw size={16} color={Colors.sport} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.activityItem}
+                  onPress={() => router.push(`/sport/${dailyRecommendations[selectedDay].sport.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].sport.image }} style={styles.activityImage} />
+                  <View style={styles.activityInfo}>
+                    <Text style={styles.activityTitle}>{dailyRecommendations[selectedDay].sport.titre}</Text>
+                    <Text style={styles.activityDetails}>{dailyRecommendations[selectedDay].sport.duree} min • {dailyRecommendations[selectedDay].sport.calories} kcal</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Détente */}
+              <View style={styles.activityCard}>
+                <View style={styles.activityHeader}>
+                  <Calendar size={20} color={Colors.relaxation} />
+                  <Text style={styles.activityType}>Exercice de Détente</Text>
+                  <TouchableOpacity 
+                    style={styles.changeButton}
+                    onPress={() => regenerateRecommendation(selectedDay, 'detente')}
+                  >
+                    <RefreshCw size={16} color={Colors.relaxation} />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity 
+                  style={styles.activityItem}
+                  onPress={() => router.push(`/detente/${dailyRecommendations[selectedDay].detente.id}` as any)}
+                >
+                  <Image source={{ uri: dailyRecommendations[selectedDay].detente.image }} style={styles.activityImage} />
+                  <View style={styles.activityInfo}>
+                    <Text style={styles.activityTitle}>{dailyRecommendations[selectedDay].detente.titre}</Text>
+                    <Text style={styles.activityDetails}>{dailyRecommendations[selectedDay].detente.duree} min • {dailyRecommendations[selectedDay].detente.type}</Text>
+                  </View>
+                  <ArrowRight size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Boutons d'accès rapide */}
+            <View style={styles.quickAccessSection}>
+              <Text style={styles.sectionTitle}>🔄 Envie de changer ?</Text>
+              <View style={styles.quickAccessButtons}>
+                <TouchableOpacity 
+                  style={[styles.quickAccessButton, { backgroundColor: Colors.agpGreen }]}
+                  onPress={() => router.push('/recettes')}
+                >
+                  <Utensils size={24} color={Colors.textLight} />
+                  <Text style={styles.quickAccessText}>Autres recettes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickAccessButton, { backgroundColor: Colors.sport }]}
+                  onPress={() => router.push('/sport')}
+                >
+                  <Dumbbell size={24} color={Colors.textLight} />
+                  <Text style={styles.quickAccessText}>Autres activités</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* Bouton temporaire pour tester l'incrémentation */}
         <TouchableOpacity style={styles.testButton} onPress={incrementDay}>
@@ -458,5 +689,145 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Inter-SemiBold',
     color: Colors.textSecondary,
+  },
+  dayContent: {
+    paddingBottom: 20,
+  },
+  dayTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  mealCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  mealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  mealTime: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.agpBlue,
+  },
+  changeButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+  },
+  recipeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  recipeImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: Colors.border,
+  },
+  recipeInfo: {
+    flex: 1,
+  },
+  recipeTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  recipeTime: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+  },
+  activityCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  activityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  activityType: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    flex: 1,
+  },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  activityImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: Colors.border,
+  },
+  activityInfo: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  activityDetails: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textSecondary,
+  },
+  quickAccessSection: {
+    marginTop: 20,
+  },
+  quickAccessButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  quickAccessButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    gap: 8,
+  },
+  quickAccessText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
   },
 });
