@@ -43,7 +43,7 @@ export default function HomeScreen() {
           <View style={styles.actionsRow}>
             <TouchableOpacity 
               style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.sport }]}
-              onPress={() => router.push('/(tabs)/sport/')}
+              onPress={() => router.push('/(tabs)/sport')}
             >
               <Dumbbell size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Sport</Text>
@@ -52,7 +52,7 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={[styles.actionCard, styles.actionCardLarge, { backgroundColor: Colors.agpGreen }]}
-              onPress={() => router.push('/(tabs)/recettes/')}
+              onPress={() => router.push('/(tabs)/recettes')}
             >
               <Utensils size={32} color={Colors.textLight} />
               <Text style={styles.actionTitle}>Recettes</Text>
@@ -62,7 +62,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity 
             style={[styles.actionCard, styles.actionCardFull, { backgroundColor: Colors.relaxation }]}
-            onPress={() => router.push('/(tabs)/detente/')}
+            onPress={() => router.push('/(tabs)/detente')}
           >
             <Heart size={32} color={Colors.textLight} />
             <Text style={styles.actionTitle}>Détente</Text>
