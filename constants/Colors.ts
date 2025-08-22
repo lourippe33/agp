@@ -31,4 +31,8 @@ export const Colors = {
   agpBlue: '#4A90E2',
   agpGreen: '#7CB342',
   agpLightBlue: '#E3F2FD',
+  
+  // Navigation
+  tabBarBackground: '#FFFFFF',
+  tabBarBorder: '#E8F4FD',
 };

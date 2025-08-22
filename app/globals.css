@@ -1,0 +1,110 @@
+/* Suppression complète des flèches de navigation */
+
+/* Supprimer toutes les flèches, carets et triangles */
+*::before,
+*::after {
+  content: none !important;
+}
+
+/* Supprimer les flèches des éléments summary */
+summary {
+  list-style: none !important;
+}
+
+summary::-webkit-details-marker {
+  display: none !important;
+}
+
+summary::marker {
+  display: none !important;
+}
+
+/* Supprimer les carets et flèches des éléments de navigation */
+.caret,
+.arrow,
+.dropdown-arrow,
+.nav-arrow {
+  display: none !important;
+}
+
+/* Supprimer les symboles Unicode de flèches */
+*:contains("▼"),
+*:contains("▾"),
+*:contains("⌄"),
+*:contains("˅") {
+  font-size: 0 !important;
+}
+
+/* Masquer les éléments avec des classes de flèches */
+[class*="arrow"],
+[class*="caret"],
+[class*="dropdown"],
+[class*="chevron"] {
+  display: none !important;
+}
+
+/* Navigation tabs - suppression des flèches */
+.tab-bar,
+.navigation-bar,
+.bottom-tabs {
+  position: relative;
+}
+
+.tab-bar *::after,
+.navigation-bar *::after,
+.bottom-tabs *::after {
+  display: none !important;
+}
+
+/* Expo Router - suppression des indicateurs de navigation */
+[data-expo-router] *::after,
+[data-expo-router] *::before {
+  display: none !important;
+}
+
+/* React Navigation - suppression des flèches */
+.react-navigation *::after,
+.react-navigation *::before {
+  display: none !important;
+}
+
+/* Suppression des pseudo-éléments avec du contenu de flèche */
+*[data-testid*="tab"]::after,
+*[data-testid*="navigation"]::after {
+  display: none !important;
+}
+
+/* Forcer la suppression de tout contenu généré */
+* {
+  --arrow-content: none !important;
+}
+
+*::after {
+  content: var(--arrow-content, none) !important;
+}
+
+/* Suppression spécifique pour les onglets */
+.tab-item::after,
+.nav-item::after,
+.menu-item::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Masquer les éléments avec aria-expanded (souvent des dropdowns) */
+[aria-expanded]::after {
+  display: none !important;
+}
+
+/* Suppression des flèches dans les boutons */
+button::after,
+a::after {
+  display: none !important;
+}
+
+/* Suppression des indicateurs visuels de navigation */
+.navigation-indicator,
+.tab-indicator,
+.dropdown-indicator {
+  display: none !important;
+}
