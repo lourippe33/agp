@@ -4,37 +4,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Clock, Heart, Play, Users } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import detenteData from '@/data/detente.json';
 
-// Données d'exemple pour l'exercice de détente
-const exerciceData = {
-  id: 1,
-  titre: "Cohérence Cardiaque Relax 4-6",
-  type: "respiration",
-  duree: 5,
-  difficulte: "Très facile",
-  tags: ["respiration", "relaxation", "coherence-cardiaque"],
-  image: "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?w=800&q=80",
-  description: "Un exercice de respiration simple pour apaiser le corps et calmer l'esprit grâce à une expiration plus longue que l'inspiration.",
-  etapes: [
-    "Asseyez-vous confortablement, les pieds bien au sol",
-    "Posez une main sur votre ventre pour sentir le mouvement respiratoire",
-    "Inspirez doucement par le nez en comptant jusqu'à 4",
-    "Expirez lentement par la bouche en comptant jusqu'à 6",
-    "Continuez ce rythme 4-6 pendant 5 minutes, sans forcer"
-  ],
-  benefices: [
-    "Apaise le système nerveux",
-    "Favorise la détente et le sommeil",
-    "Diminue le stress et l'anxiété",
-    "Améliore l'oxygénation du corps"
-  ]
-};
 
 export default function DetenteDetailScreen() {
   const { id } = useLocalSearchParams();
   const [showTimer, setShowTimer] = useState(false);
 
-  const exercice = exerciceData; // Pour l'exemple
+  const exercice = detenteData.exercices.find(e => e.id === parseInt(id as string));
+  
+  if (!exercice) {
+    return (
+      <View style={styles.container}>
+        <Text>Exercice non trouvé</Text>
+      </View>
+    );
+  }
 
   const handleStartExercise = () => {
     setShowTimer(true);
@@ -198,9 +183,11 @@ function TimerView({ exercice, onBack }: { exercice: any, onBack: () => void }) 
                 backgroundColor: breathPhase === 'inhale' ? Colors.agpBlue : Colors.relaxation
               }
             ]} />
-            <Text style={styles.breathingText}>
-              {breathPhase === 'inhale' ? `Inspirez ${breathCount}` : `Expirez ${breathCount}`}
-            </Text>
+            {exercice.titre.includes('Cohérence Cardiaque') && (
+              <Text style={styles.breathingText}>
+                {breathPhase === 'inhale' ? `Inspirez ${breathCount}` : `Expirez ${breathCount}`}
+              </Text>
+            )}
           </View>
         )}
 

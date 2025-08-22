@@ -1,49 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Clock, Search, X } from 'lucide-react-native';
+import { Heart, Clock, Search, X, Wind, Sparkles, Brain } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import detenteData from '@/data/detente.json';
 
-// Données d'exemple pour les exercices de détente
-const exercicesData = [
-  {
-    id: 1,
-    titre: "Cohérence Cardiaque Relax 4-6",
-    type: "respiration",
-    duree: 5,
-    difficulte: "Très facile",
-    tags: ["respiration", "relaxation", "coherence-cardiaque"],
-    image: "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?w=800&q=80",
-    description: "Un exercice de respiration simple pour apaiser le corps et calmer l'esprit."
-  },
-  {
-    id: 2,
-    titre: "Méditation des 5 Sens",
-    type: "meditation",
-    duree: 5,
-    difficulte: "Très facile",
-    tags: ["meditation", "sens", "present"],
-    image: "https://images.pexels.com/photos/3593811167562-9cef47bfc4d7/pexels-photo-3593811167562-9cef47bfc4d7.jpeg?w=800&q=80",
-    description: "Exercice de pleine conscience qui utilise les 5 sens pour revenir au moment présent."
-  },
-  {
-    id: 3,
-    titre: "Respiration du Sourire",
-    type: "respiration",
-    duree: 2,
-    difficulte: "Très facile",
-    tags: ["respiration", "joie", "simple"],
-    image: "https://images.pexels.com/photos/3544367567-0f2fcb009e0b/pexels-photo-3544367567-0f2fcb009e0b.jpeg?w=800&q=80",
-    description: "Exercice très doux qui combine respiration et sourire pour libérer des endorphines."
-  }
-];
 
 const types = [
-  { id: 'tous', label: 'Tous' },
-  { id: 'respiration', label: 'Respiration' },
-  { id: 'meditation', label: 'Méditation' },
-  { id: 'relaxation', label: 'Relaxation' },
+  { id: 'tous', label: 'Tous', icon: Heart, color: Colors.relaxation },
+  { id: 'respiration', label: 'Respiration', icon: Wind, color: '#4FC3F7' },
+  { id: 'meditation', label: 'Méditation', icon: Brain, color: '#9C27B0' },
+  { id: 'relaxation', label: 'Relaxation', icon: Sparkles, color: '#FF9800' },
 ];
 
 export default function DetenteScreen() {
@@ -51,7 +19,7 @@ export default function DetenteScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  const filteredExercices = exercicesData.filter(exercice => {
+  const filteredExercices = detenteData.exercices.filter(exercice => {
     const matchesType = selectedType === 'tous' || exercice.type === selectedType;
     const matchesSearch = searchQuery === '' || 
       exercice.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -103,25 +71,49 @@ export default function DetenteScreen() {
 
       {/* Filtres par type */}
       <View style={styles.filtersContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        >
-          {types.map((type) => {
+        {/* Bouton "Tous" centré */}
+        <View style={styles.allFilterContainer}>
+          <TouchableOpacity
+            style={[
+              styles.allFilterButton,
+              selectedType === 'tous' && { backgroundColor: Colors.relaxation }
+            ]}
+            onPress={() => setSelectedType('tous')}
+          >
+            <Heart 
+              size={20} 
+              color={selectedType === 'tous' ? Colors.textLight : Colors.relaxation} 
+            />
+            <Text style={[
+              styles.allFilterText,
+              selectedType === 'tous' && { color: Colors.textLight }
+            ]}>
+              Tous
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Types en ligne */}
+        <View style={styles.typesGrid}>
+          {types.filter(t => t.id !== 'tous').map((type) => {
+            const IconComponent = type.icon;
             const isSelected = selectedType === type.id;
             
             return (
               <TouchableOpacity
                 key={type.id}
                 style={[
-                  styles.filterButton,
-                  isSelected && { backgroundColor: Colors.relaxation }
+                  styles.typeButton,
+                  isSelected && { backgroundColor: type.color }
                 ]}
                 onPress={() => setSelectedType(type.id)}
               >
+                <IconComponent 
+                  size={16} 
+                  color={isSelected ? Colors.textLight : type.color} 
+                />
                 <Text style={[
-                  styles.filterText,
+                  styles.typeText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {type.label}
@@ -129,7 +121,7 @@ export default function DetenteScreen() {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       </View>
 
       {/* Liste des exercices */}
@@ -156,10 +148,6 @@ export default function DetenteScreen() {
                   <View style={styles.infoItem}>
                     <Clock size={14} color={Colors.textSecondary} />
                     <Text style={styles.infoText}>{exercice.duree} min</Text>
-                  </View>
-                  <View style={styles.infoItem}>
-                    <Heart size={14} color={Colors.textSecondary} />
-                    <Text style={styles.infoText}>{exercice.type}</Text>
                   </View>
                 </View>
                 <View style={styles.typeBadge}>
@@ -233,19 +221,55 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  filtersContent: {
-    paddingHorizontal: 20,
+  allFilterContainer: {
     alignItems: 'center',
+    marginBottom: 16,
   },
-  filterButton: {
+  allFilterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: Colors.background,
-    marginRight: 8,
+    gap: 6,
+    minWidth: 100,
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  filterText: {
+  allFilterText: {
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  typesGrid: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  typeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: Colors.background,
+    gap: 4,
+    flex: 1,
+    maxWidth: 80,
+    justifyContent: 'center',
+    elevation: 1,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  typeText: {
+    fontSize: 10,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
   },
@@ -312,11 +336,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.relaxation,
     marginBottom: 8,
   },
-  typeText: {
+  typeBadgeText: {
     fontSize: 10,
     fontFamily: 'Inter-SemiBold',
     color: Colors.textLight,
-    textTransform: 'capitalize',
   },
   description: {
     fontSize: 12,
