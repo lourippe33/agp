@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, AsyncStorage } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, RefreshCw, ArrowRight, Utensils, Dumbbell } from 'lucide-react-native';
+import { ArrowLeft, RefreshCw, ArrowRight, Utensils, Dumbbell, Check } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import recettesData from '@/data/recettes.json';
@@ -13,9 +13,11 @@ export default function DayProgramScreen() {
   const readOnly = useLocalSearchParams().readOnly === 'true';
   const dayNumber = parseInt(day as string);
   const [dailyRecommendations, setDailyRecommendations] = useState<any>({});
+  const [completedActions, setCompletedActions] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     generateDayRecommendations();
+    loadCompletedActions();
   }, []);
 
   const generateDayRecommendations = () => {
@@ -67,6 +69,34 @@ export default function DayProgramScreen() {
     setDailyRecommendations(newRecommendations);
   };
 
+  const loadCompletedActions = async () => {
+    try {
+      const saved = await AsyncStorage.getItem(`day_${dayNumber}_completed`);
+      if (saved) {
+        setCompletedActions(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.log('Erreur lors du chargement des actions:', error);
+    }
+  };
+
+  const toggleActionCompleted = async (actionKey: string) => {
+    if (readOnly) return;
+    
+    const newCompleted = {
+      ...completedActions,
+      [actionKey]: !completedActions[actionKey]
+    };
+    
+    setCompletedActions(newCompleted);
+    
+    try {
+      await AsyncStorage.setItem(`day_${dayNumber}_completed`, JSON.stringify(newCompleted));
+    } catch (error) {
+      console.log('Erreur lors de la sauvegarde:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -98,6 +128,13 @@ export default function DayProgramScreen() {
               {/* Petit-déjeuner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['matin'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('matin')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['matin'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Petit-déjeuner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -124,6 +161,13 @@ export default function DayProgramScreen() {
               {/* Déjeuner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['midi'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('midi')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['midi'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Déjeuner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -150,6 +194,13 @@ export default function DayProgramScreen() {
               {/* Goûter */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['gouter'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('gouter')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['gouter'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Goûter</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -176,6 +227,13 @@ export default function DayProgramScreen() {
               {/* Dîner */}
               <View style={styles.mealCard}>
                 <View style={styles.mealHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['soir'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('soir')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['soir'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <Text style={styles.mealTime}>Dîner</Text>
                  {!readOnly && (
                    <TouchableOpacity 
@@ -207,6 +265,13 @@ export default function DayProgramScreen() {
               {/* Sport */}
               <View style={styles.activityCard}>
                 <View style={styles.activityHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['sport'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('sport')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['sport'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <Dumbbell size={20} color={Colors.sport} />
                   <Text style={styles.activityType}>Activité Sportive</Text>
                  {!readOnly && (
@@ -234,6 +299,13 @@ export default function DayProgramScreen() {
               {/* Détente */}
               <View style={styles.activityCard}>
                 <View style={styles.activityHeader}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, completedActions['detente'] && styles.checkboxChecked]}
+                    onPress={() => toggleActionCompleted('detente')}
+                    disabled={readOnly}
+                  >
+                    {completedActions['detente'] && <Check size={16} color={Colors.textLight} />}
+                  </TouchableOpacity>
                   <View style={styles.detenteIcon}>
                     <Text style={styles.detenteIconText}>🧘</Text>
                   </View>
@@ -474,5 +546,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.agpBlue,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+  },
+  checkboxChecked: {
+    backgroundColor: Colors.success,
+    borderColor: Colors.success,
   },
 });

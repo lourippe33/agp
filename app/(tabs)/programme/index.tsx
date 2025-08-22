@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import { router } from 'expo-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { Colors } from '../../../constants/Colors';
@@ -7,6 +7,7 @@ import { Colors } from '../../../constants/Colors';
 export default function ProgrammeScreen() {
   const [currentDay, setCurrentDay] = useState(1);
   const [currentWeek, setCurrentWeek] = useState(0);
+  const [dayCompletionStatus, setDayCompletionStatus] = useState<{[key: number]: 'complete' | 'partial' | 'none'}>({});
 
   // Générer les jours de la semaine actuelle
   const getWeekDays = (weekIndex: number) => {
@@ -37,6 +38,39 @@ export default function ProgrammeScreen() {
   };
 
   const weekDays = getWeekDays(currentWeek);
+
+  useEffect(() => {
+    loadCompletionStatus();
+  }, []);
+
+  const loadCompletionStatus = async () => {
+    const status: {[key: number]: 'complete' | 'partial' | 'none'} = {};
+    
+    for (let day = 1; day <= 28; day++) {
+      try {
+        const saved = await AsyncStorage.getItem(`day_${day}_completed`);
+        if (saved) {
+          const completed = JSON.parse(saved);
+          const actions = ['matin', 'midi', 'gouter', 'soir', 'sport', 'detente'];
+          const completedCount = actions.filter(action => completed[action]).length;
+          
+          if (completedCount === actions.length) {
+            status[day] = 'complete';
+          } else if (completedCount > 0) {
+            status[day] = 'partial';
+          } else {
+            status[day] = 'none';
+          }
+        } else {
+          status[day] = 'none';
+        }
+      } catch (error) {
+        status[day] = 'none';
+      }
+    }
+    
+    setDayCompletionStatus(status);
+  };
 
   return (
     <View style={styles.container}>
@@ -93,6 +127,7 @@ export default function ProgrammeScreen() {
             const isPast = dayInfo.programDay < currentDay;
             const isCurrent = dayInfo.programDay === currentDay;
             const isFuture = dayInfo.programDay > currentDay;
+            const completionStatus = dayCompletionStatus[dayInfo.programDay] || 'none';
             
             // Vérifier si on peut accéder au jour suivant (après 23h59 du jour actuel)
             const now = new Date();
@@ -101,11 +136,26 @@ export default function ProgrammeScreen() {
             const isAfter2359 = currentHour === 23 && currentMinutes === 59;
             const canAccessNextDay = dayInfo.programDay === currentDay + 1 && isAfter2359;
             
+            // Déterminer la couleur de fond selon le statut
+            let dayBackgroundColor = Colors.background;
+            if (isPast) {
+              if (completionStatus === 'complete') {
+                dayBackgroundColor = Colors.success;
+              } else if (completionStatus === 'partial') {
+                dayBackgroundColor = '#FF9800'; // Orange
+              } else {
+                dayBackgroundColor = '#E0E0E0'; // Gris pour non fait
+              }
+            } else if (isCurrent) {
+              dayBackgroundColor = Colors.primary;
+            }
+            
             return (
               <TouchableOpacity
                 key={dayInfo.programDay}
                 style={[
                   styles.dayItem,
+                  { backgroundColor: dayBackgroundColor },
                   isPast && styles.pastDay,
                   isCurrent && styles.currentDay,
                   (isFuture && !canAccessNextDay) && styles.futureDay,
@@ -119,7 +169,7 @@ export default function ProgrammeScreen() {
               >
                 <Text style={[
                   styles.dayText,
-                  isPast && styles.pastDayText,
+                  (isPast || isCurrent) && styles.pastDayText,
                   isCurrent && styles.currentDayText,
                   (isFuture && !canAccessNextDay) && styles.futureDayText,
                 ]}>
@@ -127,7 +177,7 @@ export default function ProgrammeScreen() {
                 </Text>
                 <Text style={[
                   styles.dayNumber,
-                  isPast && styles.pastDayNumber,
+                  (isPast || isCurrent) && styles.pastDayNumber,
                   isCurrent && styles.currentDayNumber,
                   (isFuture && !canAccessNextDay) && styles.futureDayNumber,
                 ]}>
@@ -233,11 +283,9 @@ const styles = StyleSheet.create({
     minWidth: 70,
   },
   pastDay: {
-    backgroundColor: Colors.success,
-    borderColor: Colors.success,
+    borderColor: Colors.border,
   },
   currentDay: {
-    backgroundColor: Colors.primary,
     borderColor: Colors.primary,
   },
   futureDay: {
