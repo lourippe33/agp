@@ -104,7 +104,8 @@ export default function DayProgramScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <>
+      <View style={styles.container}>
       <LinearGradient
         colors={[Colors.agpBlue, Colors.agpGreen]}
         style={styles.header}
@@ -364,7 +365,7 @@ export default function DayProgramScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+      </View>
       {/* Debug info */}
       {!readOnly && (
         <View style={{ position: 'absolute', top: 100, right: 10, backgroundColor: 'red', padding: 5 }}>
@@ -373,7 +374,7 @@ export default function DayProgramScreen() {
           </Text>
         </View>
       )}
-
+    </>
   );
 }
 
