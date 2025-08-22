@@ -94,6 +94,13 @@ export default function ProgrammeScreen() {
         </View>
       </View>
 
+      {/* Instructions */}
+      <View style={styles.instructionsContainer}>
+        <Text style={styles.instructionsText}>
+          Cliquez sur la journée bleue pour voir votre programme
+        </Text>
+      </View>
+
       {/* Carrousel des jours */}
       <View style={styles.weekCarousel}>
         <View style={styles.weekHeader}>
@@ -322,6 +329,19 @@ const styles = StyleSheet.create({
   },
   futureDayNumber: {
     color: Colors.textSecondary,
+  },
+  instructionsContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: Colors.agpLightBlue,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  instructionsText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+    color: Colors.agpBlue,
+    textAlign: 'center',
   },
   programDay: {
     fontSize: 10,
