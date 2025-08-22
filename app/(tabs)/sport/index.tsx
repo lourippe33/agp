@@ -1,12 +1,43 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Dumbbell, Clock, Zap, Filter, Chrome as Home, Search, X } from 'lucide-react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Dumbbell, Clock, Zap, Search, X } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import exercicesData from '@/data/exercices_sport.json';
+
+// Données d'exemple pour les exercices
+const exercicesData = [
+  {
+    id: 1,
+    titre: "Marche Active Débutant",
+    niveau: "debutant",
+    duree: 15,
+    calories: 80,
+    difficulte: "Très facile",
+    tags: ["marche", "cardio", "extérieur"],
+    image: "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg?w=800&q=80"
+  },
+  {
+    id: 2,
+    titre: "Cardio Brûle-Graisse",
+    niveau: "intermediaire",
+    duree: 20,
+    calories: 180,
+    difficulte: "Moyen",
+    tags: ["cardio", "perte-de-poids", "brule-graisse"],
+    image: "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?w=800&q=80"
+  },
+  {
+    id: 3,
+    titre: "Yoga Dynamique",
+    niveau: "intermediaire",
+    duree: 30,
+    calories: 100,
+    difficulte: "Moyen",
+    tags: ["yoga", "souplesse", "zen"],
+    image: "https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?w=800&q=80"
+  }
+];
 
 const niveaux = [
   { id: 'tous', label: 'Tous' },
@@ -19,111 +50,78 @@ export default function SportScreen() {
   const [selectedNiveau, setSelectedNiveau] = useState('tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const { returnTo } = useLocalSearchParams();
 
-  const filteredExercices = exercicesData.exercices.filter(exercice => {
+  const filteredExercices = exercicesData.filter(exercice => {
     const matchesNiveau = selectedNiveau === 'tous' || exercice.niveau === selectedNiveau;
     const matchesSearch = searchQuery === '' || 
       exercice.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      exercice.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      exercice.description.toLowerCase().includes(searchQuery.toLowerCase());
+      exercice.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesNiveau && matchesSearch;
   });
 
-  const handleExercisePress = (exerciseId: number) => {
-    if (returnTo) {
-      // Si on vient du programme, retourner au programme après sélection
-      router.push(returnTo as string);
-    } else {
-      router.push(`/sport/${exerciseId}` as any);
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-        <LinearGradient
-          colors={['#FF5722', '#FF8A65']}
-          style={styles.header}
-        >
-          <View style={styles.headerTop}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
-            >
-              <ArrowLeft size={24} color={Colors.textLight} />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Activités Sportives</Text>
-            <TouchableOpacity 
-              style={styles.homeButton}
-              onPress={() => setShowSearch(!showSearch)}
-            >
-              <Search size={20} color={Colors.textLight} />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.headerSubtitle}>
-            Exercices adaptés à votre niveau
-          </Text>
-          
-          {/* Barre de recherche */}
-          {showSearch && (
-            <View style={styles.searchContainer}>
-              <View style={styles.searchInputContainer}>
-                <Search size={20} color={Colors.textSecondary} />
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Rechercher un exercice, tag..."
-                  placeholderTextColor={Colors.textSecondary}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  autoFocus={true}
-                />
-                {searchQuery.length > 0 && (
-                  <TouchableOpacity onPress={() => setSearchQuery('')}>
-                    <X size={20} color={Colors.textSecondary} />
-                  </TouchableOpacity>
-                )}
-              </View>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#FF5722', '#FF8A65']}
+        style={styles.header}
+      >
+        <View style={styles.headerTop}>
+          <Text style={styles.headerTitle}>Activités Sportives</Text>
+          <TouchableOpacity 
+            style={styles.searchButton}
+            onPress={() => setShowSearch(!showSearch)}
+          >
+            <Search size={20} color={Colors.textLight} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.headerSubtitle}>
+          Exercices adaptés à votre niveau
+        </Text>
+        
+        {/* Barre de recherche */}
+        {showSearch && (
+          <View style={styles.searchContainer}>
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color={Colors.textSecondary} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Rechercher un exercice..."
+                placeholderTextColor={Colors.textSecondary}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus={true}
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <X size={20} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              )}
             </View>
-          )}
-        </LinearGradient>
+          </View>
+        )}
+      </LinearGradient>
 
       {/* Filtres par niveau */}
       <View style={styles.filtersContainer}>
-        {/* Bouton Tous centré */}
-        <View style={styles.tousButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.tousButton,
-              selectedNiveau === 'tous' && { backgroundColor: Colors.sport }
-            ]}
-            onPress={() => setSelectedNiveau('tous')}
-          >
-            <Filter size={16} color={selectedNiveau === 'tous' ? Colors.textLight : Colors.sport} />
-            <Text style={[
-              styles.tousButtonText,
-              selectedNiveau === 'tous' && { color: Colors.textLight }
-            ]}>
-              Tous
-            </Text>
-          </TouchableOpacity>
-        </View>
-        
-        {/* Niveaux en dessous */}
-        <View style={styles.niveauxContainer}>
-          {niveaux.filter(n => n.id !== 'tous').map((niveau) => {
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+        >
+          {niveaux.map((niveau) => {
             const isSelected = selectedNiveau === niveau.id;
             
             return (
               <TouchableOpacity
                 key={niveau.id}
                 style={[
-                  styles.niveauButton,
+                  styles.filterButton,
                   isSelected && { backgroundColor: Colors.sport }
                 ]}
                 onPress={() => setSelectedNiveau(niveau.id)}
               >
                 <Text style={[
-                  styles.niveauButtonText,
+                  styles.filterText,
                   isSelected && { color: Colors.textLight }
                 ]}>
                   {niveau.label}
@@ -131,12 +129,11 @@ export default function SportScreen() {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </ScrollView>
       </View>
 
       {/* Liste des exercices */}
       <ScrollView style={styles.content}>
-        {/* Résultats de recherche */}
         {searchQuery.length > 0 && (
           <View style={styles.searchResults}>
             <Text style={styles.searchResultsText}>
@@ -150,7 +147,7 @@ export default function SportScreen() {
             <TouchableOpacity
               key={exercice.id}
               style={styles.exerciceCard}
-              onPress={() => handleExercisePress(exercice.id)}
+              onPress={() => router.push(`/(tabs)/sport/${exercice.id}` as any)}
             >
               <Image source={{ uri: exercice.image }} style={styles.exerciceImage} />
               <View style={styles.exerciceContent}>
@@ -178,7 +175,7 @@ export default function SportScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -188,7 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 10,
+    paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -198,86 +195,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  backButton: {
-    padding: 8,
-    minWidth: 40,
-  },
-  homeButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    minWidth: 60,
-  },
-  homeButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-    textAlign: 'center',
-  },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: Colors.textLight,
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 8,
+  },
+  searchButton: {
+    padding: 8,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Inter-Regular',
     color: Colors.textLight,
     opacity: 0.9,
     textAlign: 'center',
-    paddingHorizontal: 20,
-  },
-  filtersContainer: {
-    backgroundColor: Colors.surface,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  tousButtonContainer: {
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  tousButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.background,
-    gap: 6,
-  },
-  tousButtonText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-  },
-  niveauxContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: 20,
-  },
-  niveauButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.background,
-    marginHorizontal: 4,
-  },
-  niveauButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.text,
-    textAlign: 'center',
   },
   searchContainer: {
     marginTop: 16,
-    paddingHorizontal: 0,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -295,18 +229,39 @@ const styles = StyleSheet.create({
     color: Colors.text,
     paddingVertical: 4,
   },
+  filtersContainer: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  filtersContent: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  filterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.background,
+    marginRight: 8,
+  },
+  filterText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.text,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
   searchResults: {
     marginBottom: 16,
-    paddingHorizontal: 4,
   },
   searchResultsText: {
     fontSize: 14,
     fontFamily: 'Inter-Medium',
     color: Colors.textSecondary,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
   },
   exercicesGrid: {
     gap: 16,

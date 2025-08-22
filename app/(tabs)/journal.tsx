@@ -17,10 +17,10 @@ export default function JournalScreen() {
         </Text>
       </LinearGradient>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
+      <ScrollView style={styles.content}>
         <View style={styles.comingSoonCard}>
           <BookOpen size={48} color={Colors.agpBlue} />
-          <Text style={styles.comingSoonTitle}>Journal en cours de développement</Text>
+          <Text style={styles.comingSoonTitle}>Journal en développement</Text>
           <Text style={styles.comingSoonText}>
             Bientôt vous pourrez noter vos repas, votre hydratation et 
             vos sensations quotidiennes.

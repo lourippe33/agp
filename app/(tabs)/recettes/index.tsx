@@ -1,12 +1,40 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Sun, Utensils, Coffee, Moon, Search, Chrome as Home, X } from 'lucide-react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, getMomentColor } from '@/constants/Colors';
-import recettesData from '@/data/recettes_agp.json';
+import { Sun, Utensils, Coffee, Moon, Search, X } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { Colors } from '@/constants/Colors';
+
+// Données d'exemple pour les recettes
+const recettesData = [
+  {
+    id: 1,
+    titre: "Porridge aux fruits rouges",
+    moment: "matin",
+    tempsPreparation: 10,
+    difficulte: "Très facile",
+    tags: ["avoine", "fruits", "petit-déjeuner"],
+    image: "https://images.pexels.com/photos/1172019/pexels-photo-1172019.jpeg?w=800&q=80"
+  },
+  {
+    id: 2,
+    titre: "Poke bowl saumon-avocat",
+    moment: "midi",
+    tempsPreparation: 15,
+    difficulte: "Facile",
+    tags: ["poke", "saumon", "avocat"],
+    image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=800&q=80"
+  },
+  {
+    id: 3,
+    titre: "Energy balls dattes-amandes",
+    moment: "gouter",
+    tempsPreparation: 15,
+    difficulte: "Facile",
+    tags: ["energy-balls", "dattes", "amandes"],
+    image: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?w=800&q=80"
+  }
+];
 
 const moments = [
   { id: 'matin', label: 'Matin', icon: Sun, color: Colors.morning },
@@ -19,51 +47,22 @@ export default function RecettesScreen() {
   const [selectedMoment, setSelectedMoment] = useState('matin');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const { moment, returnTo } = useLocalSearchParams();
 
-  // Si on arrive avec un moment spécifique, le sélectionner
-  useEffect(() => {
-    if (moment && typeof moment === 'string') {
-      setSelectedMoment(moment);
-    }
-  }, [moment]);
-
-  const filteredRecettes = recettesData.recettes.filter(
-    recette => {
-      const matchesMoment = recette.moment === selectedMoment;
-      const matchesSearch = searchQuery === '' || 
-        recette.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        recette.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        recette.ingredients.some(ingredient => 
-          ingredient.nom.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      return matchesMoment && matchesSearch;
-    }
-  );
-
-  const handleRecipePress = (recipeId: number) => {
-    if (returnTo) {
-      // Si on vient du programme, retourner au programme après sélection
-      // Ici on pourrait sauvegarder la sélection et retourner
-      router.push(returnTo as string);
-    } else {
-      router.push(`/recettes/${recipeId}` as any);
-    }
-  };
+  const filteredRecettes = recettesData.filter(recette => {
+    const matchesMoment = recette.moment === selectedMoment;
+    const matchesSearch = searchQuery === '' || 
+      recette.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recette.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesMoment && matchesSearch;
+  });
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
       <LinearGradient
         colors={[Colors.agpGreen, Colors.agpBlue]}
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => returnTo ? router.push(returnTo as string) : router.back()}
-          >
-            <ArrowLeft size={24} color={Colors.textLight} />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Recettes AGP</Text>
           <TouchableOpacity 
             style={styles.searchButton}
@@ -83,7 +82,7 @@ export default function RecettesScreen() {
               <Search size={20} color={Colors.textSecondary} />
               <TextInput
                 style={styles.searchInput}
-                placeholder="Rechercher une recette, ingrédient..."
+                placeholder="Rechercher une recette..."
                 placeholderTextColor={Colors.textSecondary}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
@@ -137,7 +136,6 @@ export default function RecettesScreen() {
 
       {/* Liste des recettes */}
       <ScrollView style={styles.content}>
-        {/* Résultats de recherche */}
         {searchQuery.length > 0 && (
           <View style={styles.searchResults}>
             <Text style={styles.searchResultsText}>
@@ -151,14 +149,14 @@ export default function RecettesScreen() {
             <TouchableOpacity
               key={recette.id}
               style={styles.recipeCard}
-              onPress={() => handleRecipePress(recette.id)}
+              onPress={() => router.push(`/(tabs)/recettes/${recette.id}` as any)}
             >
               <Image source={{ uri: recette.image }} style={styles.recipeImage} />
               <View style={styles.recipeContent}>
                 <Text style={styles.recipeTitle}>{recette.titre}</Text>
                 <View style={styles.recipeInfo}>
                   <Text style={styles.recipeTime}>{recette.tempsPreparation} min</Text>
-                  <View style={[styles.difficultyBadge, { backgroundColor: getMomentColor(recette.moment) }]}>
+                  <View style={styles.difficultyBadge}>
                     <Text style={styles.difficultyText}>{recette.difficulte}</Text>
                   </View>
                 </View>
@@ -172,7 +170,7 @@ export default function RecettesScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -182,7 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingTop: 20,
+    paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -192,17 +190,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  backButton: {
-    padding: 8,
-    minWidth: 40,
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.textLight,
   },
   searchButton: {
     padding: 8,
-    minWidth: 40,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: Colors.textLight,
+    opacity: 0.9,
+    textAlign: 'center',
   },
   searchContainer: {
     marginTop: 16,
-    paddingHorizontal: 0,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -219,35 +223,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: Colors.text,
     paddingVertical: 4,
-  },
-  homeButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    minWidth: 60,
-  },
-  homeButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-    textAlign: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: Colors.textLight,
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 8,
-  },
-  headerSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: Colors.textLight,
-    opacity: 0.9,
-    textAlign: 'center',
-    paddingHorizontal: 20,
   },
   filtersContainer: {
     backgroundColor: Colors.surface,
@@ -275,7 +250,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.text,
-    textAlign: 'center',
   },
   content: {
     flex: 1,
@@ -283,7 +257,6 @@ const styles = StyleSheet.create({
   },
   searchResults: {
     marginBottom: 16,
-    paddingHorizontal: 4,
   },
   searchResultsText: {
     fontSize: 14,
@@ -332,6 +305,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    backgroundColor: Colors.agpGreen,
   },
   difficultyText: {
     fontSize: 10,

@@ -1,22 +1,43 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Users, ChefHat, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, Clock, Users, ChefHat } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, getMomentColor } from '@/constants/Colors';
-import recettesData from '@/data/recettes_agp.json';
+import { Colors } from '@/constants/Colors';
+
+// Données d'exemple pour la recette
+const recetteData = {
+  id: 1,
+  titre: "Porridge aux fruits rouges",
+  moment: "matin",
+  tempsPreparation: 10,
+  tempsCuisson: 5,
+  difficulte: "Très facile",
+  tags: ["avoine", "fruits", "petit-déjeuner"],
+  image: "https://images.pexels.com/photos/1172019/pexels-photo-1172019.jpeg?w=800&q=80",
+  ingredients: [
+    { nom: "Flocons d'avoine", quantite: "50g" },
+    { nom: "Lait végétal", quantite: "200ml" },
+    { nom: "Fruits rouges", quantite: "100g" },
+    { nom: "Miel", quantite: "1 c.à.s" }
+  ],
+  etapes: [
+    "Faire chauffer le lait végétal dans une casserole",
+    "Ajouter les flocons d'avoine et cuire 5 minutes",
+    "Incorporer les fruits rouges et le miel",
+    "Servir chaud"
+  ],
+  nutritionPour100g: {
+    calories: 180,
+    proteines: 6,
+    glucides: 28,
+    lipides: 4
+  }
+};
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
-  const recette = recettesData.recettes.find(r => r.id === parseInt(id as string));
-
-  if (!recette) {
-    return (
-      <View style={styles.container}>
-        <Text>Recette non trouvée</Text>
-      </View>
-    );
-  }
+  const recette = recetteData; // Pour l'exemple
 
   return (
     <View style={styles.container}>
@@ -34,15 +55,9 @@ export default function RecipeDetailScreen() {
           >
             <ArrowLeft size={24} color={Colors.textLight} />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.homeButton}
-            onPress={() => router.push('/(tabs)/home')}
-          >
-            <Text style={styles.homeButtonText}>Accueil</Text>
-          </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{recette.titre}</Text>
-            <View style={[styles.momentBadge, { backgroundColor: getMomentColor(recette.moment) }]}>
+            <View style={styles.momentBadge}>
               <Text style={styles.momentText}>{recette.moment}</Text>
             </View>
           </View>
@@ -143,22 +158,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,
   },
-  homeButton: {
-    position: 'absolute',
-    top: 70,
-    right: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    minWidth: 60,
-  },
-  homeButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-    textAlign: 'center',
-  },
   titleContainer: {
     position: 'absolute',
     bottom: 20,
@@ -176,6 +175,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
+    backgroundColor: Colors.morning,
   },
   momentText: {
     fontSize: 12,

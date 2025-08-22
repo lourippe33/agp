@@ -17,10 +17,10 @@ export default function ProfilScreen() {
         </Text>
       </LinearGradient>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
+      <ScrollView style={styles.content}>
         <View style={styles.comingSoonCard}>
           <User size={48} color={Colors.agpBlue} />
-          <Text style={styles.comingSoonTitle}>Profil en cours de développement</Text>
+          <Text style={styles.comingSoonTitle}>Profil en développement</Text>
           <Text style={styles.comingSoonText}>
             Bientôt vous pourrez personnaliser vos préférences alimentaires, 
             votre niveau sportif et vos objectifs.

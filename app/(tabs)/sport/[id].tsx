@@ -1,23 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Clock, Zap, Play, Users, Chrome as Home } from 'lucide-react-native';
+import { ArrowLeft, Clock, Zap, Play, Users } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import exercicesData from '@/data/exercices_sport.json';
-import AdaptiveTimer from '@/components/AdaptiveTimer';
+
+// Données d'exemple pour l'exercice
+const exerciceData = {
+  id: 1,
+  titre: "Cardio Brûle-Graisse",
+  niveau: "intermediaire",
+  duree: 20,
+  calories: 180,
+  difficulte: "Moyen",
+  tags: ["cardio", "perte-de-poids", "brule-graisse"],
+  image: "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?w=800&q=80",
+  description: "Séance dynamique sans matériel pour activer le métabolisme, brûler des graisses et améliorer l'endurance. Parfaite pour la perte de poids.",
+  etapes: [
+    "Échauffement (3 min) : marche rapide sur place, montées de genoux légères, cercles de bras",
+    "Jumping jacks (2 min) : ouvre et ferme les jambes en sautant, bras qui montent et descendent",
+    "Squats dynamiques (2 min) : plie les genoux comme pour t'asseoir, puis remonte en rythme",
+    "Montées de genoux (2 min) : cours sur place en montant les genoux à hauteur de hanches",
+    "Fentes alternées (2 min) : avance un pied, plie les genoux à 90°, puis change de jambe",
+    "Pompes simplifiées (2 min) : au sol, mains sous les épaules, sur genoux si besoin",
+    "Circuit final (5 min) : enchaîne jumping jacks, squats et montées de genoux, 30 sec chaque exercice",
+    "Retour au calme (2 min) : marche lente sur place + étirements jambes et bras"
+  ],
+  benefices: [
+    "Active le métabolisme",
+    "Favorise la perte de poids",
+    "Améliore l'endurance",
+    "Renforce les jambes et les bras",
+    "Ne nécessite aucun matériel"
+  ]
+};
 
 export default function SportDetailScreen() {
   const { id } = useLocalSearchParams();
-  const exercice = exercicesData.exercices.find(ex => ex.id === parseInt(id as string));
+  const [showTimer, setShowTimer] = useState(false);
 
-  if (!exercice) {
-    return (
-      <View style={styles.container}>
-        <Text>Exercice non trouvé</Text>
-      </View>
-    );
-  }
+  const exercice = exerciceData; // Pour l'exemple, on utilise toujours le même exercice
 
   const getDifficultyColor = (difficulte: string) => {
     switch (difficulte.toLowerCase()) {
@@ -29,12 +51,18 @@ export default function SportDetailScreen() {
         return '#FF9800';
       case 'difficile':
         return '#F44336';
-      case 'très difficile':
-        return '#D32F2F';
       default:
         return Colors.agpBlue;
     }
   };
+
+  const handleStartExercise = () => {
+    setShowTimer(true);
+  };
+
+  if (showTimer) {
+    return <TimerView exercice={exercice} onBack={() => setShowTimer(false)} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -51,12 +79,6 @@ export default function SportDetailScreen() {
             onPress={() => router.back()}
           >
             <ArrowLeft size={24} color={Colors.textLight} />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.homeButton}
-            onPress={() => router.push('/(tabs)/home')}
-          >
-            <Text style={styles.homeButtonText}>Accueil</Text>
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{exercice.titre}</Text>
@@ -88,14 +110,6 @@ export default function SportDetailScreen() {
           <Text style={styles.description}>{exercice.description}</Text>
         </View>
 
-        {/* Chrono adaptatif */}
-        <AdaptiveTimer
-          exerciseTitle={exercice.titre}
-          exerciseSteps={exercice.etapes}
-          totalDuration={exercice.duree}
-          exerciseType="sport"
-        />
-
         {/* Étapes */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Étapes de l'exercice</Text>
@@ -120,24 +134,86 @@ export default function SportDetailScreen() {
           ))}
         </View>
 
-        {/* Tags */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tags</Text>
-          <View style={styles.tagsContainer}>
-            {exercice.tags.map((tag, index) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>#{tag}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
         {/* Bouton d'action */}
-        <TouchableOpacity style={styles.startButton}>
+        <TouchableOpacity style={styles.startButton} onPress={handleStartExercise}>
           <Play size={24} color={Colors.textLight} />
           <Text style={styles.startButtonText}>Commencer l'exercice</Text>
         </TouchableOpacity>
       </ScrollView>
+    </View>
+  );
+}
+
+// Composant Timer simple
+function TimerView({ exercice, onBack }: { exercice: any, onBack: () => void }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(180); // 3 minutes pour l'échauffement
+  const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRunning && timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            if (currentStep < exercice.etapes.length - 1) {
+              setCurrentStep(prev => prev + 1);
+              return getStepDuration(currentStep + 1);
+            } else {
+              setIsRunning(false);
+              Alert.alert('Félicitations !', 'Exercice terminé !');
+              return 0;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning, timeRemaining, currentStep]);
+
+  const getStepDuration = (stepIndex: number) => {
+    // Durées par étape (en secondes)
+    const durations = [180, 120, 120, 120, 120, 120, 300, 120];
+    return durations[stepIndex] || 120;
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <View style={styles.timerContainer}>
+      <View style={styles.timerHeader}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <ArrowLeft size={24} color={Colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.timerTitle}>Chrono Exercice</Text>
+      </View>
+
+      <View style={styles.timerContent}>
+        <Text style={styles.currentStepTitle}>
+          Étape {currentStep + 1}/{exercice.etapes.length}
+        </Text>
+        
+        <Text style={styles.timerDisplay}>{formatTime(timeRemaining)}</Text>
+        
+        <Text style={styles.stepInstruction}>
+          {exercice.etapes[currentStep]}
+        </Text>
+
+        <TouchableOpacity 
+          style={styles.playButton}
+          onPress={() => setIsRunning(!isRunning)}
+        >
+          <Play size={32} color={Colors.textLight} />
+          <Text style={styles.playButtonText}>
+            {isRunning ? 'Pause' : 'Démarrer'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -169,22 +245,6 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,
-  },
-  homeButton: {
-    position: 'absolute',
-    top: 70,
-    right: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    minWidth: 60,
-  },
-  homeButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-SemiBold',
-    color: Colors.textLight,
-    textAlign: 'center',
   },
   titleContainer: {
     position: 'absolute',
@@ -284,22 +344,6 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 20,
   },
-  tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  tag: {
-    backgroundColor: Colors.agpLightBlue,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  tagText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    color: Colors.agpBlue,
-  },
   startButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -317,6 +361,69 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   startButtonText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textLight,
+  },
+  // Styles pour le timer
+  timerContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  timerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  timerTitle: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.text,
+    marginLeft: 16,
+  },
+  timerContent: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  currentStepTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: Colors.textSecondary,
+    marginBottom: 20,
+  },
+  timerDisplay: {
+    fontSize: 64,
+    fontFamily: 'Poppins-Bold',
+    color: Colors.sport,
+    marginBottom: 30,
+  },
+  stepInstruction: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: Colors.text,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 40,
+    paddingHorizontal: 20,
+  },
+  playButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.sport,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    gap: 8,
+  },
+  playButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: Colors.textLight,
