@@ -1,0 +1,150 @@
+{
+  "neurotransmitters": [
+    {
+      "id": "dopamine",
+      "name": "Dopamine",
+      "emoji": "🚀",
+      "color": "#FF6B6B",
+      "tagline": "L'hormone de la motivation",
+      "description": "Votre carburant pour démarrer la journée avec énergie et envie d'agir !",
+      "benefits": ["Motivation", "Concentration", "Action", "Plaisir"],
+      "peakTime": "Matin (6h-12h)",
+      "foods": [
+        { "name": "Œufs", "icon": "🥚" },
+        { "name": "Amandes", "icon": "🥜" },
+        { "name": "Avocat", "icon": "🥑" },
+        { "name": "Banane", "icon": "🍌" },
+        { "name": "Poulet", "icon": "🍗" },
+        { "name": "Poisson", "icon": "🐟" }
+      ],
+      "tips": [
+        "Privilégiez un petit-déjeuner avec protéines et bons gras pour booster votre dopamine",
+        "Protéines et lipides le matin = motivation toute la journée",
+        "Évitez les sucres rapides qui font chuter votre dopamine"
+      ]
+    },
+    {
+      "id": "serotonine",
+      "name": "Sérotonine",
+      "emoji": "☀️",
+      "color": "#FFA500",
+      "tagline": "L'hormone du bonheur",
+      "description": "Votre allié pour rester zen, heureux et équilibré tout au long de la journée.",
+      "benefits": ["Bien-être", "Calme", "Satisfaction", "Sommeil"],
+      "peakTime": "Journée (12h-18h)",
+      "foods": [
+        { "name": "Riz complet", "icon": "🍚" },
+        { "name": "Pâtes complètes", "icon": "🍝" },
+        { "name": "Noix", "icon": "🥜" },
+        { "name": "Chocolat noir", "icon": "🍫" },
+        { "name": "Légumineuses", "icon": "🫘" },
+        { "name": "Graines", "icon": "🌰" }
+      ],
+      "tips": [
+        "Un déjeuner équilibré maintient votre bonne humeur",
+        "Les glucides complexes favorisent la sérotonine",
+        "Pensez aux aliments riches en tryptophane"
+      ]
+    },
+    {
+      "id": "gaba",
+      "name": "GABA",
+      "emoji": "🌙",
+      "color": "#9B59B6",
+      "tagline": "L'hormone de la détente",
+      "description": "Votre frein naturel pour ralentir, vous relaxer et préparer un sommeil réparateur.",
+      "benefits": ["Relaxation", "Sommeil", "Apaisement", "Récupération"],
+      "peakTime": "Soirée (18h-22h)",
+      "foods": [
+        { "name": "Thé vert", "icon": "🍵" },
+        { "name": "Légumes verts", "icon": "🥬" },
+        { "name": "Tomate", "icon": "🍅" },
+        { "name": "Brocoli", "icon": "🥦" },
+        { "name": "Champignons", "icon": "🍄" },
+        { "name": "Céréales complètes", "icon": "🌾" }
+      ],
+      "tips": [
+        "Un dîner léger facilite la production de GABA",
+        "Évitez les protéines lourdes le soir",
+        "Les légumes verts sont vos meilleurs amis le soir"
+      ]
+    },
+    {
+      "id": "acetylcholine",
+      "name": "Acétylcholine",
+      "emoji": "🧠",
+      "color": "#9C27B0",
+      "tagline": "L'hormone de la mémoire",
+      "description": "Votre allié pour une mémoire vive, un apprentissage efficace et une concentration optimale.",
+      "benefits": ["Mémoire", "Apprentissage", "Focus", "Vivacité"],
+      "peakTime": "Matin et après-midi (8h-16h)",
+      "foods": [
+        { "name": "Œufs", "icon": "🥚" },
+        { "name": "Saumon", "icon": "🐟" },
+        { "name": "Brocoli", "icon": "🥦" },
+        { "name": "Chou-fleur", "icon": "🥬" },
+        { "name": "Foie", "icon": "🍖" },
+        { "name": "Graines de soja", "icon": "🫘" }
+      ],
+      "tips": [
+        "Les œufs au petit-déjeuner boostent votre acétylcholine",
+        "Les aliments riches en choline favorisent la mémoire",
+        "Pensez aux légumes crucifères pour votre cerveau"
+      ]
+    }
+  ],
+  "dailyTips": [
+    {
+      "time": "morning",
+      "title": "Boostez votre matinée !",
+      "message": "Le matin, privilégiez les protéines et bons gras pour stimuler votre dopamine. C'est le moment de mettre le turbo !",
+      "emoji": "🚀"
+    },
+    {
+      "time": "afternoon",
+      "title": "Restez zen l'après-midi",
+      "message": "Un déjeuner équilibré avec des glucides complexes maintient votre sérotonine. Souriez, tout va bien !",
+      "emoji": "☀️"
+    },
+    {
+      "time": "evening",
+      "title": "Préparez une nuit douce",
+      "message": "Le soir, optez pour un dîner léger et des légumes verts. Votre GABA vous remerciera avec un sommeil de champion !",
+      "emoji": "🌙"
+    }
+  ],
+  "chronoBiology": {
+    "title": "Votre horloge biologique en action",
+    "intro": "Votre corps suit un rythme naturel de 24h. Alignez votre alimentation sur ce rythme pour être au top !",
+    "timeline": [
+      {
+        "time": "6h-9h",
+        "phase": "Réveil énergétique",
+        "neurotransmitter": "dopamine",
+        "action": "Petit-déjeuner protéiné avec bons gras",
+        "why": "Votre cortisol est au max, parfait pour digérer les protéines et lipides et démarrer fort !"
+      },
+      {
+        "time": "12h-14h",
+        "phase": "Pic de la journée",
+        "neurotransmitter": "serotonine",
+        "action": "Repas complet et équilibré",
+        "why": "C'est le moment où votre digestion est la plus efficace. Profitez-en !"
+      },
+      {
+        "time": "16h-17h",
+        "phase": "Petit creux",
+        "neurotransmitter": "serotonine",
+        "action": "Collation équilibrée",
+        "why": "Un encas malin évite le coup de barre et les fringales du soir."
+      },
+      {
+        "time": "19h-20h",
+        "phase": "Transition vers le repos",
+        "neurotransmitter": "gaba",
+        "action": "Dîner léger",
+        "why": "Votre corps se prépare au sommeil. Facilitez-lui la tâche !"
+      }
+    ]
+  }
+}

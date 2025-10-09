@@ -1,0 +1,797 @@
+{
+  "exercices": [
+    {
+      "id": 1,
+      "titre": "Marche Active Débutant",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+      "duree": 15,
+      "difficulte": "Très facile",
+      "calories": 80,
+      "tags": ["marche", "cardio", "extérieur"],
+      "description": "Une marche dynamique parfaite pour commencer votre parcours de perte de poids. Accessible à tous, cette activité booste votre métabolisme en douceur.",
+      "etapes": [
+        "Échauffez-vous 2 minutes en marchant lentement",
+        "Accélérez le rythme : vous devez pouvoir parler mais être légèrement essoufflé",
+        "Maintenez ce rythme pendant 10 minutes",
+        "Ralentissez progressivement les 3 dernières minutes",
+        "Terminez par quelques étirements des mollets"
+      ],
+      "benefices": [
+        "Brûle des calories sans impact sur les articulations",
+        "Améliore la circulation sanguine",
+        "Réduit le stress et améliore l'humeur",
+        "Renforce le système cardiovasculaire",
+        "Peut se faire partout, sans équipement"
+      ],
+      "momentIdeal": ["Matin", "Après-midi", "Début de soirée"],
+      "frequence": "5 fois par semaine, 15 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 2,
+      "titre": "Cardio Brûle-Graisse",
+      "type": "cardio",
+      "niveau": "debutant-intermediaire",
+      "image": "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg",
+      "duree": 20,
+      "difficulte": "Moyen",
+      "calories": 180,
+      "tags": ["cardio", "perte-de-poids", "brule-graisse"],
+      "description": "Séance dynamique sans matériel pour activer le métabolisme, brûler des graisses et améliorer l'endurance. Parfaite pour la perte de poids.",
+      "etapes": [
+        "1) Échauffement (3 min) : marche rapide sur place, montées de genoux légères, cercles de bras.",
+        "2) Jumping jacks (2 min) : ouvre et ferme les jambes en sautant, bras qui montent et descendent.",
+        "3) Squats dynamiques (2 min) : plie les genoux comme pour t'asseoir, puis remonte en rythme.",
+        "4) Montées de genoux (2 min) : cours sur place en montant les genoux à hauteur de hanches.",
+        "5) Fentes alternées (2 min) : avance un pied, plie les genoux à 90°, puis change de jambe.",
+        "6) Pompes simplifiées (2 min) : au sol, mains sous les épaules, sur genoux si besoin.",
+        "7) Circuit final (5 min) : enchaîne jumping jacks, squats et montées de genoux, 30 sec chaque exercice, sans pause.",
+        "8) Retour au calme (2 min) : marche lente sur place + étirements jambes et bras."
+      ],
+      "benefices": [
+        "Active le métabolisme",
+        "Favorise la perte de poids",
+        "Améliore l'endurance",
+        "Renforce les jambes et les bras",
+        "Ne nécessite aucun matériel"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 à 4 fois par semaine, 20 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 3,
+      "titre": "Danse Fitness Fun",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg",
+      "duree": 25,
+      "difficulte": "Facile",
+      "calories": 120,
+      "tags": ["danse", "fun", "cardio"],
+      "description": "Bougez sur vos musiques préférées ! Cette séance de danse vous fera oublier que vous faites du sport tout en brûlant des calories.",
+      "etapes": [
+        "Choisissez 6-8 chansons rythmées que vous aimez",
+        "Commencez par des mouvements simples : pas de côté, balancement",
+        "Ajoutez progressivement bras et hanches",
+        "Laissez-vous aller, l'important est de bouger !",
+        "Terminez par une chanson plus lente pour récupérer"
+      ],
+      "benefices": [
+        "Brûle des calories en s'amusant",
+        "Améliore la coordination et l'équilibre",
+        "Libère des endorphines (hormones du bonheur)",
+        "Renforce le cœur et les muscles",
+        "Booste la confiance en soi"
+      ],
+      "momentIdeal": ["Matin", "Après-midi", "Début de soirée"],
+      "frequence": "4-5 fois par semaine, 25 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 4,
+      "titre": "HIIT Intensif",
+      "type": "cardio",
+      "niveau": "avance",
+      "image": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+      "duree": 20,
+      "difficulte": "Difficile",
+      "calories": 250,
+      "tags": ["hiit", "cardio", "intensif"],
+      "description": "Séance de HIIT (High Intensity Interval Training) pour brûler un maximum de calories en un minimum de temps. Idéal pour les sportifs confirmés qui veulent progresser rapidement.",
+      "etapes": [
+        "1) Échauffement (3 min) : Marche rapide ou petits sauts sur place. Ajoute quelques rotations de bras et de hanches.",
+        "2) HIIT (8 rounds) : Alterne 30 secondes d'effort très intense et 30 secondes de repos. Bois de l'eau entre les rounds si nécessaire.",
+        "3) Exemples d'exercices : Burpees (descends, saute, remonte), Sprint sur place rapide, Squat jumps (sauts accroupis), Pompes. Change d'exercice à chaque round pour varier.",
+        "4) Récupération active (2 min) : Marche lente pour faire redescendre le rythme cardiaque.",
+        "5) Étirements (3 min) : Étire les cuisses (talon-fesse tenu 20 s par jambe), les bras (tirer un bras contre la poitrine), et respire profondément."
+      ],
+      "benefices": [
+        "Brûle un maximum de calories rapidement",
+        "Déclenche l'effet afterburn : continue à brûler après la séance",
+        "Améliore fortement la condition physique",
+        "Augmente l'endurance et la puissance",
+        "Optimise le temps d'entraînement"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "2–3 fois par semaine, 20 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 5,
+      "titre": "Yoga Dynamique",
+      "type": "yoga",
+      "niveau": "intermediaire",
+      "image": "https://i.ibb.co/b5ndv9RN/Yoga-dynamique.jpg",
+      "duree": 30,
+      "difficulte": "Moyen",
+      "calories": 100,
+      "tags": ["yoga", "souplesse", "zen"],
+      "description": "Un yoga plus dynamique qui combine bien-être et dépense énergétique. Parfait pour tonifier le corps en douceur tout en améliorant la flexibilité.",
+      "etapes": [
+        "1) Salutations au soleil (5 min) : Commence debout, mains jointes. Inspire, lève les bras au ciel. Expire, penche-toi en avant. Place les mains au sol, recule les pieds en planche. Descends en chaturanga (pompe yoga), inspire en cobra, expire en chien tête en bas. Ramène les pieds à l'avant et redresse-toi. Répète 3 à 5 fois.",
+        "2) Postures debout (8 min) : Passe en guerrier 1 (jambe avant pliée, bras vers le ciel), puis guerrier 2 (bras ouverts de chaque côté, regarde la main avant). Tiens 20 secondes de chaque côté. Ajoute la posture du triangle (jambe tendue, main vers la cheville, bras opposé vers le ciel). Répète 2 fois par côté.",
+        "3) Séquence d'équilibre (5 min) : Mets-toi en posture de l'arbre (debout, un pied posé contre la cuisse ou le mollet opposé, mains jointes devant la poitrine). Tiens 20 secondes de chaque côté. Puis essaie la posture du danseur : debout, attrape une cheville derrière toi, tends l'autre bras vers l'avant et penche légèrement. Tiens 15–20 secondes, chaque côté.",
+        "4) Postures au sol (7 min) : Allonge-toi sur le ventre, mains sous les épaules. Inspire et pousse sur les bras pour lever la poitrine (cobra). Tiens 10 secondes. Puis passe en chien tête en bas : mains et pieds au sol, fesses vers le ciel, corps en V inversé. Respire profondément 20 secondes. Répète 3 fois cette alternance cobra / chien tête en bas.",
+        "5) Relaxation finale (5 min) : Allonge-toi sur le dos, bras le long du corps, paumes vers le ciel (posture du cadavre / savasana). Ferme les yeux, inspire et expire profondément. Relâche tout le corps et reste immobile pendant 5 minutes."
+      ],
+      "benefices": [
+        "Tonifie et allonge les muscles",
+        "Améliore la posture et l'équilibre",
+        "Favorise la concentration et la respiration",
+        "Réduit le stress et l'anxiété",
+        "Augmente la souplesse et la mobilité articulaire",
+        "Brûle des calories en douceur"
+      ],
+      "momentIdeal": ["Matin", "Fin d'après-midi", "Soir"],
+      "frequence": "3-4 fois par semaine, 30 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 6,
+      "titre": "Aqua Fitness",
+      "type": "aquatique",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1263349/pexels-photo-1263349.jpeg",
+      "duree": 35,
+      "difficulte": "Facile",
+      "calories": 140,
+      "tags": ["piscine", "aquatique", "articulations"],
+      "description": "Exercices dans l'eau parfaits pour les personnes ayant des problèmes articulaires. L'eau offre une résistance naturelle tout en protégeant vos articulations.",
+      "etapes": [
+        "Échauffement : marche dans l'eau 5 minutes",
+        "Mouvements de bras sous l'eau : 5 minutes",
+        "Course sur place dans l'eau : 10 minutes",
+        "Exercices avec frites : squats, fentes",
+        "Retour au calme : nage douce 5 minutes"
+      ],
+      "benefices": [
+        "Zéro impact sur les articulations",
+        "Résistance naturelle de l'eau",
+        "Améliore la circulation sanguine",
+        "Renforce tout le corps harmonieusement",
+        "Effet massant et relaxant"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "2-3 fois par semaine, 35 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 7,
+      "titre": "Boxe Fitness",
+      "type": "combat",
+      "niveau": "intermediaire",
+      "image": "https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg",
+      "duree": 25,
+      "difficulte": "Moyen",
+      "calories": 180,
+      "tags": ["boxe", "défouloir", "cardio"],
+      "description": "Défoulez-vous tout en sculptant votre silhouette ! Cette séance de boxe fitness combine technique et cardio pour un maximum de résultats.",
+      "etapes": [
+        "Échauffement : shadow boxing léger 3 minutes",
+        "Apprentissage des coups de base : jab, cross, crochet",
+        "Combinaisons sur sac ou dans le vide : 15 minutes",
+        "Circuit cardio-boxe : 5 minutes",
+        "Retour au calme et étirements : 2 minutes"
+      ],
+      "benefices": [
+        "Excellent défouloir anti-stress",
+        "Brûle énormément de calories",
+        "Renforce le haut du corps",
+        "Améliore la coordination",
+        "Booste la confiance en soi"
+      ],
+      "momentIdeal": ["Fin d'après-midi", "Début de soirée"],
+      "frequence": "2-3 fois par semaine, 25 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 8,
+      "titre": "Pilates Minceur",
+      "type": "pilates",
+      "niveau": "debutant",
+      "image": "https://i.ibb.co/MymntLBg/pilate-minceur.jpg",
+      "duree": 15,
+      "difficulte": "Facile",
+      "calories": 90,
+      "tags": ["pilates", "core", "posture"],
+      "description": "Un enchaînement facile pour tonifier le ventre, les jambes et le dos, tout en améliorant la posture. Accessible aux débutants.",
+      "etapes": [
+        "1) Échauffement (3 min) : Inspire par le nez, expire par la bouche (3x). Tourne doucement la tête gauche/droite. Hausse puis relâche les épaules (5x). Fais 5 cercles d'épaules vers l'avant puis 5 vers l'arrière.",
+        "2) Abdos faciles (3 min) : Allongé sur le dos, genoux pliés, mains derrière la tête. Monte la tête et les épaules pour regarder le ventre, puis redescends. 10 répétitions. Ensuite, tends une jambe en l'air, refais 10 répétitions et change de jambe.",
+        "3) Jambes actives (3 min) : Dos au sol, lève une jambe tendue vers le plafond. Dessine 5 petits cercles dans l'air, puis 5 dans l'autre sens. Change de jambe. Fais 2 séries par côté.",
+        "4) Dos renforcé (3 min) : Allongé sur le ventre, bras tendus devant. Monte bras et jambes, maintiens 1 seconde, redescends. 8–10 répétitions. Variante : alterne bras droit + jambe gauche, puis bras gauche + jambe droite (comme si tu nageais).",
+        "5) Étirements finaux (3 min) : Assis, jambes tendues, penche doucement le buste vers l'avant 20 s. À quatre pattes, enchaîne 5 fois dos rond (chat) puis dos creux."
+      ],
+      "benefices": [
+        "Renforce les muscles profonds",
+        "Améliore la posture",
+        "Affinage de la taille et des hanches",
+        "Développe la concentration",
+        "Détend le corps"
+      ],
+      "momentIdeal": ["Matin", "Soir"],
+      "frequence": "3–5 fois par semaine, 15 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 9,
+      "titre": "Course Fractionné",
+      "type": "running",
+      "niveau": "avance",
+      "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+      "duree": 22,
+      "difficulte": "Difficile",
+      "calories": 220,
+      "tags": ["course", "fractionné", "endurance"],
+      "description": "Alternez entre course rapide et récupération pour maximiser la perte de poids. Idéal pour les coureurs expérimentés.",
+      "etapes": [
+        "Échauffement : footing léger 5 minutes",
+        "8 x (1 minute course rapide + 1 minute marche)",
+        "La course rapide doit être soutenue mais contrôlée",
+        "Récupération active en marchant",
+        "Retour au calme : footing très lent 3 minutes"
+      ],
+      "benefices": [
+        "Brûle un maximum de calories",
+        "Améliore la vitesse et l'endurance",
+        "Booste le métabolisme durablement",
+        "Renforce le système cardiovasculaire",
+        "Développe la résistance mentale"
+      ],
+      "momentIdeal": ["Matin", "Fin d'après-midi"],
+      "frequence": "2 fois par semaine maximum",
+      "videoUrl": ""
+    },
+    {
+      "id": 10,
+      "titre": "Stretching Actif",
+      "type": "stretching",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+      "duree": 20,
+      "difficulte": "Facile",
+      "calories": 70,
+      "tags": ["stretching", "souplesse", "detente"],
+      "description": "Un enchaînement d'étirements simples et dynamiques pour garder le corps souple, détendre les muscles et améliorer la récupération. Idéal après une journée active ou une séance de sport.",
+      "etapes": [
+        "1) Échauffement articulaire (3 min) : Debout, fais 5 cercles avec la tête (gauche/droite). Roule les épaules 5 fois vers l'avant puis 5 vers l'arrière. Mains sur les hanches, fais 5 cercles de bassin dans chaque sens.",
+        "2) Étirements des jambes (8 min) : Debout, lève un genou vers la poitrine et tiens 10 s, change de jambe. Talon droit devant, jambe gauche pliée, penche le buste (20 s), change de jambe. Attrape la cheville derrière toi (20 s), change de côté, répète 2 fois.",
+        "3) Mobilisation de la colonne (5 min) : Bras croisés sur la poitrine, tourne le buste doucement à gauche (10 s), puis à droite (10 s). Refais 3 fois. Ensuite, penche le buste en avant et laisse la tête/les bras pendre (20 s).",
+        "4) Étirements bras & épaules (3 min) : Tends le bras droit devant toi et tire-le vers la gauche avec l'autre bras (20 s), change de côté. Mets les mains derrière la tête, ouvre les coudes en arrière, respire 10 s.",
+        "5) Relaxation finale (1 min) : Debout, secoue doucement les bras et les jambes. Ferme les yeux, inspire profondément 3 fois et relâche."
+      ],
+      "benefices": [
+        "Améliore la flexibilité",
+        "Prévient les blessures",
+        "Détend les muscles après l'effort",
+        "Favorise la récupération active",
+        "Apaise le corps et l'esprit"
+      ],
+      "momentIdeal": ["Matin", "Soir", "Après sport"],
+      "frequence": "3–6 fois par semaine, 20 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 11,
+      "titre": "Zumba Party",
+      "type": "danse",
+      "niveau": "intermediaire",
+      "image": "https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg",
+      "duree": 35,
+      "difficulte": "Moyen",
+      "calories": 160,
+      "tags": ["zumba", "latino", "party"],
+      "description": "Dansez sur des rythmes latinos endiablés ! Cette séance de Zumba vous fera transpirer tout en vous amusant comme jamais.",
+      "etapes": [
+        "Échauffement sur musiques douces : 5 minutes",
+        "Apprentissage des pas de base : merengue, salsa",
+        "Chorégraphies complètes : 20 minutes",
+        "Partie cardio intensive : 8 minutes",
+        "Retour au calme : 2 minutes"
+      ],
+      "benefices": [
+        "Brûle des calories en fêtant",
+        "Améliore la coordination",
+        "Renforce le système cardiovasculaire",
+        "Libère les endorphines",
+        "Crée une addiction positive au sport"
+      ],
+      "momentIdeal": ["Après-midi", "Début de soirée"],
+      "frequence": "3-4 fois par semaine, 35 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 12,
+      "titre": "Bootcamp Militaire",
+      "type": "bootcamp",
+      "niveau": "avance",
+      "image": "https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg",
+      "duree": 30,
+      "difficulte": "Très difficile",
+      "calories": 250,
+      "tags": ["militaire", "intensif", "défi"],
+      "description": "Un entraînement de type militaire pour repousser vos limites ! Réservé aux plus motivés qui veulent des résultats spectaculaires.",
+      "etapes": [
+        "Échauffement militaire : jumping jacks, high knees 5 minutes",
+        "Circuit 1 : Burpees, pompes, squats jumps (3 rounds)",
+        "Circuit 2 : Mountain climbers, fentes sautées, planche (3 rounds)",
+        "Défi final : 2 minutes d'effort maximal",
+        "Récupération : marche et étirements 5 minutes"
+      ],
+      "benefices": [
+        "Transformation physique rapide",
+        "Développe une mentalité de guerrier",
+        "Brûle énormément de calories",
+        "Renforce tout le corps",
+        "Améliore la discipline personnelle"
+      ],
+      "momentIdeal": ["Matin", "Fin d'après-midi"],
+      "frequence": "2 fois par semaine maximum",
+      "videoUrl": ""
+    },
+    {
+      "id": 13,
+      "titre": "Marche active sur place",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+      "duree": 10,
+      "difficulte": "Très facile",
+      "calories": 50,
+      "tags": ["marche", "échauffement", "débutant"],
+      "description": "Échauffement simple pour activer le corps en douceur avant une séance.",
+      "etapes": [
+        "Tiens-toi debout, pieds écartés à la largeur des hanches.",
+        "Commence à lever les genoux l'un après l'autre.",
+        "Balance les bras naturellement comme si tu marchais vite.",
+        "Garde un rythme soutenu sans t'essouffler.",
+        "Continue ainsi pendant 10 minutes."
+      ],
+      "benefices": [
+        "Prépare le corps à l'effort.",
+        "Stimule la circulation sanguine.",
+        "Améliore la coordination bras/jambes.",
+        "Renforce légèrement les jambes.",
+        "Favorise la mise en mouvement en douceur."
+      ],
+      "momentIdeal": ["Matin", "Avant exercice"],
+      "frequence": "Quotidien, 10 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 14,
+      "titre": "Circuit Training Maison",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg",
+      "duree": 18,
+      "difficulte": "Moyen",
+      "calories": 180,
+      "tags": ["cardio", "renforcement", "maison"],
+      "description": "Un circuit simple et efficace à faire chez soi, sans matériel. Idéal pour brûler des calories et renforcer tout le corps.",
+      "etapes": [
+        "1) Échauffement (3 min) : Marche rapide sur place en balançant les bras. Ajoute quelques montées de genoux légères pour activer le corps.",
+        "2) Circuit (à répéter 3 fois) : 30 secondes d'effort, 15 secondes de repos entre chaque exercice.",
+        " - Squats : Plie les genoux comme si tu allais t'asseoir, garde le dos droit. 30 sec.",
+        " - Pompes : Au sol, mains sous les épaules. Si c'est difficile, fais-les à genoux. 30 sec.",
+        " - Mountain climbers : Position planche, ramène alternativement les genoux vers la poitrine rapidement. 30 sec.",
+        " - Fentes : Avance un pied, plie les genoux à 90°, puis change de jambe. 30 sec.",
+        " - Jumping jacks : Sauts écartés avec bras qui montent et descendent. 30 sec.",
+        "3) Retour au calme (2 min) : Étire doucement les jambes (talons au sol, penche le buste en avant) et les bras (tire un bras contre la poitrine, puis l'autre)."
+      ],
+      "benefices": [
+        "Brûle beaucoup de calories rapidement",
+        "Renforce tous les groupes musculaires",
+        "Améliore l'endurance cardiovasculaire",
+        "Boost le métabolisme pendant des heures",
+        "Ne nécessite aucun équipement"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3–4 fois par semaine, 18 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 16,
+      "titre": "Renforcement bas du corps",
+      "type": "renforcement",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+      "duree": 15,
+      "difficulte": "Facile",
+      "calories": 80,
+      "tags": ["renforcement", "jambes", "fessiers"],
+      "description": "Renforcement doux pour le bas du corps : cuisses, fessiers et gainage.",
+      "etapes": [
+        "Effectue 3 séries de 10 squats.",
+        "Enchaîne 3 séries de 10 fentes (alternées).",
+        "Maintiens la position chaise contre un mur pendant 30 sec (3 fois).",
+        "Contrôle les mouvements et posture.",
+        "Termine par 2 minutes d'étirement doux."
+      ],
+      "benefices": [
+        "Renforce les jambes et les fessiers.",
+        "Améliore l'équilibre.",
+        "Mobilise les muscles profonds.",
+        "Prépare à des séances plus longues.",
+        "Entretien la tonicité musculaire."
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 fois par semaine, 15 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 17,
+      "titre": "Gainage facile",
+      "type": "gainage",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+      "duree": 8,
+      "difficulte": "Facile",
+      "calories": 45,
+      "tags": ["gainage", "abdos", "stabilité"],
+      "description": "Gainage en douceur pour renforcer la sangle abdominale.",
+      "etapes": [
+        "Tiens une planche ventrale (sur avant-bras) pendant 30 sec.",
+        "Passe à une planche latérale gauche pendant 30 sec.",
+        "Puis planche latérale droite pendant 30 sec.",
+        "Répète le tout 2 à 3 fois selon ton niveau.",
+        "Garde le dos droit et les abdos engagés."
+      ],
+      "benefices": [
+        "Renforce la ceinture abdominale.",
+        "Améliore la posture.",
+        "Protège le dos.",
+        "Travaille en profondeur sans impact.",
+        "Développe la stabilité globale."
+      ],
+      "momentIdeal": ["Matin", "Soir"],
+      "frequence": "Quotidien, 8 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 18,
+      "titre": "Danse libre",
+      "type": "danse",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3775593/pexels-photo-3775593.jpeg",
+      "duree": 12,
+      "difficulte": "Très facile",
+      "calories": 90,
+      "tags": ["danse", "fun", "libre"],
+      "description": "Exercice cardio libre et amusant pour faire bouger le corps en rythme.",
+      "etapes": [
+        "Choisis une musique dynamique.",
+        "Laisse ton corps bouger librement.",
+        "Bouge les bras, les jambes, saute si tu veux.",
+        "Danse sans arrêt pendant 10 à 15 min.",
+        "Amuse-toi tout en transpirant !"
+      ],
+      "benefices": [
+        "Excellente dépense calorique.",
+        "Améliore l'humeur.",
+        "Augmente le rythme cardiaque.",
+        "Libère les tensions.",
+        "Accessible à tous, sans technique."
+      ],
+      "momentIdeal": ["Après-midi", "Soir"],
+      "frequence": "4-5 fois par semaine, 12 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 19,
+      "titre": "Montée de marche ou escaliers",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+      "duree": 10,
+      "difficulte": "Facile",
+      "calories": 75,
+      "tags": ["escaliers", "cardio", "jambes"],
+      "description": "Montées et descentes simples pour stimuler le bas du corps et le cœur.",
+      "etapes": [
+        "Trouve une marche ou un escalier.",
+        "Monte puis descends pendant 2 minutes.",
+        "Repos 1 minute.",
+        "Répète 4 fois.",
+        "Garde un rythme régulier et stable."
+      ],
+      "benefices": [
+        "Renforce cuisses et fessiers.",
+        "Travaille le souffle.",
+        "Brûle des calories efficacement.",
+        "Facile à intégrer à la maison.",
+        "Mobilise l'ensemble des jambes."
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3-4 fois par semaine, 10 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 20,
+      "titre": "Stretching actif",
+      "type": "stretching",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+      "duree": 8,
+      "difficulte": "Très facile",
+      "calories": 30,
+      "tags": ["étirements", "récupération", "souplesse"],
+      "description": "Etirement doux après séance ou au réveil pour détendre le corps.",
+      "etapes": [
+        "Fais des rotations amples des bras.",
+        "Étire les jambes tendues (assis ou debout).",
+        "Effectue des torsions douces du buste.",
+        "Garde chaque position 10-20 secondes.",
+        "Respire lentement et profondément."
+      ],
+      "benefices": [
+        "Détend les muscles.",
+        "Favorise la récupération.",
+        "Améliore la souplesse.",
+        "Apaise le système nerveux.",
+        "Idéal après l'effort ou le matin."
+      ],
+      "momentIdeal": ["Matin", "Soir", "Après exercice"],
+      "frequence": "Quotidien, 8 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 22,
+      "titre": "Mini Tabata",
+      "type": "hiit",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+      "duree": 8,
+      "difficulte": "Moyen",
+      "calories": 85,
+      "tags": ["tabata", "hiit", "intensif"],
+      "description": "Un petit circuit HIIT de 8 minutes, avec alternance d'efforts courts et pauses, pour booster le métabolisme et brûler des calories rapidement.",
+      "etapes": [
+        "1) Jumping jacks (20 sec) : Debout, saute en ouvrant bras et jambes, puis referme. Rythme rapide mais contrôlé. Repose-toi 10 sec.",
+        "2) Squats (20 sec) : Pieds écartés largeur épaules, plie les genoux comme pour t'asseoir, dos droit. Descends et remontes sans bloquer les genoux. Repose-toi 10 sec.",
+        "3) Pompes genoux (20 sec) : Au sol, mains sous les épaules, genoux posés. Fléchis les bras en gardant le dos droit, puis pousse pour remonter. Repose-toi 10 sec.",
+        "4) Planche (20 sec) : Position gainage, avant-bras au sol, corps droit, abdos serrés. Ne creuse pas le dos. Tiens la position. Repose-toi 10 sec.",
+        "5) Pause longue (30 sec) : Bois une gorgée d'eau, marche sur place.",
+        "6) Répète la séquence complète 3 fois au total (≈ 8 minutes)."
+      ],
+      "benefices": [
+        "Active tout le corps en peu de temps",
+        "Brûle des calories efficacement",
+        "Renforce le cœur et les muscles",
+        "Améliore l'endurance et le souffle",
+        "Se fait sans matériel, n'importe où"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 fois par semaine, 8 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 21,
+      "titre": "Mini Tabata Doux",
+      "type": "hiit",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+      "duree": 8,
+      "difficulte": "Facile",
+      "calories": 60,
+      "tags": ["tabata", "hiit", "debutant"],
+      "description": "Un petit circuit Tabata accessible pour débutants. Alternance de mouvements simples et pauses pour activer le corps sans forcer.",
+      "etapes": [
+        "1) Marche dynamique sur place (20 sec) : Lève bien les genoux, balance les bras. Puis repose-toi 10 sec.",
+        "2) Squats partiels (20 sec) : Descends légèrement comme pour t'asseoir sur une chaise, sans aller trop bas. Dos droit. Puis repose-toi 10 sec.",
+        "3) Pompes murales (20 sec) : Place les mains contre un mur, plie doucement les coudes puis repousse. Garde le dos droit. Puis repose-toi 10 sec.",
+        "4) Gainage assis (20 sec) : Assieds-toi sur une chaise, redresse le dos, contracte les abdos 20 sec. Respire lentement. Puis repose-toi 10 sec.",
+        "5) Pause longue (30 sec) : Bois un peu d'eau, respire calmement.",
+        "6) Répète la séquence complète 3 fois (≈ 8 minutes au total)."
+      ],
+      "benefices": [
+        "Active la circulation sanguine",
+        "Brûle des calories en douceur",
+        "Renforce légèrement muscles et souffle",
+        "Convient même aux débutants absolus",
+        "Permet une remise en forme progressive"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 fois par semaine, 8 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 23,
+      "titre": "Yoga doux perte de poids",
+      "type": "yoga",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg",
+      "duree": 20,
+      "difficulte": "Facile",
+      "calories": 60,
+      "tags": ["yoga", "souplesse", "respiration"],
+      "description": "Séquence de yoga fluide et accessible pour activer le corps, améliorer la respiration et favoriser une perte de poids douce.",
+      "etapes": [
+        "1) Chat-vache (2 min) : À quatre pattes, creuse doucement le dos en levant la tête (vache), puis arrondis le dos en rentrant le menton (chat). Répète 6 fois.",
+        "2) Chien tête en bas (3 min) : Depuis les quatre pattes, tends les jambes et pousse les hanches vers le haut pour former un V inversé. Garde les talons vers le sol. Respire calmement pendant 30 secondes, repose, puis refais 2 fois.",
+        "3) Guerrier 1 et 2 (6 min) : Debout, avance une jambe, plie le genou et tends les bras vers le haut (guerrier 1). Puis ouvre les bras de chaque côté et regarde vers la main avant (guerrier 2). Tiens 20 secondes chaque posture, chaque côté, répète 2 fois.",
+        "4) Planche + cobra (5 min) : Mets-toi en planche (bras tendus, corps droit). Tiens 10 à 20 secondes. Puis pose le ventre au sol, mains sous les épaules, pousse le buste vers le haut en cobra. Répète 3 fois.",
+        "5) Respiration finale (4 min) : Allonge-toi sur le dos, mains posées sur le ventre. Inspire par le nez, expire par la bouche. Reste calme et relâché pendant 1 à 2 minutes."
+      ],
+      "benefices": [
+        "Active la souplesse",
+        "Favorise une perte de poids douce",
+        "Améliore la respiration",
+        "Mobilise le corps en douceur",
+        "Apaise et recentre l'esprit"
+      ],
+      "momentIdeal": ["Matin", "Soir"],
+      "frequence": "3–5 fois par semaine, 20 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 24,
+      "titre": "Chaise Brûle-Graisse",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+      "duree": 12,
+      "difficulte": "Facile",
+      "calories": 80,
+      "tags": ["cardio", "débutant", "sans-matériel", "chaise"],
+      "description": "Petit circuit autour d'une chaise, accessible à tous, pour activer le cardio et brûler des calories sans impact.",
+      "etapes": [
+        "1) Échauffement (1 min) : Marche sur place en s'aidant du dossier (rythme léger).",
+        "2) Assis→Debout (2 min) : Assieds-toi puis relève-toi sans t'aider des mains, rythme régulier.",
+        "3) Montées de genoux avec appui (2 min) : Touche le dossier d'une main, lève les genoux tour à tour à hauteur de hanches.",
+        "4) Fentes appuyées (2 min) : Une main sur le dossier, fais des fentes alternées en contrôle.",
+        "5) Pompes inclinées (2 min) : Mains sur l'assise, corps gainé, fléchis les coudes puis repousse.",
+        "6) Circuit final (2 min) : 30 s assis→debout + 30 s montées de genoux + 30 s pompes inclinées + 30 s marche.",
+        "7) Retour au calme (1 min) : Étire quadriceps et épaules en douceur."
+      ],
+      "benefices": [
+        "Brûle des calories sans sauts",
+        "Sécurisant grâce au point d'appui",
+        "Renforce jambes et haut du corps",
+        "Idéal pour une reprise en douceur"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 à 5 fois par semaine, 12 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 25,
+      "titre": "Marche + Bras Actifs",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1556691/pexels-photo-1556691.jpeg",
+      "duree": 10,
+      "difficulte": "Très facile",
+      "calories": 60,
+      "tags": ["marche", "cardio", "sans-impact"],
+      "description": "Marche rapide sur place avec mouvements de bras pour augmenter la dépense sans forcer.",
+      "etapes": [
+        "1) Échauffement (1 min) : Marche lente, épaules relâchées.",
+        "2) Marche rapide (2 min) : Allonge la foulée, souffle régulier.",
+        "3) Marche bras levés (2 min) : Lève et baisse les bras au-dessus de la tête en marchant.",
+        "4) Rotations de bras (2 min) : Cercles de bras alternés tout en marchant.",
+        "5) Montées de genoux légères (2 min) : Genoux à mi-hauteur, rythme confortable.",
+        "6) Retour au calme (1 min) : Marche lente + grandes respirations."
+      ],
+      "benefices": [
+        "Active le haut et le bas du corps",
+        "Brûle des calories sans impact",
+        "Améliore la coordination et le souffle",
+        "Faisable partout, zéro matériel"
+      ],
+      "momentIdeal": ["Matin", "Début de soirée"],
+      "frequence": "Quotidien, 10 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 26,
+      "titre": "Cardio Fun Sans Saut",
+      "type": "cardio",
+      "niveau": "debutant",
+      "image": "https://i.ibb.co/v4yV2sB7/cardio-fun-saut-compressed.jpg",
+      "duree": 12,
+      "difficulte": "Facile",
+      "calories": 85,
+      "tags": ["cardio", "sans-impact", "débutant"],
+      "description": "Enchaînement dynamique sans saut pour protéger les articulations tout en brûlant des calories.",
+      "etapes": [
+        "1) Pas de côté + bras (2 min) : Grand pas à droite/gauche, bras qui montent et descendent.",
+        "2) Talons-fesses sans saut (2 min) : Talon vers fesse en alternant, bras toniques.",
+        "3) Torsions de buste (2 min) : Pieds ancrés, fais des rotations lentes du buste avec bras ouverts.",
+        "4) Montées de genoux contrôlées (2 min) : Genoux à hauteur de hanches, rythme soutenu.",
+        "5) Combo final (3 min) : 30 s de chaque : pas de côté → talons-fesses → torsions → montées de genoux → pas de côté → talons-fesses.",
+        "6) Retour au calme (1 min) : Marche lente + étirement des épaules."
+      ],
+      "benefices": [
+        "Brûle des calories sans impact",
+        "Protège genoux et chevilles",
+        "Améliore le souffle et la posture",
+        "Accessible même en surpoids"
+      ],
+      "momentIdeal": ["Après-midi", "Soir"],
+      "frequence": "3 à 5 fois par semaine, 12 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 27,
+      "titre": "Yoga Brûle-Calm (Flow 15')",
+      "type": "yoga",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg",
+      "duree": 15,
+      "difficulte": "Facile",
+      "calories": 80,
+      "tags": ["yoga", "flow", "perte-de-poids"],
+      "description": "Petit flow de yoga fluide pour activer en douceur, transpirer un peu et finir apaisé.",
+      "etapes": [
+        "1) 2 Salutations au soleil (3 min) : Debout → flexion avant → planche → cobra → chien tête en bas → revient debout.",
+        "2) Flow guerrier (4 min) : Guerrier 1 → Guerrier 2 → Triangle. 30 s par posture, chaque côté.",
+        "3) Planche douce (2 min) : 2×30 s planche bras tendus, 30 s de repos entre les deux.",
+        "4) Chien tête en bas (2 min) : Tenues de 20 s × 3 avec respiration calme.",
+        "5) Assis respiration 4-6 (2 min) : Inspire 4 s, expire 6 s.",
+        "6) Relaxation courte (2 min) : Allongé, relâche tout le corps."
+      ],
+      "benefices": [
+        "Active la dépense douce",
+        "Améliore la souplesse et l'équilibre",
+        "Apaise le système nerveux",
+        "Idéal fin de journée"
+      ],
+      "momentIdeal": ["Fin d'après-midi", "Soir"],
+      "frequence": "3–4 fois par semaine, 15 minutes",
+      "videoUrl": ""
+    },
+    {
+      "id": 28,
+      "titre": "Abdos + Cardio Express",
+      "type": "cardio",
+      "niveau": "debutant-intermediaire",
+      "image": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+      "duree": 12,
+      "difficulte": "Moyen",
+      "calories": 90,
+      "tags": ["cardio", "abdos", "brule-graisse"],
+      "description": "Mélange rapide de cardio et de gainage pour activer le métabolisme et tonifier la sangle abdominale.",
+      "etapes": [
+        "1) Jumping jacks (30 s) → repos (15 s).",
+        "2) Crunchs au sol (30 s) → repos (15 s).",
+        "3) Montées de genoux (30 s) → repos (15 s).",
+        "4) Gainage avant-bras (30 s) → repos (30 s).",
+        "5) Répète la séquence 3 fois (≈ 10 min).",
+        "6) Retour au calme (2 min) : Étire abdos (cobra doux) et jambes."
+      ],
+      "benefices": [
+        "Augmente la dépense énergétique",
+        "Renforce la ceinture abdominale",
+        "Améliore le souffle",
+        "Se fait sans matériel"
+      ],
+      "momentIdeal": ["Matin", "Après-midi"],
+      "frequence": "3 à 4 fois par semaine, 12 minutes",
+      "videoUrl": ""
+    }
+  ]
+}

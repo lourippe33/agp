@@ -1,0 +1,354 @@
+{
+  "techniques": [
+    {
+      "id": 1,
+      "titre": "Cohérence Cardiaque 365",
+      "type": "respiration-guidee",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg",
+      "duree": 5,
+      "difficulte": "Facile",
+      "tags": ["respiration", "stress", "emotion"],
+      "description": "La méthode de référence : 3 fois par jour, 6 respirations par minute, pendant 5 minutes. Équilibre le système nerveux et régule les émotions.",
+      "icone": "heart-pulse",
+      "couleur": "blue",
+      "instructions": {
+        "preparation": "Installez-vous confortablement, dos droit, pieds au sol. Posez une main sur votre cœur si vous le souhaitez.",
+        "cycle": {
+          "inspiration": 5,
+          "expiration": 5,
+          "cycles": 30
+        },
+        "conseils": [
+          "Respirez avec le ventre, pas la poitrine",
+          "Ne forcez pas votre respiration",
+          "Suivez le guide visuel du cercle",
+          "Pratiquez idéalement 3 fois par jour",
+          "Moment idéal : matin, avant déjeuner, fin d'après-midi"
+        ]
+      },
+      "benefices": [
+        "Réduit le stress et l'anxiété",
+        "Améliore la concentration",
+        "Régule les émotions",
+        "Diminue la tension artérielle",
+        "Renforce le système immunitaire",
+        "Améliore le sommeil"
+      ],
+      "quandUtiliser": [
+        "Avant une situation stressante",
+        "En cas d'anxiété",
+        "Pour améliorer la concentration",
+        "Avant de dormir",
+        "Pour gérer la colère"
+      ]
+    },
+    {
+      "id": 2,
+      "titre": "Respiration 4-7-8",
+      "type": "respiration-guidee",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg",
+      "duree": 3,
+      "difficulte": "Facile",
+      "tags": ["respiration", "anxiete", "sommeil"],
+      "description": "Technique puissante du Dr Andrew Weil pour calmer instantanément l'anxiété. Appelée aussi 'tranquillisant naturel'.",
+      "icone": "wind",
+      "couleur": "cyan",
+      "instructions": {
+        "preparation": "Placez le bout de votre langue contre le palais, juste derrière les dents du haut. Elle y reste pendant tout l'exercice.",
+        "cycle": {
+          "inspiration": 4,
+          "retention": 7,
+          "expiration": 8,
+          "cycles": 4
+        },
+        "conseils": [
+          "Inspirez silencieusement par le nez",
+          "Retenez confortablement, sans forcer",
+          "Expirez bruyamment par la bouche (son 'whoosh')",
+          "Faites 4 cycles pour commencer",
+          "Augmentez progressivement"
+        ]
+      },
+      "benefices": [
+        "Calme instantanément l'anxiété",
+        "Favorise l'endormissement rapide",
+        "Réduit la tension nerveuse",
+        "Apaise les crises d'angoisse",
+        "Aide à gérer la colère"
+      ],
+      "quandUtiliser": [
+        "En cas d'anxiété aiguë",
+        "Avant de dormir",
+        "Lors d'une crise de panique",
+        "Avant un événement stressant",
+        "Pour calmer la colère"
+      ]
+    },
+    {
+      "id": 3,
+      "titre": "Ancrage 5-4-3-2-1",
+      "type": "ancrage",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg",
+      "duree": 3,
+      "difficulte": "Très facile",
+      "tags": ["ancrage", "anxiete", "present"],
+      "description": "Technique d'ancrage sensoriel pour stopper les pensées anxieuses et revenir au moment présent. Utilisable partout, discrètement.",
+      "icone": "anchor",
+      "couleur": "green",
+      "instructions": {
+        "etapes": [
+          {
+            "sens": "Vue",
+            "nombre": 5,
+            "instruction": "Identifiez 5 choses que vous pouvez VOIR autour de vous",
+            "exemples": ["Le cadre sur le mur", "La couleur de votre tasse", "La forme d'un nuage", "Un objet sur la table", "La texture du sol"]
+          },
+          {
+            "sens": "Toucher",
+            "nombre": 4,
+            "instruction": "Identifiez 4 choses que vous pouvez TOUCHER",
+            "exemples": ["La texture de vos vêtements", "Vos pieds sur le sol", "La température de l'air sur votre peau", "L'accoudoir de votre chaise"]
+          },
+          {
+            "sens": "Ouïe",
+            "nombre": 3,
+            "instruction": "Identifiez 3 sons que vous pouvez ENTENDRE",
+            "exemples": ["Le bruit de fond de la pièce", "Votre respiration", "Un son lointain", "Le tic-tac d'une horloge"]
+          },
+          {
+            "sens": "Odorat",
+            "nombre": 2,
+            "instruction": "Identifiez 2 choses que vous pouvez SENTIR",
+            "exemples": ["L'odeur de l'air", "Votre parfum ou déodorant", "L'odeur de votre environnement", "Une odeur de nourriture"]
+          },
+          {
+            "sens": "Goût",
+            "nombre": 1,
+            "instruction": "Identifiez 1 chose que vous pouvez GOÛTER",
+            "exemples": ["Le goût dans votre bouche", "Votre salive", "Un reste de repas", "Une gorgée d'eau"]
+          }
+        ],
+        "conseils": [
+          "Prenez votre temps pour chaque sens",
+          "Décrivez mentalement ce que vous percevez",
+          "Restez dans l'observation, pas le jugement",
+          "Sentez-vous revenir progressivement au présent",
+          "Peut se faire discrètement, n'importe où"
+        ]
+      },
+      "benefices": [
+        "Stoppe les pensées anxieuses",
+        "Ramène instantanément au présent",
+        "Calme les crises de panique",
+        "Réduit la rumination mentale",
+        "Utilisable partout, discrètement"
+      ],
+      "quandUtiliser": [
+        "En cas d'anxiété soudaine",
+        "Lors d'une crise de panique",
+        "Quand les pensées s'emballent",
+        "Dans les transports",
+        "Avant un événement stressant"
+      ]
+    },
+    {
+      "id": 4,
+      "titre": "Respiration Carrée",
+      "type": "respiration-guidee",
+      "niveau": "intermediaire",
+      "image": "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg",
+      "duree": 4,
+      "difficulte": "Moyenne",
+      "tags": ["respiration", "concentration", "equilibre"],
+      "description": "Technique utilisée par les Navy SEALs pour rester calme en situation de stress intense. 4 temps égaux : inspire, retient, expire, retient.",
+      "icone": "square",
+      "couleur": "teal",
+      "instructions": {
+        "preparation": "Asseyez-vous confortablement. Visualisez un carré qui se dessine devant vous.",
+        "cycle": {
+          "inspiration": 4,
+          "retention1": 4,
+          "expiration": 4,
+          "retention2": 4,
+          "cycles": 5
+        },
+        "conseils": [
+          "Comptez mentalement : 1-2-3-4",
+          "Les 4 phases doivent avoir la même durée",
+          "Visualisez les côtés du carré à chaque phase",
+          "Ne forcez pas les rétentions",
+          "Augmentez progressivement à 5 ou 6 secondes"
+        ]
+      },
+      "benefices": [
+        "Améliore la concentration",
+        "Calme le stress intense",
+        "Augmente la capacité pulmonaire",
+        "Développe la maîtrise de soi",
+        "Prépare à l'action"
+      ],
+      "quandUtiliser": [
+        "Avant une performance",
+        "En situation de stress intense",
+        "Pour améliorer la concentration",
+        "Avant une décision importante",
+        "Pour se préparer mentalement"
+      ]
+    },
+    {
+      "id": 5,
+      "titre": "EFT Tapping Points",
+      "type": "tapping",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg",
+      "duree": 5,
+      "difficulte": "Facile",
+      "tags": ["eft", "acupression", "emotion"],
+      "description": "Emotional Freedom Technique : tapotez des points d'acupression spécifiques pour libérer les émotions négatives rapidement.",
+      "icone": "hand",
+      "couleur": "orange",
+      "instructions": {
+        "preparation": "Identifiez l'émotion négative que vous ressentez. Évaluez son intensité de 0 à 10.",
+        "points": [
+          {
+            "nom": "Tranche de la main",
+            "position": "Côté externe de la main, entre poignet et auriculaire",
+            "phrase": "Même si je ressens [émotion], je m'accepte complètement"
+          },
+          {
+            "nom": "Sommet du crâne",
+            "position": "Centre du sommet de la tête",
+            "phrase": "Cette [émotion]"
+          },
+          {
+            "nom": "Début du sourcil",
+            "position": "Au-dessus du nez, début du sourcil",
+            "phrase": "Cette [émotion]"
+          },
+          {
+            "nom": "Coin de l'œil",
+            "position": "Sur l'os, au coin externe de l'œil",
+            "phrase": "Je libère cette [émotion]"
+          },
+          {
+            "nom": "Sous l'œil",
+            "position": "Sur l'os sous l'œil, aligné avec la pupille",
+            "phrase": "Je libère cette [émotion]"
+          },
+          {
+            "nom": "Sous le nez",
+            "position": "Entre le nez et la lèvre supérieure",
+            "phrase": "Je choisis le calme"
+          },
+          {
+            "nom": "Sous la bouche",
+            "position": "Dans le creux entre la lèvre inférieure et le menton",
+            "phrase": "Je choisis la paix"
+          },
+          {
+            "nom": "Clavicule",
+            "position": "Sous la clavicule, à 3 cm du sternum",
+            "phrase": "Je me libère maintenant"
+          },
+          {
+            "nom": "Sous le bras",
+            "position": "À 10 cm sous l'aisselle, niveau ligne soutien-gorge",
+            "phrase": "Je suis en sécurité"
+          }
+        ],
+        "conseils": [
+          "Tapotez 5-7 fois sur chaque point",
+          "Utilisez 2-3 doigts pour tapoter",
+          "Tapotez fermement mais sans douleur",
+          "Répétez la phrase à chaque point",
+          "Faites 2-3 rondes complètes",
+          "Réévaluez l'intensité de l'émotion après"
+        ]
+      },
+      "benefices": [
+        "Libère rapidement les émotions négatives",
+        "Réduit l'anxiété et le stress",
+        "Soulage les phobies",
+        "Améliore l'estime de soi",
+        "Peut se faire discrètement"
+      ],
+      "quandUtiliser": [
+        "En cas d'émotion intense",
+        "Avant une situation redoutée",
+        "Pour gérer une phobie",
+        "En cas de rumination",
+        "Pour libérer une tension émotionnelle"
+      ]
+    },
+    {
+      "id": 6,
+      "titre": "Visualisation du Lieu Ressource",
+      "type": "visualisation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg",
+      "duree": 7,
+      "difficulte": "Facile",
+      "tags": ["visualisation", "ressource", "calme"],
+      "description": "Créez et visitez mentalement votre lieu ressource personnel : un espace mental de paix, sécurité et régénération.",
+      "icone": "map-pin",
+      "couleur": "purple",
+      "instructions": {
+        "preparation": "Installez-vous confortablement. Fermez les yeux. Prenez 3 respirations profondes.",
+        "etapes": [
+          {
+            "titre": "Choix du lieu",
+            "description": "Pensez à un lieu où vous vous sentez parfaitement bien : réel ou imaginaire (plage, forêt, montagne, jardin secret...)"
+          },
+          {
+            "titre": "Construction visuelle",
+            "description": "Visualisez les couleurs, les formes, la lumière. Regardez autour de vous dans ce lieu."
+          },
+          {
+            "titre": "Sons",
+            "description": "Quels sons entendez-vous ? Vagues, oiseaux, vent dans les arbres, silence..."
+          },
+          {
+            "titre": "Sensations tactiles",
+            "description": "Que ressentez-vous sur votre peau ? Chaleur du soleil, brise fraîche, texture du sol..."
+          },
+          {
+            "titre": "Odeurs",
+            "description": "Quelles odeurs percevez-vous ? Air marin, pin, fleurs, air pur..."
+          },
+          {
+            "titre": "Émotions",
+            "description": "Ressentez la paix, la sécurité, le calme dans ce lieu. Ancrez ces sensations."
+          },
+          {
+            "titre": "Mot-clé",
+            "description": "Choisissez un mot qui représente ce lieu (paix, sérénité, refuge...). Ce mot sera votre déclencheur."
+          }
+        ],
+        "conseils": [
+          "Plus le lieu est détaillé, plus il est efficace",
+          "Visitez régulièrement ce lieu pour le renforcer",
+          "Utilisez votre mot-clé pour y accéder rapidement",
+          "Vous pouvez avoir plusieurs lieux ressources",
+          "Pratiquez régulièrement pour l'ancrer"
+        ]
+      },
+      "benefices": [
+        "Crée un refuge mental accessible 24h/24",
+        "Réduit instantanément le stress",
+        "Améliore la gestion émotionnelle",
+        "Développe la créativité",
+        "Utilisable partout"
+      ],
+      "quandUtiliser": [
+        "En cas de stress",
+        "Avant de dormir",
+        "Dans les transports",
+        "Pour se ressourcer",
+        "Avant une situation difficile"
+      ]
+    }
+  ]
+}

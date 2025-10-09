@@ -1,0 +1,283 @@
+{
+  "exercices": [
+    {
+      "id": 1,
+      "titre": "Cohérence Cardiaque Relax 4-6",
+      "type": "respiration",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg",
+      "duree": 5,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["respiration", "relaxation", "coherence-cardiaque"],
+      "description": "Un exercice de respiration simple pour apaiser le corps et calmer l'esprit grâce à une expiration plus longue que l'inspiration.",
+      "etapes": [
+        "1) Asseyez-vous confortablement, les pieds bien au sol.",
+        "2) Posez une main sur votre ventre pour sentir le mouvement respiratoire.",
+        "3) Inspirez doucement par le nez en comptant jusqu'à 4.",
+        "4) Expirez lentement par la bouche en comptant jusqu'à 6.",
+        "5) Continuez ce rythme 4-6 pendant 5 minutes, sans forcer."
+      ],
+      "benefices": [
+        "Apaise le système nerveux",
+        "Favorise la détente et le sommeil",
+        "Diminue le stress et l'anxiété",
+        "Améliore l'oxygénation du corps"
+      ],
+      "momentIdeal": ["Matin", "Soir", "Avant de dormir"],
+      "frequence": "Quotidien, 5 minutes"
+    },
+    {
+      "id": 2,
+      "titre": "Respiration du Sourire",
+      "type": "respiration",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/1157394/pexels-photo-1157394.jpeg",
+      "duree": 2,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["respiration", "joie", "simple"],
+      "description": "Exercice très doux qui combine respiration et sourire pour libérer des endorphines naturelles.",
+      "etapes": [
+        "Installez-vous confortablement",
+        "Esquissez un léger sourire",
+        "Inspirez lentement en gardant le sourire",
+        "Expirez doucement en relâchant les tensions",
+        "Sentez la détente se propager dans tout le corps"
+      ],
+      "benefices": [
+        "Libère des endorphines",
+        "Détend les muscles du visage",
+        "Améliore l'humeur instantanément",
+        "Très simple à retenir",
+        "Peut se faire partout"
+      ],
+      "momentIdeal": ["Au réveil", "Avant les repas", "En cas de contrariété"],
+      "frequence": "Dès que nécessaire, 2 minutes"
+    },
+    {
+      "id": 3,
+      "titre": "Étirements Doux Assis",
+      "type": "relaxation",
+      "niveau": "debutant",
+      "image": "https://i.ibb.co/ZRMPXkfK/tirement-doux-assis.jpg",
+      "duree": 5,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["etirement", "assis", "mobilite"],
+      "description": "Série d'étirements très doux à faire assis sur une chaise, parfait pour les personnes à mobilité réduite.",
+      "etapes": [
+        "Asseyez-vous bien droit sur votre chaise",
+        "Roulez lentement les épaules vers l'arrière (5 fois)",
+        "Tournez doucement la tête à droite puis à gauche (3 fois)",
+        "Levez les bras vers le ciel et étirez-vous",
+        "Terminez en respirant profondément"
+      ],
+      "benefices": [
+        "Soulage les tensions du cou et des épaules",
+        "Améliore la circulation",
+        "Peut se faire en fauteuil roulant",
+        "Prévient les raideurs",
+        "Énergise en douceur"
+      ],
+      "momentIdeal": ["Après être resté assis longtemps", "Le matin", "L'après-midi"],
+      "frequence": "2-3 fois par jour selon les besoins"
+    },
+    {
+      "id": 5,
+      "titre": "Auto-massage des Mains",
+      "type": "relaxation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/6787202/pexels-photo-6787202.jpeg",
+      "duree": 3,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["massage", "mains", "circulation"],
+      "description": "Massage simple des mains qui stimule la circulation et procure une détente immédiate.",
+      "etapes": [
+        "Frottez vos paumes l'une contre l'autre pour les réchauffer",
+        "Massez chaque doigt de la base vers l'extrémité",
+        "Pressez doucement le point au centre de chaque paume",
+        "Faites des cercles avec vos pouces sur le dos des mains",
+        "Terminez en secouant doucement les mains"
+      ],
+      "benefices": [
+        "Améliore la circulation sanguine",
+        "Soulage les douleurs articulaires",
+        "Procure une détente immédiate",
+        "Stimule les points d'acupression",
+        "Parfait pour les personnes âgées"
+      ],
+      "momentIdeal": ["Après une activité manuelle", "En cas de raideur", "Pour se détendre"],
+      "frequence": "Plusieurs fois par jour si besoin"
+    },
+    {
+      "id": 6,
+      "titre": "Respiration du Ventre",
+      "type": "respiration",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/4498153/pexels-photo-4498153.jpeg",
+      "duree": 4,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["respiration", "ventre", "digestion"],
+      "description": "Respiration abdominale très simple qui aide à la digestion et calme le système nerveux.",
+      "etapes": [
+        "Posez une main sur votre ventre",
+        "Inspirez lentement en gonflant le ventre comme un ballon",
+        "Votre main doit se soulever",
+        "Expirez doucement en rentrant le ventre",
+        "Répétez 10 fois à votre rythme"
+      ],
+      "benefices": [
+        "Facilite la digestion",
+        "Calme le stress",
+        "Oxygène mieux le corps",
+        "Très facile à apprendre",
+        "Soulage les ballonnements"
+      ],
+      "momentIdeal": ["Après les repas", "En cas de stress digestif", "Avant de dormir"],
+      "frequence": "Après chaque repas principal"
+    },
+    {
+      "id": 8,
+      "titre": "Marche Consciente Intérieure",
+      "type": "meditation",
+      "niveau": "debutant",
+      "image": "https://i.ibb.co/fGXXfsNT/marche-consciente.jpg",
+      "duree": 4,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["marche", "conscience", "mouvement"],
+      "description": "Pour ceux qui peuvent marcher : quelques pas en pleine conscience pour se reconnecter à son corps.",
+      "etapes": [
+        "Debout, sentez vos pieds en contact avec le sol",
+        "Faites 3 pas très lentement",
+        "Concentrez-vous sur le mouvement de chaque pied",
+        "Sentez le transfert du poids d'un pied à l'autre",
+        "Arrêtez-vous et respirez profondément"
+      ],
+      "benefices": [
+        "Reconnecte au corps",
+        "Améliore l'équilibre",
+        "Calme le mental",
+        "Stimule la circulation",
+        "Peut se faire sur place"
+      ],
+      "momentIdeal": ["Le matin", "Après être resté assis", "Pour s'énergiser"],
+      "frequence": "2-3 fois par jour, quelques minutes"
+    },
+    {
+      "id": 9,
+      "titre": "Gratitude Express",
+      "type": "meditation",
+      "niveau": "debutant",
+      "image": "https://i.ibb.co/wZpks5Hp/gratitude-express-compressed.jpg",
+      "duree": 2,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["gratitude", "positif", "rapide"],
+      "description": "Exercice ultra-simple de gratitude qui améliore instantanément l'humeur et la digestion.",
+      "etapes": [
+        "Pensez à une chose pour laquelle vous êtes reconnaissant aujourd'hui",
+        "Ressentez cette gratitude dans votre cœur",
+        "Souriez intérieurement",
+        "Remerciez mentalement votre corps",
+        "Gardez cette sensation quelques instants"
+      ],
+      "benefices": [
+        "Améliore l'humeur instantanément",
+        "Favorise une meilleure digestion",
+        "Développe l'optimisme",
+        "Renforce le système immunitaire",
+        "Très rapide et efficace"
+      ],
+      "momentIdeal": ["Avant chaque repas", "Au réveil", "En cas de moral bas"],
+      "frequence": "3 fois par jour, avant les repas"
+    },
+    {
+      "id": 10,
+      "titre": "Relaxation Express",
+      "type": "relaxation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/7592321/pexels-photo-7592321.jpeg",
+      "duree": 3,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["relaxation", "rapide", "tension"],
+      "description": "Technique ultra-rapide pour relâcher les tensions principales du corps en quelques minutes.",
+      "etapes": [
+        "Haussez les épaules vers les oreilles, tenez 3 secondes, relâchez",
+        "Fermez fort les yeux, tenez 3 secondes, relâchez",
+        "Serrez les poings, tenez 3 secondes, relâchez",
+        "Contractez les muscles du ventre, tenez 3 secondes, relâchez",
+        "Respirez profondément et sentez la détente"
+      ],
+      "benefices": [
+        "Relâche rapidement les tensions",
+        "Peut se faire assis ou debout",
+        "Très efficace en peu de temps",
+        "Améliore la conscience corporelle",
+        "Parfait pour les pauses"
+      ],
+      "momentIdeal": ["En cas de tension", "Pendant les pauses", "Après un effort"],
+      "frequence": "Dès que nécessaire"
+    },
+    {
+      "id": 11,
+      "titre": "Respiration Apaisante 2-4",
+      "type": "respiration",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/3759660/pexels-photo-3759660.jpeg",
+      "duree": 3,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["respiration", "calme", "sommeil"],
+      "description": "Respiration simple qui privilégie une expiration plus longue pour activer la détente.",
+      "etapes": [
+        "Inspirez calmement en comptant jusqu'à 2",
+        "Expirez lentement en comptant jusqu'à 4",
+        "Répétez ce rythme 2-4 sans forcer",
+        "Concentrez-vous sur l'expiration plus longue",
+        "Continuez pendant 3 minutes"
+      ],
+      "benefices": [
+        "Active le système nerveux parasympathique",
+        "Prépare au sommeil",
+        "Calme l'anxiété",
+        "Très simple à retenir",
+        "Efficace rapidement"
+      ],
+      "momentIdeal": ["Avant de dormir", "En cas d'anxiété", "Après le dîner"],
+      "frequence": "Le soir ou selon les besoins"
+    },
+    {
+      "id": 12,
+      "titre": "Méditation du Thé/Tisane",
+      "type": "meditation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/230477/pexels-photo-230477.jpeg",
+      "duree": 5,
+      "difficulte": "Très facile",
+      "calories": 0,
+      "tags": ["meditation", "the", "plaisir"],
+      "description": "Transformer la dégustation d'une boisson chaude en moment de méditation pleine conscience.",
+      "etapes": [
+        "Préparez votre thé ou tisane avec attention",
+        "Observez la couleur, sentez l'arôme",
+        "Prenez la première gorgée lentement",
+        "Ressentez la chaleur et le goût",
+        "Buvez en pleine conscience, gorgée par gorgée"
+      ],
+      "benefices": [
+        "Transforme un geste quotidien en méditation",
+        "Améliore la digestion",
+        "Procure un moment de plaisir",
+        "Développe la pleine conscience",
+        "Très accessible et agréable"
+      ],
+      "momentIdeal": ["Avec le petit-déjeuner", "L'après-midi", "Après le dîner"],
+      "frequence": "1-2 fois par jour avec vos boissons"
+    }
+  ]
+}
