@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { UserPlus, Check, Lock } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface SignupFormProps {
@@ -8,9 +8,6 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
-  const [accessCode, setAccessCode] = useState('');
-  const [isCodeVerified, setIsCodeVerified] = useState(false);
-  const [verifyingCode, setVerifyingCode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -20,34 +17,6 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
-
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setVerifyingCode(true);
-
-    try {
-      const { data, error } = await supabase
-        .from('access_codes')
-        .select('*')
-        .eq('code', accessCode.toUpperCase())
-        .eq('is_used', false)
-        .maybeSingle();
-
-      if (error || !data) {
-        setError('Code invalide ou déjà utilisé');
-        return;
-      }
-
-      setIsCodeVerified(true);
-      setSuccess('✓ Code vérifié avec succès! Vous pouvez maintenant créer votre compte.');
-    } catch (err: any) {
-      console.error('Code verification error:', err);
-      setError('Erreur lors de la vérification du code');
-    } finally {
-      setVerifyingCode(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,39 +37,8 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
     setLoading(true);
 
     try {
-      const { data: authData, error: signupError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-
-      if (signupError) throw signupError;
-      if (!authData.user) throw new Error('Erreur lors de la création du compte');
-
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-code-used`;
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          code: accessCode.toUpperCase(),
-          userId: authData.user.id,
-        }),
-      });
-
-      const result = await response.json();
-      if (!result.success) {
-        console.warn('Code marking failed:', result.message);
-      }
-
       await signup(email, password, fullName);
-      setSuccess('✓ Compte créé avec succès! Vous pouvez maintenant vous connecter depuis n\'importe quel appareil.');
+      setSuccess('Compte créé avec succès! Connexion en cours...');
     } catch (err: any) {
       console.error('Signup error:', err);
       if (err?.message?.includes('already registered')) {
@@ -134,56 +72,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         Commencez votre parcours bien-être
       </p>
 
-      {!isCodeVerified ? (
-        <form onSubmit={handleVerifyCode} className="space-y-5">
-          <div>
-            <label htmlFor="accessCode" className="block text-sm font-medium text-[#333333] mb-2">
-              Code d'accès
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                id="accessCode"
-                type="text"
-                value={accessCode}
-                onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-                required
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7AC943] focus:border-transparent outline-none transition uppercase"
-                placeholder="XXXX-XXXX"
-                maxLength={9}
-              />
-            </div>
-            <p className="mt-2 text-xs text-gray-500">
-              Entrez le code d'accès fourni par votre coach
-            </p>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
-              {success}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={verifyingCode}
-            className="w-full bg-[#5FA84D] text-white py-3 rounded-lg font-semibold hover:bg-[#4d8a3f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {verifyingCode ? 'Vérification...' : 'Vérifier le code'}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 mb-4">
-            <Check className="w-5 h-5 text-green-600" />
-            <span className="text-sm text-green-700 font-medium">Code vérifié</span>
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-[#333333] mb-2">
@@ -279,8 +168,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         >
           {loading ? 'Création en cours...' : 'Créer mon compte'}
         </button>
-        </form>
-      )}
+      </form>
 
       <div className="mt-6 text-center">
         <p className="text-gray-600">
