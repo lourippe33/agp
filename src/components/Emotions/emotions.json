@@ -376,6 +376,35 @@
         "En cas de frustration",
         "Pour retrouver son calme rapidement"
       ]
+    },
+    {
+      "id": 8,
+      "titre": "Le Papillon (Butterfly Hug)",
+      "type": "tapping",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/756903/pexels-photo-756903.jpeg",
+      "duree": 2,
+      "difficulte": "Très facile",
+      "tags": ["emdr", "auto-apaisement", "anxiete", "panique"],
+      "description": "Technique EMDR d'auto-apaisement développée par Lucina Artigas. Stimulation bilatérale alternée pour calmer rapidement stress et anxiété.",
+      "icone": "heart",
+      "couleur": "rose",
+      "benefices": [
+        "Calme rapidement l'anxiété et le stress",
+        "Utilisable discrètement n'importe où",
+        "Efficace lors de crises de panique",
+        "Apaise les pensées intrusives",
+        "Favorise l'endormissement",
+        "Stimulation bilatérale validée scientifiquement"
+      ],
+      "quandUtiliser": [
+        "Crise d'anxiété ou de panique",
+        "Après un événement stressant",
+        "Pensées intrusives ou ruminations",
+        "Difficultés d'endormissement",
+        "Moments de tristesse intense",
+        "Avant une situation redoutée"
+      ]
     }
   ]
 }
