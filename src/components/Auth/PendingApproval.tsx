@@ -1,8 +1,24 @@
-import React from 'react';
-import { Clock, Mail, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Mail, LogOut, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
-export function PendingApproval() {
+interface PendingApprovalProps {
+  onRefresh?: () => void;
+}
+
+export function PendingApproval({ onRefresh }: PendingApprovalProps = {}) {
+  const [checking, setChecking] = useState(false);
+
+  async function handleCheckStatus() {
+    setChecking(true);
+    if (onRefresh) {
+      await onRefresh();
+    } else {
+      window.location.reload();
+    }
+    setChecking(false);
+  }
+
   async function handleLogout() {
     await supabase.auth.signOut();
     window.location.href = '/';
@@ -38,10 +54,12 @@ export function PendingApproval() {
 
           <div className="space-y-3">
             <button
-              onClick={() => window.location.reload()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all"
+              onClick={handleCheckStatus}
+              disabled={checking}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              Vérifier le statut
+              <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
+              {checking ? 'Vérification...' : 'Vérifier le statut'}
             </button>
 
             <button

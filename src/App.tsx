@@ -94,7 +94,7 @@ function AppContent() {
   }
 
   if (!isApproved && !isAdmin) {
-    return <PendingApproval />;
+    return <PendingApproval onRefresh={checkOnboardingStatus} />;
   }
 
   if (showOnboarding) {
