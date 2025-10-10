@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Save, X, Lock } from 'lucide-react';
+import { User, Save, X, Lock, ClipboardList } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -15,6 +15,7 @@ interface ProfileData {
 interface ProfileEditorProps {
   onClose: () => void;
   onSave: () => void;
+  onOpenQuestionnaire?: () => void;
 }
 
 interface ErrorDetails {
@@ -23,7 +24,7 @@ interface ErrorDetails {
   details?: string;
 }
 
-export function ProfileEditor({ onClose, onSave }: ProfileEditorProps) {
+export function ProfileEditor({ onClose, onSave, onOpenQuestionnaire }: ProfileEditorProps) {
   const { user, updatePassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -266,7 +267,24 @@ export function ProfileEditor({ onClose, onSave }: ProfileEditorProps) {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-6 space-y-3">
+            {onOpenQuestionnaire && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenQuestionnaire();
+                }}
+                className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#7AC943] to-[#4A7729] text-white hover:shadow-lg rounded-lg transition-all"
+              >
+                <div className="flex items-center space-x-3">
+                  <ClipboardList className="w-5 h-5" />
+                  <span className="font-medium">Modifier mon questionnaire</span>
+                </div>
+                <span className="text-white">→</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => setShowPasswordChange(!showPasswordChange)}

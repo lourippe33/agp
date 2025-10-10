@@ -14,6 +14,7 @@ import { ProfileEditor } from '../Profile/ProfileEditor';
 import { NotificationsSettings } from '../Profile/NotificationsSettings';
 import { GoalsManager } from '../Profile/GoalsManager';
 import { ChronoBiologyView } from '../Neurotransmitters/ChronoBiologyView';
+import { OnboardingQuestionnaire } from '../Onboarding/OnboardingQuestionnaire';
 import { supabase } from '../../lib/supabase';
 
 type View = 'home' | 'recipes' | 'sports' | 'relaxation' | 'emotions' | 'profile' | 'agp' | 'tracking' | 'community' | 'chronobiology';
@@ -24,6 +25,7 @@ export function Dashboard() {
   const [showProfileEditor, setShowProfileEditor] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   const [weatherRefreshTrigger, setWeatherRefreshTrigger] = useState(0);
 
@@ -197,6 +199,16 @@ export function Dashboard() {
         <ProfileEditor
           onClose={() => setShowProfileEditor(false)}
           onSave={loadProfile}
+          onOpenQuestionnaire={() => setShowQuestionnaire(true)}
+        />
+      )}
+
+      {showQuestionnaire && (
+        <OnboardingQuestionnaire
+          onComplete={() => {
+            setShowQuestionnaire(false);
+            loadProfile();
+          }}
         />
       )}
 
