@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserPlus } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
@@ -28,8 +29,20 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
       return;
     }
 
-    if (accessCode !== import.meta.env.VITE_ACCESS_CODE) {
-      setError('Code d\'accès invalide. Contactez l\'administrateur.');
+    // Vérifier que le code existe et n'est pas utilisé
+    const { data: codeData, error: codeError } = await supabase
+      .from('access_codes')
+      .select('id, is_used')
+      .eq('code', accessCode.toUpperCase())
+      .maybeSingle();
+
+    if (codeError || !codeData) {
+      setError('Code d\'accès invalide.');
+      return;
+    }
+
+    if (codeData.is_used) {
+      setError('Ce code a déjà été utilisé.');
       return;
     }
 
@@ -48,6 +61,20 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
 
     try {
       await signup(email, password, fullName);
+
+      // Marquer le code comme utilisé
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        await supabase
+          .from('access_codes')
+          .update({
+            is_used: true,
+            used_by: userData.user.id,
+            used_at: new Date().toISOString()
+          })
+          .eq('code', accessCode.toUpperCase());
+      }
+
       setSuccess('Compte créé avec succès! Connexion en cours...');
     } catch (err: any) {
       console.error('Signup error:', err);
@@ -171,9 +198,10 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             required
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7AC943] focus:border-transparent outline-none transition"
             placeholder="Entrez le code d'accès"
+            style={{ textTransform: 'uppercase' }}
           />
           <p className="text-xs text-gray-500 mt-1">
-            Demandez le code d'accès à votre administrateur
+            Code unique fourni par votre administrateur (8 caractères)
           </p>
         </div>
 

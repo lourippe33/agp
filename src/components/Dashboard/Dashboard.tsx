@@ -15,6 +15,7 @@ import { NotificationsSettings } from '../Profile/NotificationsSettings';
 import { GoalsManager } from '../Profile/GoalsManager';
 import { ChronoBiologyView } from '../Neurotransmitters/ChronoBiologyView';
 import { OnboardingQuestionnaire } from '../Onboarding/OnboardingQuestionnaire';
+import { AdminSettings } from '../Profile/AdminSettings';
 import { supabase } from '../../lib/supabase';
 
 type View = 'home' | 'recipes' | 'sports' | 'relaxation' | 'emotions' | 'profile' | 'agp' | 'tracking' | 'community' | 'chronobiology';
@@ -26,8 +27,10 @@ export function Dashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [showAdminSettings, setShowAdminSettings] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   const [weatherRefreshTrigger, setWeatherRefreshTrigger] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const mockData = {
     currentWeight: 75,
@@ -59,6 +62,7 @@ export function Dashboard() {
 
       if (data) {
         setProfileData(data);
+        setIsAdmin(data.role === 'admin');
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -179,6 +183,14 @@ export function Dashboard() {
                   >
                     Objectifs
                   </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setShowAdminSettings(true)}
+                      className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-lg transition-colors text-[#2B7BBE] font-medium"
+                    >
+                      Administration
+                    </button>
+                  )}
                   <button
                     onClick={logout}
                     className="w-full text-left px-4 py-3 hover:bg-red-50 rounded-lg transition-colors text-red-600 font-medium flex items-center space-x-2"
@@ -221,6 +233,12 @@ export function Dashboard() {
       {showGoals && (
         <GoalsManager
           onClose={() => setShowGoals(false)}
+        />
+      )}
+
+      {showAdminSettings && (
+        <AdminSettings
+          onClose={() => setShowAdminSettings(false)}
         />
       )}
     </div>
