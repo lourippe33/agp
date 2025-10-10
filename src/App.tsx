@@ -33,9 +33,13 @@ function AppContent() {
   }, [user]);
 
   const checkOnboardingStatus = async () => {
-    if (!user) return;
+    if (!user) {
+      setCheckingOnboarding(false);
+      return;
+    }
 
     try {
+      console.log('Checking onboarding status for user:', user.email);
       const { data, error } = await supabase
         .from('user_profiles')
         .select('onboarding_completed, is_approved, role')
@@ -44,9 +48,13 @@ function AppContent() {
 
       if (error) throw error;
 
+      console.log('User profile data:', data);
+
       if (data) {
         const userIsAdmin = data.role === 'admin';
         const userIsApproved = data.is_approved || userIsAdmin;
+
+        console.log('User is admin:', userIsAdmin, 'User is approved:', userIsApproved);
 
         setIsAdmin(userIsAdmin);
         setIsApproved(userIsApproved);
