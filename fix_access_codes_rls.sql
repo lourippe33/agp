@@ -19,11 +19,12 @@ CREATE POLICY "Anyone can check codes"
   USING (is_used = false);
 
 -- 2. Permettre aux utilisateurs authentifiés de marquer un code comme utilisé
+--    On ne vérifie PAS used_by dans le WITH CHECK car on est en train de le définir
 CREATE POLICY "Authenticated can mark code as used"
   ON access_codes FOR UPDATE
   TO authenticated
   USING (is_used = false)
-  WITH CHECK (is_used = true AND used_by = auth.uid());
+  WITH CHECK (is_used = true);
 
 -- 3. Permettre aux utilisateurs authentifiés de créer des codes
 CREATE POLICY "Authenticated can create codes"

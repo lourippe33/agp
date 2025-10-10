@@ -6,7 +6,7 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string, accessCode?: string) => Promise<void>;
   logout: () => void;
   updateProfile: (profile: Partial<UserProfile>) => void;
   resetPassword: (email: string) => Promise<void>;
@@ -119,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, fullName: string) => {
+  const signup = async (email: string, password: string, fullName: string, accessCode?: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -146,6 +146,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profileError) {
         console.error('Error creating profile:', profileError);
+      }
+
+      // Marquer le code d'accès comme utilisé si fourni
+      if (accessCode) {
+        const { error: codeError } = await supabase
+          .from('access_codes')
+          .update({
+            is_used: true,
+            used_by: data.user.id,
+            used_at: new Date().toISOString()
+          })
+          .eq('code', accessCode.toUpperCase())
+          .eq('is_used', false);
+
+        if (codeError) {
+          console.error('Error marking access code as used:', codeError);
+        }
       }
 
       await new Promise(resolve => setTimeout(resolve, 500));

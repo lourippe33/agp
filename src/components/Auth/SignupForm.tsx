@@ -60,21 +60,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
     setLoading(true);
 
     try {
-      await signup(email, password, fullName);
-
-      // Marquer le code comme utilisé
-      const { data: userData } = await supabase.auth.getUser();
-      if (userData.user) {
-        await supabase
-          .from('access_codes')
-          .update({
-            is_used: true,
-            used_by: userData.user.id,
-            used_at: new Date().toISOString()
-          })
-          .eq('code', accessCode.toUpperCase());
-      }
-
+      await signup(email, password, fullName, accessCode);
       setSuccess('Compte créé avec succès! Connexion en cours...');
     } catch (err: any) {
       console.error('Signup error:', err);
