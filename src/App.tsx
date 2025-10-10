@@ -4,11 +4,15 @@ import { LoginForm } from './components/Auth/LoginForm';
 import { SignupForm } from './components/Auth/SignupForm';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { WelcomePage } from './components/Welcome/WelcomePage';
+import { OnboardingQuestionnaire } from './components/Onboarding/OnboardingQuestionnaire';
+import { supabase } from './lib/supabase';
 
 function AppContent() {
   const { user, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
@@ -17,7 +21,37 @@ function AppContent() {
     }
   }, [user]);
 
-  if (loading) {
+  useEffect(() => {
+    if (user) {
+      checkOnboardingStatus();
+    } else {
+      setCheckingOnboarding(false);
+    }
+  }, [user]);
+
+  const checkOnboardingStatus = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('onboarding_completed')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data && !data.onboarding_completed) {
+        setShowOnboarding(true);
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+    } finally {
+      setCheckingOnboarding(false);
+    }
+  };
+
+  if (loading || checkingOnboarding) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#B7E576] to-[#7AC943] flex items-center justify-center">
         <div className="text-white text-xl">Chargement...</div>
@@ -45,6 +79,16 @@ function AppContent() {
           <SignupForm onSwitchToLogin={() => setShowLogin(true)} />
         )}
       </div>
+    );
+  }
+
+  if (showOnboarding) {
+    return (
+      <OnboardingQuestionnaire
+        onComplete={() => {
+          setShowOnboarding(false);
+        }}
+      />
     );
   }
 
