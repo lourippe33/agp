@@ -31,6 +31,7 @@ export function Dashboard() {
   const [profileData, setProfileData] = useState<any>(null);
   const [weatherRefreshTrigger, setWeatherRefreshTrigger] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isApproved, setIsApproved] = useState<boolean | null>(null);
 
   const mockData = {
     currentWeight: 75,
@@ -76,6 +77,7 @@ export function Dashboard() {
         const adminStatus = data.role === 'admin';
         console.log('Is admin:', adminStatus, 'Role:', data.role);
         setIsAdmin(adminStatus);
+        setIsApproved(data.is_approved || adminStatus);
       } else {
         console.warn('No profile data found for user');
       }
@@ -83,6 +85,44 @@ export function Dashboard() {
       console.error('Error in loadProfile:', error);
     }
   };
+
+  if (isApproved === false) {
+    return (
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
+          <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-[#333333] mb-4">Compte en attente de validation</h2>
+          <p className="text-gray-600 mb-6">
+            Votre inscription a bien été prise en compte. Un administrateur doit valider votre compte avant que vous puissiez accéder à l'application.
+          </p>
+          <p className="text-sm text-gray-500 mb-6">
+            Vous recevrez une notification par email dès que votre compte sera activé.
+          </p>
+          <button
+            onClick={logout}
+            className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+          >
+            Se déconnecter
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isApproved === null) {
+    return (
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2B7BBE] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
