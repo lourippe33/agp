@@ -6,7 +6,7 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName: string, accessCode?: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => void;
   updateProfile: (profile: Partial<UserProfile>) => void;
   resetPassword: (email: string) => Promise<void>;
@@ -119,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, fullName: string, accessCode?: string) => {
+  const signup = async (email: string, password: string, fullName: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -146,33 +146,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profileError) {
         console.error('Error creating profile:', profileError);
-      }
-
-      // Marquer le code d'accès comme utilisé via Edge Function
-      if (accessCode && data.session) {
-        try {
-          const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-code-used`;
-
-          const response = await fetch(functionUrl, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${data.session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              code: accessCode.toUpperCase(),
-              userId: data.user.id
-            })
-          });
-
-          const result = await response.json();
-
-          if (!response.ok) {
-            console.error('Failed to mark code as used:', result.error);
-          }
-        } catch (err) {
-          console.error('Error calling mark-code-used function:', err);
-        }
       }
 
       await new Promise(resolve => setTimeout(resolve, 500));

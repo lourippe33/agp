@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { X, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { AccessCodesManager } from '../Admin/AccessCodesManager';
 
 interface AdminSettingsProps {
   onClose: () => void;
@@ -25,7 +24,7 @@ export function AdminSettings({ onClose }: AdminSettingsProps) {
         .from('user_profiles')
         .select('role')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setIsAdmin(data?.role === 'admin');
@@ -67,7 +66,7 @@ export function AdminSettings({ onClose }: AdminSettingsProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="w-6 h-6 text-[#2B7BBE]" />
@@ -82,7 +81,10 @@ export function AdminSettings({ onClose }: AdminSettingsProps) {
         </div>
 
         <div className="p-6">
-          <AccessCodesManager />
+          <div className="bg-gray-50 rounded-lg p-6 text-center">
+            <p className="text-gray-600">Panneau d'administration</p>
+            <p className="text-sm text-gray-500 mt-2">Les fonctionnalités d'administration seront ajoutées ici.</p>
+          </div>
         </div>
       </div>
     </div>
