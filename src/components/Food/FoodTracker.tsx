@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { BadgesDisplay } from '../Badges/BadgesDisplay';
 import neuroData from '../../data/neurotransmitters.json';
+import { updateUserStreak } from '../../utils/streakCalculator';
 
 interface FoodTrackerProps {
   onDataSaved?: () => void;
@@ -190,6 +191,7 @@ export function FoodTracker({ onDataSaved }: FoodTrackerProps = {}) {
       }
 
       await fetchHistory();
+      await updateUserStreak(user.id);
       if (onDataSaved) {
         onDataSaved();
       }
