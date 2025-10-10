@@ -29,6 +29,36 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Vérifier d'abord que le code existe et n'est pas utilisé
+    const { data: codeCheck, error: checkError } = await supabaseAdmin
+      .from('access_codes')
+      .select('*')
+      .eq('code', code.toUpperCase())
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('Error checking code:', checkError);
+      return new Response(
+        JSON.stringify({ error: 'Erreur lors de la vérification du code' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!codeCheck) {
+      return new Response(
+        JSON.stringify({ error: 'Code introuvable' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (codeCheck.is_used) {
+      return new Response(
+        JSON.stringify({ error: 'Code déjà utilisé' }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Mettre à jour le code
     const { data, error } = await supabaseAdmin
       .from('access_codes')
       .update({
@@ -43,15 +73,15 @@ Deno.serve(async (req: Request) => {
     if (error) {
       console.error('Error updating code:', error);
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ error: `Erreur lors de la mise à jour: ${error.message}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (!data || data.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'Code déjà utilisé ou introuvable' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Échec de la mise à jour du code (conflit possible)' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
