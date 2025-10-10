@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Flame, Trophy, Target } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { updateUserStreak } from '../../utils/streakCalculator';
 
 export function StreakCard() {
   const { user } = useAuth();
@@ -18,6 +19,8 @@ export function StreakCard() {
     if (!user) return;
 
     try {
+      await updateUserStreak(user.id);
+
       const { data, error } = await supabase
         .from('user_progress')
         .select('completion_streak')

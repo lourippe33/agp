@@ -3,6 +3,7 @@ import { Battery, Moon, Brain, Smile, Check, X, Dumbbell, LineChart as LineChart
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { updateUserStreak } from '../../utils/streakCalculator';
 
 interface DailyWellnessTrackerProps {
   onDataSaved?: () => void;
@@ -187,6 +188,7 @@ export function DailyWellnessTracker({ onDataSaved }: DailyWellnessTrackerProps 
       }
 
       await fetchHistory();
+      await updateUserStreak(user.id);
       setError('');
       if (onDataSaved) {
         onDataSaved();

@@ -3,6 +3,7 @@ import { Smile, Frown, Meh, BatteryFull, BatteryMedium, BatteryLow, Moon, Clock,
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import type { DailyJournal } from '../../types/journal';
+import { updateUserStreak } from '../../utils/streakCalculator';
 
 const emojiRatings = [
   { value: 1, emoji: '😫', label: 'Très faible' },
@@ -101,6 +102,7 @@ export function DailyJournalTracker() {
         const errorDetails = dbError?.details || dbError?.hint || '';
         setError(`Erreur: ${errorMsg}${errorDetails ? ' - ' + errorDetails : ''}`);
       } else {
+        await updateUserStreak(user.id);
         setSaved(true);
         setError('');
         setTimeout(() => setSaved(false), 3000);
