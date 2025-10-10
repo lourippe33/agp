@@ -1,28 +1,18 @@
-import { Home, Calendar, ClipboardList, User, Users, Shield } from 'lucide-react';
+import { Home, Calendar, ClipboardList, User, Users } from 'lucide-react';
 
 interface BottomNavProps {
   activeView: string;
   onNavigate: (view: string) => void;
-  isAdmin?: boolean;
 }
 
-export function BottomNav({ activeView, onNavigate, isAdmin = false }: BottomNavProps) {
-  const baseNavItems = [
+export function BottomNav({ activeView, onNavigate }: BottomNavProps) {
+  const navItems = [
     { id: 'home', label: 'Accueil', icon: Home },
     { id: 'agp', label: 'Programme', icon: Calendar },
     { id: 'tracking', label: 'Suivi', icon: ClipboardList },
     { id: 'profile', label: 'Profil', icon: User },
     { id: 'community', label: 'Communauté', icon: Users },
   ];
-
-  const adminNavItems = [
-    { id: 'home', label: 'Accueil', icon: Home },
-    { id: 'tracking', label: 'Suivi', icon: ClipboardList },
-    { id: 'admin', label: 'Admin', icon: Shield },
-    { id: 'profile', label: 'Profil', icon: User },
-  ];
-
-  const navItems = isAdmin ? adminNavItems : baseNavItems;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">

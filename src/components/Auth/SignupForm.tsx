@@ -12,6 +12,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,16 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (!accessCode) {
+      setError('Veuillez entrer le code d\'accès');
+      return;
+    }
+
+    if (accessCode !== import.meta.env.VITE_ACCESS_CODE) {
+      setError('Code d\'accès invalide. Contactez l\'administrateur.');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
@@ -146,6 +157,24 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7AC943] focus:border-transparent outline-none transition"
             placeholder="••••••••"
           />
+        </div>
+
+        <div>
+          <label htmlFor="accessCode" className="block text-sm font-medium text-[#333333] mb-2">
+            Code d'accès
+          </label>
+          <input
+            id="accessCode"
+            type="text"
+            value={accessCode}
+            onChange={(e) => setAccessCode(e.target.value)}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7AC943] focus:border-transparent outline-none transition"
+            placeholder="Entrez le code d'accès"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Demandez le code d'accès à votre administrateur
+          </p>
         </div>
 
         {error && (

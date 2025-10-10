@@ -15,10 +15,9 @@ import { NotificationsSettings } from '../Profile/NotificationsSettings';
 import { GoalsManager } from '../Profile/GoalsManager';
 import { ChronoBiologyView } from '../Neurotransmitters/ChronoBiologyView';
 import { OnboardingQuestionnaire } from '../Onboarding/OnboardingQuestionnaire';
-import { AdminDashboard } from '../Admin/AdminDashboard';
 import { supabase } from '../../lib/supabase';
 
-type View = 'home' | 'recipes' | 'sports' | 'relaxation' | 'emotions' | 'profile' | 'agp' | 'tracking' | 'community' | 'chronobiology' | 'admin';
+type View = 'home' | 'recipes' | 'sports' | 'relaxation' | 'emotions' | 'profile' | 'agp' | 'tracking' | 'community' | 'chronobiology';
 
 export function Dashboard() {
   const [currentView, setCurrentView] = useState<View>('home');
@@ -29,7 +28,6 @@ export function Dashboard() {
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   const [weatherRefreshTrigger, setWeatherRefreshTrigger] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const mockData = {
     currentWeight: 75,
@@ -61,7 +59,6 @@ export function Dashboard() {
 
       if (data) {
         setProfileData(data);
-        setIsAdmin(data.role === 'admin');
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -88,7 +85,6 @@ export function Dashboard() {
         {currentView === 'agp' && <AGPProgram />}
         {currentView === 'tracking' && <TrackingView onDataSaved={() => setWeatherRefreshTrigger(prev => prev + 1)} />}
         {currentView === 'community' && <CommunityView />}
-        {currentView === 'admin' && <AdminDashboard />}
 
         {currentView === 'recipes' && (
           <div className="pb-24 overflow-y-auto">
@@ -197,7 +193,7 @@ export function Dashboard() {
         )}
       </div>
 
-      <BottomNav activeView={currentView} onNavigate={setCurrentView} isAdmin={isAdmin} />
+      <BottomNav activeView={currentView} onNavigate={setCurrentView} />
 
       {showProfileEditor && (
         <ProfileEditor

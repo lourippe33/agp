@@ -5,7 +5,6 @@ import { SignupForm } from './components/Auth/SignupForm';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { WelcomePage } from './components/Welcome/WelcomePage';
 import { OnboardingQuestionnaire } from './components/Onboarding/OnboardingQuestionnaire';
-import { PendingApproval } from './components/Auth/PendingApproval';
 import { supabase } from './lib/supabase';
 
 function AppContent() {
@@ -14,8 +13,6 @@ function AppContent() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
-  const [isApproved, setIsApproved] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
@@ -39,29 +36,16 @@ function AppContent() {
     }
 
     try {
-      console.log('Checking onboarding status for user:', user.email);
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('onboarding_completed, is_approved, role')
+        .select('onboarding_completed')
         .eq('id', user.id)
         .maybeSingle();
 
       if (error) throw error;
 
-      console.log('User profile data:', data);
-
-      if (data) {
-        const userIsAdmin = data.role === 'admin';
-        const userIsApproved = data.is_approved || userIsAdmin;
-
-        console.log('User is admin:', userIsAdmin, 'User is approved:', userIsApproved);
-
-        setIsAdmin(userIsAdmin);
-        setIsApproved(userIsApproved);
-
-        if (userIsApproved && !data.onboarding_completed) {
-          setShowOnboarding(true);
-        }
+      if (data && !data.onboarding_completed) {
+        setShowOnboarding(true);
       }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
@@ -99,10 +83,6 @@ function AppContent() {
         )}
       </div>
     );
-  }
-
-  if (!isApproved && !isAdmin) {
-    return <PendingApproval onRefresh={checkOnboardingStatus} />;
   }
 
   if (showOnboarding) {
