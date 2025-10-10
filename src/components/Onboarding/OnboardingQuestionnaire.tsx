@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft, Check, Target, Ruler, Weight, UtensilsCrossed, Moon, Activity } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -35,6 +35,7 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
 
   const [data, setData] = useState<OnboardingData>({
@@ -52,6 +53,47 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
     sleepDuration: '',
     wakeUpTime: '',
   });
+
+  useEffect(() => {
+    loadExistingData();
+  }, [user]);
+
+  const loadExistingData = async () => {
+    if (!user) return;
+
+    setLoadingData(true);
+    try {
+      const { data: profile, error: fetchError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      if (profile) {
+        setData({
+          fullName: profile.full_name || '',
+          birthDate: profile.birth_date || '',
+          gender: profile.gender || '',
+          height: profile.height || '',
+          initialWeight: profile.initial_weight || '',
+          targetWeight: profile.target_weight || '',
+          mainGoal: profile.main_goal || '',
+          allergies: profile.allergies || '',
+          foodPreferences: Array.isArray(profile.food_preferences) ? profile.food_preferences : [],
+          activityLevel: profile.activity_level || '',
+          chronoType: profile.chrono_type || '',
+          sleepDuration: profile.sleep_duration || '',
+          wakeUpTime: profile.wake_up_time || '',
+        });
+      }
+    } catch (err: any) {
+      console.error('Erreur lors du chargement des données:', err);
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   const updateData = (field: keyof OnboardingData, value: any) => {
     setData(prev => ({ ...prev, [field]: value }));
@@ -133,6 +175,19 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
         return false;
     }
   };
+
+  if (loadingData) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-[#7AC943] via-[#4A7729] to-[#2D4A1A] flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <div className="flex items-center space-x-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7AC943]"></div>
+            <p className="text-gray-700">Chargement de vos données...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-[#7AC943] via-[#4A7729] to-[#2D4A1A] flex items-center justify-center p-4 z-50 overflow-y-auto">
