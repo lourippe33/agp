@@ -21,11 +21,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUserProfile = async (authUser: any) => {
     try {
-      const { data: profile } = await supabase
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const { data: profile, error: fetchError } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('id', authUser.id)
         .maybeSingle();
+
+      if (fetchError) {
+        console.error('Error fetching profile:', fetchError);
+      }
 
       if (profile) {
         setUser({
@@ -38,20 +44,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           createdAt: new Date(authUser.created_at),
         });
       } else {
-        const { error: upsertError } = await supabase
-          .from('user_profiles')
-          .upsert({
-            id: authUser.id,
-            email: authUser.email || '',
-            full_name: authUser.user_metadata?.full_name || '',
-          }, {
-            onConflict: 'id'
-          });
-
-        if (upsertError) {
-          console.error('Error creating/updating profile:', upsertError);
-        }
-
         setUser({
           id: authUser.id,
           email: authUser.email || '',
@@ -134,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
 
     if (data.user && data.session) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await loadUserProfile(data.user);
     } else if (data.user && !data.session) {
       throw new Error('Compte créé, mais confirmation d\'email requise. Veuillez vérifier votre boîte mail.');
