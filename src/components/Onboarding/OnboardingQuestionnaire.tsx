@@ -63,10 +63,21 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
 
     setLoadingData(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const authUserId = session?.user?.id;
+
+      if (!authUserId) {
+        console.error('No authenticated user found');
+        setLoadingData(false);
+        return;
+      }
+
+      console.log('Loading profile for auth user ID:', authUserId);
+
       const { data: profile, error: fetchError } = await supabase
         .from('user_profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', authUserId)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
@@ -129,6 +140,17 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
     setError('');
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const authUserId = session?.user?.id;
+
+      if (!authUserId) {
+        setError('Session expirée, veuillez vous reconnecter');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Updating profile for auth user ID:', authUserId);
+
       const { error: updateError } = await supabase
         .from('user_profiles')
         .update({
@@ -147,10 +169,16 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
           wake_up_time: data.wakeUpTime,
           onboarding_completed: true,
         })
-        .eq('id', user.id);
+        .eq('id', authUserId);
 
-      if (updateError) throw updateError;
+      console.log('Profile update result:', { updateError });
 
+      if (updateError) {
+        console.error('Update error:', updateError);
+        throw updateError;
+      }
+
+      console.log('Profile updated successfully!');
       onComplete();
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la sauvegarde');
