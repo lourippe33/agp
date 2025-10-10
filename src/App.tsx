@@ -107,6 +107,7 @@ function AppContent() {
       <OnboardingQuestionnaire
         onComplete={() => {
           setShowOnboarding(false);
+          window.location.reload();
         }}
       />
     );
