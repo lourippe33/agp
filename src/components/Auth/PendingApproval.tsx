@@ -20,8 +20,20 @@ export function PendingApproval({ onRefresh }: PendingApprovalProps = {}) {
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut();
-    window.location.href = '/';
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      localStorage.clear();
+      sessionStorage.clear();
+
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.href = '/';
+    }
   }
 
   return (
