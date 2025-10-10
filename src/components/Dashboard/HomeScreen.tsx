@@ -2,7 +2,6 @@ import { Trophy, Dumbbell, UtensilsCrossed, Heart, Sparkles, Pencil, Brain } fro
 import { useAuth } from '../../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { WellnessWeather } from './WellnessWeather';
-import { BMIWidget } from './BMIWidget';
 import { NeuroBalanceWidget } from '../Neurotransmitters/NeuroBalanceWidget';
 import { NotificationBell } from '../Notifications/NotificationBell';
 import { NotificationsList } from '../Notifications/NotificationsList';
@@ -133,8 +132,6 @@ export function HomeScreen({ onNavigate, weatherRefreshTrigger }: HomeScreenProp
         </div>
 
         <WellnessWeather userId={user?.id || ''} refreshTrigger={weatherRefreshTrigger} />
-
-        <BMIWidget userId={user?.id || ''} />
 
         <div className="mb-6">
           <NeuroBalanceWidget onNavigate={onNavigate} />
