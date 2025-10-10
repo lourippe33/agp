@@ -349,6 +349,33 @@
         "Pour se ressourcer",
         "Avant une situation difficile"
       ]
+    },
+    {
+      "id": 7,
+      "titre": "Le Petit Nuage",
+      "type": "visualisation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/531756/pexels-photo-531756.jpeg",
+      "duree": 5,
+      "difficulte": "Très facile",
+      "tags": ["visualisation", "respiration", "emotion"],
+      "description": "Visualisez votre émotion comme un nuage et éloignez-le par la respiration. Technique douce et accessible pour atténuer colère, anxiété ou tristesse.",
+      "icone": "cloud",
+      "couleur": "sky",
+      "benefices": [
+        "Atténue les émotions intenses rapidement",
+        "Combine visualisation et respiration",
+        "Accessible à tous, même débutants",
+        "Peut être répété autant que nécessaire",
+        "Résultats mesurables immédiatement"
+      ],
+      "quandUtiliser": [
+        "En cas de colère soudaine",
+        "Pour apaiser l'anxiété",
+        "Quand la tristesse est envahissante",
+        "En cas de frustration",
+        "Pour retrouver son calme rapidement"
+      ]
     }
   ]
 }
