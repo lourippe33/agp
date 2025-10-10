@@ -48,24 +48,39 @@ export function Dashboard() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (currentView === 'profile' && user) {
+      loadProfile();
+    }
+  }, [currentView]);
+
   const loadProfile = async () => {
     if (!user) return;
 
     try {
+      console.log('Loading profile for user:', user.id);
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading profile:', error);
+        throw error;
+      }
 
+      console.log('Profile data loaded:', data);
       if (data) {
         setProfileData(data);
-        setIsAdmin(data.role === 'admin');
+        const adminStatus = data.role === 'admin';
+        console.log('Is admin:', adminStatus, 'Role:', data.role);
+        setIsAdmin(adminStatus);
+      } else {
+        console.warn('No profile data found for user');
       }
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error('Error in loadProfile:', error);
     }
   };
 
