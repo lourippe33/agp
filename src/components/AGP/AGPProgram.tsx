@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Trophy, Lock, CheckCircle, Calendar, Play, ArrowRight } from 'lucide-react';
 import { DailyProgramView } from '../Phase1/DailyProgramView';
+import { PersonalizedTips } from '../Recommendations/PersonalizedTips';
 
 export function AGPProgram() {
   const { user } = useAuth();
@@ -94,6 +95,8 @@ export function AGPProgram() {
           </div>
           <p className="text-sm text-blue-100 mt-2">{currentDay} / 28 jours complétés</p>
         </div>
+
+        <PersonalizedTips context="agp" maxTips={4} />
 
         {phases.map((phase) => (
           <div key={phase.phase} className="bg-white rounded-2xl shadow-md p-6">

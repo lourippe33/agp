@@ -33,6 +33,12 @@ export function GoalsManager({ onClose }: GoalsManagerProps) {
     if (!user) return;
 
     try {
+      const { data: profileData } = await supabase
+        .from('user_profiles')
+        .select('main_goal')
+        .eq('id', user.id)
+        .maybeSingle();
+
       const { data, error } = await supabase
         .from('user_goals')
         .select('*')
@@ -43,12 +49,16 @@ export function GoalsManager({ onClose }: GoalsManagerProps) {
 
       if (error) throw error;
 
+      const mainGoal = profileData?.main_goal || data?.goal_type || '';
+
       if (data) {
         setGoal({
-          goalType: data.goal_type || '',
+          goalType: mainGoal,
           goalDescription: data.goal_description || '',
           aiRecommendations: Array.isArray(data.ai_recommendations) ? data.ai_recommendations : [],
         });
+      } else if (mainGoal) {
+        setGoal(prev => ({ ...prev, goalType: mainGoal }));
       }
     } catch (error) {
       console.error('Error loading goal:', error);
@@ -108,6 +118,22 @@ export function GoalsManager({ onClose }: GoalsManagerProps) {
         'Gérez votre stress avec des techniques de relaxation',
         'Suivez régulièrement vos indicateurs de bien-être (énergie, sommeil, humeur)',
       ],
+      energy: [
+        'Respectez les 4 repas chronobiologiques pour une énergie stable toute la journée',
+        'Privilégiez un petit-déjeuner riche en protéines et bonnes graisses',
+        'Évitez les sucres rapides qui provoquent des pics et des baisses d\'énergie',
+        'Pratiquez une activité physique régulière pour augmenter votre vitalité',
+        'Assurez-vous de bien dormir : 7-8h par nuit',
+        'Gérez votre stress avec des techniques de respiration et relaxation',
+      ],
+      sleep: [
+        'Établissez une routine de coucher régulière (même heure chaque soir)',
+        'Dînez léger au moins 2h avant le coucher',
+        'Évitez les écrans 1h avant de dormir',
+        'Créez un environnement propice au sommeil (sombre, calme, frais)',
+        'Pratiquez des techniques de relaxation avant le coucher',
+        'Limitez la caféine après 15h et évitez l\'alcool le soir',
+      ],
     };
 
     const specific = baseRecommendations[type] || baseRecommendations.health;
@@ -131,6 +157,11 @@ export function GoalsManager({ onClose }: GoalsManagerProps) {
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      await supabase
+        .from('user_profiles')
+        .update({ main_goal: goal.goalType })
+        .eq('id', user.id);
 
       const goalData = {
         user_id: user.id,
@@ -191,10 +222,12 @@ export function GoalsManager({ onClose }: GoalsManagerProps) {
               required
             >
               <option value="">Sélectionner un objectif</option>
-              <option value="weight_loss">Perte de poids</option>
-              <option value="weight_gain">Prise de poids</option>
-              <option value="maintain">Maintien du poids</option>
-              <option value="health">Amélioration de la santé</option>
+              <option value="weight_loss">Perdre du poids</option>
+              <option value="weight_gain">Prendre du poids</option>
+              <option value="maintain">Maintenir mon poids</option>
+              <option value="health">Améliorer ma santé</option>
+              <option value="energy">Avoir plus d'énergie</option>
+              <option value="sleep">Mieux dormir</option>
             </select>
           </div>
 

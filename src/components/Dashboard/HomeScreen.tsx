@@ -6,6 +6,7 @@ import { BMIWidget } from './BMIWidget';
 import { NeuroBalanceWidget } from '../Neurotransmitters/NeuroBalanceWidget';
 import { NotificationBell } from '../Notifications/NotificationBell';
 import { NotificationsList } from '../Notifications/NotificationsList';
+import { PersonalizedTips } from '../Recommendations/PersonalizedTips';
 
 interface HomeScreenProps {
   onNavigate: (view: string) => void;
@@ -130,6 +131,10 @@ export function HomeScreen({ onNavigate, weatherRefreshTrigger }: HomeScreenProp
               <p className="text-sm text-blue-100 opacity-90">du programme AGP</p>
             </div>
           </button>
+        </div>
+
+        <div className="mb-6">
+          <PersonalizedTips context="home" maxTips={3} />
         </div>
 
         <WellnessWeather userId={user?.id || ''} refreshTrigger={weatherRefreshTrigger} />
