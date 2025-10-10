@@ -135,8 +135,8 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#7AC943] via-[#4A7729] to-[#2D4A1A] flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-[#7AC943] via-[#4A7729] to-[#2D4A1A] flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl my-8">
         <div className="bg-gradient-to-r from-[#7AC943] to-[#4A7729] p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">Bienvenue dans AGP</h2>
           <p className="text-green-100">Configurons votre profil en quelques étapes</p>
@@ -161,7 +161,7 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
           </div>
         </div>
 
-        <div className="p-8">
+        <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
@@ -449,7 +449,7 @@ export function OnboardingQuestionnaire({ onComplete }: OnboardingQuestionnaireP
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+          <div className="sticky bottom-0 bg-white flex items-center justify-between mt-8 pt-6 border-t border-gray-200 -mx-6 md:-mx-8 px-6 md:px-8 pb-6">
             <button
               type="button"
               onClick={handleBack}
