@@ -134,20 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
 
     if (data.user && data.session) {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .upsert({
-          id: data.user.id,
-          email: data.user.email || '',
-          full_name: fullName,
-        }, {
-          onConflict: 'id'
-        });
-
-      if (profileError) {
-        console.error('Error creating profile:', profileError);
-      }
-
       await new Promise(resolve => setTimeout(resolve, 500));
       await loadUserProfile(data.user);
     } else if (data.user && !data.session) {
