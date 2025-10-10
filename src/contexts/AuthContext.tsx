@@ -148,31 +148,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Error creating profile:', profileError);
       }
 
-      // Marquer le code d'accès comme utilisé si fourni
-      if (accessCode) {
-        console.log('Marking access code as used:', accessCode.toUpperCase(), 'for user:', data.user.id);
+      // Marquer le code d'accès comme utilisé via Edge Function
+      if (accessCode && data.session) {
+        try {
+          const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-code-used`;
 
-        // Utiliser la session de l'utilisateur pour l'UPDATE
-        const { data: updateData, error: codeError } = await supabase
-          .from('access_codes')
-          .update({
-            is_used: true,
-            used_by: data.user.id,
-            used_at: new Date().toISOString()
-          })
-          .eq('code', accessCode.toUpperCase())
-          .eq('is_used', false)
-          .select();
+          const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${data.session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              code: accessCode.toUpperCase(),
+              userId: data.user.id
+            })
+          });
 
-        console.log('Update result:', { updateData, codeError });
+          const result = await response.json();
 
-        if (codeError) {
-          console.error('Error marking access code as used:', codeError);
-          console.error('Error details:', JSON.stringify(codeError, null, 2));
-        } else if (!updateData || updateData.length === 0) {
-          console.warn('No rows updated - code may already be used or policy blocked the update');
-        } else {
-          console.log('Access code marked as used successfully:', updateData);
+          if (!response.ok) {
+            console.error('Failed to mark code as used:', result.error);
+          }
+        } catch (err) {
+          console.error('Error calling mark-code-used function:', err);
         }
       }
 
