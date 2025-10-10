@@ -6,7 +6,6 @@ import { BMIWidget } from './BMIWidget';
 import { NeuroBalanceWidget } from '../Neurotransmitters/NeuroBalanceWidget';
 import { NotificationBell } from '../Notifications/NotificationBell';
 import { NotificationsList } from '../Notifications/NotificationsList';
-import { StreakCard } from './StreakCard';
 
 interface HomeScreenProps {
   onNavigate: (view: string) => void;
@@ -132,8 +131,6 @@ export function HomeScreen({ onNavigate, weatherRefreshTrigger }: HomeScreenProp
             </div>
           </button>
         </div>
-
-        <StreakCard />
 
         <WellnessWeather userId={user?.id || ''} refreshTrigger={weatherRefreshTrigger} />
 
