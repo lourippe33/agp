@@ -84,7 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        return;
+      }
+
       if (session?.user) {
         loadUserProfile(session.user);
       } else {
@@ -145,8 +150,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      setUser(null);
+      setLoading(true);
+
+      await supabase.auth.signOut();
+
+      localStorage.clear();
+      sessionStorage.clear();
+
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+    } catch (error) {
+      console.error('Logout error:', error);
+      setUser(null);
+      window.location.href = '/';
+    }
   };
 
   const updateProfile = (profileUpdate: Partial<UserProfile>) => {
