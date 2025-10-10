@@ -36,15 +36,23 @@ function AppContent() {
     }
 
     try {
+      console.log('Checking onboarding for user ID:', user.id);
+
       const { data, error } = await supabase
         .from('user_profiles')
         .select('onboarding_completed')
         .eq('id', user.id)
         .maybeSingle();
 
+      console.log('Onboarding data:', data);
+      console.log('Onboarding error:', error);
+
       if (error) throw error;
 
       if (data && !data.onboarding_completed) {
+        setShowOnboarding(true);
+      } else if (!data) {
+        console.warn('No profile found for user, showing onboarding');
         setShowOnboarding(true);
       }
     } catch (error) {
