@@ -20,52 +20,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const loadUserProfile = async (authUser: any) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const { data: profile, error: fetchError } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle();
-
-      if (fetchError) {
-        console.error('Error fetching profile:', fetchError);
-      }
-
-      if (profile) {
-        setUser({
-          id: authUser.id,
-          email: authUser.email || '',
-          fullName: profile.full_name || authUser.user_metadata?.full_name || '',
-          initialWeight: profile.initial_weight || 0,
-          targetWeight: profile.target_weight || 0,
-          height: profile.height || 0,
-          createdAt: new Date(authUser.created_at),
-        });
-      } else {
-        setUser({
-          id: authUser.id,
-          email: authUser.email || '',
-          fullName: authUser.user_metadata?.full_name || '',
-          initialWeight: 0,
-          targetWeight: 0,
-          height: 0,
-          createdAt: new Date(authUser.created_at),
-        });
-      }
-    } catch (error) {
-      console.error('Error loading user profile:', error);
-      setUser({
-        id: authUser.id,
-        email: authUser.email || '',
-        fullName: authUser.user_metadata?.full_name || '',
-        initialWeight: 0,
-        targetWeight: 0,
-        height: 0,
-        createdAt: new Date(authUser.created_at),
-      });
-    }
+    setUser({
+      id: authUser.id,
+      email: authUser.email || '',
+      fullName: authUser.user_metadata?.full_name || '',
+      initialWeight: 0,
+      targetWeight: 0,
+      height: 0,
+      createdAt: new Date(authUser.created_at),
+    });
   };
 
   useEffect(() => {
