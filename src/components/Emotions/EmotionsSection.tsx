@@ -9,6 +9,7 @@ import { EFTTapping } from './techniques/EFTTapping';
 import { VisualisationLieu } from './techniques/VisualisationLieu';
 import { PetitNuage } from './techniques/PetitNuage';
 import { PapillonEMDR } from './techniques/PapillonEMDR';
+import { RobinetEmotionnel } from './techniques/RobinetEmotionnel';
 
 interface Technique {
   id: number;
@@ -83,6 +84,7 @@ export function EmotionsSection() {
       6: <VisualisationLieu onClose={() => setShowPractice(false)} />,
       7: <PetitNuage onClose={() => setShowPractice(false)} />,
       8: <PapillonEMDR onClose={() => setShowPractice(false)} />,
+      9: <RobinetEmotionnel onClose={() => setShowPractice(false)} />,
     };
 
     return practiceComponents[selectedTechnique.id] || null;

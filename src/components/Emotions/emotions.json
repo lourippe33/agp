@@ -405,6 +405,35 @@
         "Moments de tristesse intense",
         "Avant une situation redoutée"
       ]
+    },
+    {
+      "id": 9,
+      "titre": "Le Robinet Émotionnel",
+      "type": "visualisation",
+      "niveau": "debutant",
+      "image": "https://images.pexels.com/photos/4207892/pexels-photo-4207892.jpeg",
+      "duree": 4,
+      "difficulte": "Très facile",
+      "tags": ["visualisation", "contrôle", "régulation", "métaphore"],
+      "description": "Technique de régulation émotionnelle par métaphore du contrôle. Visualisez vos émotions comme un robinet que vous pouvez ouvrir ou fermer à volonté.",
+      "icone": "droplets",
+      "couleur": "cyan",
+      "benefices": [
+        "Transforme le sentiment d'impuissance en maîtrise",
+        "Permet une régulation progressive et mesurable",
+        "Métaphore concrète facile à visualiser",
+        "Utilisable discrètement partout",
+        "Redonne le sentiment de contrôle de soi",
+        "Ne supprime pas l'émotion, la régule"
+      ],
+      "quandUtiliser": [
+        "Colère montante",
+        "Anxiété qui grimpe",
+        "Tristesse envahissante",
+        "Avant une situation stressante",
+        "Quand on se sent submergé",
+        "Pour retrouver la maîtrise de soi"
+      ]
     }
   ]
 }
