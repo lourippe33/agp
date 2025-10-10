@@ -150,7 +150,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Marquer le code d'accès comme utilisé si fourni
       if (accessCode) {
-        const { error: codeError } = await supabase
+        console.log('Marking access code as used:', accessCode.toUpperCase(), 'for user:', data.user.id);
+        const { data: updateData, error: codeError } = await supabase
           .from('access_codes')
           .update({
             is_used: true,
@@ -158,10 +159,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             used_at: new Date().toISOString()
           })
           .eq('code', accessCode.toUpperCase())
-          .eq('is_used', false);
+          .eq('is_used', false)
+          .select();
 
         if (codeError) {
           console.error('Error marking access code as used:', codeError);
+        } else {
+          console.log('Access code marked as used successfully:', updateData);
         }
       }
 
