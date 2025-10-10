@@ -36,12 +36,21 @@ function AppContent() {
     }
 
     try {
-      console.log('Checking onboarding for user ID:', user.id);
+      const { data: { session } } = await supabase.auth.getSession();
+      const authUserId = session?.user?.id;
+
+      console.log('Checking onboarding for auth user ID:', authUserId);
+
+      if (!authUserId) {
+        console.warn('No authenticated user found');
+        setCheckingOnboarding(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('user_profiles')
         .select('onboarding_completed')
-        .eq('id', user.id)
+        .eq('id', authUserId)
         .maybeSingle();
 
       console.log('Onboarding data:', data);
