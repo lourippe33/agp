@@ -195,6 +195,27 @@ export function SportsSection() {
     setWorkoutSteps([]);
   };
 
+  const getCompletionMessage = () => {
+    const messages = [
+      "Ton corps te dit merci ! Chaque séance te rapproche de tes objectifs.",
+      "Incroyable ! Tu viens de faire un pas de plus vers une meilleure version de toi-même.",
+      "Bravo champion ! La régularité est la clé du succès.",
+      "Quelle belle séance ! Tu as fait preuve de détermination.",
+      "Tu rayonnes ! Continue comme ça, les résultats suivront.",
+      "Félicitations ! Tu as prouvé que tu étais capable d'aller jusqu'au bout.",
+      "Wow ! Cette séance est dans la poche. Ton futur toi te remercie !",
+      "Superbe performance ! Tu es sur la bonne voie pour atteindre tes objectifs.",
+      "Bravo ! Chaque effort compte et tu viens d'en faire la preuve.",
+      "Extraordinaire ! Tu as montré ta force et ta persévérance.",
+      "Quelle motivation ! Continue ainsi, tu es unstoppable.",
+      "Félicitations ! Ton engagement est inspirant.",
+      "Tu es une machine ! Cette séance est un succès total.",
+      "Chapeau ! Tu viens de prouver que rien ne t'arrête.",
+      "Excellent travail ! Ton corps et ton esprit sont en harmonie."
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
   const formatTime = (seconds: number) => {
     const min = Math.floor(seconds / 60);
     const sec = seconds % 60;
@@ -343,10 +364,14 @@ export function SportsSection() {
                 <h2 className="text-4xl font-bold text-[#4A7729] mb-4">
                   Séance terminée !
                 </h2>
-                <p className="text-xl text-gray-700 mb-8">
+                <p className="text-xl text-gray-700 mb-4">
                   Bravo ! Tu as terminé ta séance <b>{selectedActivity.name}</b>.
-                  <br />Continue comme ça, tu es sur la bonne voie ! 💪
                 </p>
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 mb-8">
+                  <p className="text-lg text-[#4A7729] font-semibold italic">
+                    {getCompletionMessage()}
+                  </p>
+                </div>
                 <div className="flex items-center justify-center space-x-4">
                   <button
                     onClick={resetWorkout}
