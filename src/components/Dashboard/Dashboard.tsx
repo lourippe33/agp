@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { LogOut, Settings } from 'lucide-react';
+import { AppHeader } from './AppHeader';
 import { HomeScreen } from './HomeScreen';
 import { BottomNav } from './BottomNav';
 import { RecipesSection } from '../Recipes/RecipesSection';
@@ -87,16 +88,11 @@ export function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
       {currentView === 'profile' && (
-        <nav className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <h1 className="text-xl font-bold text-[#333333]">Mon Profil</h1>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Settings className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
-          </div>
-        </nav>
+        <AppHeader
+          title="Mon Profil"
+          subtitle="Gérez vos informations personnelles"
+          rightElement={<LogOut className="w-6 h-6 text-white cursor-pointer" onClick={logout} />}
+        />
       )}
 
       <div className="flex-1 overflow-hidden">
