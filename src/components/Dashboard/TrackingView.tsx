@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Scale, Activity, Salad } from 'lucide-react';
-import logoAgp from '../../assets/logo-agp.png';
 import { MeasurementsTracker } from '../Measurements/MeasurementsTracker';
 import { DailyWellnessTracker } from '../Wellness/DailyWellnessTracker';
 import { FoodTracker } from '../Food/FoodTracker';
@@ -16,14 +15,7 @@ export function TrackingView({ onDataSaved }: TrackingViewProps) {
 
   return (
     <div className="pb-24 h-full flex flex-col">
-      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-6 pb-6 px-6 rounded-b-3xl">
-        <div className="mb-4">
-          <img
-            src={logoAgp}
-            alt="AGP Logo"
-            className="h-12 w-12 rounded-lg shadow-md"
-          />
-        </div>
+      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-8 pb-6 px-6 rounded-b-3xl">
         <h1 className="text-2xl font-bold text-white mb-2">Suivi personnel</h1>
         <p className="text-white text-opacity-90">
           Suivez votre progression quotidienne

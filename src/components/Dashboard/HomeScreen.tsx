@@ -5,7 +5,6 @@ import { WellnessWeather } from './WellnessWeather';
 import { NeuroBalanceWidget } from '../Neurotransmitters/NeuroBalanceWidget';
 import { NotificationBell } from '../Notifications/NotificationBell';
 import { NotificationsList } from '../Notifications/NotificationsList';
-import logoAgp from '../../assets/logo-agp.png';
 
 interface HomeScreenProps {
   onNavigate: (view: string) => void;
@@ -70,22 +69,17 @@ export function HomeScreen({ onNavigate, weatherRefreshTrigger }: HomeScreenProp
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-6 pb-12 px-6 rounded-b-3xl">
-        <div className="flex items-center justify-between mb-6">
-          <img
-            src={logoAgp}
-            alt="AGP Logo"
-            className="h-12 w-12 rounded-lg shadow-md"
-          />
+      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-8 pb-12 px-6 rounded-b-3xl">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
+              Bonjour, {user?.fullName?.split(' ')[0] || 'eric'}
+            </h1>
+            <p className="text-white text-opacity-90">
+              Votre parcours chronobiologique vous attend
+            </p>
+          </div>
           <NotificationBell onOpenNotifications={() => setShowNotifications(true)} />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white mb-1">
-            Bonjour, {user?.fullName?.split(' ')[0] || 'eric'}
-          </h1>
-          <p className="text-white text-opacity-90">
-            Votre parcours chronobiologique vous attend
-          </p>
         </div>
       </div>
 

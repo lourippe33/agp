@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Trophy, Lock, CheckCircle, Calendar, Play, ArrowRight } from 'lucide-react';
-import logoAgp from '../../assets/logo-agp.png';
 import { DailyProgramView } from '../Phase1/DailyProgramView';
 import { PersonalizedTips } from '../Recommendations/PersonalizedTips';
 
@@ -60,14 +59,7 @@ export function AGPProgram() {
 
   return (
     <div className="pb-24">
-      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-6 pb-12 px-6 rounded-b-3xl mb-6">
-        <div className="mb-4">
-          <img
-            src={logoAgp}
-            alt="AGP Logo"
-            className="h-12 w-12 rounded-lg shadow-md"
-          />
-        </div>
+      <div className="bg-gradient-to-br from-[#2B7BBE] via-[#4A9CD9] to-[#5FA84D] pt-8 pb-12 px-6 rounded-b-3xl mb-6">
         <div className="flex items-center space-x-3 mb-2">
           <Trophy className="w-8 h-8 text-white" />
           <h1 className="text-2xl font-bold text-white">Programme AGP</h1>
