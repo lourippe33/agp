@@ -257,21 +257,21 @@ export function SportsSection() {
       const isFinished = !currentStep;
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-3 sm:p-6 pb-24">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-[#333333]">{selectedActivity.name}</h2>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-2xl font-bold text-[#333333] truncate pr-2">{selectedActivity.name}</h2>
               <button
                 onClick={resetWorkout}
-                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold"
+                className="px-3 py-2 sm:px-4 text-sm sm:text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold whitespace-nowrap flex-shrink-0"
               >
                 Arrêter
               </button>
             </div>
 
             {!isFinished ? (
-              <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-                <div className="flex flex-col items-center space-y-8">
+              <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-6">
+                <div className="flex flex-col items-center space-y-4 sm:space-y-8">
                   <div className="text-center w-full">
                     <div className="text-sm text-gray-500 mb-2">Progression globale</div>
                     <div className="flex justify-between text-xs text-gray-600 mb-1">
@@ -286,7 +286,7 @@ export function SportsSection() {
                     </div>
                   </div>
 
-                  <div className="relative w-72 h-72 flex items-center justify-center">
+                  <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
                     <div
                       className="absolute w-full h-full rounded-full bg-gradient-to-br from-green-400 to-emerald-400 transition-all duration-1000 ease-in-out"
                       style={{
@@ -308,76 +308,76 @@ export function SportsSection() {
                       }}
                     >
                       <div className="text-center text-white">
-                        <div className="text-6xl font-bold mb-2">{formatTime(timeLeft)}</div>
-                        <div className="text-sm uppercase tracking-wider font-semibold opacity-90">
+                        <div className="text-4xl sm:text-6xl font-bold mb-1 sm:mb-2">{formatTime(timeLeft)}</div>
+                        <div className="text-xs sm:text-sm uppercase tracking-wider font-semibold opacity-90">
                           Temps restant
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-center w-full bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
-                    <h3 className="text-2xl font-bold text-[#333333] mb-3">{currentStep.name}</h3>
-                    <p className="text-gray-700 text-lg leading-relaxed">{currentStep.description}</p>
+                  <div className="text-center w-full bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 sm:p-6">
+                    <h3 className="text-lg sm:text-2xl font-bold text-[#333333] mb-2 sm:mb-3">{currentStep.name}</h3>
+                    <p className="text-gray-700 text-sm sm:text-lg leading-relaxed">{currentStep.description}</p>
                   </div>
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
                     {isPaused ? (
                       <button
                         onClick={() => setIsPaused(false)}
-                        className="flex items-center space-x-2 px-8 py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                        className="flex items-center justify-center space-x-2 px-6 py-3 sm:px-8 sm:py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                       >
-                        <Play className="w-6 h-6" />
+                        <Play className="w-5 h-5 sm:w-6 sm:h-6" />
                         <span>Reprendre</span>
                       </button>
                     ) : (
                       <button
                         onClick={() => setIsPaused(true)}
-                        className="flex items-center space-x-2 px-8 py-4 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                        className="flex items-center justify-center space-x-2 px-6 py-3 sm:px-8 sm:py-4 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                       >
-                        <Pause className="w-6 h-6" />
+                        <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
                         <span>Pause</span>
                       </button>
                     )}
 
                     <button
                       onClick={nextStep}
-                      className="flex items-center space-x-2 px-6 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg transform hover:scale-105"
+                      className="flex items-center justify-center space-x-2 px-6 py-3 sm:px-8 sm:py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                     >
-                      <SkipForward className="w-5 h-5" />
+                      <SkipForward className="w-5 h-5 sm:w-6 sm:h-6" />
                       <span>Suivant</span>
                     </button>
 
                     <button
                       onClick={resetWorkout}
-                      className="flex items-center space-x-2 px-6 py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold shadow-lg transform hover:scale-105"
+                      className="flex items-center justify-center space-x-2 px-6 py-3 sm:px-8 sm:py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                     >
-                      <RotateCcw className="w-5 h-5" />
+                      <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
                       <span>Recommencer</span>
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-                <div className="text-8xl mb-6 animate-bounce">🎉</div>
-                <h2 className="text-4xl font-bold text-[#4A7729] mb-4">
+              <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-12 text-center">
+                <div className="text-6xl sm:text-8xl mb-4 sm:mb-6 animate-bounce">🎉</div>
+                <h2 className="text-2xl sm:text-4xl font-bold text-[#4A7729] mb-3 sm:mb-4">
                   Séance terminée !
                 </h2>
-                <p className="text-xl text-gray-700 mb-4">
+                <p className="text-base sm:text-xl text-gray-700 mb-3 sm:mb-4">
                   Bravo ! Tu as terminé ta séance <b>{selectedActivity.name}</b>.
                 </p>
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 mb-8">
-                  <p className="text-lg text-[#4A7729] font-semibold italic">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+                  <p className="text-sm sm:text-lg text-[#4A7729] font-semibold italic">
                     {getCompletionMessage()}
                   </p>
                 </div>
-                <div className="flex items-center justify-center space-x-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
                   <button
                     onClick={resetWorkout}
-                    className="flex items-center space-x-2 px-8 py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                    className="flex items-center justify-center space-x-2 px-6 py-3 sm:px-8 sm:py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                   >
-                    <RotateCcw className="w-6 h-6" />
+                    <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
                     <span>Recommencer</span>
                   </button>
                   <button
@@ -385,7 +385,7 @@ export function SportsSection() {
                       resetWorkout();
                       setSelectedActivity(null);
                     }}
-                    className="px-8 py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                    className="px-6 py-3 sm:px-8 sm:py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold text-base sm:text-lg shadow-lg transform hover:scale-105 w-full sm:w-auto"
                   >
                     Retour aux activités
                   </button>
