@@ -17,5 +17,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Enregistrement du Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then(() => console.log('✅ Service Worker enregistré'))
+            .catch((err) => console.error('Erreur SW :', err));
+        });
+      }
+    </script>
   </body>
 </html>
