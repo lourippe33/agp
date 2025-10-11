@@ -111,19 +111,56 @@ export function SportsSection() {
   const generateWorkoutSteps = (activity: SportsActivity): WorkoutStep[] => {
     const steps: WorkoutStep[] = [];
     const totalDuration = activity.duration * 60;
-    const numInstructions = activity.instructions.length;
 
-    if (numInstructions === 0) return [];
+    if (activity.instructions.length === 0) return [];
 
-    const stepDuration = Math.floor(totalDuration / numInstructions);
+    // Extraire les durées des descriptions si elles existent
+    activity.instructions.forEach((instruction) => {
+      // Chercher les patterns comme "(5 min)", "(3 min)", etc.
+      const durationMatch = instruction.match(/\((\d+)\s*min\)/i);
+      // Chercher aussi les patterns comme "Échauffement (3 min)"
+      const titleMatch = instruction.match(/^(\d+\)?\s*)?([^(]+)(?:\((\d+)\s*min\))?/i);
 
-    activity.instructions.forEach((instruction, index) => {
+      let duration = 0;
+      let name = '';
+      let description = instruction;
+
+      if (durationMatch) {
+        duration = parseInt(durationMatch[1]) * 60; // Convertir minutes en secondes
+      }
+
+      // Extraire le nom de l'étape (avant les deux-points ou la parenthèse)
+      if (titleMatch) {
+        const fullTitle = titleMatch[0].trim();
+        const colonIndex = fullTitle.indexOf(':');
+        if (colonIndex > 0) {
+          name = fullTitle.substring(0, colonIndex).trim();
+          description = fullTitle.substring(colonIndex + 1).trim();
+        } else {
+          name = fullTitle.replace(/\(\d+\s*min\)/i, '').trim();
+        }
+      }
+
+      // Si pas de nom trouvé, utiliser un nom par défaut
+      if (!name) {
+        name = `Étape ${steps.length + 1}`;
+      }
+
       steps.push({
-        name: `Étape ${index + 1}`,
-        duration: stepDuration,
-        description: instruction
+        name,
+        duration: duration || 60, // Par défaut 1 minute si pas de durée trouvée
+        description
       });
     });
+
+    // Si aucune durée n'a été extraite, répartir équitablement
+    const totalExtracted = steps.reduce((sum, step) => sum + step.duration, 0);
+    if (totalExtracted === 0 || totalExtracted === steps.length * 60) {
+      const stepDuration = Math.floor(totalDuration / steps.length);
+      steps.forEach(step => {
+        step.duration = stepDuration;
+      });
+    }
 
     return steps;
   };
