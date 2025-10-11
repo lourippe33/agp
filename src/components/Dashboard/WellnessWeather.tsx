@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 interface WellnessWeatherProps {
   userId: string;
   refreshTrigger?: number;
+  onNavigate?: (view: string) => void;
 }
 
 interface WeatherMood {
@@ -53,7 +54,7 @@ const WEATHER_MOODS: Record<string, WeatherMood> = {
   }
 };
 
-export function WellnessWeather({ userId, refreshTrigger }: WellnessWeatherProps) {
+export function WellnessWeather({ userId, refreshTrigger, onNavigate }: WellnessWeatherProps) {
   const [weather, setWeather] = useState<WeatherMood>(WEATHER_MOODS.none);
   const [averageScore, setAverageScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -192,12 +193,15 @@ export function WellnessWeather({ userId, refreshTrigger }: WellnessWeatherProps
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+        <button
+          onClick={() => onNavigate?.('tracking')}
+          className="w-full flex items-center justify-center space-x-2 text-sm text-gray-600 bg-blue-50 hover:bg-blue-100 rounded-lg p-3 transition-colors cursor-pointer"
+        >
           <Sparkles className="w-5 h-5 text-[#7AC943] flex-shrink-0" />
           <p className="text-center">
             <span className="font-semibold text-gray-800">Astuce :</span> Maintenez votre suivi quotidien à jour pour voir votre météo évoluer !
           </p>
-        </div>
+        </button>
       </div>
     </div>
   );

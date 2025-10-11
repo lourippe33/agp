@@ -131,7 +131,7 @@ export function HomeScreen({ onNavigate, weatherRefreshTrigger }: HomeScreenProp
           </button>
         </div>
 
-        <WellnessWeather userId={user?.id || ''} refreshTrigger={weatherRefreshTrigger} />
+        <WellnessWeather userId={user?.id || ''} refreshTrigger={weatherRefreshTrigger} onNavigate={onNavigate} />
 
         <div className="mb-6">
           <NeuroBalanceWidget onNavigate={onNavigate} />
