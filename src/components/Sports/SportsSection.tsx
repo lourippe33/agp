@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Dumbbell, Clock, Flame, Search, Play, Video } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Dumbbell, Clock, Flame, Search, Play, Video, Pause, RotateCcw, SkipForward } from 'lucide-react';
 import exercicesData from './exercices.json';
 
 interface ExerciceFromJson {
@@ -52,11 +52,22 @@ const convertJsonExercices = (jsonExercices: ExerciceFromJson[]): SportsActivity
 
 const allActivities = convertJsonExercices(exercicesData.exercices);
 
+interface WorkoutStep {
+  name: string;
+  duration: number;
+  description: string;
+}
+
 export function SportsSection() {
   const [activities] = useState<SportsActivity[]>(allActivities);
   const [selectedActivity, setSelectedActivity] = useState<SportsActivity | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState<string>('all');
+  const [isWorkoutActive, setIsWorkoutActive] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [workoutSteps, setWorkoutSteps] = useState<WorkoutStep[]>([]);
 
   const difficulties = [
     { value: 'all', label: 'Tous niveaux' },
@@ -97,11 +108,240 @@ export function SportsSection() {
     }
   };
 
+  const generateWorkoutSteps = (activity: SportsActivity): WorkoutStep[] => {
+    const steps: WorkoutStep[] = [];
+    const totalDuration = activity.duration * 60;
+    const numInstructions = activity.instructions.length;
+
+    if (numInstructions === 0) return [];
+
+    const stepDuration = Math.floor(totalDuration / numInstructions);
+
+    activity.instructions.forEach((instruction, index) => {
+      steps.push({
+        name: `Étape ${index + 1}`,
+        duration: stepDuration,
+        description: instruction
+      });
+    });
+
+    return steps;
+  };
+
+  const startWorkout = () => {
+    if (!selectedActivity) return;
+
+    const steps = generateWorkoutSteps(selectedActivity);
+    if (steps.length === 0) return;
+
+    setWorkoutSteps(steps);
+    setCurrentStepIndex(0);
+    setTimeLeft(steps[0].duration);
+    setIsWorkoutActive(true);
+    setIsPaused(false);
+  };
+
+  const nextStep = () => {
+    if (currentStepIndex + 1 < workoutSteps.length) {
+      setCurrentStepIndex(prev => prev + 1);
+      setTimeLeft(workoutSteps[currentStepIndex + 1].duration);
+    } else {
+      setIsWorkoutActive(false);
+    }
+  };
+
+  const resetWorkout = () => {
+    setIsWorkoutActive(false);
+    setCurrentStepIndex(0);
+    setTimeLeft(0);
+    setIsPaused(false);
+    setWorkoutSteps([]);
+  };
+
+  const formatTime = (seconds: number) => {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    if (!isWorkoutActive || isPaused || timeLeft <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          nextStep();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isWorkoutActive, isPaused, timeLeft, currentStepIndex]);
+
+  const getProgressPercentage = () => {
+    if (workoutSteps.length === 0) return 0;
+    const currentStep = workoutSteps[currentStepIndex];
+    if (!currentStep) return 0;
+    const elapsed = currentStep.duration - timeLeft;
+    return (elapsed / currentStep.duration) * 100;
+  };
+
+  const getTotalProgress = () => {
+    if (workoutSteps.length === 0) return 0;
+    return ((currentStepIndex / workoutSteps.length) * 100);
+  };
+
   if (selectedActivity) {
+    if (isWorkoutActive) {
+      const currentStep = workoutSteps[currentStepIndex];
+      const isFinished = !currentStep;
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-[#333333]">{selectedActivity.name}</h2>
+              <button
+                onClick={resetWorkout}
+                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold"
+              >
+                Arrêter
+              </button>
+            </div>
+
+            {!isFinished ? (
+              <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                <div className="flex flex-col items-center space-y-8">
+                  <div className="text-center w-full">
+                    <div className="text-sm text-gray-500 mb-2">Progression globale</div>
+                    <div className="flex justify-between text-xs text-gray-600 mb-1">
+                      <span>Étape {currentStepIndex + 1} / {workoutSteps.length}</span>
+                      <span>{Math.round(getTotalProgress())}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden mb-6">
+                      <div
+                        className="bg-gradient-to-r from-[#4A7729] to-[#7AC943] h-full transition-all duration-300"
+                        style={{ width: `${getTotalProgress()}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative w-72 h-72 flex items-center justify-center">
+                    <div
+                      className="absolute w-full h-full rounded-full bg-gradient-to-br from-green-400 to-emerald-400 transition-all duration-1000 ease-in-out"
+                      style={{
+                        opacity: 0.2,
+                        transform: `scale(${0.6 + (getProgressPercentage() / 100) * 0.4})`
+                      }}
+                    />
+                    <div
+                      className="absolute w-4/5 h-4/5 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 transition-all duration-1000 ease-in-out"
+                      style={{
+                        opacity: 0.4,
+                        transform: `scale(${0.6 + (getProgressPercentage() / 100) * 0.4})`
+                      }}
+                    />
+                    <div
+                      className="absolute w-3/5 h-3/5 rounded-full bg-gradient-to-br from-[#4A7729] to-[#7AC943] flex items-center justify-center transition-all duration-1000 ease-in-out shadow-2xl"
+                      style={{
+                        transform: `scale(${0.8 + (getProgressPercentage() / 100) * 0.2})`
+                      }}
+                    >
+                      <div className="text-center text-white">
+                        <div className="text-6xl font-bold mb-2">{formatTime(timeLeft)}</div>
+                        <div className="text-sm uppercase tracking-wider font-semibold opacity-90">
+                          Temps restant
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center w-full bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 className="text-2xl font-bold text-[#333333] mb-3">{currentStep.name}</h3>
+                    <p className="text-gray-700 text-lg leading-relaxed">{currentStep.description}</p>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    {isPaused ? (
+                      <button
+                        onClick={() => setIsPaused(false)}
+                        className="flex items-center space-x-2 px-8 py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                      >
+                        <Play className="w-6 h-6" />
+                        <span>Reprendre</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setIsPaused(true)}
+                        className="flex items-center space-x-2 px-8 py-4 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                      >
+                        <Pause className="w-6 h-6" />
+                        <span>Pause</span>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={nextStep}
+                      className="flex items-center space-x-2 px-6 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg transform hover:scale-105"
+                    >
+                      <SkipForward className="w-5 h-5" />
+                      <span>Suivant</span>
+                    </button>
+
+                    <button
+                      onClick={resetWorkout}
+                      className="flex items-center space-x-2 px-6 py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold shadow-lg transform hover:scale-105"
+                    >
+                      <RotateCcw className="w-5 h-5" />
+                      <span>Recommencer</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                <div className="text-8xl mb-6 animate-bounce">🎉</div>
+                <h2 className="text-4xl font-bold text-[#4A7729] mb-4">
+                  Séance terminée !
+                </h2>
+                <p className="text-xl text-gray-700 mb-8">
+                  Bravo ! Tu as terminé ta séance <b>{selectedActivity.name}</b>.
+                  <br />Continue comme ça, tu es sur la bonne voie ! 💪
+                </p>
+                <div className="flex items-center justify-center space-x-4">
+                  <button
+                    onClick={resetWorkout}
+                    className="flex items-center space-x-2 px-8 py-4 bg-[#4A7729] text-white rounded-xl hover:bg-[#3d6322] transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                  >
+                    <RotateCcw className="w-6 h-6" />
+                    <span>Recommencer</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      resetWorkout();
+                      setSelectedActivity(null);
+                    }}
+                    className="px-8 py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all font-semibold text-lg shadow-lg transform hover:scale-105"
+                  >
+                    Retour aux activités
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6">
         <button
-          onClick={() => setSelectedActivity(null)}
+          onClick={() => {
+            setSelectedActivity(null);
+            resetWorkout();
+          }}
           className="text-[#4A7729] hover:text-[#7AC943] font-semibold"
         >
           ← Retour aux activités
@@ -180,7 +420,10 @@ export function SportsSection() {
             </div>
 
             <div className="mt-6">
-              <button className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-3 bg-[#4A7729] text-white rounded-lg hover:bg-[#3d6322] transition-colors font-semibold">
+              <button
+                onClick={startWorkout}
+                className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-3 bg-[#4A7729] text-white rounded-lg hover:bg-[#3d6322] transition-all font-semibold shadow-lg transform hover:scale-105"
+              >
                 <Play className="w-5 h-5" />
                 <span>Commencer l'activité</span>
               </button>
