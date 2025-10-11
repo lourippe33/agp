@@ -1,7 +1,7 @@
 {
-  "name": "AGP - Gestion du Poids",
+  "name": "Programme AGP",
   "short_name": "AGP",
-  "description": "Application de suivi wellness et gestion du poids",
+  "description": "Application AGP – Suivi du poids et bien-être basé sur la chronobiologie",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -11,14 +11,12 @@
     {
       "src": "/icons/icon-144.png",
       "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-512.png",
