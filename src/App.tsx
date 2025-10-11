@@ -5,7 +5,9 @@ import { SignupForm } from './components/Auth/SignupForm';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { WelcomePage } from './components/Welcome/WelcomePage';
 import { OnboardingQuestionnaire } from './components/Onboarding/OnboardingQuestionnaire';
+import { IntroAGP } from './components/Intro/IntroAGP';
 import { supabase } from './lib/supabase';
+import { AnimatePresence } from 'framer-motion';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -13,11 +15,18 @@ function AppContent() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    const hasSeenIntro = localStorage.getItem('hasSeenIntro');
+
     if (!hasSeenWelcome && !user) {
       setShowWelcome(true);
+    }
+
+    if (user && !hasSeenIntro) {
+      setShowIntro(true);
     }
   }, [user]);
 
@@ -113,7 +122,21 @@ function AppContent() {
     );
   }
 
-  return <Dashboard />;
+  return (
+    <>
+      <AnimatePresence>
+        {showIntro && (
+          <IntroAGP
+            onComplete={() => {
+              localStorage.setItem('hasSeenIntro', 'true');
+              setShowIntro(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+      {!showIntro && <Dashboard />}
+    </>
+  );
 }
 
 function App() {
