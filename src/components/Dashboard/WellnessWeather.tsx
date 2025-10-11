@@ -56,8 +56,6 @@ const WEATHER_MOODS: Record<string, WeatherMood> = {
 export function WellnessWeather({ userId, refreshTrigger }: WellnessWeatherProps) {
   const [weather, setWeather] = useState<WeatherMood>(WEATHER_MOODS.none);
   const [averageScore, setAverageScore] = useState<number | null>(null);
-  const [streak, setStreak] = useState(0);
-  const [totalDays, setTotalDays] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -135,28 +133,6 @@ export function WellnessWeather({ userId, refreshTrigger }: WellnessWeatherProps
       const average = totalScore / scoreCount;
       setAverageScore(Math.round(average * 10) / 10);
 
-      const uniqueDates = new Set([
-        ...wellnessData.map((e: any) => e.tracking_date),
-        ...foodData.map((e: any) => e.tracking_date)
-      ]);
-      setTotalDays(uniqueDates.size);
-
-      let currentStreak = 0;
-      const sortedDates = Array.from(uniqueDates).sort((a, b) => b.localeCompare(a));
-      let checkDate = new Date();
-      checkDate.setHours(0, 0, 0, 0);
-
-      while (true) {
-        const expectedDate = checkDate.toISOString().split('T')[0];
-        if (sortedDates.includes(expectedDate)) {
-          currentStreak++;
-          checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-          break;
-        }
-      }
-      setStreak(currentStreak);
-
       if (average >= 4) {
         setWeather(WEATHER_MOODS.excellent);
       } else if (average >= 3.5) {
@@ -215,30 +191,14 @@ export function WellnessWeather({ userId, refreshTrigger }: WellnessWeatherProps
         </div>
       </div>
 
-      {totalDays > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <Sparkles className="w-4 h-4 text-[#7AC943]" />
-                <span className="text-xs text-gray-500">Série en cours</span>
-              </div>
-              <p className="text-2xl font-bold text-[#4A7729]">{streak}</p>
-              <p className="text-xs text-gray-500">jour{streak > 1 ? 's' : ''}</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <span className="text-xs text-gray-500">Cette semaine</span>
-              </div>
-              <p className="text-2xl font-bold text-[#2B7BBE]">{totalDays}</p>
-              <p className="text-xs text-gray-500">jour{totalDays > 1 ? 's' : ''} suivi{totalDays > 1 ? 's' : ''}</p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 text-center mt-3">
-            Basé sur vos 7 derniers jours de suivi
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+          <Sparkles className="w-5 h-5 text-[#7AC943] flex-shrink-0" />
+          <p className="text-center">
+            <span className="font-semibold text-gray-800">Astuce :</span> Maintenez votre suivi quotidien à jour pour voir votre météo évoluer !
           </p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
